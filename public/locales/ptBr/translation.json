@@ -1,0 +1,18 @@
+{
+  "common": {
+    "welcome": "Bem-vindo",
+    "language": "Idioma",
+    "theme": "Tema"
+  },
+  "themes": {
+    "light": "Claro",
+    "dark": "Escuro",
+    "test": "Teste"
+  },
+  "welcome":{
+    "message": "Hello, welcome to our application!",
+    "intro": "This is a sample application to demonstrate internationalization.",
+    "language_select": "Select your preferred language:",
+    "theme_select": "Select your preferred theme:"
+  }
+}
