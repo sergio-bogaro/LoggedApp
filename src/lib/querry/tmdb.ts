@@ -26,11 +26,13 @@ export type Movie = {
 const TMDB_BASE = "https://api.themoviedb.org/3";
 
 function getApiKey(): string | null {
-  try {
-    return localStorage.getItem("TMDB_API_KEY");
-  } catch {
-    return null;
-  }
+  return "c1a60ca480f0e9455068980a65bafa08"
+
+  // try {
+  //   return localStorage.getItem("TMDB_API_KEY");
+  // } catch {
+  //   return null;
+  // }
 }
 
 export async function searchMovies(query: string): Promise<Movie[]> {
@@ -60,7 +62,7 @@ export async function getMovieDetails(id: number) {
   const apiKey = getApiKey();
   if (!apiKey) throw new Error("TMDB API key not found in localStorage");
 
-  const res = await fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}&language=en-US`);
+  const res = await fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}&language=en-US&append_to_response=credits,videos,images,similar`);
   if (!res.ok) throw new Error("TMDB details error");
   return res.json();
 }
