@@ -62,7 +62,7 @@ export async function getMovieDetails(id: number) {
   const apiKey = getApiKey();
   if (!apiKey) throw new Error("TMDB API key not found in localStorage");
 
-  const res = await fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}&language=en-US&append_to_response=credits,videos,images,similar`);
+  const res = await fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}&language=en-US&append_to_response=credits,videos,images,recommendations`);
   if (!res.ok) throw new Error("TMDB details error");
   return res.json();
 }

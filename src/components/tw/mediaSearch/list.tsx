@@ -1,6 +1,8 @@
 import { Plus } from "lucide-react";
 import { Link } from "react-router"
 
+import { ImageWithSkeleton } from "../imageSkeleton";
+
 import { Button } from "@/components/ui/button";
 import { MediaItem } from "@/types/mediaItem";
 
@@ -9,7 +11,8 @@ const ListItem = ({ item }: { item: MediaItem }) => {
   return (
     <Link key={item.id} to={`/logger/${item.type}/details/${item.id}`} className="flex border rounded overflow-hidden p-2 cursor-pointer hover:shadow">
       {item.coverUrl ? (
-        <img loading='lazy' src={item.coverUrl} alt={item.title} className="h-[120px] rounded" />
+        <ImageWithSkeleton src={item.coverUrl} alt={item.title} height={120} width="fit-content"/>
+        // <img loading='lazy' src={item.coverUrl} alt={item.title} className="h-[120px] rounded" />
       ) : (
         <div className="h-[120px] w-[80px] bg-muted flex items-center justify-center">No Poster</div>
       )}

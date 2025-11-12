@@ -1,8 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router";
+import { Divide, History, List } from "lucide-react";
+import { Link, useParams } from "react-router";
 
+import { MovieTabs } from "./components/movies/tabs";
+
+import { TrackMediaDialog } from "@/components/tw/dialogs/trackMediaDialog";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import { getMovieDetails, posterUrl } from "@/lib/querry/tmdb";
+import { formatFromIsoDate } from "@/utils/date";
 import { MediaTypeEnum } from "@/utils/mediaText";
 
 type MediaDetailsParams = {
@@ -47,6 +53,8 @@ function MediaDetailsPage(){
     (member: any) => member.job === "Director"
   );
 
+  const alternateImages = data?.images?.posters.map((img: any) => posterUrl(img.file_path)) || [];
+
 
   return(
     <div>
@@ -59,16 +67,27 @@ function MediaDetailsPage(){
           <div className="flex gap-4">
             <div className="flex flex-col w-1/5 text-center text-wrap sticky top-16 self-start transition-all">
               {data.poster_path && <img src={posterUrl(data.poster_path, "original")} alt={data.title} className="mb-4 rounded" />}
-           
-              <Button>Log</Button>
+
+              <TrackMediaDialog 
+                mediaType={mediaType} 
+                image={posterUrl(data.poster_path)}
+                alternateImages={alternateImages}
+                title={data.title}
+              />
 
             </div>
 
-            <div className="w-4/5">
-              <div className="flex gap-4 items-end mb-6">
+            <div className="flex flex-col w-4/5">
+              <div className="flex gap-4 items-end">
                 <h1 className="text-3xl  font-bold">{data.title}</h1>
+                
                 <span className="text-gray-500">{data.release_date?.slice(0,4)}</span>
-                <span className="text-gray-500">Directed by {director.name}</span>
+              </div>
+
+              <div className="flex gap-2">
+                {data.genres?.map((genre: { id: number; name: string }) => (
+                  <span key={genre.id} className="text-sm bg-accent  rounded-full px-3 py-1">{genre.name}</span>
+                ))}
               </div>
 
               <div className="flex flex-col gap-4">
@@ -76,20 +95,10 @@ function MediaDetailsPage(){
 
                 <p>{data.overview}</p>
 
-                <span>{data.runtime} mins</span>
+                
 
-                <div className="flex gap-2">
-                  {data.genres?.map((genre: { id: number; name: string }) => (
-                    <span key={genre.id} className="text-sm bg-accent  rounded-full px-3 py-1">{genre.name}</span>
-                  ))}
-                </div>
-
-                <div className="flex gap-2">
-                  {data.genres?.map((genre: { id: number; name: string }) => (
-                    <span key={genre.id} className="text-sm bg-accent  rounded-full px-3 py-1">{genre.name}</span>
-                  ))}
-                </div>
-
+                
+                {/* 
                 {trailer ? (
                   <div className="aspect-video w-full max-w-3xl">
                     <iframe
@@ -102,10 +111,87 @@ function MediaDetailsPage(){
                   </div>
                 ) : (
                   <p>No trailer available</p>
-                )}
+                )} */}
 
               </div>
               
+            </div>
+          </div>
+
+          <div className="flex gap-4 mt-5">
+            <div className="flex flex-col w-1/5 text-wrap gap-3">
+
+              <h3 className="mx-auto">Details</h3>  
+
+              <div className="bg-card rounded p-2 flex flex-col gap-2">
+                <div>
+                  <Label>
+                    Duration
+                  </Label>
+                  <span>{data.runtime} mins</span>              
+                </div>
+
+                <div>
+                  <Label>
+                    Release Date
+                  </Label>
+                  <span>{formatFromIsoDate(data.release_date)}</span>
+                  {/* TODO: Validar como fazer pra exibir diferente se for ingles  */}
+                </div>
+
+                <div>
+                  <Label>
+                    Directed by
+                  </Label>
+                  <span>{director.name}</span>              
+                </div>
+
+                <div>
+                  <Label>
+                    Production by
+                  </Label>
+                  <span>
+                    {data?.production_companies.map((company, index) => (
+                      `${index == 0 ?"" : ", "}   ${company.name}`
+                    ))}
+                  </span>              
+                </div>
+
+                <div>
+                  <Label>
+                    TMDB Score
+                  </Label>
+                  <span>{data.vote_average.toFixed(1)} ★</span>              
+                </div>
+
+                <div>
+                  <Label>
+                    Source
+                  </Label>
+
+                  <Link to={`https://www.themoviedb.org/movie/${data.id}`} target="_blank" >
+                    TMDB          
+                  </Link>
+                </div>
+              </div>
+
+              <div className="bg-card rounded p-2 flex justify-around">
+                {/* TODO: Props tooltip */}
+                <Button variant="secondary" >
+                  <History />
+                </Button>
+
+                <Button>
+                  <List />
+                </Button>
+
+              </div>
+                   
+            </div>
+
+            <div className="flex flex-col w-4/5">
+              <MovieTabs movieData={data} />
+             
             </div>
 
           </div>

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from "react"
-import { Control } from 'react-hook-form'
+import { Control } from "react-hook-form"
 
 import { FormControl, FormField, FormItem } from "./form"
 import { Label } from "./label"
@@ -37,7 +37,7 @@ type InputProps = {
   id?: string;
   required?: boolean;
   control?: Control<any>;
-} & Omit<React.ComponentProps<typeof BaseInput>, 'name' | 'id'>
+} & Omit<React.ComponentProps<typeof BaseInput>, "name" | "id">
 
 function Input({ label, name, id, required, control, ...props }: InputProps) {
   if (control) {
@@ -60,7 +60,7 @@ function Input({ label, name, id, required, control, ...props }: InputProps) {
                     {...props}
                     {...fieldRest}
                     id={id ?? name}
-                    value={value ?? ''}
+                    value={value ?? ""}
                   />
                 </FormControl>
               </FormItem>

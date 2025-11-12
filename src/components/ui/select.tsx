@@ -1,7 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as SelectPrimitive from "@radix-ui/react-select"
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react"
 import * as React from "react"
+import { Control } from "react-hook-form"
 
+import { FormControl, FormField, FormItem } from "./form"
 import { Label } from "./label"
 
 import { cn } from "@/lib/utils"
@@ -14,6 +17,12 @@ type SelectOptions = {
 type SelectProps = React.ComponentProps<typeof SelectPrimitive.Root> & {
   options: SelectOptions[];
   label?: string;
+  name: string;
+  id?: string;
+  required?: boolean;
+  control?: Control<any>;
+  placeholder?: string;
+  triggerClassName?: string;
 }
 
 function SelectBase({
@@ -181,18 +190,76 @@ function SelectScrollDownButton({
   )
 }
 
-export function Select({ label, name, options, ...props }: SelectProps) {
+export function Select({
+  label,
+  name,
+  id,
+  required,
+  control,
+  options,
+  placeholder = "Selecione ...",
+  ...props
+}: SelectProps) {
+  if (control) {
+    return (
+      <div className={cn("flex flex-col w-full gap-1")}>
+        <Label htmlFor={id ?? name}>
+          {label}
+          {required && <span className="text-destructive font-extrabold -ml-1.5">*</span>}
+        </Label>
+
+        <FormField
+          control={control}
+          name={name}
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <SelectBase
+                  {...props}
+                  onValueChange={field.onChange}
+                  value={field.value ?? ""}
+                >
+                  <SelectTrigger className="w-full" id={id ?? name}>
+                    <SelectValue placeholder={placeholder} />
+                  </SelectTrigger>
+
+                  <SelectContent>
+                    <SelectGroup>
+                      {options.map(({ value, label }) => (
+                        <SelectItem key={value} value={value}>
+                          {label}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </SelectBase>
+              </FormControl>
+            </FormItem>
+          )}
+        />
+      </div>
+    )
+  }
+
+  // Without react-hook-form
   return (
     <div className="flex flex-col w-full gap-1">
-      <Label htmlFor={name}>{label}</Label>
+      <Label htmlFor={id ?? name}>
+        {label}
+        {required && <span className="text-destructive font-extrabold -ml-1.5">*</span>}
+      </Label>
+
       <SelectBase {...props}>
-        <SelectTrigger className="w-full">
-          <SelectValue placeholder="Selecione ..." />
+        <SelectTrigger className="w-full" id={id ?? name}>
+          <SelectValue placeholder={placeholder} />
         </SelectTrigger>
+
         <SelectContent>
           <SelectGroup>
-            {options.map(({ label, value }) => (
-              <SelectItem key={value} value={value}>{label}</SelectItem>
+            {options.map(({ value, label }) => (
+              <SelectItem key={value} value={value}>
+                {label}
+              </SelectItem>
             ))}
           </SelectGroup>
         </SelectContent>
@@ -200,6 +267,7 @@ export function Select({ label, name, options, ...props }: SelectProps) {
     </div>
   )
 }
+
 
 export {
   SelectBase,

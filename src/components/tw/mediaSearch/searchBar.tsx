@@ -16,10 +16,11 @@ export type FormSearchProps = {
 
 interface SearchContainerProps {
   onSearch: (term: string) => void;
-  page: MediaTypeEnum;
+  page?: MediaTypeEnum;
+  defaultValue?: string;
 }
 
-export const SearchContainer = ({ onSearch, page }: SearchContainerProps) => {
+export const SearchContainer = ({ onSearch, page, defaultValue }: SearchContainerProps) => {
   const { viewMode } = useAppSelector(state => state.ui)
   const isGrid = useMemo(() => viewMode === "grid", [viewMode]);
   const dispatch = useAppDispatch()
@@ -30,7 +31,9 @@ export const SearchContainer = ({ onSearch, page }: SearchContainerProps) => {
 
   const { label, placeholder } = getPageTranslation(page);
 
-  const form = useForm<FormSearchProps>();
+  const form = useForm<FormSearchProps>({ 
+    defaultValues: { searchFilter: defaultValue || "" }
+  });
   const { control } = form;
 
   function onSubmit(data: FormSearchProps) {

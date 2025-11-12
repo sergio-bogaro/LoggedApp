@@ -48,6 +48,8 @@ export default [
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/no-explicit-any': 'warn',
       'no-unused-vars': 'off',
+      "react/jsx-props-no-multi-spaces": "error",
+      "no-multi-spaces": ["error", { ignoreEOLComments: false }],
       '@typescript-eslint/no-unused-vars': ['warn', { 'argsIgnorePattern': '^_' }],
       'import/order': [
         'warn',

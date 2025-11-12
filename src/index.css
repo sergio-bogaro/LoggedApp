@@ -213,6 +213,20 @@
   --sidebar-ring: oklch(0.6 0.1 200);
 }
 
+.dark ::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #3f3f3f;
+  border-radius: 9999px;
+}
+
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

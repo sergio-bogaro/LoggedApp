@@ -1,14 +1,70 @@
-import { PersonStanding } from "lucide-react";
-import { Link } from "react-router";
+import { t } from "i18next";
+import { PersonStanding, Search } from "lucide-react";
+import { useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { Link, useLocation, useNavigate } from "react-router";
+
+import { FormSearchProps, SearchContainer } from "../mediaSearch/searchBar";
 
 import { Button } from "@/components/ui/button";
+import { Form } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { MediaTypeEnum, mediaTypesOptions } from "@/utils/mediaText";
+
+export type MediaSearchHeaderProps = {
+  searchFilter: string;
+  mediaType: MediaTypeEnum;
+}
 
 export function Header() {
-  return (
-    <div className="flex items-center px-4 w-full h-14 border-b sticky top-0 self-start bg-background shadow-md">
-      <h1 className="font-bold text-2xl">LOGGED APP</h1>
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isSearchPage = useMemo(() => location.pathname.includes("search"), [location]);
 
-      <Button asChild variant="outline" size="icon" className="ml-auto rounded-full">
+  const form = useForm<MediaSearchHeaderProps>({ });
+  const { control } = form;
+
+  function onSearch(data: MediaSearchHeaderProps) {
+    const { searchFilter, mediaType } = data;
+
+    navigate("/logger/movies/search", { 
+      state: { searchFilter, mediaType } })
+  }
+  
+  return (
+    <div className="flex items-center justify-between px-4 w-full h-14 border-b sticky top-0 self-start bg-background shadow-md">
+      <h1 className="font-bold text-2xl">LOGGED APP</h1>
+    
+      { !isSearchPage && (
+        <div className="">
+          <Form {...form}>
+            <form className='w-full flex gap-1 items-end pb-3' onSubmit={form.handleSubmit(onSearch)}>
+
+              <Select
+                options={mediaTypesOptions} 
+                name='mediaType'
+                control={control}
+                placeholder={t("mediaType")}
+              />
+
+              <Input
+                name='searchFilter'
+                control={control}
+                placeholder={t("placeholder")}
+              />
+
+            
+              <Button>
+                <Search />
+              </Button>
+            </form>
+          </Form>
+        </div>
+      )}
+      
+
+      <Button asChild variant="outline" size="icon" className="rounded-full">
         <Link to="/logger/settings">
           <PersonStanding />
         </Link>
