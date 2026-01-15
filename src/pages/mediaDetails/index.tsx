@@ -16,7 +16,7 @@ type MediaDetailsParams = {
   id: string;
 }
 
-function MediaDetailsPage(){
+function MediaDetailsPage() {
   const { mediaType, id } = useParams() as MediaDetailsParams;
 
   const { data, isLoading, isError, error } = useQuery({
@@ -56,7 +56,7 @@ function MediaDetailsPage(){
   const alternateImages = data?.images?.posters.map((img: any) => posterUrl(img.file_path)) || [];
 
 
-  return(
+  return (
     <div>
       {isLoading && <p>Loading...</p>}
       {isError && <p>Error: {error.message}</p>}
@@ -68,8 +68,8 @@ function MediaDetailsPage(){
             <div className="flex flex-col w-1/5 text-center text-wrap sticky top-16 self-start transition-all">
               {data.poster_path && <img src={posterUrl(data.poster_path, "original")} alt={data.title} className="mb-4 rounded" />}
 
-              <TrackMediaDialog 
-                mediaType={mediaType} 
+              <TrackMediaDialog
+                mediaType={mediaType}
                 image={posterUrl(data.poster_path)}
                 alternateImages={alternateImages}
                 title={data.title}
@@ -80,8 +80,8 @@ function MediaDetailsPage(){
             <div className="flex flex-col w-4/5">
               <div className="flex gap-4 items-end">
                 <h1 className="text-3xl  font-bold">{data.title}</h1>
-                
-                <span className="text-gray-500">{data.release_date?.slice(0,4)}</span>
+
+                <span className="text-gray-500">{data.release_date?.slice(0, 4)}</span>
               </div>
 
               <div className="flex gap-2">
@@ -95,9 +95,9 @@ function MediaDetailsPage(){
 
                 <p>{data.overview}</p>
 
-                
 
-                
+
+
                 {/* 
                 {trailer ? (
                   <div className="aspect-video w-full max-w-3xl">
@@ -114,21 +114,21 @@ function MediaDetailsPage(){
                 )} */}
 
               </div>
-              
+
             </div>
           </div>
 
           <div className="flex gap-4 mt-5">
             <div className="flex flex-col w-1/5 text-wrap gap-3">
 
-              <h3 className="mx-auto">Details</h3>  
+              <h3 className="mx-auto">Details</h3>
 
               <div className="bg-card rounded p-2 flex flex-col gap-2">
                 <div>
                   <Label>
                     Duration
                   </Label>
-                  <span>{data.runtime} mins</span>              
+                  <span>{data.runtime} mins</span>
                 </div>
 
                 <div>
@@ -143,7 +143,7 @@ function MediaDetailsPage(){
                   <Label>
                     Directed by
                   </Label>
-                  <span>{director.name}</span>              
+                  <span>{director.name}</span>
                 </div>
 
                 <div>
@@ -152,16 +152,16 @@ function MediaDetailsPage(){
                   </Label>
                   <span>
                     {data?.production_companies.map((company, index) => (
-                      `${index == 0 ?"" : ", "}   ${company.name}`
+                      `${index == 0 ? "" : ", "}   ${company.name}`
                     ))}
-                  </span>              
+                  </span>
                 </div>
 
                 <div>
                   <Label>
                     TMDB Score
                   </Label>
-                  <span>{data.vote_average.toFixed(1)} ★</span>              
+                  <span>{data.vote_average.toFixed(1)} ★</span>
                 </div>
 
                 <div>
@@ -170,7 +170,7 @@ function MediaDetailsPage(){
                   </Label>
 
                   <Link to={`https://www.themoviedb.org/movie/${data.id}`} target="_blank" >
-                    TMDB          
+                    TMDB
                   </Link>
                 </div>
               </div>
@@ -186,12 +186,12 @@ function MediaDetailsPage(){
                 </Button>
 
               </div>
-                   
+
             </div>
 
             <div className="flex flex-col w-4/5">
               <MovieTabs movieData={data} />
-             
+
             </div>
 
           </div>

@@ -22,7 +22,7 @@ type SelectProps = React.ComponentProps<typeof SelectPrimitive.Root> & {
   required?: boolean;
   control?: Control<any>;
   placeholder?: string;
-  triggerClassName?: string;
+  width?: number;
 }
 
 function SelectBase({
@@ -197,12 +197,13 @@ export function Select({
   required,
   control,
   options,
+  width,
   placeholder = "Selecione ...",
   ...props
 }: SelectProps) {
   if (control) {
     return (
-      <div className={cn("flex flex-col w-full gap-1")}>
+      <div className="flex flex-col gap-1" style={width ? { width: `${width}px` } : { width: "100%" }}>
         <Label htmlFor={id ?? name}>
           {label}
           {required && <span className="text-destructive font-extrabold -ml-1.5">*</span>}
@@ -212,14 +213,14 @@ export function Select({
           control={control}
           name={name}
           render={({ field }) => (
-            <FormItem>
+            <FormItem >
               <FormControl>
                 <SelectBase
                   {...props}
                   onValueChange={field.onChange}
                   value={field.value ?? ""}
                 >
-                  <SelectTrigger className="w-full" id={id ?? name}>
+                  <SelectTrigger className={cn("w-full")} id={id ?? name}>
                     <SelectValue placeholder={placeholder} />
                   </SelectTrigger>
 
@@ -241,7 +242,6 @@ export function Select({
     )
   }
 
-  // Without react-hook-form
   return (
     <div className="flex flex-col w-full gap-1">
       <Label htmlFor={id ?? name}>
