@@ -1,15 +1,18 @@
-import type { MediaItem } from '@/utils/mediaItem';
+import { MediaItem } from "@/types/mediaItem";
+import { MediaTypeEnum } from "@/utils/mediaText";
+
 // Normalized search returning MediaItem[]
 export async function searchMangaNormalized(title: string): Promise<MediaItem[]> {
   const mangas = await searchManga(title);
+
   return mangas.map((m) => ({
     id: m.id,
-    title: m.attributes.title?.en || Object.values(m.attributes.title)[0] || '',
+    title: m.attributes.title?.en || Object.values(m.attributes.title)[0] || "",
     coverUrl: m.coverUrl,
     year: m.attributes.year,
-    type: 'manga',
-    description: m.attributes.description?.en || '',
-    provider: 'mangadex',
+    type: MediaTypeEnum.MANGA,
+    description: m.attributes.description?.en || "",
+    provider: "mangadex",
     raw: m,
   }));
 }
@@ -30,20 +33,20 @@ export type MangaDexManga = {
   coverUrl?: string;
 };
 
-const BASE = 'https://api.mangadex.org';
+const BASE = "https://api.mangadex.org";
 
 export async function searchManga(title: string): Promise<MangaDexManga[]> {
   if (!title || title.trim().length === 0) return [];
   const url = `${BASE}/manga`;
   const params = new URLSearchParams();
-  params.set('title', title);
+  params.set("title", title);
   // request cover relationships explicitly
-  params.set('includes[]', 'cover_art');
+  params.set("includes[]", "cover_art");
 
   const res = await fetch(`${url}?${params.toString()}`, {
-    method: 'GET',
+    method: "GET",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
   });
 
@@ -60,9 +63,9 @@ export async function searchManga(title: string): Promise<MangaDexManga[]> {
   // build a map of cover id -> fileName from included array
   const coverMap: Record<string, string> = {};
   for (const inc of included) {
-    if (inc && typeof inc === 'object') {
+    if (inc && typeof inc === "object") {
       const o = inc as any;
-      if (o.type === 'cover_art' && o.attributes && o.attributes.fileName) {
+      if (o.type === "cover_art" && o.attributes && o.attributes.fileName) {
         coverMap[o.id] = o.attributes.fileName;
       }
     }
@@ -73,8 +76,8 @@ export async function searchManga(title: string): Promise<MangaDexManga[]> {
     const it = item as any;
     // relationships may point to the cover id; find it
     const rels: unknown[] = it.relationships || [];
-    const coverRel = rels.find((r) => typeof r === 'object' && r !== null && (r as any).type === 'cover_art');
-    const coverId = coverRel && typeof coverRel === 'object' ? (coverRel as any).id : undefined;
+    const coverRel = rels.find((r) => typeof r === "object" && r !== null && (r as any).type === "cover_art");
+    const coverId = coverRel && typeof coverRel === "object" ? (coverRel as any).id : undefined;
     const fileName = coverId ? coverMap[coverId] : undefined;
     const coverUrl = fileName ? `https://uploads.mangadex.org/covers/${it.id}/${fileName}` : undefined;
     return { ...(it as MangaDexManga), coverUrl } as MangaDexManga;
@@ -85,6 +88,6 @@ export async function searchManga(title: string): Promise<MangaDexManga[]> {
 
 export async function getMangaDetails(id: string) {
   const res = await fetch(`https://api.mangadex.org/manga/${id}`);
-  if (!res.ok) throw new Error('MangaDex details error');
+  if (!res.ok) throw new Error("MangaDex details error");
   return res.json();
 }

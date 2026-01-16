@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 import { Skeleton } from "@/components/ui/skeleton"; // shadcn skeleton import
 import { cn } from "@/lib/utils";
@@ -29,17 +29,14 @@ export function ImageWithSkeleton({
       }}
       aria-busy={!isLoaded}
     >
-      {/* Skeleton shown while image not loaded */}
       {!isLoaded && (
         <Skeleton className="h-full w-full animate-pulse" />
       )}
 
-      {/* real image */}
       <img
         src={src}
         alt={alt}
         onLoad={() => setIsLoaded(true)}
-        // keep it visually hidden until loaded, then fade in
         className={cn(
           "relative block h-full w-full object-cover transition-opacity duration-300 ease-out",
           isLoaded ? "opacity-100" : "opacity-0"

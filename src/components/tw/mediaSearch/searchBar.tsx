@@ -14,15 +14,17 @@ import { getPageTranslation, MediaTypeEnum, mediaTypesOptions } from "@/utils/me
 
 export type FormSearchProps = {
   searchFilter: string;
+  mediaType?: MediaTypeEnum;
 }
 
 interface SearchContainerProps {
   onSearch: (term: string) => void;
   page?: MediaTypeEnum;
-  defaultValue?: string;
+  defaultSearchValue?: string;
+  defaultMediaType?: MediaTypeEnum;
 }
 
-export const SearchContainer = ({ onSearch, page, defaultValue }: SearchContainerProps) => {
+export const SearchContainer = ({ onSearch, page, defaultSearchValue, defaultMediaType }: SearchContainerProps) => {
   const { viewMode } = useAppSelector(state => state.ui)
   const isGrid = useMemo(() => viewMode === "grid", [viewMode]);
   const dispatch = useAppDispatch()
@@ -34,7 +36,10 @@ export const SearchContainer = ({ onSearch, page, defaultValue }: SearchContaine
   const { label, placeholder } = getPageTranslation(page);
 
   const form = useForm<FormSearchProps>({
-    defaultValues: { searchFilter: defaultValue || "" }
+    defaultValues: {
+      searchFilter: defaultSearchValue || "",
+      mediaType: defaultMediaType
+    }
   });
   const { control } = form;
 

@@ -1,10 +1,10 @@
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
-import { Select } from './ui/select';
+import { Select } from "./ui/select";
 
 const languageOptions = [
-  { value: 'en', label: 'English' },
-  { value: 'ptBr', label: 'Português (BR)' },
+  { value: "en", label: "English" },
+  { value: "ptBr", label: "Português (BR)" },
 ];
 
 const LanguageSwitcher = () => {
@@ -15,8 +15,9 @@ const LanguageSwitcher = () => {
   };
 
   return (
-    <Select 
-      label={t('common.language')}
+    <Select
+      label={t("common.language")}
+      name="language"
       value={i18n.language}
       options={languageOptions}
       onValueChange={(e) => changeLanguage(e)}
