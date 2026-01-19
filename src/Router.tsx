@@ -14,8 +14,9 @@ export function Router() {
       <Route path="logger" element={<InternalLayout />}>
         <Route path="settings" element={<SettingsPage />} />
 
+        <Route path="search" element={<MediaSearchPage />} />
+
         <Route path=":mediaType">
-          <Route path="search" element={<MediaSearchPage />} />
           <Route path="details/:id" element={<MediaDetailsPage />} />
         </Route>
       </Route>

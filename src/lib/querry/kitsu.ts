@@ -92,7 +92,43 @@ export async function searchKitsuAnimeNormalized(title: string): Promise<MediaIt
 }
 
 export async function getKitsuDetails(id: string, type: "anime" | "manga") {
-  const res = await fetch(`${KITSU_BASE}/${type}/${id}`);
-  if (!res.ok) throw new Error("Kitsu details error");
-  return res.json();
+  if (!id || id.trim().length === 0) throw new Error("ID is required");
+
+  const res = await fetch(`${KITSU_BASE}/${type}/${id}`, {
+    method: "GET",
+    headers: {
+      "Accept": "application/vnd.api+json",
+    },
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Kitsu API error: ${res.status} ${text}`);
+  }
+
+  return await res.json();
+}
+
+export async function getKitsuDetailsNormalized(
+  id: string,
+  type: "anime" | "manga"
+): Promise<MediaItem> {
+  const data = await getKitsuDetails(id, type);
+  const m = data.data;
+
+  return {
+    id: m.id,
+    title: m.attributes.canonicalTitle || "",
+    coverUrl:
+      m.attributes.posterImage?.medium ||
+      m.attributes.posterImage?.small ||
+      m.attributes.posterImage?.large,
+    year: m.attributes.startDate
+      ? new Date(m.attributes.startDate).getFullYear()
+      : undefined,
+    type: type === "anime" ? MediaTypeEnum.MOVIES : MediaTypeEnum.MANGA,
+    description: m.attributes.synopsis || "",
+    provider: "kitsu",
+    raw: m,
+  };
 }

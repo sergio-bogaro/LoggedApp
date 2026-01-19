@@ -3,10 +3,10 @@ import { Link } from "react-router";
 import { CastMember, CrewMember, MovieSummary } from "./types";
 
 import { AppTabs } from "@/components/tw/tabs";
-import { posterUrl } from "@/lib/querry/tmdb";
+import { tmdbPosterUrl } from "@/lib/querry/tmdb";
 
-function CastTab({ castList } : { castList: CastMember[]}){
-  return(
+function CastTab({ castList }: { castList: CastMember[] }) {
+  return (
     <div>
       {castList.map(cast => (
         <div key={cast.cast_id}>
@@ -17,8 +17,8 @@ function CastTab({ castList } : { castList: CastMember[]}){
   )
 }
 
-function CrewTab({ castList } : { castList: CrewMember[]}){
-  return(
+function CrewTab({ castList }: { castList: CrewMember[] }) {
+  return (
     <div>
       {castList.map(cast => (
         <div key={cast.credit_id}>
@@ -29,15 +29,15 @@ function CrewTab({ castList } : { castList: CrewMember[]}){
   )
 }
 
-function SimilarTab({ similarList } : { similarList: MovieSummary[]}){
-  return(
+function SimilarTab({ similarList }: { similarList: MovieSummary[] }) {
+  return (
     <div className="grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
       {similarList?.map((movie, index) => (
         <Link to={`/logger/movies/details/${movie.id}`} key={movie.id}>
-          <img 
-            src={posterUrl(movie.poster_path)} 
+          <img
+            src={tmdbPosterUrl(movie.poster_path)}
             alt={movie.title}
-            className="rounded hover:scale-105 transition-transform cursor-pointer" 
+            className="rounded hover:scale-105 transition-transform cursor-pointer"
           />
         </Link>
       ))}
@@ -46,8 +46,8 @@ function SimilarTab({ similarList } : { similarList: MovieSummary[]}){
 
 }
 
-export function MovieTabs({ movieData }: { movieData: any}){
-  return(
+export function MovieTabs({ movieData }: { movieData: any }) {
+  return (
     <AppTabs
       defaultValue="cast"
       options={[

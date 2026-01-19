@@ -7,7 +7,7 @@ export async function searchMoviesNormalized(query: string): Promise<MediaItem[]
   return movies.map((m) => ({
     id: String(m.id),
     title: m.title,
-    coverUrl: posterUrl(m.poster_path) || undefined,
+    coverUrl: tmdbPosterUrl(m.poster_path) || undefined,
     year: m.release_date ? m.release_date.slice(0, 4) : undefined,
     type: MediaTypeEnum.MOVIES,
     description: m.overview,
@@ -53,7 +53,7 @@ export async function searchMovies(query: string): Promise<Movie[]> {
   return (data.results || []) as Movie[];
 }
 
-export function posterUrl(path: string | null | undefined, size = "w200") {
+export function tmdbPosterUrl(path: string | null | undefined, size = "w200") {
   if (!path) return null;
   return `https://image.tmdb.org/t/p/${size}${path}`;
 }

@@ -1,4 +1,4 @@
-export function formatFromIsoDate( iso: string, to: "dd/mm/yyyy" | "mm/dd/yyyy" = "dd/mm/yyyy"): string | null {
+export function formatFromIsoDate(iso: string, to: "dd/mm/yyyy" | "mm/dd/yyyy" = "dd/mm/yyyy"): string | null {
   if (!iso) return null;
 
   const match = iso.match(/^(\d{4})-(\d{2})-(\d{2})/);

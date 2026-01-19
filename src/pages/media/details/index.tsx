@@ -7,7 +7,9 @@ import { MovieTabs } from "./components/movies/tabs";
 import { TrackMediaDialog } from "@/components/tw/dialogs/trackMediaDialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { getMovieDetails, posterUrl } from "@/lib/querry/tmdb";
+import { getKitsuDetails } from "@/lib/querry/kitsu";
+import { getMangaDetails } from "@/lib/querry/mangadex";
+import { getMovieDetails, tmdbPosterUrl } from "@/lib/querry/tmdb";
 import { formatFromIsoDate } from "@/utils/date";
 import { MediaTypeEnum } from "@/utils/mediaText";
 
@@ -23,11 +25,14 @@ function MediaDetailsPage() {
     queryKey: ["details", mediaType, id],
     queryFn: async () => {
       if (!mediaType || !id) return null;
+
       switch (mediaType) {
         case MediaTypeEnum.MOVIES:
           return getMovieDetails(Number(id));
-        // case "mangadex":
-        //   return getMangaDetails(id);
+        case MediaTypeEnum.MANGA:
+          return getMangaDetails(id);
+        case MediaTypeEnum.ANIME:
+          return getKitsuDetails(id, MediaTypeEnum.ANIME);
         // case "kitsu-manga":
         //   return getKitsuDetails(id, "manga");
         // case "kitsu-anime":
@@ -53,8 +58,18 @@ function MediaDetailsPage() {
     (member: any) => member.job === "Director"
   );
 
-  const alternateImages = data?.images?.posters.map((img: any) => posterUrl(img.file_path)) || [];
+  const alternateImages = data?.images?.posters.map((img: any) => tmdbPosterUrl(img.file_path)) || [];
 
+  function getPosterUrl(type: MediaTypeEnum, data: any) {
+    switch (mediaType) {
+      case MediaTypeEnum.MOVIES:
+        return tmdbPosterUrl(data.poster_path)
+      case MediaTypeEnum.MANGA:
+        return data.attributes.posterImage?.medium;
+      case MediaTypeEnum.ANIME:
+        return data.attributes.posterImage?.medium;
+    }
+  }
 
   return (
     <div>
@@ -62,19 +77,18 @@ function MediaDetailsPage() {
       {isError && <p>Error: {error.message}</p>}
       {data && (
         <div className="max-w-[1400px] mx-auto p-8">
-          {/* {data.backdrop_path && <img src={posterUrl(data.backdrop_path, "original")} alt={data.title} className="h-[400px] w-full object-cover" />} */}
+          {/* {data.backdrop_path && <img src={tmdbPosterUrl(data.backdrop_path, "original")} alt={data.title} className="h-[400px] w-full object-cover" />} */}
 
           <div className="flex gap-4">
             <div className="flex flex-col w-1/5 text-center text-wrap sticky top-16 self-start transition-all">
-              {data.poster_path && <img src={posterUrl(data.poster_path, "original")} alt={data.title} className="mb-4 rounded" />}
+              {data.poster_path && <img src={getPosterUrl(mediaType, data.poster_path)} alt={data.title} className="mb-4 rounded" />}
 
               <TrackMediaDialog
                 mediaType={mediaType}
-                image={posterUrl(data.poster_path)}
+                image={tmdbPosterUrl(data.poster_path)}
                 alternateImages={alternateImages}
                 title={data.title}
               />
-
             </div>
 
             <div className="flex flex-col w-4/5">
@@ -191,7 +205,6 @@ function MediaDetailsPage() {
 
             <div className="flex flex-col w-4/5">
               <MovieTabs movieData={data} />
-
             </div>
 
           </div>

@@ -24,7 +24,12 @@ const ListItem = ({ item }: { item: MediaItem }) => {
           <h3 className="font-semibold">
             {item.title}
           </h3>
-          <p className="text-sm text-gray-600">{item.year ?? "-"}</p>
+
+          <p className="text-sm text-foreground/80">{item.year ?? "-"}</p>
+
+          <span className="text-sm text-foreground/50 mt-2 block">
+            {item.description.length > 300 ? item.description.slice(0, 250) + " ..." : item.description || "No description available."}
+          </span>
         </div>
 
 
