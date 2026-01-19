@@ -23,7 +23,7 @@ const MediaView = ({ isLoading, error, mediaData }: MediaViewProps) => {
         <p>{error.message}</p>
       ) : mediaData.length === 0 ? (
         <p>No Results</p>
-      ) :  viewMode === "list" ? (
+      ) : viewMode === "list" ? (
         mediaData.map((mediaItem) => <ListItem key={mediaItem.id} item={mediaItem} />)
       ) : (
         mediaData.map((mediaItem) => <ListItem key={mediaItem.id} item={mediaItem} />)
