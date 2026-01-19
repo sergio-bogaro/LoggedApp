@@ -8,13 +8,13 @@ export type BookItem = {
   coverUrl?: string;
 };
 
-const OPENLIB_BASE = 'https://openlibrary.org';
+const OPENLIB_BASE = "https://openlibrary.org";
 
 export async function searchBooks(title: string): Promise<BookItem[]> {
   if (!title || title.trim().length === 0) return [];
   const params = new URLSearchParams();
-  params.set('title', title);
-  params.set('limit', '20');
+  params.set("title", title);
+  params.set("limit", "20");
 
   const res = await fetch(`${OPENLIB_BASE}/search.json?${params.toString()}`);
   if (!res.ok) {
@@ -34,8 +34,8 @@ export async function searchBooks(title: string): Promise<BookItem[]> {
   const seen = new Set<string>();
   const items: BookItem[] = [];
   for (const it of rawItems) {
-    const titleNorm = (it.title || '').trim().toLowerCase();
-    const author = Array.isArray(it.author_name) && it.author_name.length > 0 ? String(it.author_name[0]).trim().toLowerCase() : '';
+    const titleNorm = (it.title || "").trim().toLowerCase();
+    const author = Array.isArray(it.author_name) && it.author_name.length > 0 ? String(it.author_name[0]).trim().toLowerCase() : "";
     const key = `${titleNorm}||${author}`;
     if (!seen.has(key)) {
       seen.add(key);
@@ -48,8 +48,8 @@ export async function searchBooks(title: string): Promise<BookItem[]> {
 
 export async function getBookDetails(key: string) {
   // key typically looks like '/works/OL12345W' or '/books/OL...'
-  const path = key.startsWith('/') ? key : `/works/${key}`;
+  const path = key.startsWith("/") ? key : `/works/${key}`;
   const res = await fetch(`https://openlibrary.org${path}.json`);
-  if (!res.ok) throw new Error('OpenLibrary details error');
+  if (!res.ok) throw new Error("OpenLibrary details error");
   return res.json();
 }

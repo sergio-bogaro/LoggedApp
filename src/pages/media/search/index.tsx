@@ -1,16 +1,24 @@
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { t } from "i18next";
+import { Grid, List, Search } from "lucide-react";
+import { useMemo, useState } from "react";
+import { set, useForm } from "react-hook-form";
 import { useLocation } from "react-router";
 
 import { MediaSearchHeaderProps } from "@/components/tw/header";
 import { SearchContainer } from "@/components/tw/mediaSearch/searchBar";
 import MediaView from "@/components/tw/mediaSearch/view";
+import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { searchKitsuMangaNormalized } from "@/lib/querry/kitsu";
 import { searchMangaNormalized } from "@/lib/querry/mangadex";
 import { searchMoviesNormalized } from "@/lib/querry/tmdb";
+import { useAppDispatch, useAppSelector } from "@/store/settings/hooks";
+import { setViewMode, ViewMode } from "@/store/settings/slice";
 import { MediaItem } from "@/types/mediaItem";
-import { MediaTypeEnum } from "@/utils/mediaText";
+import { MediaTypeEnum, mediaTypesOptions } from "@/utils/mediaText";
 
 export type FormSearchProps = {
   searchFilter: string;
@@ -19,26 +27,27 @@ export type FormSearchProps = {
 
 function MediaSearchPage() {
   const { state } = useLocation() as { state: MediaSearchHeaderProps };
-  const { searchFilter, mediaType } = state;
+  const dispatch = useAppDispatch()
+  const { searchFilter, mediaType } = state ?? { searchFilter: "", mediaType: MediaTypeEnum.MOVIES };
   const [searchName, setSearchName] = useState(searchFilter || "");
+
+  const { viewMode } = useAppSelector(state => state.ui)
+  const isGrid = useMemo(() => viewMode === "grid", [viewMode]);
+
+  const handleViewModeChange = (newTheme: ViewMode) => {
+    dispatch(setViewMode(newTheme))
+  }
 
   function getSearchFuntion(mediaType: MediaTypeEnum) {
     switch (mediaType) {
       case MediaTypeEnum.MOVIES:
         return searchMoviesNormalized;
       case MediaTypeEnum.MANGA:
-        return searchMangaNormalized;
+        return searchKitsuMangaNormalized;
       default:
         return searchMoviesNormalized;
     }
   }
-
-  const { data, isLoading, error } = useQuery<MediaItem[]>({
-    queryKey: ["media", mediaType, searchName],
-    queryFn: () => getSearchFuntion(mediaType)(searchName),
-    enabled: searchName.trim().length > 0,
-    staleTime: 1000 * 60 * 5,
-  });
 
   const form = useForm<FormSearchProps>({
     defaultValues: {
@@ -46,7 +55,22 @@ function MediaSearchPage() {
       mediaType: mediaType
     }
   });
-  const { control } = form;
+
+  const { control, watch } = form;
+  const watchedMediaType = watch("mediaType");
+
+  const { data, isLoading, error } = useQuery<MediaItem[]>({
+    queryKey: ["media", watchedMediaType, searchName],
+    queryFn: () => getSearchFuntion(watchedMediaType)(searchName),
+    enabled: searchName.trim().length > 0,
+    staleTime: 1000 * 60 * 5,
+  });
+
+
+
+  function onSubmit(data: FormSearchProps) {
+    setSearchName(data.searchFilter || "");
+  }
 
   return (
     <div className="p-4 top-18">
@@ -65,9 +89,10 @@ function MediaSearchPage() {
             <Input
               name='searchFilter'
               control={control}
-              label={label}
-              placeholder={placeholder}
+              label={t("search")}
+              placeholder={t("searchPlaceholder")}
             />
+
             <Button>
               <Search />
             </Button>
@@ -79,15 +104,6 @@ function MediaSearchPage() {
           </form>
         </Form>
       </div>
-
-
-      <SearchContainer
-        onSearch={setSearchName}
-        page={MediaTypeEnum.MOVIES}
-        defaultSearchValue={searchFilter}
-        defaultMediaType={mediaType}
-      />
-
       <MediaView error={error} isLoading={isLoading} mediaData={data} />
     </div >
   );
