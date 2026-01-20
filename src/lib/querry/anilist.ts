@@ -6,7 +6,7 @@ const searchCache = new Map<string, { data: AniListMedia[]; timestamp: number }>
 const CACHE_DURATION = 10 * 60 * 1000; // 10 minutos
 
 // Normalized search returning MediaItem[]
-export async function searchMangaNormalized(title: string): Promise<MediaItem[]> {
+export async function searchMangaAnilistNormalized(title: string): Promise<MediaItem[]> {
   const mangas = await searchAniList(title, "MANGA");
 
   return mangas.map((m) => ({
@@ -21,7 +21,7 @@ export async function searchMangaNormalized(title: string): Promise<MediaItem[]>
   }));
 }
 
-export async function searchAnimeNormalized(title: string): Promise<MediaItem[]> {
+export async function searchAnimeAnilistNormalized(title: string): Promise<MediaItem[]> {
   const animes = await searchAniList(title, "ANIME");
 
   return animes.map((a) => ({
@@ -215,7 +215,9 @@ export async function searchAniList(
   }
 }
 
-export async function getAniListDetails(id: number, type: "ANIME" | "MANGA" = "MANGA") {
+export async function getAniListDetails(id: number, mediaType: MediaTypeEnum = MediaTypeEnum.MANGA) {
+  const type = mediaType === MediaTypeEnum.ANIME ? "ANIME" : "MANGA";
+
   const query = `
     query ($id: Int, $type: MediaType) {
       Media(id: $id, type: $type) {

@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
-import { searchMangaNormalized } from "@/lib/querry/anilist";
+import { searchAnimeAnilistNormalized, searchMangaAnilistNormalized } from "@/lib/querry/anilist";
 import { searchKitsuAnimeNormalized, searchKitsuMangaNormalized } from "@/lib/querry/kitsu";
 import { searchMoviesNormalized } from "@/lib/querry/tmdb";
 import { useAppDispatch, useAppSelector } from "@/store/settings/hooks";
@@ -52,9 +52,9 @@ function MediaSearchPage() {
       case MediaTypeEnum.MOVIES:
         return searchMoviesNormalized;
       case MediaTypeEnum.MANGA:
-        return searchMangaNormalized;
+        return searchMangaAnilistNormalized;
       case MediaTypeEnum.ANIME:
-        return searchKitsuAnimeNormalized;
+        return searchAnimeAnilistNormalized;
       default:
         return searchMoviesNormalized;
     }
