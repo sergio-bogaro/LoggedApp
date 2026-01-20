@@ -83,6 +83,24 @@ export type AniListMedia = {
       name: string;
     }>;
   };
+  staff?: {
+    edges: Array<{
+      role: string;
+      node: {
+        id: number;
+        name: {
+          full: string;
+          native?: string;
+        };
+        image?: {
+          large: string;
+          medium: string;
+        };
+        description?: string;
+        languageV2?: string;
+      };
+    }>;
+  };
 };
 
 const BASE = "https://graphql.anilist.co";
@@ -215,8 +233,8 @@ export async function searchAniList(
   }
 }
 
-export async function getAniListDetails(id: number, mediaType: MediaTypeEnum = MediaTypeEnum.MANGA) {
-  const type = mediaType === MediaTypeEnum.ANIME ? "ANIME" : "MANGA";
+export async function getAniListDetails(id: number, MediaType: MediaTypeEnum) {
+  const type = MediaType === MediaTypeEnum.ANIME ? "ANIME" : "MANGA";
 
   const query = `
     query ($id: Int, $type: MediaType) {
@@ -299,14 +317,21 @@ export async function getAniListDetails(id: number, mediaType: MediaTypeEnum = M
             }
           }
         }
-        staff(page: 1, perPage: 10, sort: RELEVANCE) {
-          nodes {
-            id
-            name {
-              full
-            }
-            image {
-              large
+        staff(page: 1, perPage: 20, sort: RELEVANCE) {
+          edges {
+            role
+            node {
+              id
+              name {
+                full
+                native
+              }
+              image {
+                large
+                medium
+              }
+              description
+              languageV2
             }
           }
         }
@@ -464,6 +489,38 @@ export async function getSeasonalAnime(
 export function clearAniListCache() {
   searchCache.clear();
   console.log("🧹 Cache AniList limpo");
+}
+
+// Helper functions para extrair staff específicos
+export function getAuthor(media: AniListMedia): string | undefined {
+  const authorEdge = media.staff?.edges.find(
+    (edge) => edge.role?.toLowerCase().includes("story") ||
+      edge.role?.toLowerCase().includes("original creator")
+  );
+  return authorEdge?.node.name.full;
+}
+
+export function getArtist(media: AniListMedia): string | undefined {
+  const artistEdge = media.staff?.edges.find(
+    (edge) => edge.role?.toLowerCase().includes("art")
+  );
+  return artistEdge?.node.name.full;
+}
+
+export function getStaffByRole(media: AniListMedia, roleKeyword: string): Array<{
+  name: string;
+  role: string;
+  id: number;
+}> {
+  if (!media.staff?.edges) return [];
+
+  return media.staff.edges
+    .filter((edge) => edge.role?.toLowerCase().includes(roleKeyword.toLowerCase()))
+    .map((edge) => ({
+      name: edge.node.name.full,
+      role: edge.role,
+      id: edge.node.id,
+    }));
 }
 
 // Helper para remover HTML tags da descrição

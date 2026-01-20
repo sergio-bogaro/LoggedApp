@@ -15,7 +15,7 @@ export const MovieDetails = ({ data }: { data: any }) => {
   );
 
   return (
-    <div className="bg-card rounded p-2 flex flex-col gap-2">
+    <>
       <div>
         <Label>
           Duration
@@ -65,7 +65,7 @@ export const MovieDetails = ({ data }: { data: any }) => {
           TMDB
         </Link>
       </div>
-    </div>
+    </>
   )
 
 

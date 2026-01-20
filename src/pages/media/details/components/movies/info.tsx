@@ -18,9 +18,6 @@ export const MovieInfo = ({ data }: { data: any }) => {
 
         <p>{data.overview}</p>
 
-
-
-
         {/* 
                 {trailer ? (
                   <div className="aspect-video w-full max-w-3xl">

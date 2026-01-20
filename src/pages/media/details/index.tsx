@@ -2,6 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import { Divide, History, List } from "lucide-react";
 import { Link, useParams } from "react-router";
 
+import { DetailsCard } from "./components/general/detailsCard";
+import { MediaInfo } from "./components/general/mediaInfo";
+import { MediaPoster } from "./components/general/poster";
 import { MovieDetails } from "./components/movies/detail";
 import { MovieInfo } from "./components/movies/info";
 import { MovieTabs } from "./components/movies/tabs";
@@ -53,49 +56,7 @@ function MediaDetailsPage() {
     enabled: !!mediaType && !!id,
   });
 
-
-
   const alternateImages = data?.images?.posters?.map((img: any) => tmdbPosterUrl(img.file_path)) || [];
-
-
-
-
-  function getPosterUrl(type: MediaTypeEnum, data: any) {
-    console.log(data)
-
-    switch (type) {
-      case MediaTypeEnum.MOVIES:
-        return tmdbPosterUrl(data.poster_path)
-      case MediaTypeEnum.MANGA:
-        return data.coverImage?.large;
-      case MediaTypeEnum.ANIME:
-        return data.coverImage?.large;
-      default:
-        return "";
-    }
-  }
-
-  function getInfo() {
-
-
-    switch (mediaType) {
-      case MediaTypeEnum.MOVIES:
-        return <MovieInfo data={data} />;
-
-      default: return null;
-    }
-  }
-
-  function getDetails() {
-
-
-    switch (mediaType) {
-      case MediaTypeEnum.MOVIES:
-        return <MovieDetails data={data} />;
-
-      default: return null;
-    }
-  }
 
   return (
     <div>
@@ -108,7 +69,7 @@ function MediaDetailsPage() {
           <div className="flex gap-4">
             <div className="flex flex-col w-1/5 text-center text-wrap sticky top-16 self-start transition-all">
 
-              <img src={getPosterUrl(mediaType, data)} alt={data.title} className="mb-4 rounded" />
+              <MediaPoster mediaType={mediaType} data={data} />
 
               <TrackMediaDialog
                 mediaType={mediaType}
@@ -116,33 +77,16 @@ function MediaDetailsPage() {
                 alternateImages={alternateImages}
                 title={data.title}
               />
+
             </div>
 
-            {getInfo()}
+            <MediaInfo mediaType={mediaType} data={data} />
+
 
           </div>
 
           <div className="flex gap-4 mt-5">
-            <div className="flex flex-col w-1/5 text-wrap gap-3">
-
-              <h3 className="mx-auto">Details</h3>
-
-              {getDetails()}
-
-              <div className="bg-card rounded p-2 flex justify-around">
-                {/* TODO: Props tooltip */}
-                <Button variant="secondary" >
-                  <History />
-                </Button>
-
-                <Button>
-                  <List />
-                </Button>
-
-              </div>
-
-            </div>
-
+            <DetailsCard mediaType={mediaType} data={data} />
             {/* <div className="flex flex-col w-4/5">
               <MovieTabs movieData={data} />
             </div> */}
