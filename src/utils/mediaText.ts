@@ -6,7 +6,8 @@ interface MeidaTypeText {
 export enum MediaTypeEnum {
   MOVIES = "movies",
   MANGA = "manga",
-  ANIME = "anime"
+  ANIME = "anime",
+  GAME = "game",
 }
 
 export function getPageTranslation(page: MediaTypeEnum): MeidaTypeText {
@@ -22,4 +23,5 @@ export const mediaTypesOptions = [
   { value: MediaTypeEnum.MOVIES, label: "Movies" },
   { value: MediaTypeEnum.MANGA, label: "Manga" },
   { value: MediaTypeEnum.ANIME, label: "Anime" },
+  { value: MediaTypeEnum.GAME, label: "Games" },
 ]

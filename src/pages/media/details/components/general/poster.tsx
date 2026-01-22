@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { tmdbPosterUrl } from "@/lib/querry/tmdb";
 import { MediaTypeEnum } from "@/utils/mediaText";
 

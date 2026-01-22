@@ -1,70 +1,55 @@
 
+import { t } from "i18next";
 import { Link } from "react-router";
 
-import { Label } from "@/components/ui/label"
+import { DetailsLabel } from "../general/detailsCard";
+
+import { TMDBMovieDetails } from "@/lib/querry/tmdb";
 import { formatFromIsoDate } from "@/utils/date"
 
-export const MovieDetails = ({ data }: { data: any }) => {
-
-  const trailer = data?.videos?.results?.find(
-    (v: any) => v.site === "YouTube" && v.type === "Trailer"
-  );
+export const MovieDetails = ({ data }: { data: TMDBMovieDetails }) => {
 
   const director = data?.credits?.crew?.find(
-    (member: any) => member.job === "Director"
+    (member) => member.job === "Director"
   );
 
   return (
     <>
-      <div>
-        <Label>
-          Duration
-        </Label>
-        <span>{data.runtime} mins</span>
-      </div>
+      <DetailsLabel
+        label={t("Duration")}
+        value={data.runtime + "mins"}
+      />
 
-      <div>
-        <Label>
-          Release Date
-        </Label>
-        <span>{formatFromIsoDate(data.release_date)}</span>
-        {/* TODO: Validar como fazer pra exibir diferente se for ingles  */}
-      </div>
+      <DetailsLabel
+        label={t("Release Date")}
+        value={formatFromIsoDate(data.release_date)}
+      />
+      {/* TODO: Validar como fazer pra exibir diferente se for ingles  */}
 
-      <div>
-        <Label>
-          Directed by
-        </Label>
-        <span>{director.name}</span>
-      </div>
+      <DetailsLabel
+        label={t("Directed by")}
+        value={director.name}
+      />
 
-      <div>
-        <Label>
-          Production by
-        </Label>
-        <span>
-          {data?.production_companies.map((company, index) => (
-            `${index == 0 ? "" : ", "}   ${company.name}`
-          ))}
-        </span>
-      </div>
+      <DetailsLabel
+        label={t("Production by")}
+        value={data?.production_companies.map((company, index) => (
+          `${index == 0 ? "" : ", "}   ${company.name}`
+        ))}
+      />
 
-      <div>
-        <Label>
-          TMDB Score
-        </Label>
-        <span>{data.vote_average.toFixed(1)} ★</span>
-      </div>
+      <DetailsLabel
+        label={t("TMDB Score")}
+        value={data.vote_average.toFixed(1) + "★"}
+      />
 
-      <div>
-        <Label>
-          Source
-        </Label>
-
-        <Link to={`https://www.themoviedb.org/movie/${data.id}`} target="_blank" >
-          TMDB
-        </Link>
-      </div>
+      <DetailsLabel
+        label={t("Source")}
+        value={
+          <Link to={`https://www.themoviedb.org/movie/${data.id}`} target="_blank" >
+            TMDB
+          </Link>}
+      />
     </>
   )
 

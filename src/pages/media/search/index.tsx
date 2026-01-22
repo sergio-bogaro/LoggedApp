@@ -12,7 +12,7 @@ import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { searchAnimeAnilistNormalized, searchMangaAnilistNormalized } from "@/lib/querry/anilist";
-import { searchKitsuAnimeNormalized, searchKitsuMangaNormalized } from "@/lib/querry/kitsu";
+import { searchGamesNormalized } from "@/lib/querry/games";
 import { searchMoviesNormalized } from "@/lib/querry/tmdb";
 import { useAppDispatch, useAppSelector } from "@/store/settings/hooks";
 import { setViewMode, ViewMode } from "@/store/settings/slice";
@@ -55,6 +55,8 @@ function MediaSearchPage() {
         return searchMangaAnilistNormalized;
       case MediaTypeEnum.ANIME:
         return searchAnimeAnilistNormalized;
+      case MediaTypeEnum.GAME:
+        return searchGamesNormalized;
       default:
         return searchMoviesNormalized;
     }

@@ -4,7 +4,7 @@ import { MediaItem } from "@/types/mediaItem";
 import { MediaTypeEnum } from "@/utils/mediaText";
 import { capitalizeFirstLetter } from "@/utils/string";
 
-const searchCache = new Map<string, { data: AniListMedia[]; timestamp: number }>();
+const searchCache = new Map<string, { data: AniListMediaDetails[]; timestamp: number }>();
 const CACHE_DURATION = 10 * 60 * 1000; // 10 minutos
 
 export async function searchMangaAnilistNormalized(title: string): Promise<MediaItem[]> {
@@ -37,7 +37,7 @@ export async function searchAnimeAnilistNormalized(title: string): Promise<Media
   }));
 }
 
-export type AniListMedia = {
+export type AniListMediaDetails = {
   id: number;
   idMal?: number;
   title: {
@@ -114,7 +114,7 @@ let searchController: AbortController | null = null;
 export async function searchAniList(
   title: string,
   type: "ANIME" | "MANGA" = "MANGA"
-): Promise<AniListMedia[]> {
+): Promise<AniListMediaDetails[]> {
   if (!title || title.trim().length === 0) return [];
 
   const cacheKey = `${type}-${title.toLowerCase().trim()}`;
@@ -225,7 +225,7 @@ export async function searchAniList(
       throw new Error(`AniList GraphQL error: ${JSON.stringify(data.errors)}`);
     }
 
-    const items: AniListMedia[] = data.data?.Page?.media || [];
+    const items: AniListMediaDetails[] = data.data?.Page?.media || [];
 
     // Salvar no cache
     searchCache.set(cacheKey, { data: items, timestamp: Date.now() });
@@ -507,7 +507,7 @@ export function clearAniListCache() {
   console.log("🧹 Cache AniList limpo");
 }
 
-export function getAuthor(media: AniListMedia): string | undefined {
+export function getAuthor(media: AniListMediaDetails): string | undefined {
   const authorEdge = media.staff?.edges.find(
     (edge) => edge.role?.toLowerCase().includes("story") ||
       edge.role?.toLowerCase().includes("original creator")
@@ -515,21 +515,21 @@ export function getAuthor(media: AniListMedia): string | undefined {
   return authorEdge?.node.name.full;
 }
 
-export function getArtist(media: AniListMedia): string | undefined {
+export function getArtist(media: AniListMediaDetails): string | undefined {
   const artistEdge = media.staff?.edges.find(
     (edge) => edge.role?.toLowerCase().includes("art")
   );
   return artistEdge?.node.name.full;
 }
 
-export function getDirector(media: AniListMedia): string | undefined {
+export function getDirector(media: AniListMediaDetails): string | undefined {
   const directorEdge = media.staff?.edges.find(
     (edge) => edge.role?.toLowerCase().includes("director")
   );
   return directorEdge?.node.name.full;
 }
 
-export function getStudios(media: AniListMedia): Array<{
+export function getStudios(media: AniListMediaDetails): Array<{
   id: number;
   name: string;
   isAnimationStudio?: boolean;
@@ -542,7 +542,7 @@ export function getStudios(media: AniListMedia): Array<{
   return studios ? studios : [];
 }
 
-export function getStaffByRole(media: AniListMedia, roleKeyword: string): Array<{
+export function getStaffByRole(media: AniListMediaDetails, roleKeyword: string): Array<{
   name: string;
   role: string;
   id: number;
@@ -558,7 +558,7 @@ export function getStaffByRole(media: AniListMedia, roleKeyword: string): Array<
     }));
 }
 
-export function getCountAndStatusLabel(media: AniListMedia, mediaType: MediaTypeEnum): string {
+export function getCountAndStatusLabel(media: AniListMediaDetails, mediaType: MediaTypeEnum): string {
   const count = mediaType === MediaTypeEnum.ANIME ? media.episodes : media.chapters;
   const status = media.status ? capitalizeFirstLetter(media.status) : "Unknown";
 
@@ -566,7 +566,7 @@ export function getCountAndStatusLabel(media: AniListMedia, mediaType: MediaType
 
 }
 
-export function cleanDescription(html?: string): string {
+export function cleanDescriptionAnilist(html?: string): string {
   if (!html) return "";
   return html
     .replace(/<br\s*\/?>/gi, "\n")

@@ -7,7 +7,7 @@ import { MovieDetails } from "../movies/details";
 
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { AniListMedia } from "@/lib/querry/anilist";
+import { AniListMediaDetails } from "@/lib/querry/anilist";
 import { MediaTypeEnum } from "@/utils/mediaText";
 
 type DetailsCardProps = {
@@ -34,9 +34,9 @@ export const DetailsCard = ({ mediaType, data }: DetailsCardProps) => {
       case MediaTypeEnum.MOVIES:
         return <MovieDetails data={data} />;
       case MediaTypeEnum.MANGA:
-        return <MangaDetails data={data as AniListMedia} />;
+        return <MangaDetails data={data as AniListMediaDetails} />;
       case MediaTypeEnum.ANIME:
-        return <AnimeDetails data={data as AniListMedia} />;
+        return <AnimeDetails data={data as AniListMediaDetails} />;
 
       default: return null;
     }

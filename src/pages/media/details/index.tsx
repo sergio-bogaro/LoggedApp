@@ -1,22 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
-import { Divide, History, List } from "lucide-react";
-import { Link, useParams } from "react-router";
+import { useParams } from "react-router";
 
 import { DetailsCard } from "./components/general/detailsCard";
 import { MediaInfo } from "./components/general/mediaInfo";
 import { MediaPoster } from "./components/general/poster";
-import { MovieDetails } from "./components/movies/details";
-import { MovieInfo } from "./components/movies/info";
-import { MovieTabs } from "./components/movies/tabs";
 
 import { TrackMediaDialog } from "@/components/tw/dialogs/trackMediaDialog";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { getAniListDetails } from "@/lib/querry/anilist";
-import { getKitsuDetails } from "@/lib/querry/kitsu";
-import { getMangaDetails } from "@/lib/querry/mangadex";
 import { getMovieDetails, tmdbPosterUrl } from "@/lib/querry/tmdb";
-import { formatFromIsoDate } from "@/utils/date";
 import { MediaTypeEnum } from "@/utils/mediaText";
 
 type MediaDetailsParams = {
