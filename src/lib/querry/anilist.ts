@@ -1,11 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { MediaItem } from "@/types/mediaItem";
 import { MediaTypeEnum } from "@/utils/mediaText";
+import { capitalizeFirstLetter } from "@/utils/string";
 
-// Cache simples em memória (válido por 10 minutos)
 const searchCache = new Map<string, { data: AniListMedia[]; timestamp: number }>();
 const CACHE_DURATION = 10 * 60 * 1000; // 10 minutos
 
-// Normalized search returning MediaItem[]
 export async function searchMangaAnilistNormalized(title: string): Promise<MediaItem[]> {
   const mangas = await searchAniList(title, "MANGA");
 
@@ -35,8 +36,6 @@ export async function searchAnimeAnilistNormalized(title: string): Promise<Media
     raw: a,
   }));
 }
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 export type AniListMedia = {
   id: number;
@@ -81,6 +80,10 @@ export type AniListMedia = {
     nodes: Array<{
       id: number;
       name: string;
+      isAnimationStudio?: boolean;
+      siteUrl?: string;
+      favourites?: number;
+      isFavourite?: boolean;
     }>;
   };
   staff?: {
@@ -146,6 +149,16 @@ export async function searchAniList(
             medium
           }
           bannerImage
+          studios {
+            nodes {
+              id
+              name
+              isAnimationStudio
+              siteUrl
+              favourites
+              isFavourite
+            }
+          }
           startDate {
             year
             month
@@ -339,6 +352,10 @@ export async function getAniListDetails(id: number, MediaType: MediaTypeEnum) {
           nodes {
             id
             name
+            isAnimationStudio
+            siteUrl
+            favourites
+            isFavourite
           }
         }
         recommendations(page: 1, perPage: 5, sort: RATING_DESC) {
@@ -485,13 +502,11 @@ export async function getSeasonalAnime(
   return data.data?.Page?.media || [];
 }
 
-// Função utilitária para limpar cache manualmente
 export function clearAniListCache() {
   searchCache.clear();
   console.log("🧹 Cache AniList limpo");
 }
 
-// Helper functions para extrair staff específicos
 export function getAuthor(media: AniListMedia): string | undefined {
   const authorEdge = media.staff?.edges.find(
     (edge) => edge.role?.toLowerCase().includes("story") ||
@@ -505,6 +520,26 @@ export function getArtist(media: AniListMedia): string | undefined {
     (edge) => edge.role?.toLowerCase().includes("art")
   );
   return artistEdge?.node.name.full;
+}
+
+export function getDirector(media: AniListMedia): string | undefined {
+  const directorEdge = media.staff?.edges.find(
+    (edge) => edge.role?.toLowerCase().includes("director")
+  );
+  return directorEdge?.node.name.full;
+}
+
+export function getStudios(media: AniListMedia): Array<{
+  id: number;
+  name: string;
+  isAnimationStudio?: boolean;
+  siteUrl?: string;
+  favourites?: number;
+  isFavourite?: boolean;
+}> {
+  const studios = media.studios.nodes.filter((edge) => edge.isAnimationStudio);
+  console.log(studios)
+  return studios ? studios : [];
 }
 
 export function getStaffByRole(media: AniListMedia, roleKeyword: string): Array<{
@@ -523,7 +558,14 @@ export function getStaffByRole(media: AniListMedia, roleKeyword: string): Array<
     }));
 }
 
-// Helper para remover HTML tags da descrição
+export function getCountAndStatusLabel(media: AniListMedia, mediaType: MediaTypeEnum): string {
+  const count = mediaType === MediaTypeEnum.ANIME ? media.episodes : media.chapters;
+  const status = media.status ? capitalizeFirstLetter(media.status) : "Unknown";
+
+  return `${count ? count + " - " : ""} ${status}`;
+
+}
+
 export function cleanDescription(html?: string): string {
   if (!html) return "";
   return html

@@ -5,7 +5,7 @@ import { Link, useParams } from "react-router";
 import { DetailsCard } from "./components/general/detailsCard";
 import { MediaInfo } from "./components/general/mediaInfo";
 import { MediaPoster } from "./components/general/poster";
-import { MovieDetails } from "./components/movies/detail";
+import { MovieDetails } from "./components/movies/details";
 import { MovieInfo } from "./components/movies/info";
 import { MovieTabs } from "./components/movies/tabs";
 

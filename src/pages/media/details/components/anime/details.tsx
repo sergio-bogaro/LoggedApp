@@ -3,12 +3,11 @@ import { Link } from "react-router"
 
 import { DetailsLabel } from "../general/detailsCard"
 
-import { Label } from "@/components/ui/label"
-import { AniListMedia, getArtist, getAuthor, getCountAndStatusLabel } from "@/lib/querry/anilist"
+import { AniListMedia, getCountAndStatusLabel, getDirector, getStudios } from "@/lib/querry/anilist"
 import { formatFromIsoDate } from "@/utils/date"
 import { MediaTypeEnum } from "@/utils/mediaText"
 
-export const MangaDetails = ({ data }: { data: AniListMedia }) => {
+export const AnimeDetails = ({ data }: { data: AniListMedia }) => {
   const startDate = data.startDate;
   const formattedDate = formatFromIsoDate(`${startDate.year}-${String(startDate.month).padStart(2, "0")}-${String(startDate.day).padStart(2, "0")}`);
 
@@ -20,8 +19,8 @@ export const MangaDetails = ({ data }: { data: AniListMedia }) => {
   return (
     <>
       <DetailsLabel
-        label={t("Chapters")}
-        value={getCountAndStatusLabel(data, MediaTypeEnum.MANGA)}
+        label={t("Episodes")}
+        value={getCountAndStatusLabel(data, MediaTypeEnum.ANIME)}
       />
 
       <DetailsLabel
@@ -37,13 +36,13 @@ export const MangaDetails = ({ data }: { data: AniListMedia }) => {
       {/* TODO: Validar como fazer pra exibir diferente se for ingles  */}
 
       <DetailsLabel
-        label={t("Author")}
-        value={getAuthor(data)}
+        label={t("Director")}
+        value={getDirector(data)}
       />
 
       <DetailsLabel
-        label={t("Artist")}
-        value={getArtist(data)}
+        label={t("Production")}
+        value={getStudios(data).map((studio) => studio.name).join(", ")}
       />
 
       <DetailsLabel
@@ -54,7 +53,7 @@ export const MangaDetails = ({ data }: { data: AniListMedia }) => {
       <DetailsLabel
         label={t("Source")}
         value={
-          <Link to={`https://anilist.co/manga/${data.id}`} target="_blank" >
+          <Link to={`https://anilist.co/anime/${data.id}`} target="_blank" >
             Anilist
           </Link>
         }

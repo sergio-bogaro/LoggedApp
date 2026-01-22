@@ -1,15 +1,30 @@
 import { History, List } from "lucide-react";
+import { ReactNode } from "react";
 
-import { MangaDetail } from "../manga/details";
-import { MovieDetails } from "../movies/detail";
+import { AnimeDetails } from "../anime/details";
+import { MangaDetails } from "../manga/details";
+import { MovieDetails } from "../movies/details";
 
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import { AniListMedia } from "@/lib/querry/anilist";
 import { MediaTypeEnum } from "@/utils/mediaText";
 
 type DetailsCardProps = {
   mediaType: MediaTypeEnum;
   data: any;
+}
+
+export const DetailsLabel = ({ label, value }: { label: string; value: string | ReactNode }) => {
+  return (
+    <div>
+      <Label>
+        {label}
+      </Label>
+
+      <span>{value}</span>
+    </div>
+  )
 }
 
 export const DetailsCard = ({ mediaType, data }: DetailsCardProps) => {
@@ -19,9 +34,9 @@ export const DetailsCard = ({ mediaType, data }: DetailsCardProps) => {
       case MediaTypeEnum.MOVIES:
         return <MovieDetails data={data} />;
       case MediaTypeEnum.MANGA:
-        return <MangaDetail data={data as AniListMedia} />;
+        return <MangaDetails data={data as AniListMedia} />;
       case MediaTypeEnum.ANIME:
-        return null;
+        return <AnimeDetails data={data as AniListMedia} />;
 
       default: return null;
     }
