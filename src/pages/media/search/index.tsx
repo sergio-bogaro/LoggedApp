@@ -3,7 +3,7 @@ import { t } from "i18next";
 import { Grid, List, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 
 import { MediaSearchHeaderProps } from "@/components/tw/header";
 import MediaView from "@/components/tw/mediaSearch/view";
@@ -32,6 +32,8 @@ function MediaSearchPage() {
   const { viewMode } = useAppSelector(state => state.ui)
   const isGrid = useMemo(() => viewMode === "grid", [viewMode]);
   const dispatch = useAppDispatch()
+
+  const navigate = useNavigate();
 
   const form = useForm<FormSearchProps>({
     defaultValues: {
@@ -70,6 +72,8 @@ function MediaSearchPage() {
   });
 
   function onSubmit(data: FormSearchProps) {
+    navigate("/logger/search", { state: { searchFilter: data.searchFilter, mediaType: data.mediaType } });
+
     setSearchName(data.searchFilter || "");
   }
 

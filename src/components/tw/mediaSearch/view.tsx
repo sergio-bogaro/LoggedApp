@@ -1,4 +1,5 @@
 
+import { GridItem } from "./grid";
 import ListItem from "./list";
 
 import { useAppSelector } from "@/store/settings/hooks";
@@ -14,7 +15,10 @@ const MediaView = ({ isLoading, error, mediaData }: MediaViewProps) => {
   const { viewMode } = useAppSelector(state => state.ui)
 
   return (
-    <div className={`grid gap-4 mt-4 ${viewMode === "grid" ? "grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5" : "grid-cols-1"}`}>
+    <div className={`gap-8 mt-4 ${viewMode === "list" ?
+      "flex flex-col gap-4" :
+      "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"} `
+    }>
       {mediaData === undefined ? (
         <p>Start your search above.</p>
       ) : isLoading ? (
@@ -26,7 +30,7 @@ const MediaView = ({ isLoading, error, mediaData }: MediaViewProps) => {
       ) : viewMode === "list" ? (
         mediaData.map((mediaItem) => <ListItem key={mediaItem.id} item={mediaItem} />)
       ) : (
-        mediaData.map((mediaItem) => <ListItem key={mediaItem.id} item={mediaItem} />)
+        mediaData.map((mediaItem) => <GridItem key={mediaItem.id} item={mediaItem} />)
       )
       }
     </div>
