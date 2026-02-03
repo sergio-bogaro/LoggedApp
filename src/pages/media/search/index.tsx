@@ -1,11 +1,11 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { t } from "i18next";
 import { Grid, List, Search } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
-import { useLocation, useNavigate } from "react-router";
+import { useSearchParams } from "react-router";
 
-import { MediaSearchHeaderProps } from "@/components/tw/header";
 import MediaView from "@/components/tw/mediaSearch/view";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
@@ -25,29 +25,22 @@ export type FormSearchProps = {
 }
 
 function MediaSearchPage() {
-  const { state } = useLocation() as { state: MediaSearchHeaderProps };
-  const { searchFilter, mediaType } = state ?? { searchFilter: "", mediaType: MediaTypeEnum.MOVIES };
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const [searchName, setSearchName] = useState(searchFilter || "");
+  const [searchName, setSearchName] = useState(searchParams.get("searchFilter") || "");
   const { viewMode } = useAppSelector(state => state.ui)
   const isGrid = useMemo(() => viewMode === "grid", [viewMode]);
-  const dispatch = useAppDispatch()
-
-  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const form = useForm<FormSearchProps>({
     defaultValues: {
-      searchFilter: searchFilter || "",
-      mediaType: mediaType
+      searchFilter: searchParams.get("searchFilter") || "",
+      mediaType: (searchParams.get("mediaType") as MediaTypeEnum) || MediaTypeEnum.MOVIES,
     }
   });
 
   const { control, handleSubmit } = form;
   const watchedMediaType = useWatch({ control, name: "mediaType" });
-
-  const handleViewModeChange = (newTheme: ViewMode) => {
-    dispatch(setViewMode(newTheme))
-  }
 
   function getSearchFuntion(mediaType: MediaTypeEnum) {
     switch (mediaType) {
@@ -64,18 +57,40 @@ function MediaSearchPage() {
     }
   }
 
-  const { data, isLoading, error } = useQuery<MediaItem[]>({
+  const { data, isLoading, error, isFetching } = useQuery<MediaItem[]>({
     queryKey: ["media", watchedMediaType, searchName],
     queryFn: () => getSearchFuntion(watchedMediaType)(searchName),
     enabled: searchName.trim().length > 0,
     staleTime: 1000 * 60 * 5,
   });
 
-  function onSubmit(data: FormSearchProps) {
-    navigate("/logger/search", { state: { searchFilter: data.searchFilter, mediaType: data.mediaType } });
-
-    setSearchName(data.searchFilter || "");
+  const handleViewModeChange = (newTheme: ViewMode) => {
+    dispatch(setViewMode(newTheme))
   }
+
+  function handleSearchParamsChange() {
+    const paramsForm = form.getValues();
+
+    const params: Record<string, string> = {};
+    if (paramsForm.searchFilter && paramsForm.searchFilter.trim().length > 0) params.searchFilter = paramsForm.searchFilter;
+    if (paramsForm.mediaType) params.mediaType = String(paramsForm.mediaType as unknown as string);
+
+    setSearchParams(params);
+  }
+
+  function onSubmit(data: FormSearchProps) {
+    const params: Record<string, string> = {};
+    if (data.searchFilter && data.searchFilter.trim().length > 0) params.searchFilter = data.searchFilter;
+    if (data.mediaType) params.mediaType = String(data.mediaType as unknown as string);
+
+    handleSearchParamsChange();
+    setSearchName(params.searchFilter || "");
+  }
+
+  useEffect(() => {
+    handleSearchParamsChange()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [watchedMediaType]);
 
   return (
     <div className="p-4 top-18">
@@ -110,7 +125,7 @@ function MediaSearchPage() {
         </Form>
       </div>
 
-      <MediaView error={error} isLoading={isLoading} mediaData={data} />
+      <MediaView error={error} isLoading={isFetching} mediaData={data} />
     </div >
   );
 }

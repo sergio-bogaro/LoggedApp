@@ -26,9 +26,14 @@ export function Header() {
   function onSearch(data: MediaSearchHeaderProps) {
     const { searchFilter, mediaType } = data;
 
-    navigate(`/logger/${mediaType}/search`, {
-      state: { searchFilter, mediaType }
-    })
+    const params = new URLSearchParams();
+    if (searchFilter && searchFilter.trim().length > 0) params.set("searchFilter", searchFilter);
+    if (mediaType) params.set("mediaType", String(mediaType));
+
+    const query = params.toString();
+    const path = `/logger/search${query ? `?${query}` : ""}`;
+
+    navigate(path);
   }
 
   return (
