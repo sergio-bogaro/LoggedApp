@@ -7,6 +7,7 @@ import { MediaPoster } from "./components/general/poster";
 
 import { TrackMediaDialog } from "@/components/tw/dialogs/trackMediaDialog";
 import { getAniListDetails } from "@/lib/querry/anilist";
+import { getBookDetails } from "@/lib/querry/books";
 import { getMovieDetails, tmdbPosterUrl } from "@/lib/querry/tmdb";
 import { MediaTypeEnum } from "@/utils/mediaText";
 
@@ -30,6 +31,8 @@ function MediaDetailsPage() {
           return getAniListDetails(Number(id), MediaTypeEnum.MANGA);
         case MediaTypeEnum.ANIME:
           return getAniListDetails(Number(id), MediaTypeEnum.ANIME);
+        case MediaTypeEnum.BOOK:
+          return getBookDetails(id);
         // case "kitsu-manga":
         //   return getKitsuDetails(id, "manga");
         // case "kitsu-anime":

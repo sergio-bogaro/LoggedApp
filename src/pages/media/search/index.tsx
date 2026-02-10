@@ -12,6 +12,7 @@ import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { searchAnimeAnilistNormalized, searchMangaAnilistNormalized } from "@/lib/querry/anilist";
+import { searchBooksNormalized } from "@/lib/querry/books";
 import { searchGamesNormalized } from "@/lib/querry/games";
 import { searchMoviesNormalized } from "@/lib/querry/tmdb";
 import { useAppDispatch, useAppSelector } from "@/store/settings/hooks";
@@ -52,12 +53,14 @@ function MediaSearchPage() {
         return searchAnimeAnilistNormalized;
       case MediaTypeEnum.GAME:
         return searchGamesNormalized;
+      case MediaTypeEnum.BOOK:
+        return searchBooksNormalized;
       default:
         return searchMoviesNormalized;
     }
   }
 
-  const { data, isLoading, error, isFetching } = useQuery<MediaItem[]>({
+  const { data, error, isFetching } = useQuery<MediaItem[]>({
     queryKey: ["media", watchedMediaType, searchName],
     queryFn: () => getSearchFuntion(watchedMediaType)(searchName),
     enabled: searchName.trim().length > 0,

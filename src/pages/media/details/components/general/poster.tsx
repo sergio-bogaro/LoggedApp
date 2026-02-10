@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { ImageWithSkeleton } from "@/components/tw/imageSkeleton";
 import { tmdbPosterUrl } from "@/lib/querry/tmdb";
 import { MediaTypeEnum } from "@/utils/mediaText";
 
@@ -21,5 +22,5 @@ export const MediaPoster = ({ mediaType, data }: MediaPosterProps) => {
     }
 
   }
-  return <img src={getPosterUrl(mediaType, data)} alt={data.title} className="mb-4 rounded" />
+  return <ImageWithSkeleton src={getPosterUrl(mediaType, data)} alt={data.title} className="mb-4" />
 }

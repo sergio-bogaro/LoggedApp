@@ -6,9 +6,27 @@ const API_KEY = import.meta.env.VITE_ANYTYPE_API_KEY;
 const headers = {
   Accept: "application/json",
   Authorization: `Bearer ${API_KEY}`,
+  // "Access-Control-Allow-Origin": "*",
+  // "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+  // "Access-Control-Allow-Headers": "Content-Type, Authorization"
 };
 
-const ANYTYPE_BASE = "https://api.anytype.io";
+const ANYTYPE_BASE = "http://127.0.0.1:31009/v1";
+
+export async function anytypeTest(): Promise<any> {
+  const res = await fetch(`${ANYTYPE_BASE}/spaces`, {
+    method: "GET",
+    headers,
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Anytype API error: ${res.status} ${text}`);
+  }
+
+  const data = await res.json();
+  return data;
+}
 
 export async function searchAnytypeObjects(query: string): Promise<MediaItem[]> {
   if (!query || query.trim().length === 0) return [];

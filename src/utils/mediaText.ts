@@ -8,6 +8,7 @@ export enum MediaTypeEnum {
   MANGA = "manga",
   ANIME = "anime",
   GAME = "game",
+  BOOK = "book",
 }
 
 export function getPageTranslation(page: MediaTypeEnum): MeidaTypeText {
@@ -24,4 +25,5 @@ export const mediaTypesOptions = [
   { value: MediaTypeEnum.MANGA, label: "Manga" },
   { value: MediaTypeEnum.ANIME, label: "Anime" },
   { value: MediaTypeEnum.GAME, label: "Games" },
+  { value: MediaTypeEnum.BOOK, label: "Books" },
 ]
