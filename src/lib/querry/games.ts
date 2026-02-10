@@ -187,10 +187,8 @@ export type RAWGTrailer = {
 };
 
 const RAWG_BASE = "https://api.rawg.io/api";
-// Move to env or secure storage for production
-const RAWG_API_KEY = "fd05b98309a6413488473dbc76d07023";
+const RAWG_API_KEY = import.meta.env.VITE_RAWG_API_KEY;
 
-// Controller para cancelar requisições antigas
 let searchController: AbortController | null = null;
 
 export async function searchGames(title: string): Promise<RAWGGame[]> {
@@ -198,14 +196,12 @@ export async function searchGames(title: string): Promise<RAWGGame[]> {
 
   const cacheKey = title.toLowerCase().trim();
 
-  // Verificar cache
   const cached = searchCache.get(cacheKey);
   if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
     console.log("📦 Retornando do cache RAWG:", cacheKey);
     return cached.data;
   }
 
-  // Cancelar requisição anterior se existir
   if (searchController) {
     searchController.abort();
   }
@@ -229,10 +225,8 @@ export async function searchGames(title: string): Promise<RAWGGame[]> {
     const data = await res.json();
     const results: RAWGGame[] = data.results || [];
 
-    // Salvar no cache
     searchCache.set(cacheKey, { data: results, timestamp: Date.now() });
 
-    // Limpar cache antigo (manter apenas últimas 100 buscas)
     if (searchCache.size > 100) {
       const oldestKey = searchCache.keys().next().value;
       searchCache.delete(oldestKey);
@@ -241,7 +235,6 @@ export async function searchGames(title: string): Promise<RAWGGame[]> {
     return results;
   } catch (error: any) {
     if (error.name === "AbortError") {
-      console.log("🚫 Requisição RAWG cancelada");
       return [];
     }
     throw error;
@@ -337,7 +330,6 @@ export async function getDLCs(id: number): Promise<RAWGGame[]> {
   return data.results || [];
 }
 
-// Buscar jogos por plataforma
 export async function getGamesByPlatform(
   platformId: number,
   page: number = 1
@@ -359,7 +351,6 @@ export async function getGamesByPlatform(
   return data.results || [];
 }
 
-// Buscar jogos por gênero
 export async function getGamesByGenre(genreId: number, page: number = 1): Promise<RAWGGame[]> {
   const params = new URLSearchParams();
   params.set("genres", genreId.toString());
@@ -378,7 +369,6 @@ export async function getGamesByGenre(genreId: number, page: number = 1): Promis
   return data.results || [];
 }
 
-// Buscar jogos por data de lançamento
 export async function getGamesByDateRange(
   startDate: string,
   endDate: string,
@@ -402,7 +392,6 @@ export async function getGamesByDateRange(
   return data.results || [];
 }
 
-// Helper functions para extrair informações específicas
 export function getPrimaryDeveloper(game: RAWGGame): string | undefined {
   return game.developers?.[0]?.name;
 }
@@ -453,13 +442,10 @@ export function getRatingPercentage(game: RAWGGame): number | undefined {
   return (game.rating / game.rating_top) * 100;
 }
 
-// Função utilitária para limpar cache manualmente
 export function clearRAWGCache() {
   searchCache.clear();
-  console.log("🧹 Cache RAWG limpo");
 }
 
-// Helper para limpar HTML da descrição (RAWG às vezes retorna HTML)
 export function cleanDescription(html?: string): string {
   if (!html) return "";
   return html

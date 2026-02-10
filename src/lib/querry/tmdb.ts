@@ -132,22 +132,11 @@ export type TMDBMovieDetails = {
 };
 
 const TMDB_BASE = "https://api.themoviedb.org/3";
-
-function getApiKey(): string | null {
-  return "c1a60ca480f0e9455068980a65bafa08"
-
-  // try {
-  //   return localStorage.getItem("TMDB_API_KEY");
-  // } catch {
-  //   return null;
-  // }
-}
+const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
 export async function searchMovies(query: string): Promise<Movie[]> {
-  const apiKey = getApiKey();
-  if (!apiKey) throw new Error('TMDB API key not found in localStorage under "TMDB_API_KEY"');
   const url = new URL(`${TMDB_BASE}/search/movie`);
-  url.searchParams.set("api_key", apiKey);
+  url.searchParams.set("api_key", TMDB_API_KEY);
   url.searchParams.set("query", query);
   url.searchParams.set("language", "en-US");
   url.searchParams.set("page", "1");
@@ -167,10 +156,7 @@ export function tmdbPosterUrl(path: string | null | undefined, size = "w200") {
 }
 
 export async function getMovieDetails(id: number): Promise<TMDBMovieDetails> {
-  const apiKey = getApiKey();
-  if (!apiKey) throw new Error("TMDB API key not found in localStorage");
-
-  const res = await fetch(`${TMDB_BASE}/movie/${id}?api_key=${apiKey}&language=en-US&append_to_response=credits,videos,images,recommendations`);
+  const res = await fetch(`${TMDB_BASE}/movie/${id}?api_key=${TMDB_API_KEY}&language=en-US&append_to_response=credits,videos,images,recommendations`);
   if (!res.ok) throw new Error("TMDB details error");
   const data = (await res.json()) as TMDBMovieDetails;
   return data;
