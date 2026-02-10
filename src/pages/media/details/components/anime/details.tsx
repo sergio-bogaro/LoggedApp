@@ -14,8 +14,6 @@ export const AnimeDetails = ({ data }: { data: AniListMediaDetails }) => {
   const endDate = data.endDate;
   const formattedEndDate = endDate.year ? formatFromIsoDate(`${endDate.year}-${String(endDate.month).padStart(2, "0")}-${String(endDate.day).padStart(2, "0")}`) : " --- "
 
-  console.log(data)
-
   return (
     <>
       <DetailsLabel

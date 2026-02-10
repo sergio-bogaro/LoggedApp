@@ -19,15 +19,17 @@ type MediaInfoProps = {
 export const MediaInfoComponent = ({ title, dates, tags, tagline, overview }: MediaInfoContainerProps) => {
   return (
     <div className="flex flex-col w-4/5">
-      <div className="flex gap-4 items-end mb-2">
-        <h1 className="text-3xl  font-bold">{title}</h1>
+      <div className="flex gap-4 items-end">
+        <h1 className="text-3xl font-bold">
+          {title}
+        </h1>
 
         <span className="text-foreground/70">{dates}</span>
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 my-3">
         {tags.map((tag) => (
-          <span key={tag} className="text-sm bg-accent  rounded-full px-3 py-1">{tag}</span>
+          <span key={tag} className="text-sm text-primary-foreground bg-primary rounded-md px-3 py-1">{tag}</span>
         ))}
       </div>
 
@@ -56,9 +58,12 @@ export const MediaInfo = ({ mediaType, data }: MediaInfoProps) => {
       }
       case MediaTypeEnum.ANIME: {
         const animeData = data as AniListMediaDetails;
+        const formatedTitle = animeData.title.english ?
+          animeData.title.english === animeData.title.romaji ? animeData.title.english :
+            `${animeData.title.english} (${animeData.title.romaji})` : animeData.title.romaji;
 
         return <MediaInfoComponent
-          title={animeData.title.romaji}
+          title={formatedTitle}
           dates={animeData.startDate.year?.toString()}
           overview={animeData.description}
           tags={animeData.genres.map((genre) => genre) || []}
@@ -66,9 +71,12 @@ export const MediaInfo = ({ mediaType, data }: MediaInfoProps) => {
       }
       case MediaTypeEnum.MANGA: {
         const mangaData = data as AniListMediaDetails;
+        const formatedTitle = mangaData.title.english ?
+          mangaData.title.english === mangaData.title.romaji ? mangaData.title.english :
+            `${mangaData.title.english} (${mangaData.title.romaji})` : mangaData.title.romaji;
 
         return <MediaInfoComponent
-          title={mangaData.title.romaji}
+          title={formatedTitle}
           dates={mangaData.startDate.year?.toString()}
           overview={mangaData.description}
           tags={mangaData.genres.map((genre) => genre) || []}

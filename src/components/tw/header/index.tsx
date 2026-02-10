@@ -1,5 +1,5 @@
 import { t } from "i18next";
-import { PersonStanding, Search } from "lucide-react";
+import { Search, Settings } from "lucide-react";
 import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router";
@@ -38,7 +38,10 @@ export function Header() {
 
   return (
     <div className="flex items-center justify-between px-4 w-full h-14 border-b sticky top-0 self-start bg-background shadow-md z-10">
-      <h1 className="font-bold text-2xl">LOGGED APP</h1>
+      <Link to="/logger" className="transition-colors hover:text-foreground/80">
+        <h1 className="font-bold text-2xl">LOGGED APP</h1>
+      </Link>
+
       {!isSearchPage && (
         <div className="">
           <Form {...form}>
@@ -66,7 +69,7 @@ export function Header() {
 
       <Button asChild variant="outline" size="icon" className="rounded-full">
         <Link to="/logger/settings">
-          <PersonStanding />
+          <Settings />
         </Link>
       </Button>
     </div>
