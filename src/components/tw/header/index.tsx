@@ -43,7 +43,7 @@ export function Header() {
       </Link>
 
       {!isSearchPage && (
-        <div className="">
+        <div className="hidden">
           <Form {...form}>
             <form className='w-full flex gap-1 items-end pb-3' onSubmit={form.handleSubmit(onSearch)}>
               <Select

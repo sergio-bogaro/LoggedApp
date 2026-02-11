@@ -1,10 +1,9 @@
-import { Plus } from "lucide-react";
 import { Link } from "react-router"
+
 
 import { ImageWithSkeleton } from "../imageSkeleton";
 import MediaOptionsButton from "../mediaOptions";
 
-import { Button } from "@/components/ui/button";
 import { MediaItem } from "@/types/mediaItem";
 
 const ListItem = ({ item }: { item: MediaItem }) => {
@@ -37,7 +36,7 @@ const ListItem = ({ item }: { item: MediaItem }) => {
 
 
         <span className="absolute top-2 right-2 z-10">
-          <MediaOptionsButton mediaId={item.id} />
+          <MediaOptionsButton mediaId={item.id} mediaType={item.type} />
         </span>
 
       </div>

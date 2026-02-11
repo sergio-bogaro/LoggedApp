@@ -9,7 +9,7 @@ export const GridItem = ({ item }: { item: MediaItem }) => {
   return (
     <div className="relative group rounded">
       <span className="absolute top-2 right-2 z-10">
-        <MediaOptionsButton mediaId={item.id} />
+        <MediaOptionsButton mediaId={item.id} mediaType={item.type} />
       </span>
 
       <Link

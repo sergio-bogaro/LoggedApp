@@ -6,20 +6,21 @@ import { Button } from "../ui/button";
 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { handleBacklog } from "@/utils/mediaStore";
+import { MediaTypeEnum } from "@/utils/mediaText";
 
 
 interface MediaOptionsButtonProps {
-  mediaId?: string;
+  mediaId: string;
+  mediaType: MediaTypeEnum
 }
 
-const MediaOptionsButton = ({ mediaId }: MediaOptionsButtonProps) => {
+const MediaOptionsButton = ({ mediaId, mediaType }: MediaOptionsButtonProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   function handleTreeDotsClick(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
-
-    console.log(mediaId)
   }
 
   return (
@@ -36,7 +37,7 @@ const MediaOptionsButton = ({ mediaId }: MediaOptionsButtonProps) => {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end">
-        <DropdownMenuItem>{t("addList")}</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleBacklog(mediaId, mediaType)}>{t("addList")}</DropdownMenuItem>
         <DropdownMenuItem>{t("viewHistory")}</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
