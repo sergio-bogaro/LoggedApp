@@ -16,6 +16,13 @@ export default defineConfig({
   server: {
     hmr: {
       host: "localhost"
+    },
+    proxy: {
+      "/anytype-api": {
+        target: "http://127.0.0.1:31009",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/anytype-api/, "/v1")
+      }
     }
   }
 })
