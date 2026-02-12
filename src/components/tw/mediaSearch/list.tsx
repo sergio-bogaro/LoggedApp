@@ -4,10 +4,15 @@ import { Link } from "react-router"
 import { ImageWithSkeleton } from "../imageSkeleton";
 import MediaOptionsButton from "../mediaOptions";
 
+import { MediaResponse } from "@/lib/querry/logged";
 import { MediaItem } from "@/types/mediaItem";
 
-const ListItem = ({ item }: { item: MediaItem }) => {
+interface ListItemProps {
+  item: MediaItem;
+  existingItem?: MediaResponse
+}
 
+const ListItem = ({ item, existingItem }: ListItemProps) => {
   return (
     <Link
       key={item.id}
@@ -36,7 +41,7 @@ const ListItem = ({ item }: { item: MediaItem }) => {
 
 
         <span className="absolute top-2 right-2 z-10">
-          <MediaOptionsButton mediaId={item.id} mediaType={item.type} />
+          <MediaOptionsButton mediaItem={item} existingItem={existingItem} />
         </span>
 
       </div>

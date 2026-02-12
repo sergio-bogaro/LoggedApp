@@ -1,9 +1,59 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-import { MediaTypeEnum } from "./mediaText";
+import { MediaStatusEnum, MediaTypeEnum } from "./mediaText";
 
-export function handleBacklog(mediaId: string, mediaType: MediaTypeEnum) {
-  //TODO: validar se ja existe na lista antes de adicionar e remover caso esteja
+import { batchCheckExisting, createMedia, MediaCheckItem, MediaResponse } from "@/lib/querry/logged";
+import { MediaItem } from "@/types/mediaItem";
 
-  toast.success("Added to Backlog");
+export function useHandleBacklog() {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: async (item: MediaItem) => {
+      const payload = {
+        title: item.title,
+        type: item.type,
+        externalId: item.id,
+        description: item.description ?? null,
+        status: MediaStatusEnum.BACKLOG
+      };
+
+      return createMedia(payload);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["media"] });
+      toast.success("Added to Backlog");
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to add media");
+    },
+  });
+
+  return (item: MediaItem) => mutation.mutate(item);
 }
+
+
+export function useExistingMedia(items: MediaItem[] | undefined) {
+  const checkItems: MediaCheckItem[] = items?.map((item) => ({
+    externalId: item.id,
+    type: item.type,
+  })) || [];
+
+  return useQuery<Record<string, MediaResponse>>({
+    queryKey: ["existing-media", checkItems],
+    queryFn: () => batchCheckExisting(checkItems),
+    enabled: checkItems.length > 0,
+    staleTime: 1000 * 60 * 5, // 5 minutos
+  });
+}
+
+export function getExistingMedia(
+  existingMedia: Record<string, MediaResponse> | undefined,
+  externalId: string,
+  type: MediaTypeEnum
+): MediaResponse | undefined {
+  const key = `${externalId}:${type}`;
+  return existingMedia?.[key];
+}
+

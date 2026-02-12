@@ -148,6 +148,22 @@ export async function getMediaByExternalId(
   }
 }
 
+export type MediaCheckItem = {
+  externalId: string;
+  type: MediaTypeEnum;
+};
+
+export async function batchCheckExisting(
+  items: MediaCheckItem[]
+): Promise<Record<string, MediaResponse>> {
+  if (items.length === 0) return {};
+
+  return apiFetch<Record<string, MediaResponse>>("/api/media/batch-check", {
+    method: "POST",
+    body: JSON.stringify(items),
+  });
+}
+
 export async function createMedia(
   data: MediaCreatePayload
 ): Promise<MediaResponse> {

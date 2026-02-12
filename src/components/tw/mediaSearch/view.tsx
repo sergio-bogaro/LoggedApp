@@ -4,17 +4,20 @@ import { useEffect, useState } from "react";
 import { GridItem } from "./grid";
 import ListItem from "./list";
 
+import { MediaResponse } from "@/lib/querry/logged";
 import { cn } from "@/lib/utils";
 import { useAppSelector } from "@/store/settings/hooks";
 import { MediaItem } from "@/types/mediaItem";
+import { getExistingMedia } from "@/utils/mediaStore";
 
 interface MediaViewProps {
   isLoading: boolean;
   error: Error | null;
   mediaData: MediaItem[] | undefined;
+  existingMedia?: Record<string, MediaResponse>;
 }
 
-const MediaView = ({ isLoading, error, mediaData }: MediaViewProps) => {
+const MediaView = ({ isLoading, error, mediaData, existingMedia }: MediaViewProps) => {
   const { viewMode } = useAppSelector(state => state.ui)
   const [switching, setSwitching] = useState(false)
 
@@ -70,19 +73,20 @@ const MediaView = ({ isLoading, error, mediaData }: MediaViewProps) => {
       "gap-4 mt-2 transition-all duration-300 ease-in-out",
       switching ? "opacity-80 translate-y-0.5" : "opacity-100 translate-0",
       viewMode === "list" ? "flex flex-col gap-4" : "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5"
-    )}>
-      {viewMode === "list" ?
-        mediaData.map((mediaItem) => (
+    )}>{mediaData.map((mediaItem) => {
+        const existingItem = getExistingMedia(existingMedia, mediaItem.id, mediaItem.type);
+
+
+        return viewMode === "list" ? (
           <div key={mediaItem.id} className="transition-transform duration-300 ease-in-out transform hover:scale-[1.01]">
-            <ListItem item={mediaItem} />
+            <ListItem item={mediaItem} existingItem={existingItem} />
           </div>
-        )) :
-        mediaData.map((mediaItem) => (
+        ) : (
           <div key={mediaItem.id} className="transition-transform duration-300 ease-in-out transform hover:scale-[1.01]">
-            <GridItem item={mediaItem} />
+            <GridItem item={mediaItem} existingItem={existingItem} />
           </div>
-        ))
-      }
+        )
+      })}
     </div>
   )
 }

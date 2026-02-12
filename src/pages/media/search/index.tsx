@@ -18,6 +18,7 @@ import { searchMoviesNormalized } from "@/lib/querry/tmdb";
 import { useAppDispatch, useAppSelector } from "@/store/settings/hooks";
 import { setViewMode, ViewMode } from "@/store/settings/slice";
 import { MediaItem } from "@/types/mediaItem";
+import { useExistingMedia } from "@/utils/mediaStore";
 import { MediaTypeEnum, mediaTypesOptions } from "@/utils/mediaText";
 
 export type FormSearchProps = {
@@ -66,6 +67,10 @@ function MediaSearchPage() {
     enabled: searchName.trim().length > 0,
     staleTime: 1000 * 60 * 5,
   });
+
+  // Verifica quais mídias já existem no backend
+  const { data: existingMedia } = useExistingMedia(data);
+  console.log(existingMedia)
 
   const handleViewModeChange = (newTheme: ViewMode) => {
     dispatch(setViewMode(newTheme))
@@ -128,7 +133,7 @@ function MediaSearchPage() {
         </Form>
       </div>
 
-      <MediaView error={error} isLoading={isFetching} mediaData={data} />
+      <MediaView error={error} isLoading={isFetching} mediaData={data} existingMedia={existingMedia} />
     </div >
   );
 }

@@ -1,6 +1,14 @@
-interface MeidaTypeText {
+interface MediaTypeText {
   label: string;
   placeholder: string;
+}
+
+export enum MediaStatusEnum {
+    BACKLOG = "backlog",
+    IN_PROGRESS = "in_progress",
+    COMPLETED = "completed",
+    DROPPED = "dropped",
+    ON_HOLD = "on_hold"
 }
 
 export enum MediaTypeEnum {
@@ -11,7 +19,7 @@ export enum MediaTypeEnum {
   BOOK = "book",
 }
 
-export function getPageTranslation(page: MediaTypeEnum): MeidaTypeText {
+export function getPageTranslation(page: MediaTypeEnum): MediaTypeText {
   switch (page) {
     case MediaTypeEnum.MOVIES:
       return { label: "Search Movies (TMDB)", placeholder: "Type a movie name" };
