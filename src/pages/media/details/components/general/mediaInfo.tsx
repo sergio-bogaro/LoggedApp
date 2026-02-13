@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { AniListMediaDetails } from "@/lib/querry/anilist";
-import { TMDBMovieDetails } from "@/lib/querry/tmdb";
+import { AniListMediaDetails } from "@/querries/externalMedia/anilist";
+import { TMDBMovieDetails } from "@/querries/externalMedia/movies";
 import { MediaTypeEnum } from "@/utils/mediaText";
 
 type MediaInfoContainerProps = {

@@ -3,7 +3,7 @@ import { Link } from "react-router"
 
 import { DetailsLabel } from "../general/detailsCard"
 
-import { AniListMediaDetails, getArtist, getAuthor, getCountAndStatusLabel } from "@/lib/querry/anilist"
+import { AniListMediaDetails, getArtist, getAuthor, getCountAndStatusLabel } from "@/querries/externalMedia/anilist"
 import { formatFromIsoDate } from "@/utils/date"
 import { MediaTypeEnum } from "@/utils/mediaText"
 

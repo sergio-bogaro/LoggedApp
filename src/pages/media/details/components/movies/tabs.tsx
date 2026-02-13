@@ -3,7 +3,7 @@ import { Link } from "react-router";
 import { CastMember, CrewMember, MovieSummary } from "./types";
 
 import { AppTabs } from "@/components/tw/tabs";
-import { tmdbPosterUrl } from "@/lib/querry/tmdb";
+import { tmdbPosterUrl } from "@/querries/externalMedia/movies";
 
 function CastTab({ castList }: { castList: CastMember[] }) {
   return (

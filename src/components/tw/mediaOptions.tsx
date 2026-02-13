@@ -1,11 +1,11 @@
 import { t } from "i18next";
-import { MoreVertical, Check } from "lucide-react";
+import { MoreVertical } from "lucide-react";
 import React, { useState } from "react";
 
 import { Button } from "../ui/button";
 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { MediaResponse } from "@/lib/querry/logged";
+import { MediaResponse } from "@/querries/logged";
 import { cn } from "@/lib/utils";
 import { MediaItem } from "@/types/mediaItem";
 import { useHandleBacklog } from "@/utils/mediaStore";
@@ -19,8 +19,8 @@ interface MediaOptionsButtonProps {
 const MediaOptionsButton = ({ mediaItem, existingItem }: MediaOptionsButtonProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const handleBacklog = useHandleBacklog();
-  const isInLibrary = !!existingItem;
-  const isInBacklog = existingItem?.onList
+
+  const isInBacklog = existingItem?.onList;
 
   function handleTreeDotsClick(e: React.MouseEvent) {
     e.preventDefault();
@@ -47,11 +47,6 @@ const MediaOptionsButton = ({ mediaItem, existingItem }: MediaOptionsButtonProps
             isOpen ? "opacity-100 bg-popover" : "opacity-0 group-hover:opacity-100"
           )}
         >
-          {isInLibrary && (
-            <span className="absolute -top-1 -right-1 bg-green-500 rounded-full p-0.5">
-              <Check size={12} className="text-white" />
-            </span>
-          )}
           <MoreVertical size={20} />
         </Button>
       </DropdownMenuTrigger>

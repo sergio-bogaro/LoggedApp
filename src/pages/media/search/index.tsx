@@ -11,10 +11,10 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
-import { searchAnimeAnilistNormalized, searchMangaAnilistNormalized } from "@/lib/querry/anilist";
-import { searchBooksNormalized } from "@/lib/querry/books";
-import { searchGamesNormalized } from "@/lib/querry/games";
-import { searchMoviesNormalized } from "@/lib/querry/tmdb";
+import { searchAnimeAnilistNormalized, searchMangaAnilistNormalized } from "@/querries/externalMedia/anilist";
+import { searchBooksNormalized } from "@/querries/externalMedia/books";
+import { searchGamesNormalized } from "@/querries/externalMedia/games";
+import { searchMoviesNormalized } from "@/querries/externalMedia/movies";
 import { useAppDispatch, useAppSelector } from "@/store/settings/hooks";
 import { setViewMode, ViewMode } from "@/store/settings/slice";
 import { MediaItem } from "@/types/mediaItem";
@@ -68,9 +68,7 @@ function MediaSearchPage() {
     staleTime: 1000 * 60 * 5,
   });
 
-  // Verifica quais mídias já existem no backend
   const { data: existingMedia } = useExistingMedia(data);
-  console.log(existingMedia)
 
   const handleViewModeChange = (newTheme: ViewMode) => {
     dispatch(setViewMode(newTheme))

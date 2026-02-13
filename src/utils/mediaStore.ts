@@ -3,7 +3,7 @@ import { toast } from "sonner";
 
 import { MediaTypeEnum } from "./mediaText";
 
-import { batchCheckExisting, createMedia, MediaCheckItem, MediaResponse, updateMedia } from "@/lib/querry/logged";
+import { batchCheckExisting, createMedia, MediaCheckItem, MediaResponse, updateMedia } from "@/querries/logged";
 import { MediaItem } from "@/types/mediaItem";
 
 export function useHandleBacklog() {

@@ -7,7 +7,7 @@ import { MovieDetails } from "../movies/details";
 
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { AniListMediaDetails } from "@/lib/querry/anilist";
+import { AniListMediaDetails } from "@/querries/externalMedia/anilist";
 import { MediaTypeEnum } from "@/utils/mediaText";
 
 type DetailsCardProps = {

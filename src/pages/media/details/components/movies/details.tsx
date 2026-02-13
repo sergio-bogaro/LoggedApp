@@ -4,7 +4,7 @@ import { Link } from "react-router";
 
 import { DetailsLabel } from "../general/detailsCard";
 
-import { TMDBMovieDetails } from "@/lib/querry/tmdb";
+import { TMDBMovieDetails } from "@/querries/externalMedia/movies";
 import { formatFromIsoDate } from "@/utils/date"
 
 export const MovieDetails = ({ data }: { data: TMDBMovieDetails }) => {

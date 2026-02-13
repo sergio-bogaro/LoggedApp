@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ImageWithSkeleton } from "@/components/tw/imageSkeleton";
-import { tmdbPosterUrl } from "@/lib/querry/tmdb";
+import { tmdbPosterUrl } from "@/querries/externalMedia/movies";
 import { MediaTypeEnum } from "@/utils/mediaText";
 
 type MediaPosterProps = {

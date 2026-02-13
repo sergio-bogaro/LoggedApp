@@ -6,9 +6,9 @@ import { MediaInfo } from "./components/general/mediaInfo";
 import { MediaPoster } from "./components/general/poster";
 
 import { TrackMediaDialog } from "@/components/tw/dialogs/trackMediaDialog";
-import { getAniListDetails } from "@/lib/querry/anilist";
-import { getBookDetails } from "@/lib/querry/books";
-import { getMovieDetails, tmdbPosterUrl } from "@/lib/querry/tmdb";
+import { getAniListDetails } from "@/querries/externalMedia/anilist";
+import { getBookDetails } from "@/querries/externalMedia/books";
+import { getMovieDetails, tmdbPosterUrl } from "@/querries/externalMedia/movies";
 import { MediaTypeEnum } from "@/utils/mediaText";
 
 type MediaDetailsParams = {

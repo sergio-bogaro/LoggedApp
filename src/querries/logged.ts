@@ -18,12 +18,12 @@ export type MediaResponse = {
   type: MediaTypeEnum;
   status: MediaStatusEnum;
   onList: boolean;
-  description?: string | null;
-  coverUrl?: string | null;
-  imagePath?: string | null;
-  releaseDate?: string | null;
-  rating?: number | null;
-  review?: string | null;
+  description?: string;
+  coverUrl?: string;
+  imagePath?: string;
+  releaseDate?: string;
+  rating?: number;
+  review?: string;
   createdAt: string;
   updatedAt: string;
   logCount: number;
@@ -33,9 +33,9 @@ export type MediaLogResponse = {
   id: number;
   mediaId: number;
   date: string;
-  status?: MediaStatusEnum | null;
-  rating?: number | null;
-  review?: string | null;
+  status?: MediaStatusEnum;
+  rating?: number;
+  review?: string;
   createdAt: string;
 };
 
@@ -48,50 +48,42 @@ export type MediaCreatePayload = {
   type: MediaTypeEnum;
   externalId: string;
   status?: MediaStatusEnum;
-  description?: string | null;
-  coverUrl?: string | null;
-  onList?: boolean | null;
-  releaseDate?: string | null;
-  rating?: number | null;
-  review?: string | null;
+  description?: string;
+  coverUrl?: string;
+  onList?: boolean;
+  releaseDate?: string;
+  rating?: number;
+  review?: string;
 };
 
 export type MediaUpdatePayload = {
   title?: string;
   status?: MediaStatusEnum;
-  description?: string | null;
-  coverUrl?: string | null;
-  imagePath?: string | null;
-  onList?: boolean | null;
-  releaseDate?: string | null;
-  rating?: number | null;
-  review?: string | null;
+  description?: string;
+  coverUrl?: string;
+  imagePath?: string;
+  onList?: boolean;
+  releaseDate?: string;
+  rating?: number;
+  review?: string;
 };
 
 export type MediaLogCreatePayload = {
   mediaId: number;
   date: string;
-  status?: MediaStatusEnum | null;
-  rating?: number | null;
-  review?: string | null;
+  status?: MediaStatusEnum;
+  rating?: number;
+  review?: string;
 };
 
 export type MediaLogUpdatePayload = {
   date?: string;
-  status?: MediaStatusEnum | null;
-  rating?: number | null;
-  review?: string | null;
+  status?: MediaStatusEnum;
+  rating?: number;
+  review?: string;
 };
 
-// ──────────────────────────────────────────────
-// Base URL
-// ──────────────────────────────────────────────
-
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
-
-// ──────────────────────────────────────────────
-// Helper
-// ──────────────────────────────────────────────
 
 async function apiFetch<T>(
   path: string,

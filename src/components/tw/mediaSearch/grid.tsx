@@ -3,7 +3,7 @@ import { Link } from "react-router";
 import { ImageWithSkeleton } from "../imageSkeleton";
 import MediaOptionsButton from "../mediaOptions";
 
-import { MediaResponse } from "@/lib/querry/logged";
+import { MediaResponse } from "@/querries/logged";
 import { MediaItem } from "@/types/mediaItem";
 
 interface GridItemProps {

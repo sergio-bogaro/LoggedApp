@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { GridItem } from "./grid";
 import ListItem from "./list";
 
-import { MediaResponse } from "@/lib/querry/logged";
 import { cn } from "@/lib/utils";
+import { MediaResponse } from "@/querries/logged";
 import { useAppSelector } from "@/store/settings/hooks";
 import { MediaItem } from "@/types/mediaItem";
 import { getExistingMedia } from "@/utils/mediaStore";
