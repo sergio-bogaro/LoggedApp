@@ -1,9 +1,8 @@
 import { Link } from "react-router";
 
-import { ImageWithSkeleton } from "../imageSkeleton";
-import MediaOptionsButton from "../mediaOptions";
-
-import { MediaResponse } from "@/querries/logged";
+import { ImageWithSkeleton } from "@/components/tw/generic/imageSkeleton";
+import { MediaOptionsButton } from "@/components/tw/media/mediaOptions";
+import { MediaResponse } from "@/querries/media/logged";
 import { MediaItem } from "@/types/mediaItem";
 
 interface GridItemProps {

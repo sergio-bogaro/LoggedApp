@@ -14,6 +14,7 @@ export async function searchGamesNormalized(title: string): Promise<MediaItem[]>
     title: g.name,
     coverUrl: g.background_image || undefined,
     year: g.released ? new Date(g.released).getFullYear() : undefined,
+    releaseDate: g.released,
     type: MediaTypeEnum.GAME,
     description: g.description_raw || "",
     provider: "rawg",

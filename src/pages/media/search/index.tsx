@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useSearchParams } from "react-router";
 
-import MediaView from "@/components/tw/mediaSearch/view";
+import MediaView from "@/components/tw/media/view";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -15,10 +15,10 @@ import { searchAnimeAnilistNormalized, searchMangaAnilistNormalized } from "@/qu
 import { searchBooksNormalized } from "@/querries/externalMedia/books";
 import { searchGamesNormalized } from "@/querries/externalMedia/games";
 import { searchMoviesNormalized } from "@/querries/externalMedia/movies";
+import { useExistingMedia } from "@/querries/media/existingMedias";
 import { useAppDispatch, useAppSelector } from "@/store/settings/hooks";
 import { setViewMode, ViewMode } from "@/store/settings/slice";
 import { MediaItem } from "@/types/mediaItem";
-import { useExistingMedia } from "@/utils/mediaStore";
 import { MediaTypeEnum, mediaTypesOptions } from "@/utils/mediaText";
 
 export type FormSearchProps = {

@@ -9,6 +9,7 @@ export async function searchMoviesNormalized(query: string): Promise<MediaItem[]
     title: m.title,
     coverUrl: tmdbPosterUrl(m.poster_path) || undefined,
     year: m.release_date ? m.release_date.slice(0, 4) : undefined,
+    releaseDate: m.release_date,
     type: MediaTypeEnum.MOVIES,
     description: m.overview,
     provider: "tmdb",

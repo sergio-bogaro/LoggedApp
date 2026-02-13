@@ -9,5 +9,6 @@ export interface MediaItem {
   year?: string | number;
   type: MediaTypeEnum;
   description?: string;
+  releaseDate?: string;
   [key: string]: any;
 }

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ImageWithSkeleton } from "@/components/tw/imageSkeleton";
+import { ImageWithSkeleton } from "@/components/tw/generic/imageSkeleton";
 import { tmdbPosterUrl } from "@/querries/externalMedia/movies";
 import { MediaTypeEnum } from "@/utils/mediaText";
 

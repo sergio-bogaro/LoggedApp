@@ -2,11 +2,10 @@ import { t } from "i18next";
 import { MoreVertical } from "lucide-react";
 import React, { useState } from "react";
 
-import { Button } from "../ui/button";
-
+import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { MediaResponse } from "@/querries/logged";
 import { cn } from "@/lib/utils";
+import { MediaResponse } from "@/querries/media/logged";
 import { MediaItem } from "@/types/mediaItem";
 import { useHandleBacklog } from "@/utils/mediaStore";
 
@@ -16,7 +15,7 @@ interface MediaOptionsButtonProps {
   existingItem?: MediaResponse;
 }
 
-const MediaOptionsButton = ({ mediaItem, existingItem }: MediaOptionsButtonProps) => {
+export const MediaOptionsButton = ({ mediaItem, existingItem }: MediaOptionsButtonProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const handleBacklog = useHandleBacklog();
 
@@ -62,5 +61,3 @@ const MediaOptionsButton = ({ mediaItem, existingItem }: MediaOptionsButtonProps
     </DropdownMenu>
   )
 }
-
-export default MediaOptionsButton;

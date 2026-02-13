@@ -1,14 +1,14 @@
 import { useState } from "react";
 
-import { Skeleton } from "@/components/ui/skeleton"; // shadcn skeleton import
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
 type ImageWithSkeletonProps = {
   src: string;
   alt: string;
   className?: string;
-  width?: number | string;
-  height?: number | string;
+  width?: number;
+  height?: number;
 };
 
 export function ImageWithSkeleton({
@@ -24,8 +24,8 @@ export function ImageWithSkeleton({
     <div
       className={cn("overflow-hidden rounded-md bg-muted", className)}
       style={{
-        width: width ?? "100%",
-        height: height ?? "auto",
+        width: width ? `${width}px` : "100%",
+        height: height ? `${height}px` : "auto",
       }}
       aria-busy={!isLoaded}
     >
