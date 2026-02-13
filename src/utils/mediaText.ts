@@ -4,11 +4,12 @@ interface MediaTypeText {
 }
 
 export enum MediaStatusEnum {
-    BACKLOG = "backlog",
-    IN_PROGRESS = "in_progress",
-    COMPLETED = "completed",
-    DROPPED = "dropped",
-    ON_HOLD = "on_hold"
+  IN_PROGRESS = "in_progress",
+  DROPPED = "dropped",
+  ON_HOLD = "on_hold",
+  FOLLOWING = "following",
+  COMPLETED = "completed",
+
 }
 
 export enum MediaTypeEnum {

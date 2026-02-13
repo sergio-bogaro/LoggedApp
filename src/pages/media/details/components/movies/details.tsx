@@ -28,7 +28,7 @@ export const MovieDetails = ({ data }: { data: TMDBMovieDetails }) => {
 
       <DetailsLabel
         label={t("Directed by")}
-        value={director.name}
+        value={director?.name}
       />
 
       <DetailsLabel

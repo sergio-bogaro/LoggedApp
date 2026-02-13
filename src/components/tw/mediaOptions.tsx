@@ -20,14 +20,18 @@ const MediaOptionsButton = ({ mediaItem, existingItem }: MediaOptionsButtonProps
   const [isOpen, setIsOpen] = useState(false);
   const handleBacklog = useHandleBacklog();
   const isInLibrary = !!existingItem;
+  const isInBacklog = existingItem?.onList
 
   function handleTreeDotsClick(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
   }
 
-  function onAddToBacklog() {
-    handleBacklog(mediaItem);
+  function onHandleBacklog(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    handleBacklog(mediaItem, existingItem);
     setIsOpen(false);
   }
 
@@ -53,20 +57,10 @@ const MediaOptionsButton = ({ mediaItem, existingItem }: MediaOptionsButtonProps
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end">
-        {!isInLibrary && (
-          <DropdownMenuItem onClick={onAddToBacklog}>{t("addList")}</DropdownMenuItem>
-        )}
-        {isInLibrary && (
-          <>
-            <DropdownMenuItem disabled className="text-xs text-muted-foreground">
-              Status: {existingItem.status}
-            </DropdownMenuItem>
-            {existingItem.rating && (
-              <DropdownMenuItem disabled className="text-xs text-muted-foreground">
-                Rating: {existingItem.rating}/10
-              </DropdownMenuItem>
-            )}
-          </>
+        {isInBacklog ? (
+          <DropdownMenuItem onClick={onHandleBacklog}>Remover do Backlog</DropdownMenuItem>
+        ) : (
+          <DropdownMenuItem onClick={onHandleBacklog}>Adicionar ao Backlog</DropdownMenuItem>
         )}
         <DropdownMenuItem>{t("viewHistory")}</DropdownMenuItem>
       </DropdownMenuContent>

@@ -1,28 +1,35 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-import { MediaStatusEnum, MediaTypeEnum } from "./mediaText";
+import { MediaTypeEnum } from "./mediaText";
 
-import { batchCheckExisting, createMedia, MediaCheckItem, MediaResponse } from "@/lib/querry/logged";
+import { batchCheckExisting, createMedia, MediaCheckItem, MediaResponse, updateMedia } from "@/lib/querry/logged";
 import { MediaItem } from "@/types/mediaItem";
 
 export function useHandleBacklog() {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: async (item: MediaItem) => {
+    mutationFn: async ({ item, existingMedia }: { item: MediaItem; existingMedia?: MediaResponse }) => {
       const payload = {
         title: item.title,
         type: item.type,
         externalId: item.id,
         description: item.description ?? null,
-        status: MediaStatusEnum.BACKLOG
+        coverUrl: item.coverUrl ?? null,
+        onList: !existingMedia ? true : !existingMedia.onList,
       };
+
+      if (existingMedia) {
+        return updateMedia(existingMedia.id, payload);
+      }
 
       return createMedia(payload);
     },
+
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["media"] });
+      queryClient.invalidateQueries({ queryKey: ["existing-media"] });
+
       toast.success("Added to Backlog");
     },
     onError: (error: Error) => {
@@ -30,7 +37,7 @@ export function useHandleBacklog() {
     },
   });
 
-  return (item: MediaItem) => mutation.mutate(item);
+  return (item: MediaItem, existingMedia?: MediaResponse) => mutation.mutate({ item, existingMedia });
 }
 
 
