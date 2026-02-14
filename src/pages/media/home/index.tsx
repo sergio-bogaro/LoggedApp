@@ -5,7 +5,7 @@ import { getMediaList, MediaResponse } from "@/querries/media/logged";
 import { MediaItem } from "@/types/mediaItem";
 
 const MediaHomePage = () => {
-  const { data, error, isFetching } = useQuery<MediaResponse[]>({
+  const { data, isFetching } = useQuery<MediaResponse[]>({
     queryKey: ["media"],
     queryFn: () => getMediaList(),
     staleTime: 1000 * 60 * 5,
@@ -19,24 +19,35 @@ const MediaHomePage = () => {
       <div>
         <h2>Recentely Added</h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 m-2 gap-4">
-          {data?.map((item) => {
-            
+        {isFetching ? (
+          <p>Loading...</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 m-2 gap-4">
+            {data?.map((item) => {
 
-            const normalizedItem: MediaItem = {
-              id: item.id.toString(),
-              title: item.title,
-              type: item.type,
-              coverUrl: item.coverUrl,
-              year: item.releaseDate ? item.releaseDate.slice(0, 4) : undefined,
-              description: item.description,
-            }
 
-            return (
-              <GridItem key={item.id} item={normalizedItem} existingItem={item} />
-            )
-          })}
-        </div>
+              const normalizedItem: MediaItem = {
+                id: item.externalId,
+                title: item.title,
+                type: item.type,
+                coverUrl: item.coverUrl,
+                year: item.releaseDate ? item.releaseDate.slice(0, 4) : undefined,
+                description: item.description,
+              }
+
+              return (
+                <GridItem
+                  key={item.id}
+                  item={normalizedItem}
+                  existingItem={item}
+                  showMediaType
+                />
+              )
+            })}
+          </div>
+        )}
+
+
       </div>
     </div>
   );

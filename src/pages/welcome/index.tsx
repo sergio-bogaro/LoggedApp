@@ -6,7 +6,7 @@ import ThemeSwitcher from "@/components/ThemeSwitcher";
 import { Button } from "@/components/ui/button";
 
 function WelcomePage() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("welcome");
 
   return (
     <div className="w-full flex justify-center items-center p-40">

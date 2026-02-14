@@ -11,6 +11,8 @@ i18n
     fallbackLng: "en",
     supportedLngs: ["en", "ptBr"],
     debug: false,
+    ns: ["common", "themes", "welcome", "media"],
+    defaultNS: "common",
     interpolation: {
       escapeValue: false,
     },

@@ -8,7 +8,7 @@ const languageOptions = [
 ];
 
 const LanguageSwitcher = () => {
-  const { i18n, t } = useTranslation();
+  const { i18n, t } = useTranslation("common");
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);

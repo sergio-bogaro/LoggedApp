@@ -1,5 +1,7 @@
 import { Link } from "react-router";
 
+import { MediaTypeBadge } from "../generic/badges";
+
 import { ImageWithSkeleton } from "@/components/tw/generic/imageSkeleton";
 import { MediaOptionsButton } from "@/components/tw/media/mediaOptions";
 import { MediaResponse } from "@/querries/media/logged";
@@ -8,9 +10,10 @@ import { MediaItem } from "@/types/mediaItem";
 interface GridItemProps {
   item: MediaItem;
   existingItem?: MediaResponse
+  showMediaType?: boolean;
 }
 
-export const GridItem = ({ item, existingItem }: GridItemProps) => {
+export const GridItem = ({ item, existingItem, showMediaType = false }: GridItemProps) => {
 
   return (
     <div className="relative group rounded">
@@ -18,18 +21,24 @@ export const GridItem = ({ item, existingItem }: GridItemProps) => {
         <MediaOptionsButton mediaItem={item} existingItem={existingItem} />
       </span>
 
+
       <Link
         key={item.id}
         to={`/logger/${item.type}/details/${item.id}`}
         className="block rounded overflow-hidden shadow-md hover:shadow-xl transition-all hover:opacity-70"
       >
+
         <ImageWithSkeleton
           src={item.coverUrl}
           alt={item.title}
           className="h-full w-auto aspect-2/3 object-cover"
         />
 
-        <div className="absolute rounded-md bottom-0 left-0 right-0 bg-linear-to-t from-background/90 via-background/50 to-transparent p-3">
+        <div className="absolute top-2 left-2">
+          {showMediaType && <MediaTypeBadge type={item.type} />}
+        </div>
+
+        <div className="absolute rounded-md bottom-0 left-0 right-0 bg-linear-to-t from-black/90 via-black/50 to-transparent p-3">
           <div className="flex items-end justify-between gap-2">
             <div className="flex flex-col-reverse min-w-0">
               <p className="text-white/60 text-xs">{item.year ?? "-"}</p>

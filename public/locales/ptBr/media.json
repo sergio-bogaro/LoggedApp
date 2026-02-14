@@ -1,0 +1,7 @@
+{
+  "type": {
+    "movie": "Filme",
+    "anime": "Anime",
+    "manga": "Mangá"
+  }
+}
