@@ -19,39 +19,39 @@ export const MangaDetails = ({ data }: { data: AniListMediaDetails }) => {
   return (
     <>
       <DetailsLabel
-        label={t("Chapters")}
+        label={t("details.status", { ns: "media" })}
         value={getCountAndStatusLabel(data, MediaTypeEnum.MANGA)}
       />
 
       <DetailsLabel
-        label={t("Release Date")}
+        label={t("details.releaseDate", { ns: "media" })}
         value={formattedDate}
       />
 
       <DetailsLabel
-        label={t("End Date")}
+        label={t("details.endDate", { ns: "media" })}
         value={formattedEndDate}
       />
 
       {/* TODO: Validar como fazer pra exibir diferente se for ingles  */}
 
       <DetailsLabel
-        label={t("Author")}
+        label={t("details.author", { ns: "media" })}
         value={getAuthor(data)}
       />
 
       <DetailsLabel
-        label={t("Artist")}
+        label={t("details.artist", { ns: "media" })}
         value={getArtist(data)}
       />
 
       <DetailsLabel
-        label={t("Anilist Score")}
+        label={t("details.anilistScore", { ns: "media" })}
         value={((data.averageScore * 0.1) / 2).toFixed(1) + " ★"}
       />
 
       <DetailsLabel
-        label={t("Source")}
+        label={t("details.source", { ns: "media" })}
         value={
           <Link to={`https://anilist.co/manga/${data.id}`} target="_blank" >
             Anilist

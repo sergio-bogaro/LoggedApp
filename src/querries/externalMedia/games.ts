@@ -199,7 +199,6 @@ export async function searchGames(title: string): Promise<RAWGGame[]> {
 
   const cached = searchCache.get(cacheKey);
   if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
-    console.log("📦 Retornando do cache RAWG:", cacheKey);
     return cached.data;
   }
 

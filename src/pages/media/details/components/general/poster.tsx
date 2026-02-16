@@ -17,10 +17,14 @@ export const MediaPoster = ({ mediaType, data }: MediaPosterProps) => {
         return data.coverImage?.large;
       case MediaTypeEnum.ANIME:
         return data.coverImage?.large;
+      case MediaTypeEnum.BOOK:
+        return data.coverImageUrl;
+      case MediaTypeEnum.GAME:
+        return data.background_image;
       default:
         return "";
     }
 
   }
-  return <ImageWithSkeleton src={getPosterUrl(mediaType, data)} alt={data.title} className="mb-4" />
+  return <ImageWithSkeleton src={getPosterUrl(mediaType, data)} alt={data.title} className="mb-4 aspect-2/3" />
 }

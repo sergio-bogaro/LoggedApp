@@ -8,6 +8,7 @@ import { MediaPoster } from "./components/general/poster";
 import { TrackMediaDialog } from "@/components/tw/dialogs/trackMediaDialog";
 import { getAniListDetails } from "@/querries/externalMedia/anilist";
 import { getBookDetails } from "@/querries/externalMedia/books";
+import { getGameDetails } from "@/querries/externalMedia/games";
 import { getMovieDetails, tmdbPosterUrl } from "@/querries/externalMedia/movies";
 import { MediaTypeEnum } from "@/utils/mediaText";
 
@@ -33,6 +34,8 @@ function MediaDetailsPage() {
           return getAniListDetails(Number(id), MediaTypeEnum.ANIME);
         case MediaTypeEnum.BOOK:
           return getBookDetails(id);
+        case MediaTypeEnum.GAME:
+          return getGameDetails(Number(id));
         // case "kitsu-manga":
         //   return getKitsuDetails(id, "manga");
         // case "kitsu-anime":
@@ -68,7 +71,6 @@ function MediaDetailsPage() {
               <TrackMediaDialog
                 mediaType={mediaType}
                 image={tmdbPosterUrl(data.poster_path)}
-                alternateImages={alternateImages}
                 title={data.title}
               />
 

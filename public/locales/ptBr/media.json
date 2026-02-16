@@ -1,4 +1,25 @@
 {
+  "details": {
+    "label": "Detalhes",
+    "title": "Título",
+    "description": "Descrição",
+    "review": "Avaliação",
+    "rating": "Classificação",
+    "releaseDate": "Data de Lançamento",
+    "endDate": "Data de Encerramento",
+    "director": "Diretor",
+    "author": "Autor",
+    "artist": "Artista",
+    "episodes": "Episódios",
+    "chgapters": "Capítulos",
+    "volumes": "Volumes",
+    "productionBy": "Produção",
+    "source": "Fonte",
+    "duration": "Duração",
+    "status": "Status",
+    "TMDBScore": "Nota TMDB",
+    "anilistScore": "Nota Anilist"
+  },
   "type": {
     "movie": "Filme",
     "anime": "Anime",
