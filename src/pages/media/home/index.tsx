@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { GridItem } from "@/components/tw/media/grid";
-import { getMediaList, MediaResponse } from "@/querries/media/logged";
-import { MediaItem } from "@/types/mediaItem";
+import { getMediaList } from "@/querries/media/logged";
+import { MediaResponse } from "@/types/logged";
+import { MediaItem } from "@/types/media";
 
 const MediaHomePage = () => {
   const { data, isFetching } = useQuery<MediaResponse[]>({

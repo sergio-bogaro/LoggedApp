@@ -18,8 +18,9 @@ import { searchMoviesNormalized } from "@/querries/externalMedia/movies";
 import { useExistingMedia } from "@/querries/media/existingMedias";
 import { useAppDispatch, useAppSelector } from "@/store/settings/hooks";
 import { setViewMode, ViewMode } from "@/store/settings/slice";
-import { MediaItem } from "@/types/mediaItem";
-import { MediaTypeEnum, mediaTypesOptions } from "@/utils/mediaText";
+import { MediaItem } from "@/types/media";
+import { MediaTypeEnum } from "@/types/media";
+import { mediaTypesOptions } from "@/utils/mediaText";
 
 export type FormSearchProps = {
   searchFilter: string;

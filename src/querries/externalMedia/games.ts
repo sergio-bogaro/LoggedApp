@@ -1,5 +1,5 @@
-import { MediaItem } from "@/types/mediaItem";
-import { MediaTypeEnum } from "@/utils/mediaText";
+import { MediaItem } from "@/types/media";
+import { MediaTypeEnum } from "@/types/media";
 
 // Cache simples em memória (válido por 10 minutos)
 const searchCache = new Map<string, { data: RAWGGame[]; timestamp: number }>();

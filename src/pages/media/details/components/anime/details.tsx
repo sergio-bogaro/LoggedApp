@@ -5,7 +5,7 @@ import { DetailsLabel } from "../general/detailsCard"
 
 import { AniListMediaDetails, getCountAndStatusLabel, getDirector, getStudios } from "@/querries/externalMedia/anilist"
 import { formatFromIsoDate } from "@/utils/date"
-import { MediaTypeEnum } from "@/utils/mediaText"
+import { MediaTypeEnum } from "@/types/media"
 
 export const AnimeDetails = ({ data }: { data: AniListMediaDetails }) => {
   const startDate = data.startDate;

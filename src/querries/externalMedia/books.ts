@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { MediaItem } from "@/types/mediaItem";
-import { MediaTypeEnum } from "@/utils/mediaText";
+import { MediaItem } from "@/types/media";
+import { MediaTypeEnum } from "@/types/media";
 
 export type BookItem = {
   key: string;

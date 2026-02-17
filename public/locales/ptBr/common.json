@@ -1,5 +1,7 @@
 {
   "welcome": "Bem-vindo",
   "language": "Idioma",
-  "theme": "Tema"
+  "theme": "Tema",
+  "cancel": "Cancelar",
+  "save": "Salvar"
 }

@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { AniListMediaDetails } from "@/querries/externalMedia/anilist";
 import { RAWGGame } from "@/querries/externalMedia/games";
-import { MediaTypeEnum } from "@/utils/mediaText";
+import { MediaTypeEnum } from "@/types/media";
 
 type DetailsCardProps = {
   mediaType: MediaTypeEnum;

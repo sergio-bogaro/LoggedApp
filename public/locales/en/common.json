@@ -1,5 +1,7 @@
 {
   "welcome": "Welcome",
   "language": "Language",
-  "theme": "Theme"
+  "theme": "Theme",
+  "cancel": "Cancel",
+  "save": "Save"
 }

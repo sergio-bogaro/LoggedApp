@@ -1,9 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { batchCheckExisting, MediaCheckItem, MediaResponse } from "./logged";
+import { batchCheckExisting, MediaCheckItem } from "./logged";
+import { MediaResponse } from "@/types/logged";
 
-import { MediaItem } from "@/types/mediaItem";
-import { MediaTypeEnum } from "@/utils/mediaText";
+import { MediaItem } from "@/types/media";
+import { MediaTypeEnum } from "@/types/media";
 
 export function useExistingMedia(items: MediaItem[] | undefined) {
   const checkItems: MediaCheckItem[] = items?.map((item) => ({

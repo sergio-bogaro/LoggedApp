@@ -5,8 +5,8 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { MediaResponse } from "@/querries/media/logged";
-import { MediaItem } from "@/types/mediaItem";
+import { MediaResponse } from "@/types/logged";
+import { MediaItem } from "@/types/media";
 import { useHandleBacklog } from "@/utils/mediaStore";
 
 

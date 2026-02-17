@@ -10,7 +10,8 @@ import { getAniListDetails } from "@/querries/externalMedia/anilist";
 import { getBookDetails } from "@/querries/externalMedia/books";
 import { getGameDetails } from "@/querries/externalMedia/games";
 import { getMovieDetails, tmdbPosterUrl } from "@/querries/externalMedia/movies";
-import { MediaTypeEnum } from "@/utils/mediaText";
+import { getMediaByExternalId, getMediaLogs } from "@/querries/media/logged";
+import { MediaTypeEnum } from "@/types/media";
 
 type MediaDetailsParams = {
   mediaType: MediaTypeEnum;
@@ -36,16 +37,6 @@ function MediaDetailsPage() {
           return getBookDetails(id);
         case MediaTypeEnum.GAME:
           return getGameDetails(Number(id));
-        // case "kitsu-manga":
-        //   return getKitsuDetails(id, "manga");
-        // case "kitsu-anime":
-        //   return getKitsuDetails(id, "anime");
-        // case "book":
-        //   return getBookDetails(id);
-        // case "game":
-        //   return getGameDetails(Number(id));
-        // case "music":
-        //   return getAlbumDetails(id);
         default:
           throw new Error("Unknown source");
       }
@@ -53,7 +44,21 @@ function MediaDetailsPage() {
     enabled: !!mediaType && !!id,
   });
 
-  const alternateImages = data?.images?.posters?.map((img: any) => tmdbPosterUrl(img.file_path)) || [];
+  const { data: existingMedia } = useQuery({
+    queryKey: ["existingMedia", id, mediaType],
+    queryFn: () => getMediaByExternalId(id!, mediaType),
+    enabled: !!id && !!mediaType,
+  });
+
+  const { data: mediaLogs } = useQuery({
+    queryKey: ["mediaLogs", existingMedia?.id],
+    queryFn: () => getMediaLogs(existingMedia!.id),
+    enabled: !!existingMedia,
+  });
+
+  const lastLog = mediaLogs && mediaLogs.length > 0
+    ? mediaLogs.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0]
+    : null;
 
   return (
     <div>
@@ -72,7 +77,16 @@ function MediaDetailsPage() {
                 mediaType={mediaType}
                 image={tmdbPosterUrl(data.poster_path)}
                 title={data.title}
+                mediaData={data}
+                existingMedia={existingMedia}
               />
+
+              {existingMedia && (
+                <div className="mt-2">
+                  <p>You tracked this on {lastLog ? new Date(lastLog.date).toLocaleDateString() : "N/A"}</p>
+                  <p></p>
+                </div>
+              )}
 
             </div>
 

@@ -9,8 +9,8 @@ export type KitsuManga = {
   };
 };
 
-import { MediaItem } from "@/types/mediaItem";
-import { MediaTypeEnum } from "@/utils/mediaText";
+import { MediaItem } from "@/types/media";
+import { MediaTypeEnum } from "@/types/media";
 
 const KITSU_BASE = "https://kitsu.io/api/edge";
 

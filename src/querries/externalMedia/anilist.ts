@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { MediaItem } from "@/types/mediaItem";
-import { MediaTypeEnum } from "@/utils/mediaText";
+import { MediaItem } from "@/types/media";
+import { MediaTypeEnum } from "@/types/media";
 import { capitalizeFirstLetter } from "@/utils/string";
 
 const searchCache = new Map<string, { data: AniListMediaDetails[]; timestamp: number }>();

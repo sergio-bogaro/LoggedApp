@@ -1,5 +1,5 @@
-import { MediaItem } from "@/types/mediaItem";
-import { MediaTypeEnum } from "@/utils/mediaText";
+import { MediaItem } from "@/types/media";
+import { MediaTypeEnum } from "@/types/media";
 
 // Normalized search returning MediaItem[]
 export async function searchMangaNormalized(title: string): Promise<MediaItem[]> {

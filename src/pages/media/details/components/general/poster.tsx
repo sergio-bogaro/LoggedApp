@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ImageWithSkeleton } from "@/components/tw/generic/imageSkeleton";
 import { tmdbPosterUrl } from "@/querries/externalMedia/movies";
-import { MediaTypeEnum } from "@/utils/mediaText";
+import { MediaTypeEnum } from "@/types/media";
 
 type MediaPosterProps = {
   mediaType: MediaTypeEnum;

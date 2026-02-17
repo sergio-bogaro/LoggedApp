@@ -22,7 +22,33 @@
   },
   "type": {
     "movie": "Filme",
+    "movies": "Filme",
     "anime": "Anime",
-    "manga": "Mangá"
+    "manga": "Mangá",
+    "game": "Jogo",
+    "book": "Livro"
+  },
+  "track": {
+    "label": "Registrar",
+    "dialogTitle": "Registrar {{mediaType}}",
+    "changeImage": "Mudar Imagem",
+    "changeImageDescription": "Isso aparecerá apenas na sua biblioteca",
+    "status": "Status",
+    "score": "Nota",
+    "progress": "Progresso",
+    "progressVolumes": "Progresso (Volumes)",
+    "progressEpisodes": "Progresso (Episódios)",
+    "startDate": "Data de Início",
+    "finishDate": "Data de Conclusão",
+    "viewedOn": "Visto em",
+    "completedOn": "Completado em",
+    "rating": "Nota",
+    "review": "Avaliação",
+    "reconsume": "Reassistir",
+    "consuming": "Assistindo",
+    "completed": "Completo",
+    "paused": "Pausado",
+    "dropped": "Abandonado",
+    "planning": "Planejando"
   }
 }

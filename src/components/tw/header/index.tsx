@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
-import { MediaTypeEnum, mediaTypesOptions } from "@/utils/mediaText";
+import { MediaTypeEnum } from "@/types/media";
+import { mediaTypesOptions } from "@/utils/mediaText";
 
 export type MediaSearchHeaderProps = {
   searchFilter: string;

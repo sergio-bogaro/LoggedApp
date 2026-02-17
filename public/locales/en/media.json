@@ -19,9 +19,35 @@
     "source": "Source",
     "duration": "Duration"
   },
+  "track": {
+    "label": "Track",
+    "dialogTitle": "Track {{mediaType}}",
+    "changeImage": "Change Image",
+    "changeImageDescription": "This will appear only in your library",
+    "status": "Status",
+    "score": "Score",
+    "progress": "Progress",
+    "progressVolumes": "Progress (Volumes)",
+    "progressEpisodes": "Progress (Episodes)",
+    "startDate": "Start Date",
+    "finishDate": "Finish Date",
+    "viewedOn": "Viewed On",
+    "completedOn": "Completed On",
+    "rating": "Rating",
+    "review": "Review",
+    "reconsume": "Reconsume",
+    "consuming": "Consuming",
+    "completed": "Completed",
+    "paused": "Paused",
+    "dropped": "Dropped",
+    "planning": "Planning"
+  },
   "type": {
     "movie": "Movie",
+    "movies": "Movie",
     "anime": "Anime",
-    "manga": "Manga"
+    "manga": "Manga",
+    "game": "Game",
+    "book": "Book"
   }
 }

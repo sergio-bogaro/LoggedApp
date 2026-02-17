@@ -1,6 +1,6 @@
 import { t } from "i18next"
 
-import { MediaTypeEnum } from "@/utils/mediaText"
+import { MediaTypeEnum } from "@/types/media"
 
 export const MediaTypeBadge = ({ type }: { type: MediaTypeEnum }) => {
 

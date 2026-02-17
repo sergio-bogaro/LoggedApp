@@ -2,8 +2,8 @@ import { Link } from "react-router"
 
 import { ImageWithSkeleton } from "@/components/tw/generic/imageSkeleton";
 import { MediaOptionsButton } from "@/components/tw/media/mediaOptions";
-import { MediaResponse } from "@/querries/media/logged";
-import { MediaItem } from "@/types/mediaItem";
+import { MediaResponse } from "@/types/logged";
+import { MediaItem } from "@/types/media";
 
 interface ListItemProps {
   item: MediaItem;

@@ -10,7 +10,8 @@ import { Input } from "../../ui/input";
 import { Select } from "@/components/ui/select";
 import { useAppDispatch, useAppSelector } from "@/store/settings/hooks";
 import { setViewMode, ViewMode } from "@/store/settings/slice";
-import { getPageTranslation, MediaTypeEnum, mediaTypesOptions } from "@/utils/mediaText";
+import { MediaTypeEnum } from "@/types/media";
+import { getPageTranslation, mediaTypesOptions } from "@/utils/mediaText";
 
 export type FormSearchProps = {
   searchFilter: string;
