@@ -12,6 +12,7 @@ import { getGameDetails } from "@/querries/externalMedia/games";
 import { getMovieDetails, tmdbPosterUrl } from "@/querries/externalMedia/movies";
 import { getMediaByExternalId, getMediaLogs } from "@/querries/media/logged";
 import { MediaTypeEnum } from "@/types/media";
+import { getPosterUrl } from "@/utils/posterPaths";
 
 type MediaDetailsParams = {
   mediaType: MediaTypeEnum;
@@ -73,10 +74,11 @@ function MediaDetailsPage() {
 
               <MediaPoster mediaType={mediaType} data={data} />
 
+              {/* TODO: Alterar esse title para ser o certo */}
               <TrackMediaDialog
                 mediaType={mediaType}
-                image={tmdbPosterUrl(data.poster_path)}
-                title={data.title}
+                defaultImage={getPosterUrl(mediaType, data)}
+                title="data.title"
                 mediaData={data}
                 existingMedia={existingMedia}
               />

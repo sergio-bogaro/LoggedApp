@@ -6,7 +6,6 @@ export enum MediaStatusEnum {
   ON_HOLD = "on_hold",
   FOLLOWING = "following",
   FINISHED = "finished",
-
 }
 
 export enum MediaTypeEnum {

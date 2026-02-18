@@ -49,5 +49,12 @@
     "manga": "Manga",
     "game": "Game",
     "book": "Book"
+  },
+  "status": {
+    "in_progress": "In Progress",
+    "dropped": "Dropped",
+    "on_hold": "On Hold",
+    "following": "Following",
+    "finished": "Finished"
   }
 }

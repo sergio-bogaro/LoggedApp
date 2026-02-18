@@ -1,5 +1,5 @@
 import { t } from "i18next"
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 
 import { Button } from "@/components/ui/button"
@@ -14,38 +14,46 @@ import {
 } from "@/components/ui/dialog"
 import { Form } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { Select } from "@/components/ui/select"
+import { TextArea } from "@/components/ui/textarea"
 import { MediaResponse } from "@/types/logged"
 import { MediaStatusEnum, MediaTypeEnum } from "@/types/media"
 import { getMediaData } from "@/utils/mediaDataResponse"
 import { useTrackMedia } from "@/utils/mediaStore"
+import { statusAnimeOptions } from "@/utils/selectOptions"
 
 interface TrackMediaDialogProps {
   existingMedia?: MediaResponse;
   title: string;
   mediaType: MediaTypeEnum;
-  image: string;
+  defaultImage: string;
   mediaData: any;
 }
 
-export function TrackMediaDialog({ mediaType, image, title, mediaData, existingMedia }: TrackMediaDialogProps) {
-  const form = useForm();
-  const { control, handleSubmit } = form;
-  const trackMedia = useTrackMedia();
+interface FormType {
+  startDate?: string;
+  endDate?: string;
+  rating?: number;
+  review?: string;
+}
 
-  const [selectedImage, setSelectedImage] = useState(image);
+export function TrackMediaDialog({ mediaType, defaultImage, title, mediaData, existingMedia }: TrackMediaDialogProps) {
+  const isOneTimeConsumption = useMemo(() => mediaType === MediaTypeEnum.MOVIES || mediaType === MediaTypeEnum.GAME, [mediaType]);
+  const endDateLabel = useMemo(() => isOneTimeConsumption ? "track.viewedOn" : "track.finishDate", [isOneTimeConsumption]);
+
+  const [selectedImage, setSelectedImage] = useState(defaultImage);
   const [open, setOpen] = useState(false);
+  
+  const trackMedia = useTrackMedia();
+  const form = useForm<FormType>();
+  const { control, handleSubmit } = form;
 
-  const isOneTimeConsumption = mediaType === MediaTypeEnum.MOVIES || mediaType === MediaTypeEnum.GAME;
-  const endDateLabel = isOneTimeConsumption ? "track.viewedOn" : "track.finishDate";
-
-
-
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: FormType) => {
     const mediaDataFormated = getMediaData(mediaType, mediaData);
     const formData = {
       startDate: data.startDate,
-      finishDate: data.finishDate,
-      status: isOneTimeConsumption ? MediaStatusEnum.FINISHED : data.finishDate ? MediaStatusEnum.FINISHED : MediaStatusEnum.IN_PROGRESS,
+      endDate: data.endDate,
+      status: isOneTimeConsumption ? MediaStatusEnum.FINISHED : data.endDate ? MediaStatusEnum.FINISHED : MediaStatusEnum.IN_PROGRESS,
       rating: data.rating ? Number(data.rating) : undefined,
       review: data.review,
     }
@@ -71,7 +79,8 @@ export function TrackMediaDialog({ mediaType, image, title, mediaData, existingM
 
         <div className="flex flex-col lg:flex-row w-full">
           <div className="w-full lg:w-1/3 flex flex-col gap-2 items-center text-center">
-            <img src={selectedImage} alt={image} className="rounded" />
+            <img src={selectedImage} alt="sistemImage" className="rounded" />
+            
             <h3 className="text-wrap">
               {title}
             </h3>
@@ -109,6 +118,14 @@ export function TrackMediaDialog({ mediaType, image, title, mediaData, existingM
 
           <Form {...form}>
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 w-full lg:w-2/3">
+              <Select
+                name="status"
+                label={t("track.status", { ns: "media" })}
+                control={control}
+                options={statusAnimeOptions}
+              />       
+
+
               <div className="grid grid-cols-2 gap-4">
                 {!isOneTimeConsumption && (
                   <Input
@@ -137,7 +154,7 @@ export function TrackMediaDialog({ mediaType, image, title, mediaData, existingM
                 step="0.1"
               />
 
-              <Input
+              <TextArea
                 label={t("track.review", { ns: "media" })}
                 name="review"
                 control={control}
@@ -153,6 +170,7 @@ export function TrackMediaDialog({ mediaType, image, title, mediaData, existingM
                   {t("save", { ns: "common" })}
                 </Button>
               </div>
+
             </form>
           </Form>
 
