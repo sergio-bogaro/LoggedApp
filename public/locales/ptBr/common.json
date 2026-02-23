@@ -3,5 +3,9 @@
   "language": "Idioma",
   "theme": "Tema",
   "cancel": "Cancelar",
-  "save": "Salvar"
+  "save": "Salvar",
+  "rating_mode": "Modo de Avaliação",
+  "rating_numeric": "1 – 10",
+  "rating_stars5": "5 Estrelas",
+  "rating_stars10": "10 Estrelas"
 }

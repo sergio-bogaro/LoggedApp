@@ -51,11 +51,11 @@
     "dropped": "Abandonado",
     "planning": "Planejando"
   },
-    "status": {
-      "in_progress": "Em Progresso",
-      "dropped": "Abandonado",
-      "on_hold": "Em Espera",
-      "following": "Seguindo",
-      "finished": "Finalizado"
-    }
+  "status": {
+    "in_progress": "Em Progresso",
+    "dropped": "Abandonado",
+    "on_hold": "Em Espera",
+    "following": "Seguindo",
+    "finished": "Finalizado"
+  }
 }

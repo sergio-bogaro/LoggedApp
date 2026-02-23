@@ -3,5 +3,9 @@
   "language": "Language",
   "theme": "Theme",
   "cancel": "Cancel",
-  "save": "Save"
+  "save": "Save",
+  "rating_mode": "Rating Mode",
+  "rating_numeric": "1 – 10",
+  "rating_stars5": "5 Stars",
+  "rating_stars10": "10 Stars"
 }

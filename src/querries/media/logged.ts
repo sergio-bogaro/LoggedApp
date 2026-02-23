@@ -51,6 +51,16 @@ export async function getMediaByExternalId(externalId: string, type: MediaTypeEn
   }
 }
 
+export async function getMediaByExternalIdWithLogs(externalId: string, type: MediaTypeEnum): Promise<MediaWithLogsResponse | null> {
+  try {
+    return await apiFetch<MediaWithLogsResponse | null>(
+      `/api/media/external/${externalId}/with-logs?type=${type}`
+    );
+  } catch {
+    return null;
+  }
+}
+
 export type MediaCheckItem = {
   externalId: string;
   type: MediaTypeEnum;

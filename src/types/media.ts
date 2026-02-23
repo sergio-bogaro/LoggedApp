@@ -16,6 +16,8 @@ export enum MediaTypeEnum {
   BOOK = "book",
 }
 
+export const finishedStatusEnumValues = [MediaStatusEnum.FINISHED, MediaStatusEnum.DROPPED];
+
 export interface MediaItem {
   id: string;
   title: string;
@@ -29,7 +31,7 @@ export interface MediaItem {
 
 export type TrackMediaPayload = {
   startDate?: string;
-  finishDate?: string;
+  endDate?: string;
   status: MediaStatusEnum
   rating?: number;
   review?: string;

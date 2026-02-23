@@ -1,6 +1,6 @@
 import { t } from "i18next"
 import { useMemo, useState } from "react"
-import { useForm } from "react-hook-form"
+import { useForm, useWatch } from "react-hook-form"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -15,9 +15,11 @@ import {
 import { Form } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Select } from "@/components/ui/select"
+import { StarRating } from "@/components/ui/starRating"
 import { TextArea } from "@/components/ui/textarea"
 import { MediaResponse } from "@/types/logged"
-import { MediaStatusEnum, MediaTypeEnum } from "@/types/media"
+import { finishedStatusEnumValues, MediaStatusEnum, MediaTypeEnum } from "@/types/media"
+import { newIsoDate } from "@/utils/date"
 import { getMediaData } from "@/utils/mediaDataResponse"
 import { useTrackMedia } from "@/utils/mediaStore"
 import { statusAnimeOptions } from "@/utils/selectOptions"
@@ -27,10 +29,11 @@ interface TrackMediaDialogProps {
   title: string;
   mediaType: MediaTypeEnum;
   defaultImage: string;
-  mediaData: any;
+  mediaData: unknown;
 }
 
 interface FormType {
+  status: MediaStatusEnum;
   startDate?: string;
   endDate?: string;
   rating?: number;
@@ -45,8 +48,16 @@ export function TrackMediaDialog({ mediaType, defaultImage, title, mediaData, ex
   const [open, setOpen] = useState(false);
   
   const trackMedia = useTrackMedia();
-  const form = useForm<FormType>();
+  const form = useForm<FormType>({
+    defaultValues: {
+      status: existingMedia ? existingMedia.status : isOneTimeConsumption ? MediaStatusEnum.FINISHED : MediaStatusEnum.IN_PROGRESS,
+      startDate: isOneTimeConsumption ? "" : newIsoDate(),
+      endDate: isOneTimeConsumption ? newIsoDate() : "",
+    }
+  });
   const { control, handleSubmit } = form;
+  const watchStatus = useWatch({ control, name: "status" });
+  const isFinished = useMemo(() => finishedStatusEnumValues.includes(watchStatus) , [watchStatus]);
 
   const onSubmit = (data: FormType) => {
     const mediaDataFormated = getMediaData(mediaType, mediaData);
@@ -70,7 +81,7 @@ export function TrackMediaDialog({ mediaType, defaultImage, title, mediaData, ex
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="w-[1000px]">
+      <DialogContent className="w-[80%] max-w-[1000px]">
         <DialogHeader>
           <DialogTitle>
             {t("track.dialogTitle", { ns: "media", mediaType: t(`type.${mediaType}`, { ns: "media" }) })}
@@ -118,13 +129,15 @@ export function TrackMediaDialog({ mediaType, defaultImage, title, mediaData, ex
 
           <Form {...form}>
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 w-full lg:w-2/3">
-              <Select
-                name="status"
-                label={t("track.status", { ns: "media" })}
-                control={control}
-                options={statusAnimeOptions}
-              />       
 
+              {!isOneTimeConsumption && (
+                <Select
+                  name="status"
+                  label={t("track.status", { ns: "media" })}
+                  control={control}
+                  options={statusAnimeOptions()}
+                />       
+              )}
 
               <div className="grid grid-cols-2 gap-4">
                 {!isOneTimeConsumption && (
@@ -136,29 +149,31 @@ export function TrackMediaDialog({ mediaType, defaultImage, title, mediaData, ex
                   />
                 )}
 
-                <Input
-                  label={t(endDateLabel, { ns: "media" })}
-                  name="endDate"
-                  control={control}
-                  type="date"
-                />
+                {isFinished && (
+                  <Input
+                    label={t(endDateLabel, { ns: "media" })}
+                    name="endDate"
+                    control={control}
+                    type="date"
+                  />
+                )}            
               </div>
 
-              <Input
-                label={t("track.rating", { ns: "media" })}
-                name="rating"
-                control={control}
-                type="number"
-                min="0"
-                max="10"
-                step="0.1"
-              />
+              {isFinished && (
+                <>
+                  <StarRating
+                    label={t("track.rating", { ns: "media" })}
+                    name="rating"
+                    control={control}
+                  />
 
-              <TextArea
-                label={t("track.review", { ns: "media" })}
-                name="review"
-                control={control}
-              />
+                  <TextArea
+                    label={t("track.review", { ns: "media" })}
+                    name="review"
+                    control={control}
+                  />
+                </>
+              )}
 
               <div className="flex justify-end gap-2 mt-4">
                 <DialogClose asChild>

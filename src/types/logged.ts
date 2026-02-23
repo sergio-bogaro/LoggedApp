@@ -26,6 +26,8 @@ export type MediaLogResponse = {
   rating?: number;
   review?: string;
   createdAt: string;
+  startDate?: string;
+  endDate?: string;
 };
 
 export type MediaWithLogsResponse = MediaResponse & {
@@ -61,10 +63,12 @@ export type MediaUpdatePayload = {
 
 export type MediaLogCreatePayload = {
   mediaId: number;
-  date: string;
+  date?: string;
   status?: MediaStatusEnum;
   rating?: number;
   review?: string;
+  startDate?: string;
+  endDate?: string;
 };
 
 export type MediaLogUpdatePayload = {

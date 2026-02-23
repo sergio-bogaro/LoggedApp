@@ -1,8 +1,9 @@
-import { AniListMediaDetails } from "@/querries/externalMedia/anilist";
+import { anilistDateToIso, AniListMediaDetails } from "@/querries/externalMedia/anilist";
+import { RAWGGame } from "@/querries/externalMedia/games";
 import { TMDBMovieDetails, tmdbPosterUrl } from "@/querries/externalMedia/movies";
 import { MediaDataDetailsType, MediaTypeEnum } from "@/types/media";
 
-export function getMediaData(mediaType: MediaTypeEnum, mediaData: any): MediaDataDetailsType {
+export function getMediaData(mediaType: MediaTypeEnum, mediaData: unknown): MediaDataDetailsType {
   switch (mediaType) {
     case MediaTypeEnum.MOVIES: {
       const movieData = mediaData as TMDBMovieDetails;
@@ -25,7 +26,7 @@ export function getMediaData(mediaType: MediaTypeEnum, mediaData: any): MediaDat
         type: mediaType,
         coverUrl: animeData.coverImage.large,
         description: animeData.description,
-        releaseDate: animeData.startDate ? `${animeData.startDate.year}-${animeData.startDate.month}-${animeData.startDate.day}` : undefined,
+        releaseDate: animeData.startDate ? anilistDateToIso(animeData.startDate) : undefined,
         tags: animeData.genres || [],
       };
     }
@@ -37,20 +38,22 @@ export function getMediaData(mediaType: MediaTypeEnum, mediaData: any): MediaDat
         type: mediaType,
         coverUrl: mangaData.coverImage.large,
         description: mangaData.description,
-        releaseDate: mangaData.startDate ? `${mangaData.startDate.year}-${mangaData.startDate.month}-${mangaData.startDate.day}` : undefined,
+        releaseDate: mangaData.startDate ? anilistDateToIso(mangaData.startDate) : undefined,
         tags: mangaData.genres || [],
       };
     }
-    case MediaTypeEnum.GAME:
+    case MediaTypeEnum.GAME: {
+      const gameData = mediaData as RAWGGame;
       return {
-        id: String(mediaData.id),
-        title: mediaData.title,
+        id: String(gameData.id),
+        title: gameData.name,
         type: mediaType,
-        coverUrl: mediaData.coverUrl,
-        description: mediaData.description,
-        releaseDate: mediaData.releaseDate,
-        tags: mediaData.tags || [],
+        coverUrl: gameData.background_image,
+        description: gameData.description,
+        releaseDate: gameData.released,
+        tags: gameData.tags.map((tag) => tag.name) || [],
       };
+    }
     default:
       throw new Error("Unknown media type");
   }

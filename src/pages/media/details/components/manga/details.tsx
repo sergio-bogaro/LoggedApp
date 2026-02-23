@@ -4,8 +4,8 @@ import { Link } from "react-router"
 import { DetailsLabel } from "../general/detailsCard"
 
 import { AniListMediaDetails, getArtist, getAuthor, getCountAndStatusLabel } from "@/querries/externalMedia/anilist"
-import { formatFromIsoDate } from "@/utils/date"
 import { MediaTypeEnum } from "@/types/media"
+import { formatFromIsoDate } from "@/utils/date"
 
 export const MangaDetails = ({ data }: { data: AniListMediaDetails }) => {
   const startDate = data.startDate;
@@ -13,8 +13,6 @@ export const MangaDetails = ({ data }: { data: AniListMediaDetails }) => {
 
   const endDate = data.endDate;
   const formattedEndDate = endDate.year ? formatFromIsoDate(`${endDate.year}-${String(endDate.month).padStart(2, "0")}-${String(endDate.day).padStart(2, "0")}`) : " --- "
-
-  console.log(data)
 
   return (
     <>

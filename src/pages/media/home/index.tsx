@@ -12,8 +12,6 @@ const MediaHomePage = () => {
     staleTime: 1000 * 60 * 5,
   });
 
-  console.log(data)
-
   return (
     <div className="w-full h-full">
       <h1 className="text-2xl font-bold mb-4">Media Home Page</h1>

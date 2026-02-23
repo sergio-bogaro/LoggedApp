@@ -7,6 +7,7 @@ import { GameDetails } from "../game/details";
 import { MangaDetails } from "../manga/details";
 import { MovieDetails } from "../movies/details";
 
+import { Card } from "@/components/tw/generic/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { AniListMediaDetails } from "@/querries/externalMedia/anilist";
@@ -53,11 +54,11 @@ export const DetailsCard = ({ mediaType, data }: DetailsCardProps) => {
     <div className="flex flex-col w-1/5 text-wrap gap-3">
       <h3 className="mx-auto">{t("details.label", { ns: "media" })}</h3>
 
-      <div className="bg-card rounded p-2 flex flex-col gap-2">
+      <Card>
         {getDetails()}
-      </div>
+      </Card>
 
-      <div className="bg-card rounded p-2 flex justify-around">
+      <Card className="flex-row justify-around">
         {/* TODO: Props tooltip */}
         <Button variant="secondary" >
           <History />
@@ -66,9 +67,7 @@ export const DetailsCard = ({ mediaType, data }: DetailsCardProps) => {
         <Button>
           <List />
         </Button>
-
-      </div>
-
+      </Card>
     </div>
 
   )

@@ -6,11 +6,12 @@ import { MediaInfo } from "./components/general/mediaInfo";
 import { MediaPoster } from "./components/general/poster";
 
 import { TrackMediaDialog } from "@/components/tw/dialogs/trackMediaDialog";
+import { LastLog } from "@/components/tw/media/lastLog";
 import { getAniListDetails } from "@/querries/externalMedia/anilist";
 import { getBookDetails } from "@/querries/externalMedia/books";
 import { getGameDetails } from "@/querries/externalMedia/games";
-import { getMovieDetails, tmdbPosterUrl } from "@/querries/externalMedia/movies";
-import { getMediaByExternalId, getMediaLogs } from "@/querries/media/logged";
+import { getMovieDetails } from "@/querries/externalMedia/movies";
+import { getMediaByExternalIdWithLogs } from "@/querries/media/logged";
 import { MediaTypeEnum } from "@/types/media";
 import { getPosterUrl } from "@/utils/posterPaths";
 
@@ -47,19 +48,11 @@ function MediaDetailsPage() {
 
   const { data: existingMedia } = useQuery({
     queryKey: ["existingMedia", id, mediaType],
-    queryFn: () => getMediaByExternalId(id!, mediaType),
+    queryFn: () => getMediaByExternalIdWithLogs(id!, mediaType),
     enabled: !!id && !!mediaType,
   });
 
-  const { data: mediaLogs } = useQuery({
-    queryKey: ["mediaLogs", existingMedia?.id],
-    queryFn: () => getMediaLogs(existingMedia!.id),
-    enabled: !!existingMedia,
-  });
-
-  const lastLog = mediaLogs && mediaLogs.length > 0
-    ? mediaLogs.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0]
-    : null;
+  const lastLog = existingMedia?.logs && existingMedia.logs.length > 0 ? existingMedia.logs[existingMedia.logs.length - 1] : null;
 
   return (
     <div>
@@ -83,12 +76,7 @@ function MediaDetailsPage() {
                 existingMedia={existingMedia}
               />
 
-              {existingMedia && (
-                <div className="mt-2">
-                  <p>You tracked this on {lastLog ? new Date(lastLog.date).toLocaleDateString() : "N/A"}</p>
-                  <p></p>
-                </div>
-              )}
+              <LastLog lastLog={lastLog} />
 
             </div>
 

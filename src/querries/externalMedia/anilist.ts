@@ -124,7 +124,6 @@ export async function searchAniList(
   // Verificar cache
   const cached = searchCache.get(cacheKey);
   if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
-    console.log("📦 Retornando do cache AniList:", cacheKey);
     return cached.data;
   }
 
@@ -241,7 +240,6 @@ export async function searchAniList(
     return items;
   } catch (error: any) {
     if (error.name === "AbortError") {
-      console.log("🚫 Requisição AniList cancelada");
       return [];
     }
     throw error;
@@ -506,7 +504,6 @@ export async function getSeasonalAnime(
 
 export function clearAniListCache() {
   searchCache.clear();
-  console.log("🧹 Cache AniList limpo");
 }
 
 export function getAuthor(media: AniListMediaDetails): string | undefined {
@@ -540,7 +537,6 @@ export function getStudios(media: AniListMediaDetails): Array<{
   isFavourite?: boolean;
 }> {
   const studios = media.studios.nodes.filter((edge) => edge.isAnimationStudio);
-  console.log(studios)
   return studios ? studios : [];
 }
 
@@ -574,4 +570,13 @@ export function cleanDescriptionAnilist(html?: string): string {
     .replace(/<br\s*\/?>/gi, "\n")
     .replace(/<\/?[^>]+(>|$)/g, "")
     .trim();
+}
+
+export function anilistDateToIso(date?: { year?: number; month?: number; day?: number }): string | undefined {
+  if (!date || !date.year) return undefined;
+
+  const month = date.month ? String(date.month).padStart(2, "0") : "01";
+  const day = date.day ? String(date.day).padStart(2, "0") : "01";
+  
+  return `${date.year}-${month}-${day}`;
 }

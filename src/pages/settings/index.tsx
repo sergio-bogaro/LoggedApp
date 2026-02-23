@@ -1,4 +1,5 @@
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import RatingSwitcher from "@/components/RatingSwitcher";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 
 function SettingsPage() {
@@ -6,6 +7,7 @@ function SettingsPage() {
     <div>
       <LanguageSwitcher />
       <ThemeSwitcher />
+      <RatingSwitcher />
     </div>
   )
 }

@@ -81,10 +81,11 @@ export function useTrackMedia() {
       // Create media log
       await createMediaLog({
         mediaId: media.id,
-        date: trackData.startDate || new Date().toISOString().split("T")[0],
         status: trackData.status,
         rating: trackData.rating,
         review: trackData.review,
+        startDate: trackData.startDate,
+        endDate: trackData.endDate,
       });
 
       return media;
