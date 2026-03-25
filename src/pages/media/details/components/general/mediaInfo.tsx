@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AniListMediaDetails } from "@/querries/externalMedia/anilist";
+import { GameBrainGame } from "@/querries/externalMedia/gamebrain";
 import { TMDBMovieDetails } from "@/querries/externalMedia/movies";
 import { MediaTypeEnum } from "@/types/media";
 
@@ -80,6 +81,17 @@ export const MediaInfo = ({ mediaType, data }: MediaInfoProps) => {
           dates={mangaData.startDate.year?.toString()}
           overview={mangaData.description}
           tags={mangaData.genres.map((genre) => genre) || []}
+        />
+      }
+
+      case MediaTypeEnum.GAME: {
+        const gameData = data as GameBrainGame;
+
+        return <MediaInfoComponent
+          title={gameData.name}
+          dates={gameData.release_date?.slice(0, 4) || ""}
+          overview={gameData.description}
+          tags={gameData.genres?.map((genre) => genre.name) || []}
         />
       }
 

@@ -4,7 +4,7 @@
     "title": "Título",
     "description": "Descrição",
     "review": "Avaliação",
-    "rating": "Classificação",
+    "rating": "Nota",
     "releaseDate": "Data de Lançamento",
     "endDate": "Data de Encerramento",
     "director": "Diretor",
@@ -18,7 +18,9 @@
     "duration": "Duração",
     "status": "Status",
     "TMDBScore": "Nota TMDB",
-    "anilistScore": "Nota Anilist"
+    "anilistScore": "Nota Anilist",
+    "developer": "Desenvolvedor",
+    "platforms": "Plataformas"
   },
   "type": {
     "movie": "Filme",

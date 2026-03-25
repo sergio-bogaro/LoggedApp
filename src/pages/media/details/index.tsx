@@ -3,17 +3,18 @@ import { useParams } from "react-router";
 
 import { DetailsCard } from "./components/general/detailsCard";
 import { MediaInfo } from "./components/general/mediaInfo";
-import { MediaPoster } from "./components/general/poster";
 
 import { TrackMediaDialog } from "@/components/tw/dialogs/trackMediaDialog";
+import { ImageWithSkeleton } from "@/components/tw/generic/imageSkeleton";
 import { LastLog } from "@/components/tw/media/lastLog";
 import { getAniListDetails } from "@/querries/externalMedia/anilist";
 import { getBookDetails } from "@/querries/externalMedia/books";
-import { getGameDetails } from "@/querries/externalMedia/games";
+import { getGameDetails } from "@/querries/externalMedia/gamebrain";
 import { getMovieDetails } from "@/querries/externalMedia/movies";
 import { getMediaByExternalIdWithLogs } from "@/querries/media/logged";
+import { getMediaByExternalId, getMediaLogs } from "@/querries/media/logged";
 import { MediaTypeEnum } from "@/types/media";
-import { getPosterUrl } from "@/utils/posterPaths";
+import { getPosterUrl } from "@/utils/mediaDataResponse";
 
 type MediaDetailsParams = {
   mediaType: MediaTypeEnum;
@@ -65,7 +66,7 @@ function MediaDetailsPage() {
           <div className="flex gap-4">
             <div className="flex flex-col w-1/5 text-center text-wrap sticky top-16 self-start transition-all">
 
-              <MediaPoster mediaType={mediaType} data={data} />
+              <ImageWithSkeleton src={getPosterUrl(mediaType, data)} alt={data.title} className="mb-4 aspect-2/3" />
 
               {/* TODO: Alterar esse title para ser o certo */}
               <TrackMediaDialog
@@ -87,6 +88,7 @@ function MediaDetailsPage() {
 
           <div className="flex gap-4 mt-5">
             <DetailsCard mediaType={mediaType} data={data} />
+
             {/* <div className="flex flex-col w-4/5">
               <MovieTabs movieData={data} />
             </div> */}

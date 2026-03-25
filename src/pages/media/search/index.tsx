@@ -14,6 +14,7 @@ import { Select } from "@/components/ui/select";
 import { searchAnimeAnilistNormalized, searchMangaAnilistNormalized } from "@/querries/externalMedia/anilist";
 import { searchBooksNormalized } from "@/querries/externalMedia/books";
 import { searchGamesNormalized } from "@/querries/externalMedia/games";
+import { searchGamesGameBrainNormalized } from "@/querries/externalMedia/games-";
 import { searchMoviesNormalized } from "@/querries/externalMedia/movies";
 import { useExistingMedia } from "@/querries/media/existingMedias";
 import { useAppDispatch, useAppSelector } from "@/store/settings/hooks";
@@ -54,7 +55,8 @@ function MediaSearchPage() {
       case MediaTypeEnum.ANIME:
         return searchAnimeAnilistNormalized;
       case MediaTypeEnum.GAME:
-        return searchGamesNormalized;
+        // Try GameBrain API first, fallback to RAWG if no API key
+        return searchGamesGameBrainNormalized;
       case MediaTypeEnum.BOOK:
         return searchBooksNormalized;
       default:

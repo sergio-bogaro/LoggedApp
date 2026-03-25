@@ -58,3 +58,21 @@ export function getMediaData(mediaType: MediaTypeEnum, mediaData: unknown): Medi
       throw new Error("Unknown media type");
   }
 }
+
+export function getPosterUrl(type: MediaTypeEnum, data: any) {
+  switch (type) {
+    case MediaTypeEnum.MOVIES:
+      return tmdbPosterUrl(data.poster_path, "original");
+    case MediaTypeEnum.MANGA:
+      return data.coverImage?.large;
+    case MediaTypeEnum.ANIME:
+      return data.coverImage?.large;
+    case MediaTypeEnum.BOOK:
+      return data.coverImageUrl;
+    case MediaTypeEnum.GAME:
+      return data.image;
+    default:
+      return "";
+  }
+
+}

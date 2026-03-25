@@ -17,7 +17,9 @@
     "TMDBScore": "TMDB Score",
     "anilistScore": "Anilist Score",
     "source": "Source",
-    "duration": "Duration"
+    "duration": "Duration",
+    "developer": "Developer",
+    "platforms": "Platforms"
   },
   "track": {
     "label": "Track",

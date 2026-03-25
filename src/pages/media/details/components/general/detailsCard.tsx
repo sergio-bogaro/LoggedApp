@@ -11,6 +11,7 @@ import { Card } from "@/components/tw/generic/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { AniListMediaDetails } from "@/querries/externalMedia/anilist";
+import { GameBrainGame } from "@/querries/externalMedia/gamebrain";
 import { RAWGGame } from "@/querries/externalMedia/games";
 import { MediaTypeEnum } from "@/types/media";
 
@@ -44,7 +45,7 @@ export const DetailsCard = ({ mediaType, data }: DetailsCardProps) => {
       case MediaTypeEnum.BOOK:
         return <p>Book details coming soon...</p>;
       case MediaTypeEnum.GAME:
-        return <GameDetails data={data as RAWGGame} />;
+        return <GameDetails data={data as GameBrainGame} />;
 
       default: return null;
     }
