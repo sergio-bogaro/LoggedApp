@@ -13,8 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { searchAnimeAnilistNormalized, searchMangaAnilistNormalized } from "@/querries/externalMedia/anilist";
 import { searchBooksNormalized } from "@/querries/externalMedia/books";
-import { searchGamesNormalized } from "@/querries/externalMedia/games";
-import { searchGamesGameBrainNormalized } from "@/querries/externalMedia/games-";
+import { searchGamesNormalized } from "@/querries/externalMedia/gamebrain";
 import { searchMoviesNormalized } from "@/querries/externalMedia/movies";
 import { useExistingMedia } from "@/querries/media/existingMedias";
 import { useAppDispatch, useAppSelector } from "@/store/settings/hooks";
@@ -55,8 +54,7 @@ function MediaSearchPage() {
       case MediaTypeEnum.ANIME:
         return searchAnimeAnilistNormalized;
       case MediaTypeEnum.GAME:
-        // Try GameBrain API first, fallback to RAWG if no API key
-        return searchGamesGameBrainNormalized;
+        return searchGamesNormalized;
       case MediaTypeEnum.BOOK:
         return searchBooksNormalized;
       default:

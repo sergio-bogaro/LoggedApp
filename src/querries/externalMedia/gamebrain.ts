@@ -1,9 +1,50 @@
 import { MediaItem } from "@/types/media";
 import { MediaTypeEnum } from "@/types/media";
 
-// Cache simples em memória (válido por 10 minutos)
-const searchCache = new Map<string, { data: GameBrainGame[]; timestamp: number }>();
-const CACHE_DURATION = 10 * 60 * 1000; // 10 minutos
+// Cache com localStorage (válido por 24 horas para economizar requisições)
+const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 horas
+const SEARCH_CACHE_KEY = "gamebrain_search_cache";
+const DETAILS_CACHE_KEY = "gamebrain_details_cache";
+
+type CacheEntry<T> = {
+  data: T;
+  timestamp: number;
+};
+
+// Funções auxiliares de cache
+function getFromCache<T>(key: string): T | null {
+  try {
+    const cached = localStorage.getItem(key);
+    if (!cached) return null;
+
+    const parsed = JSON.parse(cached) as CacheEntry<T>;
+    if (Date.now() - parsed.timestamp > CACHE_DURATION) {
+      localStorage.removeItem(key);
+      return null;
+    }
+
+    return parsed.data;
+  } catch {
+    return null;
+  }
+}
+
+function saveToCache<T>(key: string, data: T): void {
+  try {
+    const entry: CacheEntry<T> = {
+      data,
+      timestamp: Date.now(),
+    };
+    localStorage.setItem(key, JSON.stringify(entry));
+  } catch (error) {
+    // Ignorar erros de quota excedida
+    console.warn("Cache storage error:", error);
+  }
+}
+
+function getCacheKey(prefix: string, id: string | number): string {
+  return `${prefix}_${id}`;
+}
 
 // GameBrain Types
 export type GameBrainGame = {
@@ -159,15 +200,18 @@ export async function searchGames(
     };
   }
 
-  const cacheKey = `${query}-${JSON.stringify(options || {})}`.toLowerCase().trim();
-  const cached = searchCache.get(cacheKey);
-  if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+  const cacheKey = getCacheKey(
+    SEARCH_CACHE_KEY,
+    `${query}-${JSON.stringify(options || {})}`
+  );
+  const cached = getFromCache<GameBrainGame[]>(cacheKey);
+  if (cached) {
     return {
       query,
-      total_results: cached.data.length,
+      total_results: cached.length,
       limit: options?.limit || 10,
       offset: options?.offset || 0,
-      results: cached.data,
+      results: cached,
     };
   }
 
@@ -220,12 +264,7 @@ export async function searchGames(
 
     // Cache results
     if (data.results && data.results.length > 0) {
-      searchCache.set(cacheKey, { data: data.results, timestamp: Date.now() });
-
-      if (searchCache.size > 100) {
-        const oldestKey = searchCache.keys().next().value;
-        searchCache.delete(oldestKey);
-      }
+      saveToCache(cacheKey, data.results);
     }
 
     return data;
@@ -285,6 +324,13 @@ export async function getGameDetails(id: number): Promise<GameBrainGame> {
     throw new Error("GameBrain API key not configured");
   }
 
+  // Check cache first
+  const cacheKey = getCacheKey(DETAILS_CACHE_KEY, id);
+  const cached = getFromCache<GameBrainGame>(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
   const res = await fetch(`${GAMEBRAIN_BASE}/games/${id}`, {
     headers: {
       "x-api-key": GAMEBRAIN_API_KEY,
@@ -298,6 +344,8 @@ export async function getGameDetails(id: number): Promise<GameBrainGame> {
 
   const game: GameBrainGame = await res.json();
 
+  // Save to cache
+  saveToCache(cacheKey, game);
 
   return game;
 }
@@ -512,20 +560,121 @@ export function getDescription(game: GameBrainGame): string {
 }
 
 /**
- * Clear search cache
+ * Clear all GameBrain caches
  */
 export function clearCache() {
-  searchCache.clear();
+  try {
+    // Clear all GameBrain cache entries
+    const keys = Object.keys(localStorage);
+    keys.forEach((key) => {
+      if (key.startsWith(SEARCH_CACHE_KEY) || key.startsWith(DETAILS_CACHE_KEY)) {
+        localStorage.removeItem(key);
+      }
+    });
+  } catch (error) {
+    console.warn("Error clearing cache:", error);
+  }
+}
+
+/**
+ * Clear only search cache
+ */
+export function clearSearchCache() {
+  try {
+    const keys = Object.keys(localStorage);
+    keys.forEach((key) => {
+      if (key.startsWith(SEARCH_CACHE_KEY)) {
+        localStorage.removeItem(key);
+      }
+    });
+  } catch (error) {
+    console.warn("Error clearing search cache:", error);
+  }
+}
+
+/**
+ * Clear only details cache
+ */
+export function clearDetailsCache() {
+  try {
+    const keys = Object.keys(localStorage);
+    keys.forEach((key) => {
+      if (key.startsWith(DETAILS_CACHE_KEY)) {
+        localStorage.removeItem(key);
+      }
+    });
+  } catch (error) {
+    console.warn("Error clearing details cache:", error);
+  }
 }
 
 /**
  * Get cache statistics
  */
 export function getCacheStats() {
-  return {
-    size: searchCache.size,
-    maxSize: 100,
-  };
+  try {
+    const keys = Object.keys(localStorage);
+    const searchKeys = keys.filter((k) => k.startsWith(SEARCH_CACHE_KEY));
+    const detailsKeys = keys.filter((k) => k.startsWith(DETAILS_CACHE_KEY));
+
+    return {
+      searchCache: {
+        count: searchKeys.length,
+        size: searchKeys.reduce((acc, key) => {
+          const item = localStorage.getItem(key);
+          return acc + (item?.length || 0);
+        }, 0),
+      },
+      detailsCache: {
+        count: detailsKeys.length,
+        size: detailsKeys.reduce((acc, key) => {
+          const item = localStorage.getItem(key);
+          return acc + (item?.length || 0);
+        }, 0),
+      },
+      cacheDuration: CACHE_DURATION / (60 * 60 * 1000) + " hours",
+    };
+  } catch {
+    return {
+      searchCache: { count: 0, size: 0 },
+      detailsCache: { count: 0, size: 0 },
+      cacheDuration: "24 hours",
+    };
+  }
+}
+
+/**
+ * Clean expired cache entries
+ */
+export function cleanExpiredCache() {
+  try {
+    const keys = Object.keys(localStorage);
+    let cleaned = 0;
+
+    keys.forEach((key) => {
+      if (key.startsWith(SEARCH_CACHE_KEY) || key.startsWith(DETAILS_CACHE_KEY)) {
+        const item = localStorage.getItem(key);
+        if (item) {
+          try {
+            const parsed = JSON.parse(item) as CacheEntry<unknown>;
+            if (Date.now() - parsed.timestamp > CACHE_DURATION) {
+              localStorage.removeItem(key);
+              cleaned++;
+            }
+          } catch {
+            // Remove invalid entries
+            localStorage.removeItem(key);
+            cleaned++;
+          }
+        }
+      }
+    });
+
+    return { cleaned };
+  } catch (error) {
+    console.warn("Error cleaning expired cache:", error);
+    return { cleaned: 0 };
+  }
 }
 
 // ============================================
