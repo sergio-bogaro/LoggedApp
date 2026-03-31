@@ -41,29 +41,29 @@ interface FormType {
 }
 
 export function TrackMediaDialog({ mediaType, defaultImage, title, mediaData, existingMedia }: TrackMediaDialogProps) {
-  const isOneTimeConsumption = useMemo(() => mediaType === MediaTypeEnum.MOVIES || mediaType === MediaTypeEnum.GAME, [mediaType]);
+  const isOneTimeConsumption = useMemo(() => mediaType === MediaTypeEnum.MOVIES, [mediaType]);
   const endDateLabel = useMemo(() => isOneTimeConsumption ? "track.viewedOn" : "track.finishDate", [isOneTimeConsumption]);
 
   const [selectedImage, setSelectedImage] = useState(defaultImage);
   const [open, setOpen] = useState(false);
-  
+
   const trackMedia = useTrackMedia();
   const form = useForm<FormType>({
     defaultValues: {
       status: existingMedia ? existingMedia.status : isOneTimeConsumption ? MediaStatusEnum.FINISHED : MediaStatusEnum.IN_PROGRESS,
-      startDate: isOneTimeConsumption ? "" : newIsoDate(),
-      endDate: isOneTimeConsumption ? newIsoDate() : "",
+      startDate: isOneTimeConsumption ? undefined : newIsoDate(),
+      endDate: isOneTimeConsumption ? newIsoDate() : undefined,
     }
   });
   const { control, handleSubmit } = form;
   const watchStatus = useWatch({ control, name: "status" });
-  const isFinished = useMemo(() => finishedStatusEnumValues.includes(watchStatus) , [watchStatus]);
+  const isFinished = useMemo(() => finishedStatusEnumValues.includes(watchStatus), [watchStatus]);
 
   const onSubmit = (data: FormType) => {
     const mediaDataFormated = getMediaData(mediaType, mediaData);
     const formData = {
       startDate: data.startDate,
-      endDate: data.endDate,
+      endDate: isOneTimeConsumption ? data.endDate : data.status === MediaStatusEnum.FINISHED ? data.endDate : undefined,
       status: isOneTimeConsumption ? MediaStatusEnum.FINISHED : data.endDate ? MediaStatusEnum.FINISHED : MediaStatusEnum.IN_PROGRESS,
       rating: data.rating ? Number(data.rating) : undefined,
       review: data.review,
@@ -89,9 +89,11 @@ export function TrackMediaDialog({ mediaType, defaultImage, title, mediaData, ex
         </DialogHeader>
 
         <div className="flex flex-col lg:flex-row w-full">
+
           <div className="w-full lg:w-1/3 flex flex-col gap-2 items-center text-center">
-            <img src={selectedImage} alt="sistemImage" className="rounded" />
-            
+
+            <img src={selectedImage} alt="media cover" className="rounded aspect-2/3 w-[80%]" />
+
             <h3 className="text-wrap">
               {title}
             </h3>
@@ -136,7 +138,7 @@ export function TrackMediaDialog({ mediaType, defaultImage, title, mediaData, ex
                   label={t("track.status", { ns: "media" })}
                   control={control}
                   options={statusAnimeOptions()}
-                />       
+                />
               )}
 
               <div className="grid grid-cols-2 gap-4">
@@ -156,7 +158,7 @@ export function TrackMediaDialog({ mediaType, defaultImage, title, mediaData, ex
                     control={control}
                     type="date"
                   />
-                )}            
+                )}
               </div>
 
               {isFinished && (
@@ -175,7 +177,7 @@ export function TrackMediaDialog({ mediaType, defaultImage, title, mediaData, ex
                 </>
               )}
 
-              <div className="flex justify-end gap-2 mt-4">
+              <div className="flex justify-end gap-2 mt-auto">
                 <DialogClose asChild>
                   <Button type="button" variant="outline">
                     {t("cancel", { ns: "common" })}
