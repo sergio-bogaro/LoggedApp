@@ -44,7 +44,7 @@ export default function Register() {
       dispatch(setUser(loginResponse.user));
 
       toast.success("Account created successfully!");
-      navigate("/logger");
+      navigate("/media/home");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Registration failed");
     } finally {

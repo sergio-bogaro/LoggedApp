@@ -27,8 +27,9 @@ async function apiFetch<T>(path: string, options?: globalThis.RequestInit): Prom
 // Media — CRUD
 // ──────────────────────────────────────────────
 
-export async function getMediaList(params?: { type?: MediaTypeEnum; status?: MediaStatusEnum; search?: string; }): Promise<MediaResponse[]> {
+export async function getMediaList(userId: number, params?: { type?: MediaTypeEnum; status?: MediaStatusEnum; search?: string; }): Promise<MediaResponse[]> {
   const url = new URLSearchParams();
+  url.set("user_id", userId.toString());
   if (params?.type) url.set("type", params.type);
   if (params?.status) url.set("status", params.status);
   if (params?.search) url.set("search", params.search);
@@ -37,24 +38,24 @@ export async function getMediaList(params?: { type?: MediaTypeEnum; status?: Med
   return apiFetch<MediaResponse[]>(`/api/media/${qs ? `?${qs}` : ""}`);
 }
 
-export async function getMediaById(id: number): Promise<MediaWithLogsResponse> {
-  return apiFetch<MediaWithLogsResponse>(`/api/media/${id}`);
+export async function getMediaById(id: number, userId: number): Promise<MediaWithLogsResponse> {
+  return apiFetch<MediaWithLogsResponse>(`/api/media/${id}?user_id=${userId}`);
 }
 
-export async function getMediaByExternalId(externalId: string, type: MediaTypeEnum): Promise<MediaResponse | null> {
+export async function getMediaByExternalId(externalId: string, type: MediaTypeEnum, userId: number): Promise<MediaResponse | null> {
   try {
     return await apiFetch<MediaResponse | null>(
-      `/api/media/external/${externalId}?type=${type}`
+      `/api/media/external/${externalId}?type=${type}&user_id=${userId}`
     );
   } catch {
     return null;
   }
 }
 
-export async function getMediaByExternalIdWithLogs(externalId: string, type: MediaTypeEnum): Promise<MediaWithLogsResponse | null> {
+export async function getMediaByExternalIdWithLogs(externalId: string, type: MediaTypeEnum, userId: number): Promise<MediaWithLogsResponse | null> {
   try {
     return await apiFetch<MediaWithLogsResponse | null>(
-      `/api/media/external/${externalId}/with-logs?type=${type}`
+      `/api/media/external/${externalId}/with-logs?type=${type}&user_id=${userId}`
     );
   } catch {
     return null;
@@ -66,10 +67,10 @@ export type MediaCheckItem = {
   type: MediaTypeEnum;
 };
 
-export async function batchCheckExisting(items: MediaCheckItem[]): Promise<Record<string, MediaResponse>> {
+export async function batchCheckExisting(items: MediaCheckItem[], userId: number): Promise<Record<string, MediaResponse>> {
   if (items.length === 0) return {};
 
-  return apiFetch<Record<string, MediaResponse>>("/api/media/batch-check", {
+  return apiFetch<Record<string, MediaResponse>>(`/api/media/batch-check?user_id=${userId}`, {
     method: "POST",
     body: JSON.stringify(items),
   });
@@ -82,18 +83,18 @@ export async function createMedia(data: MediaCreatePayload): Promise<MediaRespon
   });
 }
 
-export async function updateMedia(id: number, data: MediaUpdatePayload): Promise<MediaResponse> {
-  return apiFetch<MediaResponse>(`/api/media/${id}`, {
+export async function updateMedia(id: number, data: MediaUpdatePayload, userId: number): Promise<MediaResponse> {
+  return apiFetch<MediaResponse>(`/api/media/${id}?user_id=${userId}`, {
     method: "PATCH",
     body: JSON.stringify(data),
   });
 }
 
-export async function uploadMediaImage(id: number, file: File): Promise<MediaResponse> {
+export async function uploadMediaImage(id: number, file: File, userId: number): Promise<MediaResponse> {
   const formData = new FormData();
   formData.append("file", file);
 
-  const res = await fetch(`${API_BASE}/api/media/${id}/image`, {
+  const res = await fetch(`${API_BASE}/api/media/${id}/image?user_id=${userId}`, {
     method: "POST",
     body: formData,
   });
@@ -106,20 +107,20 @@ export async function uploadMediaImage(id: number, file: File): Promise<MediaRes
   return (await res.json()) as MediaResponse;
 }
 
-export async function deleteMedia(id: number): Promise<void> {
-  await apiFetch<void>(`/api/media/${id}`, { method: "DELETE" });
+export async function deleteMedia(id: number, userId: number): Promise<void> {
+  await apiFetch<void>(`/api/media/${id}?user_id=${userId}`, { method: "DELETE" });
 }
 
 // ──────────────────────────────────────────────
 // Media Logs — CRUD
 // ──────────────────────────────────────────────
 
-export async function getMediaLogs(mediaId: number): Promise<MediaLogResponse[]> {
-  return apiFetch<MediaLogResponse[]>(`/api/media-logs/media/${mediaId}`);
+export async function getMediaLogs(mediaId: number, userId: number): Promise<MediaLogResponse[]> {
+  return apiFetch<MediaLogResponse[]>(`/api/media-logs/media/${mediaId}?user_id=${userId}`);
 }
 
-export async function getMediaLog(logId: number): Promise<MediaLogResponse> {
-  return apiFetch<MediaLogResponse>(`/api/media-logs/${logId}`);
+export async function getMediaLog(logId: number, userId: number): Promise<MediaLogResponse> {
+  return apiFetch<MediaLogResponse>(`/api/media-logs/${logId}?user_id=${userId}`);
 }
 
 export async function createMediaLog(data: MediaLogCreatePayload): Promise<MediaLogResponse> {
@@ -129,15 +130,15 @@ export async function createMediaLog(data: MediaLogCreatePayload): Promise<Media
   });
 }
 
-export async function updateMediaLog(logId: number, data: MediaLogUpdatePayload): Promise<MediaLogResponse> {
-  return apiFetch<MediaLogResponse>(`/api/media-logs/${logId}`, {
+export async function updateMediaLog(logId: number, data: MediaLogUpdatePayload, userId: number): Promise<MediaLogResponse> {
+  return apiFetch<MediaLogResponse>(`/api/media-logs/${logId}?user_id=${userId}`, {
     method: "PATCH",
     body: JSON.stringify(data),
   });
 }
 
-export async function deleteMediaLog(logId: number): Promise<void> {
-  await apiFetch<void>(`/api/media-logs/${logId}`, { method: "DELETE" });
+export async function deleteMediaLog(logId: number, userId: number): Promise<void> {
+  await apiFetch<void>(`/api/media-logs/${logId}?user_id=${userId}`, { method: "DELETE" });
 }
 
 // ──────────────────────────────────────────────

@@ -226,7 +226,6 @@
   border-radius: 9999px;
 }
 
-
 @layer base {
   * {
     @apply border-border;

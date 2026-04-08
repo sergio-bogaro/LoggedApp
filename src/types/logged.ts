@@ -2,6 +2,7 @@ import { MediaStatusEnum, MediaTypeEnum } from "./media";
 
 export type MediaResponse = {
   id: number;
+  userId: number;
   externalId: string;
   title: string;
   type: MediaTypeEnum;
@@ -20,6 +21,7 @@ export type MediaResponse = {
 
 export type MediaLogResponse = {
   id: number;
+  userId: number;
   mediaId: number;
   date: string;
   status?: MediaStatusEnum;
@@ -35,6 +37,7 @@ export type MediaWithLogsResponse = MediaResponse & {
 };
 
 export type MediaCreatePayload = {
+  userId: number;
   title: string;
   type: MediaTypeEnum;
   externalId: string;
@@ -62,6 +65,7 @@ export type MediaUpdatePayload = {
 };
 
 export type MediaLogCreatePayload = {
+  userId: number;
   mediaId: number;
   date?: string;
   status?: MediaStatusEnum;

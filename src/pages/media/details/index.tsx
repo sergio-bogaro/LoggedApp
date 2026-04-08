@@ -12,7 +12,7 @@ import { getBookDetails } from "@/querries/externalMedia/books";
 import { getGameDetails } from "@/querries/externalMedia/gamebrain";
 import { getMovieDetails } from "@/querries/externalMedia/movies";
 import { getMediaByExternalIdWithLogs } from "@/querries/media/logged";
-import { getMediaByExternalId, getMediaLogs } from "@/querries/media/logged";
+import { useAppSelector } from "@/store/auth/hooks";
 import { MediaTypeEnum } from "@/types/media";
 import { getPosterUrl } from "@/utils/mediaDataResponse";
 
@@ -23,6 +23,7 @@ type MediaDetailsParams = {
 
 function MediaDetailsPage() {
   const { mediaType, id } = useParams() as MediaDetailsParams;
+  const { user } = useAppSelector((state) => state.auth);
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["details", mediaType, id],
@@ -49,8 +50,8 @@ function MediaDetailsPage() {
 
   const { data: existingMedia } = useQuery({
     queryKey: ["existingMedia", id, mediaType],
-    queryFn: () => getMediaByExternalIdWithLogs(id!, mediaType),
-    enabled: !!id && !!mediaType,
+    queryFn: () => getMediaByExternalIdWithLogs(id!, mediaType, user!.id),
+    enabled: !!id && !!mediaType && !!user,
   });
 
   const lastLog = existingMedia?.logs && existingMedia.logs.length > 0 ? existingMedia.logs[existingMedia.logs.length - 1] : null;

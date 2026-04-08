@@ -14,7 +14,7 @@ const ListItem = ({ item, existingItem }: ListItemProps) => {
   return (
     <Link
       key={item.id}
-      to={`/logger/${item.type}/details/${item.id}`}
+      to={`/media/${item.type}/details/${item.id}`}
       className="flex group border rounded overflow-hidden p-2 cursor-pointer hover:shadow hover:bg-accent/30 transition">
 
       <ImageWithSkeleton

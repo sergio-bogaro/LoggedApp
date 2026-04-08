@@ -32,15 +32,15 @@ export function Header() {
     if (mediaType) params.set("mediaType", String(mediaType));
 
     const query = params.toString();
-    const path = `/logger/search${query ? `?${query}` : ""}`;
+    const path = `/search${query ? `?${query}` : ""}`;
 
     navigate(path);
   }
 
   return (
-    <div className="flex items-center justify-between px-4 w-full h-14 border-b sticky top-0 self-start bg-background shadow-md z-10">
-      <Link to="/logger" className="transition-colors hover:text-foreground/80">
-        <h1 className="font-bold text-2xl">LOGGED APP</h1>
+    <div className="flex items-center justify-between w-full">
+      <Link to="/media/home" className="transition-colors hover:text-foreground/80 font-bold text-lg">
+        LOGGED APP
       </Link>
 
       {!isSearchPage && (
@@ -67,12 +67,6 @@ export function Header() {
           </Form>
         </div>
       )}
-
-      <Button asChild variant="outline" size="icon" className="rounded-full">
-        <Link to="/logger/settings">
-          <Settings />
-        </Link>
-      </Button>
     </div>
-  )
+  );
 }

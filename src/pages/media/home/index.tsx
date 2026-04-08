@@ -2,14 +2,17 @@ import { useQuery } from "@tanstack/react-query";
 
 import { GridItem } from "@/components/tw/media/grid";
 import { getMediaList } from "@/querries/media/logged";
+import { useAppSelector } from "@/store/auth/hooks";
 import { MediaResponse } from "@/types/logged";
 import { MediaItem } from "@/types/media";
 
 const MediaHomePage = () => {
+  const { user } = useAppSelector((state) => state.auth);
   const { data, isFetching } = useQuery<MediaResponse[]>({
     queryKey: ["media"],
-    queryFn: () => getMediaList(),
+    queryFn: () => getMediaList(user!.id),
     staleTime: 1000 * 60 * 5,
+    enabled: !!user,
   });
 
   return (

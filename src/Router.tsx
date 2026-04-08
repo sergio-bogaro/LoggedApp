@@ -6,6 +6,7 @@ import LoginPage from "./pages/auth/login";
 import RegisterPage from "./pages/auth/register";
 import MediaDetailsPage from "./pages/media/details";
 import MediaHomePage from "./pages/media/home";
+import MediaListPage from "./pages/media/list";
 import MediaSearchPage from "./pages/media/search";
 import SettingsPage from "./pages/settings";
 import WelcomePage from "./pages/welcome";
@@ -18,22 +19,41 @@ export function Router() {
       <Route path="/register" element={<RegisterPage />} />
 
       <Route
-        path="logger"
+        path="/media"
         element={
           <ProtectedRoute>
             <InternalLayout />
           </ProtectedRoute>
         }
       >
-        <Route path="" element={<MediaHomePage />} />
-
-        <Route path="settings" element={<SettingsPage />} />
-
-        <Route path="search" element={<MediaSearchPage />} />
+        <Route path="home" element={<MediaHomePage />} />
+        <Route path="list/:type" element={<MediaListPage />} />
 
         <Route path=":mediaType">
           <Route path="details/:id" element={<MediaDetailsPage />} />
         </Route>
+      </Route>
+
+      <Route
+        path="/settings"
+        element={
+          <ProtectedRoute>
+            <InternalLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route path="" element={<SettingsPage />} />
+      </Route>
+
+      <Route
+        path="/search"
+        element={
+          <ProtectedRoute>
+            <InternalLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route path="" element={<MediaSearchPage />} />
       </Route>
     </Routes>
   );

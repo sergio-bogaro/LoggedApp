@@ -28,7 +28,7 @@ export default function Login() {
       const response = await authApi.login({ username, password });
       dispatch(setUser(response.user));
       toast.success(t("Login successful!"));
-      navigate("/logger");
+      navigate("/media/home");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Login failed");
     } finally {

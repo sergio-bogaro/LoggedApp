@@ -33,7 +33,7 @@ function SimilarTab({ similarList }: { similarList: MovieSummary[] }) {
   return (
     <div className="grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
       {similarList?.map((movie, index) => (
-        <Link to={`/logger/movies/details/${movie.id}`} key={movie.id}>
+        <Link to={`/media/movies/details/${movie.id}`} key={movie.id}>
           <img
             src={tmdbPosterUrl(movie.poster_path)}
             alt={movie.title}

@@ -4,8 +4,8 @@ import { Link, useNavigate } from "react-router";
 
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
-import ViewSetupStep from "@/components/ViewSetupStep";
 import { Button } from "@/components/ui/button";
+import ViewSetupStep from "@/components/ViewSetupStep";
 import { useAppSelector } from "@/store/auth/hooks";
 
 function WelcomePage() {
@@ -15,7 +15,7 @@ function WelcomePage() {
   const [showViewSetup, setShowViewSetup] = useState(false);
 
   const handleViewSetupComplete = () => {
-    navigate("/logger");
+    navigate("/media/home");
   };
 
   if (showViewSetup && isAuthenticated) {
@@ -42,7 +42,7 @@ function WelcomePage() {
             </p>
             <div className="flex gap-2">
               <Button asChild variant="default">
-                <Link to="/logger">Go to App</Link>
+                <Link to="/media/home">Go to App</Link>
               </Button>
               <Button variant="outline" onClick={() => setShowViewSetup(true)}>
                 Setup Views

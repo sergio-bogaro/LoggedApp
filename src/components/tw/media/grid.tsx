@@ -24,7 +24,7 @@ export const GridItem = ({ item, existingItem, showMediaType = false }: GridItem
 
       <Link
         key={item.id}
-        to={`/logger/${item.type}/details/${item.id}`}
+        to={`/media/${item.type}/details/${item.id}`}
         className="block rounded overflow-hidden shadow-md hover:shadow-xl transition-all hover:opacity-70"
       >
 

@@ -2,16 +2,21 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { createMedia, createMediaLog, deleteMedia, updateMedia } from "@/querries/media/logged";
+import { useAppSelector } from "@/store/auth/hooks";
 import { MediaResponse } from "@/types/logged";
 import { MediaDataDetailsType, TrackMediaPayload } from "@/types/media";
 import { MediaItem } from "@/types/media";
 
 export function useHandleBacklog() {
   const queryClient = useQueryClient();
+  const { user } = useAppSelector((state) => state.auth);
 
   const mutation = useMutation({
     mutationFn: async ({ item, existingMedia }: { item: MediaItem; existingMedia?: MediaResponse }) => {
+      if (!user) throw new Error("User not authenticated");
+
       const payload = {
+        userId: user.id,
         title: item.title,
         type: item.type,
         externalId: item.id,
@@ -22,9 +27,9 @@ export function useHandleBacklog() {
       };
 
       if (existingMedia) {
-        if (!payload.onList && !existingMedia.status) return deleteMedia(existingMedia.id);
+        if (!payload.onList && !existingMedia.status) return deleteMedia(existingMedia.id, user.id);
 
-        return updateMedia(existingMedia.id, payload);
+        return updateMedia(existingMedia.id, payload, user.id);
       }
 
       return createMedia(payload);
@@ -45,6 +50,7 @@ export function useHandleBacklog() {
 
 export function useTrackMedia() {
   const queryClient = useQueryClient();
+  const { user } = useAppSelector((state) => state.auth);
 
   const mutation = useMutation({
     mutationFn: async ({ mediaData, existingMedia, trackData }: {
@@ -52,6 +58,8 @@ export function useTrackMedia() {
       existingMedia?: MediaResponse;
       trackData: TrackMediaPayload;
     }) => {
+      if (!user) throw new Error("User not authenticated");
+
       let media: MediaResponse;
 
       // Create or update media
@@ -61,9 +69,10 @@ export function useTrackMedia() {
           rating: trackData.rating,
           review: trackData.review,
           tags: mediaData.tags,
-        });
+        }, user.id);
       } else {
         media = await createMedia({
+          userId: user.id,
           title: mediaData.title,
           type: mediaData.type,
           externalId: mediaData.id,
@@ -80,6 +89,7 @@ export function useTrackMedia() {
 
       // Create media log
       await createMediaLog({
+        userId: user.id,
         mediaId: media.id,
         status: trackData.status,
         rating: trackData.rating,

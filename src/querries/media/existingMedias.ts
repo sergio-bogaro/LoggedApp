@@ -5,8 +5,10 @@ import { MediaResponse } from "@/types/logged";
 
 import { MediaItem } from "@/types/media";
 import { MediaTypeEnum } from "@/types/media";
+import { useAppSelector } from "@/store/auth/hooks";
 
 export function useExistingMedia(items: MediaItem[] | undefined) {
+  const { user } = useAppSelector((state) => state.auth);
   const checkItems: MediaCheckItem[] = items?.map((item) => ({
     externalId: item.id,
     type: item.type,
@@ -14,8 +16,8 @@ export function useExistingMedia(items: MediaItem[] | undefined) {
 
   return useQuery<Record<string, MediaResponse>>({
     queryKey: ["media", checkItems],
-    queryFn: () => batchCheckExisting(checkItems),
-    enabled: checkItems.length > 0,
+    queryFn: () => batchCheckExisting(checkItems, user!.id),
+    enabled: checkItems.length > 0 && !!user,
     staleTime: 1000 * 60 * 5, // 5 minutos
   });
 }
