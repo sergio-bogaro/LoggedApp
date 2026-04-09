@@ -1,9 +1,9 @@
 import { Outlet } from "react-router";
 
-import { AppSidebar } from "@/components/tw/sidebar/AppSidebar";
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { Separator } from "@/components/ui/separator";
 import { Header } from "@/components/tw/header";
+import { AppSidebar } from "@/components/tw/sidebar/AppSidebar";
+import { Separator } from "@/components/ui/separator";
+import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
 function InternalLayout() {
   return (

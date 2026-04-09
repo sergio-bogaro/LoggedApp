@@ -27,6 +27,7 @@ export function Router() {
         }
       >
         <Route path="home" element={<MediaHomePage />} />
+        <Route path="list" element={<MediaListPage />} />
         <Route path="list/:type" element={<MediaListPage />} />
 
         <Route path=":mediaType">

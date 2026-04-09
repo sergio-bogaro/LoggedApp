@@ -24,7 +24,7 @@ import { mediaTypesOptions } from "@/utils/mediaText";
 
 export type FormSearchProps = {
   searchFilter: string;
-  mediaType?: MediaTypeEnum;
+  mediaType: MediaTypeEnum;
 }
 
 function MediaSearchPage() {

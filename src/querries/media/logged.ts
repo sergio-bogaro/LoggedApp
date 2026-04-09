@@ -33,7 +33,7 @@ export async function getMediaList(userId: number, params?: { type?: MediaTypeEn
   if (params?.type) url.set("type", params.type);
   if (params?.status) url.set("status", params.status);
   if (params?.search) url.set("search", params.search);
-
+  
   const qs = url.toString();
   return apiFetch<MediaResponse[]>(`/api/media/${qs ? `?${qs}` : ""}`);
 }

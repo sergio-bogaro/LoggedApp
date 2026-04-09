@@ -12,7 +12,7 @@ import { MediaItem } from "@/types/media";
 
 interface MediaViewProps {
   isLoading: boolean;
-  error?: Error;
+  error: Error | null;
   mediaData?: MediaItem[];
   existingMedia?: Record<string, MediaResponse>;
 }

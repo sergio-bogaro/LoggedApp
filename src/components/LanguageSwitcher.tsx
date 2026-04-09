@@ -12,11 +12,12 @@ const LanguageSwitcher = () => {
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
+    localStorage.setItem("i18nextLng", lng);
   };
 
   return (
     <Select
-      label={t("common.language")}
+      label={t("language")}
       name="language"
       value={i18n.language}
       options={languageOptions}

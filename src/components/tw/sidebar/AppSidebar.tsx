@@ -1,5 +1,8 @@
-import { Film, Tv, BookOpen, Gamepad2, Home, Settings } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { t } from "i18next";
 import { Link, useLocation } from "react-router";
+
+import { bottomNavigation, mainNavigation, mediaTypes } from "./const";
 
 import {
   Sidebar,
@@ -14,59 +17,27 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
-import { MediaTypeEnum } from "@/types/media";
-
-const mediaTypes = [
-  {
-    title: "Filmes",
-    icon: Film,
-    type: MediaTypeEnum.MOVIES,
-    path: "/media/list/movies",
-  },
-  {
-    title: "Animes",
-    icon: Tv,
-    type: MediaTypeEnum.ANIME,
-    path: "/media/list/anime",
-  },
-  {
-    title: "Mangás",
-    icon: BookOpen,
-    type: MediaTypeEnum.MANGA,
-    path: "/media/list/manga",
-  },
-  {
-    title: "Livros",
-    icon: BookOpen,
-    type: MediaTypeEnum.BOOK,
-    path: "/media/list/books",
-  },
-  {
-    title: "Jogos",
-    icon: Gamepad2,
-    type: MediaTypeEnum.GAME,
-    path: "/media/list/games",
-  },
-];
-
-const mainNavigation = [
-  {
-    title: "Home",
-    icon: Home,
-    path: "/media/home",
-  },
-];
-
-const bottomNavigation = [
-  {
-    title: "Configurações",
-    icon: Settings,
-    path: "/settings",
-  },
-];
+import { customViewsApi } from "@/querries/customViews/customViews";
+import { useAppSelector } from "@/store/auth/hooks";
+import type { CustomView } from "@/types/customView";
 
 export function AppSidebar() {
   const location = useLocation();
+  const { user } = useAppSelector((state) => state.auth);
+
+  const { data: customViews } = useQuery<CustomView[]>({
+    queryKey: ["custom-views", user?.id],
+    queryFn: () => customViewsApi.getUserViews(user!.id),
+    enabled: !!user,
+    staleTime: 1000 * 60 * 5,
+  });
+
+  const visibleViews = customViews
+    ?.filter((v) => v.isVisible)
+    .sort((a, b) => {
+      if (a.isPinned !== b.isPinned) return a.isPinned ? -1 : 1;
+      return a.order - b.order;
+    }) ?? [];
 
   return (
     <Sidebar>
@@ -81,7 +52,6 @@ export function AppSidebar() {
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Navegação</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {mainNavigation.map((item) => (
@@ -104,7 +74,7 @@ export function AppSidebar() {
         <SidebarSeparator />
 
         <SidebarGroup>
-          <SidebarGroupLabel>Mídias</SidebarGroupLabel>
+          <SidebarGroupLabel>{t("label", { ns: "media" })}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {mediaTypes.map((item) => (
@@ -115,7 +85,7 @@ export function AppSidebar() {
                   >
                     <Link to={item.path}>
                       <item.icon />
-                      <span>{item.title}</span>
+                      <span>{ t(`type.${item.type}`, { ns: "media" }) }</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -123,6 +93,40 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {visibleViews.length > 0 && (
+          <>
+            <SidebarSeparator />
+            <SidebarGroup>
+              <SidebarGroupLabel>Views</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {visibleViews.map((view) => {
+                    const viewTypes = view.filters?.media_types;
+                    const singleType = viewTypes?.length === 1 ? viewTypes[0] : undefined;
+                    const href = singleType
+                      ? `/media/list/${singleType}?view=${view.id}`
+                      : `/media/list?view=${view.id}`;
+                    const isActive =
+                      location.pathname === (singleType ? `/media/list/${singleType}` : "/media/list") &&
+                      location.search === `?view=${view.id}`;
+
+                    return (
+                      <SidebarMenuItem key={view.id}>
+                        <SidebarMenuButton asChild isActive={isActive}>
+                          <Link to={href}>
+                            <span>{view.icon ?? "📁"}</span>
+                            <span>{view.name}</span>
+                          </Link>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    );
+                  })}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </>
+        )}
       </SidebarContent>
 
       <SidebarFooter>

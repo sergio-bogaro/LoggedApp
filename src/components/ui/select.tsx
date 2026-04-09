@@ -204,7 +204,7 @@ export function Select({
   if (control) {
     return (
       <div className="flex flex-col gap-1" style={width ? { width: `${width}px` } : { width: "100%" }}>
-        <Label htmlFor={id ?? name}>
+        <Label className="font-bold" htmlFor={id ?? name}>
           {label}
           {required && <span className="text-destructive font-extrabold -ml-1.5">*</span>}
         </Label>

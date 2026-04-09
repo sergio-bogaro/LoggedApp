@@ -21,7 +21,7 @@ export const finishedStatusEnumValues = [MediaStatusEnum.FINISHED, MediaStatusEn
 export interface MediaItem {
   id: string;
   title: string;
-  coverUrl?: string;
+  coverUrl: string;
   year?: string | number;
   type: MediaTypeEnum;
   description?: string;

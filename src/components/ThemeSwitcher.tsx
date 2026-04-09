@@ -23,7 +23,7 @@ function ThemeSwitcher() {
 
   return (
     <Select
-      label={t("common.theme")}
+      label={t("theme")}
       name="theme"
       options={themeOptions}
       value={theme}

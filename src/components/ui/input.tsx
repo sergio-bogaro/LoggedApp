@@ -11,6 +11,14 @@ type BaseInputProps = React.ComponentProps<"input"> & {
   className?: string;
 }
 
+type InputProps = {
+  label?: string;
+  name: string;
+  id?: string;
+  required?: boolean;
+  control?: Control<any>;
+} & Omit<React.ComponentProps<typeof BaseInput>, "name" | "id">
+
 const BaseInput = React.forwardRef<HTMLInputElement, BaseInputProps>(function BaseInput(
   { className, type, ...props },
   ref
@@ -31,13 +39,7 @@ const BaseInput = React.forwardRef<HTMLInputElement, BaseInputProps>(function Ba
   )
 })
 
-type InputProps = {
-  label?: string;
-  name: string;
-  id?: string;
-  required?: boolean;
-  control?: Control<any>;
-} & Omit<React.ComponentProps<typeof BaseInput>, "name" | "id">
+
 
 function Input({ label, name, id, required, control, ...props }: InputProps) {
   if (control) {

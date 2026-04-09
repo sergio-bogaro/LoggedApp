@@ -1,13 +1,14 @@
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 
+import CustomViewsManager from "./views";
+
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import RatingSwitcher from "@/components/RatingSwitcher";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 import { Button } from "@/components/ui/button";
 import { useAppDispatch, useAppSelector } from "@/store/auth/hooks";
 import { logout } from "@/store/auth/slice";
-import CustomViewsManager from "./views";
 
 function SettingsPage() {
   const navigate = useNavigate();
