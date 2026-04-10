@@ -1,5 +1,5 @@
 import { anilistDateToIso, AniListMediaDetails } from "@/querries/externalMedia/anilist";
-import { RAWGGame } from "@/querries/externalMedia/games";
+import { GameBrainGame } from "@/querries/externalMedia/gamebrain";
 import { TMDBMovieDetails, tmdbPosterUrl } from "@/querries/externalMedia/movies";
 import { MediaDataDetailsType, MediaTypeEnum } from "@/types/media";
 
@@ -43,14 +43,14 @@ export function getMediaData(mediaType: MediaTypeEnum, mediaData: unknown): Medi
       };
     }
     case MediaTypeEnum.GAME: {
-      const gameData = mediaData as RAWGGame;
+      const gameData = mediaData as GameBrainGame;
       return {
         id: String(gameData.id),
         title: gameData.name,
         type: mediaType,
-        coverUrl: gameData.background_image,
+        coverUrl: gameData.image,
         description: gameData.description,
-        releaseDate: gameData.released,
+        releaseDate: gameData.release_date,
         tags: gameData.tags.map((tag) => tag.name) || [],
       };
     }
@@ -59,6 +59,7 @@ export function getMediaData(mediaType: MediaTypeEnum, mediaData: unknown): Medi
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getPosterUrl(type: MediaTypeEnum, data: any) {
   switch (type) {
     case MediaTypeEnum.MOVIES:

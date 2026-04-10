@@ -28,7 +28,7 @@ export const MediaInfoComponent = ({ title, dates, tags, tagline, overview }: Me
         <span className="text-foreground/70">{dates}</span>
       </div>
 
-      <div className="flex gap-2 my-3">
+      <div className="flex flex-wrap gap-2 my-3">
         {tags.map((tag) => (
           <span key={tag} className="text-sm text-primary-foreground bg-primary rounded-md px-3 py-1">{tag}</span>
         ))}

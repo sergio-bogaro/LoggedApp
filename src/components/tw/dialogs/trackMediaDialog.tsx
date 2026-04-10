@@ -48,6 +48,7 @@ export function TrackMediaDialog({ mediaType, defaultImage, title, mediaData, ex
   const [open, setOpen] = useState(false);
 
   const trackMedia = useTrackMedia();
+
   const form = useForm<FormType>({
     defaultValues: {
       status: existingMedia ? existingMedia.status : isOneTimeConsumption ? MediaStatusEnum.FINISHED : MediaStatusEnum.IN_PROGRESS,
@@ -61,6 +62,7 @@ export function TrackMediaDialog({ mediaType, defaultImage, title, mediaData, ex
 
   const onSubmit = (data: FormType) => {
     const mediaDataFormated = getMediaData(mediaType, mediaData);
+
     const formData = {
       startDate: data.startDate,
       endDate: isOneTimeConsumption ? data.endDate : data.status === MediaStatusEnum.FINISHED ? data.endDate : undefined,
