@@ -36,6 +36,7 @@
     "dialogTitle": "Registrar {{mediaType}}",
     "changeImage": "Mudar Imagem",
     "changeImageDescription": "Isso aparecerá apenas na sua biblioteca",
+    "selectFile": "Selecionar Arquivo",
     "status": "Status",
     "score": "Nota",
     "progress": "Progresso",

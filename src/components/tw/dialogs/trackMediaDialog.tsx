@@ -1,5 +1,5 @@
 import { t } from "i18next"
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { useForm, useWatch } from "react-hook-form"
 
 import { Button } from "@/components/ui/button"
@@ -45,7 +45,10 @@ export function TrackMediaDialog({ mediaType, defaultImage, title, mediaData, ex
   const endDateLabel = useMemo(() => isOneTimeConsumption ? "track.viewedOn" : "track.finishDate", [isOneTimeConsumption]);
 
   const [selectedImage, setSelectedImage] = useState(defaultImage);
+  const [selectedFile, setSelectedFile] = useState<File | undefined>(undefined);
   const [open, setOpen] = useState(false);
+  const [imageDialogOpen, setImageDialogOpen] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const trackMedia = useTrackMedia();
 
@@ -60,18 +63,32 @@ export function TrackMediaDialog({ mediaType, defaultImage, title, mediaData, ex
   const watchStatus = useWatch({ control, name: "status" });
   const isFinished = useMemo(() => finishedStatusEnumValues.includes(watchStatus), [watchStatus]);
 
+  useEffect(() => {
+    if (isFinished && !isOneTimeConsumption) {
+      form.setValue("endDate", newIsoDate());
+      form.setValue("startDate", "")
+    } else {
+      form.setValue("startDate", newIsoDate());
+      form.setValue("endDate", undefined)
+    }
+  }, [isFinished])
+
   const onSubmit = (data: FormType) => {
     const mediaDataFormated = getMediaData(mediaType, mediaData);
 
+    console.log(data.startDate ?? "teste")
+
     const formData = {
-      startDate: data.startDate,
+      startDate: data.startDate && data.startDate.trim() !== "" ? data.startDate : undefined,
       endDate: isOneTimeConsumption ? data.endDate : data.status === MediaStatusEnum.FINISHED ? data.endDate : undefined,
       status: isOneTimeConsumption ? MediaStatusEnum.FINISHED : data.endDate ? MediaStatusEnum.FINISHED : MediaStatusEnum.IN_PROGRESS,
       rating: data.rating ? Number(data.rating) : undefined,
       review: data.review,
     }
 
-    trackMedia(mediaDataFormated, existingMedia, formData);
+    console.log(selectedFile)
+
+    trackMedia(mediaDataFormated, existingMedia, formData, selectedFile);
     setOpen(false);
   };
 
@@ -100,32 +117,44 @@ export function TrackMediaDialog({ mediaType, defaultImage, title, mediaData, ex
               {title}
             </h3>
 
-            <Dialog>
+            <Dialog open={imageDialogOpen} onOpenChange={setImageDialogOpen}>
               <DialogTrigger asChild>
                 <Button>
                   {t("track.changeImage", { ns: "media" })}
                 </Button>
               </DialogTrigger>
-              <DialogContent className="w-[1000px] max-h-10/12 overflow-auto ">
 
+              <DialogContent className="max-w-sm">
                 <DialogHeader>
                   <DialogTitle>{t("track.changeImage", { ns: "media" })}</DialogTitle>
                   <DialogDescription>{t("track.changeImageDescription", { ns: "media" })}</DialogDescription>
                 </DialogHeader>
 
-                {/* <div className="grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
-                  {alternateImages?.map((imgUrl, index) => (
-                    <DialogClose key={index} asChild>
-                      <img
-                        src={imgUrl}
-                        alt={imgUrl}
-                        onClick={() => setSelectedImage(imgUrl)}
-                        className="rounded hover:scale-105 transition-transform cursor-pointer"
-                      />
-                    </DialogClose>
-                  ))}
-                </div> */}
+                <div className="flex flex-col items-center gap-4">
+                  <img
+                    src={selectedImage}
+                    alt="preview"
+                    className="rounded aspect-2/3 w-[60%] object-cover"
+                  />
 
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".jpg,.jpeg,.png,.webp,.gif"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      setSelectedFile(file);
+                      setSelectedImage(URL.createObjectURL(file));
+                      setImageDialogOpen(false);
+                    }}
+                  />
+
+                  <Button onClick={() => fileInputRef.current?.click()}>
+                    {t("track.selectFile", { ns: "media" })}
+                  </Button>
+                </div>
               </DialogContent>
 
             </Dialog>

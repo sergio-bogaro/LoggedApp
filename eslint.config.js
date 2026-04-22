@@ -40,6 +40,7 @@ export default [
       ...reactPlugin.configs.recommended.rules,
       ...reactPlugin.configs['jsx-runtime'].rules,
       ...reactHooksPlugin.configs.recommended.rules,
+      'react-hooks/exhaustive-deps': 'off',
       indent: ["error", 2, { "SwitchCase": 1 }],
       'object-curly-spacing': ["error", "always"],
       'quotes': ['error', 'double', { 'avoidEscape': true }],

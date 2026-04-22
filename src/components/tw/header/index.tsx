@@ -1,5 +1,5 @@
 import { t } from "i18next";
-import { Search, Settings } from "lucide-react";
+import { Search } from "lucide-react";
 import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router";
@@ -38,35 +38,36 @@ export function Header() {
   }
 
   return (
-    <div className="flex items-center justify-between w-full">
-      <Link to="/media/home" className="transition-colors hover:text-foreground/80 font-bold text-lg">
+    <div className="flex items-center justify-between w-full gap-4">
+      <Link to="/media/home" className="transition-colors hover:text-foreground/80 font-bold text-lg shrink-0">
         LOGGED APP
       </Link>
 
       {!isSearchPage && (
-        <div className="hidden">
-          <Form {...form}>
-            <form className='w-full flex gap-1 items-end pb-3' onSubmit={form.handleSubmit(onSearch)}>
-              <Select
-                options={mediaTypesOptions}
-                name='mediaType'
-                control={control}
-                placeholder={t("mediaType")}
-              />
+        <Form {...form}>
+          <form className="flex gap-2 items-end w-md" onSubmit={form.handleSubmit(onSearch)}>
+            <Select
+              options={mediaTypesOptions}
+              name="mediaType"
+              control={control}
+              placeholder={t("mediaType")}
+              width={200}
+            />
 
-              <Input
-                name='searchFilter'
-                control={control}
-                placeholder={t("placeholder")}
-              />
+            <Input
+              name="searchFilter"
+              control={control}
+              placeholder={t("placeholder")}
+            />
 
-              <Button>
-                <Search />
-              </Button>
-            </form>
-          </Form>
-        </div>
+            <Button type="submit" size="icon">
+              <Search />
+            </Button>
+          </form>
+        </Form>
       )}
+
+
     </div>
   );
 }

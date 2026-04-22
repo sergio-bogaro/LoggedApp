@@ -12,6 +12,7 @@ import { getBookDetails } from "@/querries/externalMedia/books";
 import { getGameDetails } from "@/querries/externalMedia/gamebrain";
 import { getMovieDetails } from "@/querries/externalMedia/movies";
 import { getMediaByExternalIdWithLogs } from "@/querries/media/logged";
+import { mediaImageUrl } from "@/querries/media/logged"
 import { useAppSelector } from "@/store/auth/hooks";
 import { MediaTypeEnum } from "@/types/media";
 import { getPosterUrl } from "@/utils/mediaDataResponse";
@@ -67,12 +68,12 @@ function MediaDetailsPage() {
           <div className="flex gap-4">
             <div className="flex flex-col w-1/5 text-center text-wrap sticky top-16 self-start transition-all">
 
-              <ImageWithSkeleton src={getPosterUrl(mediaType, data)} alt={data.title} className="mb-4 aspect-2/3" />
+              <ImageWithSkeleton src={existingMedia?.imagePath ? mediaImageUrl(existingMedia.imagePath)! : getPosterUrl(mediaType, data)} alt={data.title} className="mb-4 aspect-2/3" />
 
               {/* TODO: Alterar esse title para ser o certo */}
               <TrackMediaDialog
                 mediaType={mediaType}
-                defaultImage={getPosterUrl(mediaType, data)}
+                defaultImage={existingMedia?.imagePath ? mediaImageUrl(existingMedia.imagePath)! : getPosterUrl(mediaType, data)}
                 title="data.title"
                 mediaData={data}
                 existingMedia={existingMedia}

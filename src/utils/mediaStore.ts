@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-import { createMedia, createMediaLog, deleteMedia, updateMedia } from "@/querries/media/logged";
+import { createMedia, createMediaLog, deleteMedia, updateMedia, uploadMediaImage } from "@/querries/media/logged";
 import { useAppSelector } from "@/store/auth/hooks";
 import { MediaResponse } from "@/types/logged";
 import { MediaDataDetailsType, TrackMediaPayload } from "@/types/media";
@@ -53,10 +53,11 @@ export function useTrackMedia() {
   const { user } = useAppSelector((state) => state.auth);
 
   const mutation = useMutation({
-    mutationFn: async ({ mediaData, existingMedia, trackData }: {
+    mutationFn: async ({ mediaData, existingMedia, trackData, imageFile }: {
       mediaData: MediaDataDetailsType;
       existingMedia?: MediaResponse;
       trackData: TrackMediaPayload;
+      imageFile?: File;
     }) => {
       if (!user) throw new Error("User not authenticated");
 
@@ -98,11 +99,17 @@ export function useTrackMedia() {
         endDate: trackData.endDate,
       });
 
+      // Upload custom image if provided
+      if (imageFile) {
+        await uploadMediaImage(media.id, imageFile, user.id);
+      }
+
       return media;
     },
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["media"] });
+      queryClient.invalidateQueries({ queryKey: ["existingMedia"] });
       toast.success("Media tracked successfully");
     },
     onError: (error: Error) => {
@@ -110,8 +117,8 @@ export function useTrackMedia() {
     },
   });
 
-  return (mediaData: MediaDataDetailsType, existingMedia: MediaResponse | undefined, trackData: TrackMediaPayload) =>
-    mutation.mutate({ mediaData, existingMedia, trackData });
+  return (mediaData: MediaDataDetailsType, existingMedia: MediaResponse | undefined, trackData: TrackMediaPayload, imageFile?: File) =>
+    mutation.mutate({ mediaData, existingMedia, trackData, imageFile });
 }
 
 

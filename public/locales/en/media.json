@@ -27,6 +27,7 @@
     "dialogTitle": "Track {{mediaType}}",
     "changeImage": "Change Image",
     "changeImageDescription": "This will appear only in your library",
+    "selectFile": "Select a File",
     "status": "Status",
     "score": "Score",
     "progress": "Progress",

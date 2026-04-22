@@ -4,6 +4,7 @@ import { MediaTypeBadge } from "../generic/badges";
 
 import { ImageWithSkeleton } from "@/components/tw/generic/imageSkeleton";
 import { MediaOptionsButton } from "@/components/tw/media/mediaOptions";
+import { mediaImageUrl } from "@/querries/media/logged";
 import { MediaResponse } from "@/types/logged";
 import { MediaItem } from "@/types/media";
 
@@ -29,7 +30,7 @@ export const GridItem = ({ item, existingItem, showMediaType = false }: GridItem
       >
 
         <ImageWithSkeleton
-          src={item.coverUrl}
+          src={existingItem?.imagePath ? mediaImageUrl(existingItem.imagePath)! : item.coverUrl}
           alt={item.title}
           className="h-full w-auto aspect-2/3 object-cover"
         />
