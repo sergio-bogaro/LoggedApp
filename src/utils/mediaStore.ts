@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
 import { createMedia, createMediaLog, deleteMedia, updateMedia, uploadMediaImage } from "@/querries/media/logged";
@@ -8,6 +9,7 @@ import { MediaDataDetailsType, TrackMediaPayload } from "@/types/media";
 import { MediaItem } from "@/types/media";
 
 export function useHandleBacklog() {
+  const { t } = useTranslation("media");
   const queryClient = useQueryClient();
   const { user } = useAppSelector((state) => state.auth);
 
@@ -38,10 +40,10 @@ export function useHandleBacklog() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["media"] });
 
-      toast.success("Added to Backlog");
+      toast.success(t("feedback.backlogAdded"));
     },
     onError: (error: Error) => {
-      toast.error(error.message || "Failed to add media");
+      toast.error(error.message || t("feedback.backlogFailed"));
     },
   });
 
@@ -49,6 +51,7 @@ export function useHandleBacklog() {
 }
 
 export function useTrackMedia() {
+  const { t } = useTranslation("media");
   const queryClient = useQueryClient();
   const { user } = useAppSelector((state) => state.auth);
 
@@ -110,15 +113,14 @@ export function useTrackMedia() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["media"] });
       queryClient.invalidateQueries({ queryKey: ["existingMedia"] });
-      toast.success("Media tracked successfully");
+      toast.success(t("feedback.trackSuccess"));
     },
     onError: (error: Error) => {
-      toast.error(error.message || "Failed to track media");
+      toast.error(error.message || t("feedback.trackFailed"));
     },
   });
 
   return (mediaData: MediaDataDetailsType, existingMedia: MediaResponse | undefined, trackData: TrackMediaPayload, imageFile?: File) =>
     mutation.mutate({ mediaData, existingMedia, trackData, imageFile });
 }
-
 

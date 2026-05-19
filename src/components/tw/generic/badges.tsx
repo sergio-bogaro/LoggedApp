@@ -5,7 +5,7 @@ import { MediaStatusEnum, MediaTypeEnum } from "@/types/media"
 
 const Badge = ({ children, className }: { children: ReactNode, className?: string }) => {
   return (
-    <span className={`text-sm px-2 py-1 rounded ${className}`}>
+    <span className={`text-sm px-2 py-1 rounded-sm ${className}`}>
       {children}
     </span>
   )
@@ -35,11 +35,11 @@ export const MediaTypeBadge = ({ type }: { type: MediaTypeEnum }) => {
 
 export const StatusBadge = ({ status }: { status: MediaStatusEnum }) => {
   const statusColors: Record<MediaStatusEnum, string> = {
-    [MediaStatusEnum.IN_PROGRESS]: "bg-blue-500",
-    [MediaStatusEnum.FOLLOWING]: "bg-gray-500",
-    [MediaStatusEnum.ON_HOLD]: "bg-yellow-500",
-    [MediaStatusEnum.DROPPED]: "bg-red-500",
-    [MediaStatusEnum.FINISHED]: "bg-green-500",
+    [MediaStatusEnum.IN_PROGRESS]: "bg-blue-700",
+    [MediaStatusEnum.FOLLOWING]: "bg-gray-700",
+    [MediaStatusEnum.ON_HOLD]: "bg-yellow-700",
+    [MediaStatusEnum.DROPPED]: "bg-red-700",
+    [MediaStatusEnum.FINISHED]: "bg-green-700",
   };
 
   function getStatusText(status: MediaStatusEnum) {

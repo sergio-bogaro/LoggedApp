@@ -1,9 +1,9 @@
 
 import { useQuery } from "@tanstack/react-query";
-import { t } from "i18next";
 import { Grid, List, Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router";
 
 import MediaView from "@/components/tw/media/view";
@@ -20,7 +20,7 @@ import { useAppDispatch, useAppSelector } from "@/store/settings/hooks";
 import { setViewMode, ViewMode } from "@/store/settings/slice";
 import { MediaItem } from "@/types/media";
 import { MediaTypeEnum } from "@/types/media";
-import { mediaTypesOptions } from "@/utils/mediaText";
+import { getMediaTypesOptions } from "@/utils/mediaText";
 
 export type FormSearchProps = {
   searchFilter: string;
@@ -28,12 +28,14 @@ export type FormSearchProps = {
 }
 
 function MediaSearchPage() {
+  const { t } = useTranslation("media");
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [searchName, setSearchName] = useState(searchParams.get("searchFilter") || "");
   const { viewMode } = useAppSelector(state => state.ui)
   const isGrid = useMemo(() => viewMode === "grid", [viewMode]);
   const dispatch = useAppDispatch();
+  const mediaTypesOptions = useMemo(() => getMediaTypesOptions(t), [t]);
 
   const form = useForm<FormSearchProps>({
     defaultValues: {
@@ -96,7 +98,7 @@ function MediaSearchPage() {
 
   useEffect(() => {
     handleSearchParamsChange()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [watchedMediaType]);
 
   return (
@@ -108,16 +110,16 @@ function MediaSearchPage() {
               options={mediaTypesOptions}
               name='mediaType'
               control={control}
-              placeholder={t("mediaType")}
-              label={t("Type")}
+              placeholder={t("searchForm.typePlaceholder")}
+              label={t("searchForm.typeLabel")}
               width={200}
             />
 
             <Input
               name='searchFilter'
               control={control}
-              label={t("search")}
-              placeholder={t("searchPlaceholder")}
+              label={t("searchForm.searchLabel")}
+              placeholder={t("searchForm.searchPlaceholder")}
             />
 
             <Button>

@@ -1,3 +1,5 @@
+import type { TFunction } from "i18next";
+
 import { MediaTypeEnum } from "@/types/media";
 
 interface MediaTypeText {
@@ -5,19 +7,27 @@ interface MediaTypeText {
   placeholder: string;
 }
 
-export function getPageTranslation(page: MediaTypeEnum): MediaTypeText {
+export function getPageTranslation(t: TFunction, page?: MediaTypeEnum): MediaTypeText {
   switch (page) {
     case MediaTypeEnum.MOVIES:
-      return { label: "Search Movies (TMDB)", placeholder: "Type a movie name" };
+      return {
+        label: t("searchForm.pageLabelMovies", { ns: "media" }),
+        placeholder: t("searchForm.pagePlaceholderMovies", { ns: "media" }),
+      };
     default:
-      return { label: "Search", placeholder: "Type to search..." };
+      return {
+        label: t("searchForm.pageLabelDefault", { ns: "media" }),
+        placeholder: t("searchForm.pagePlaceholderDefault", { ns: "media" }),
+      };
   }
 }
 
-export const mediaTypesOptions = [
-  { value: MediaTypeEnum.MOVIES, label: "Movies" },
-  { value: MediaTypeEnum.MANGA, label: "Manga" },
-  { value: MediaTypeEnum.ANIME, label: "Anime" },
-  { value: MediaTypeEnum.GAME, label: "Games" },
-  { value: MediaTypeEnum.BOOK, label: "Books" },
-]
+export function getMediaTypesOptions(t: TFunction) {
+  return [
+    { value: MediaTypeEnum.MOVIES, label: t("typePlural.movies", { ns: "media" }) },
+    { value: MediaTypeEnum.MANGA, label: t("typePlural.manga", { ns: "media" }) },
+    { value: MediaTypeEnum.ANIME, label: t("typePlural.anime", { ns: "media" }) },
+    { value: MediaTypeEnum.GAME, label: t("typePlural.game", { ns: "media" }) },
+    { value: MediaTypeEnum.BOOK, label: t("typePlural.book", { ns: "media" }) },
+  ]
+}

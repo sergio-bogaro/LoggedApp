@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { batchCheckExisting, MediaCheckItem } from "./logged";
-import { MediaResponse } from "@/types/logged";
 
+import { useAppSelector } from "@/store/auth/hooks";
+import { MediaResponse } from "@/types/logged";
 import { MediaItem } from "@/types/media";
 import { MediaTypeEnum } from "@/types/media";
-import { useAppSelector } from "@/store/auth/hooks";
 
 export function useExistingMedia(items: MediaItem[] | undefined) {
   const { user } = useAppSelector((state) => state.auth);

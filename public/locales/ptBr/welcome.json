@@ -2,5 +2,11 @@
   "message": "Olá, bem-vindo à nossa aplicação!",
   "intro": "Esta é uma aplicação de exemplo para demonstrar internacionalização.",
   "language_select": "Selecione seu idioma preferido:",
-  "theme_select": "Selecione seu tema preferido:"
+  "theme_select": "Selecione seu tema preferido:",
+  "authenticatedGreeting": "Bem-vindo de volta, {{username}}!",
+  "actions": {
+    "goToApp": "Ir para o app",
+    "login": "Entrar",
+    "register": "Registrar"
+  }
 }

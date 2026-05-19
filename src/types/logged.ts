@@ -24,7 +24,7 @@ export type MediaLogResponse = {
   userId: number;
   mediaId: number;
   date: string;
-  status?: MediaStatusEnum;
+  status: MediaStatusEnum;
   rating?: number;
   review?: string;
   createdAt: string;

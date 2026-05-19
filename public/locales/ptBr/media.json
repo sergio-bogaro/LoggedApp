@@ -1,5 +1,16 @@
 {
   "label": "Mídias",
+  "history": {
+    "viewedOn": "Visto em",
+    "finishedOn": "Terminado em",
+    "startedOn": "Início:",
+    "endedOn": "Fim:",
+    "dialogTitle": "Histórico de logs",
+    "loading": "Carregando histórico...",
+    "errorPrefix": "Erro ao carregar histórico:",
+    "empty": "Nenhum log registrado para esta mídia.",
+    "viewReview": "Ver review"
+  },
   "details": {
     "label": "Detalhes",
     "title": "Título",
@@ -12,7 +23,7 @@
     "author": "Autor",
     "artist": "Artista",
     "episodes": "Episódios",
-    "chgapters": "Capítulos",
+    "chapters": "Capítulos",
     "volumes": "Volumes",
     "productionBy": "Produção",
     "source": "Fonte",
@@ -21,7 +32,14 @@
     "TMDBScore": "Nota TMDB",
     "anilistScore": "Nota Anilist",
     "developer": "Desenvolvedor",
-    "platforms": "Plataformas"
+    "platforms": "Plataformas",
+    "durationMinutes": "{{count}} min",
+    "durationHours": "{{count}} horas",
+    "bookComingSoon": "Detalhes de livros em breve..."
+  },
+  "sources": {
+    "tmdb": "TMDB",
+    "gameBrain": "GameBrain"
   },
   "type": {
     "movie": "Filme",
@@ -30,6 +48,13 @@
     "manga": "Mangá",
     "game": "Jogo",
     "book": "Livro"
+  },
+  "typePlural": {
+    "movies": "Filmes",
+    "anime": "Animes",
+    "manga": "Mangás",
+    "game": "Jogos",
+    "book": "Livros"
   },
   "track": {
     "label": "Registrar",
@@ -53,7 +78,9 @@
     "completed": "Completo",
     "paused": "Pausado",
     "dropped": "Abandonado",
-    "planning": "Planejando"
+    "planning": "Planejando",
+    "coverAlt": "Capa da mídia",
+    "previewAlt": "Imagem de pré-visualização"
   },
   "status": {
     "in_progress": "Em Progresso",
@@ -61,5 +88,80 @@
     "on_hold": "Em Espera",
     "following": "Seguindo",
     "finished": "Finalizado"
+  },
+  "moviesTabs": {
+    "tabs": {
+      "cast": "Elenco",
+      "crew": "Equipe",
+      "similar": "Similares"
+    },
+    "actions": {
+      "showMore": "Ver mais",
+      "showLess": "Ver menos"
+    },
+    "empty": {
+      "cast": "Nenhum ator encontrado.",
+      "crew": "Nenhuma equipe encontrada.",
+      "similar": "Nenhum filme similar encontrado."
+    },
+    "crewLabels": {
+      "director": "Direção",
+      "screenplay": "Roteiro",
+      "source": "Obra original",
+      "composer": "Trilha sonora",
+      "producer": "Produção",
+      "characters": "Design de personagens",
+      "dop": "Fotografia"
+    }
+  },
+  "searchForm": {
+    "typeLabel": "Tipo",
+    "typePlaceholder": "Tipo de mídia",
+    "searchLabel": "Buscar",
+    "searchPlaceholder": "Busque por título",
+    "pageLabelMovies": "Buscar filmes (TMDB)",
+    "pagePlaceholderMovies": "Digite o nome de um filme",
+    "pageLabelDefault": "Buscar",
+    "pagePlaceholderDefault": "Digite para buscar..."
+  },
+  "searchView": {
+    "startTitle": "Comece sua busca",
+    "startDescription": "Use a barra de busca acima para encontrar mídias por título.",
+    "errorTitle": "Erro",
+    "noResultsTitle": "Nenhum resultado encontrado",
+    "noResultsDescription": "Tente palavras-chave diferentes ou remova filtros. Verifique a grafia e tente termos mais amplos."
+  },
+  "actions": {
+    "viewHistory": "Ver histórico",
+    "addToBacklog": "Adicionar ao backlog",
+    "removeFromBacklog": "Remover do backlog"
+  },
+  "feedback": {
+    "backlogAdded": "Adicionado ao backlog",
+    "backlogFailed": "Falha ao adicionar mídia",
+    "trackSuccess": "Mídia registrada com sucesso",
+    "trackFailed": "Falha ao registrar mídia"
+  },
+  "home": {
+    "title": "Página inicial de mídias",
+    "recentlyAdded": "Adicionados recentemente",
+    "chartByType": "Quantidade por tipo",
+    "loading": "Carregando..."
+  },
+  "list": {
+    "loading": "Carregando...",
+    "empty": "Nenhuma mídia encontrada",
+    "emptyWithType": "Comece adicionando {{mediaType}} à sua biblioteca",
+    "noDescription": "Nenhuma descrição disponível."
+  },
+  "customView": {
+    "loading": "Carregando...",
+    "notFound": "View não encontrada.",
+    "loadingMedia": "Carregando mídias...",
+    "empty": "Nenhuma mídia encontrada para esta view"
+  },
+  "detailsPage": {
+    "loading": "Carregando...",
+    "errorPrefix": "Erro:"
   }
 }

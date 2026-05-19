@@ -22,7 +22,7 @@ export const GameDetails = ({ data }: { data: GameBrainGame }) => {
 
       <DetailsLabel
         label={t("details.duration", { ns: "media" })}
-        value={(data.playtime?.mean.toFixed(1) || 0) + "  Hours"}
+        value={t("details.durationHours", { ns: "media", count: Number((data.playtime?.mean ?? 0).toFixed(1)) })}
       />
 
       <DetailsLabel
@@ -39,7 +39,7 @@ export const GameDetails = ({ data }: { data: GameBrainGame }) => {
         label={t("details.source", { ns: "media" })}
         value={
           <Link to={data.link} target="_blank" >
-            GameBrain
+            {t("sources.gameBrain", { ns: "media" })}
           </Link>
         }
       />

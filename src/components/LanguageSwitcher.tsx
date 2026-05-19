@@ -2,13 +2,12 @@ import { useTranslation } from "react-i18next";
 
 import { Select } from "./ui/select";
 
-const languageOptions = [
-  { value: "en", label: "English" },
-  { value: "ptBr", label: "Português (BR)" },
-];
-
 const LanguageSwitcher = () => {
   const { i18n, t } = useTranslation("common");
+  const languageOptions = [
+    { value: "en", label: t("languageOptions.en") },
+    { value: "ptBr", label: t("languageOptions.ptBr") },
+  ];
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);

@@ -1,7 +1,7 @@
-import { t } from "i18next";
 import { Search } from "lucide-react";
 import { useMemo } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { Link, useLocation, useNavigate } from "react-router";
 
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,7 @@ import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { MediaTypeEnum } from "@/types/media";
-import { mediaTypesOptions } from "@/utils/mediaText";
+import { getMediaTypesOptions } from "@/utils/mediaText";
 
 export type MediaSearchHeaderProps = {
   searchFilter: string;
@@ -17,9 +17,11 @@ export type MediaSearchHeaderProps = {
 }
 
 export function Header() {
+  const { t } = useTranslation(["common", "media"]);
   const navigate = useNavigate();
   const location = useLocation();
   const isSearchPage = useMemo(() => location.pathname.includes("search"), [location]);
+  const mediaTypesOptions = useMemo(() => getMediaTypesOptions(t), [t]);
 
   const form = useForm<MediaSearchHeaderProps>({});
   const { control } = form;
@@ -40,7 +42,7 @@ export function Header() {
   return (
     <div className="flex items-center justify-between w-full gap-4">
       <Link to="/media/home" className="transition-colors hover:text-foreground/80 font-bold text-lg shrink-0">
-        LOGGED APP
+        {t("branding.headerName", { ns: "common" })}
       </Link>
 
       {!isSearchPage && (
@@ -50,14 +52,14 @@ export function Header() {
               options={mediaTypesOptions}
               name="mediaType"
               control={control}
-              placeholder={t("mediaType")}
+              placeholder={t("searchForm.typePlaceholder", { ns: "media" })}
               width={200}
             />
 
             <Input
               name="searchFilter"
               control={control}
-              placeholder={t("placeholder")}
+              placeholder={t("searchForm.searchPlaceholder", { ns: "media" })}
             />
 
             <Button type="submit" size="icon">

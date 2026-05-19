@@ -1,4 +1,5 @@
 import { Link } from "react-router"
+import { useTranslation } from "react-i18next";
 
 import { ImageWithSkeleton } from "@/components/tw/generic/imageSkeleton";
 import { MediaOptionsButton } from "@/components/tw/media/mediaOptions";
@@ -11,6 +12,8 @@ interface ListItemProps {
 }
 
 const ListItem = ({ item, existingItem }: ListItemProps) => {
+  const { t } = useTranslation("media");
+
   return (
     <Link
       key={item.id}
@@ -32,9 +35,9 @@ const ListItem = ({ item, existingItem }: ListItemProps) => {
 
           <p className="text-sm text-foreground/80">{item.year ?? "-"}</p>
 
-          <span className="text-sm text-foreground/50 mt-2 block">
-            {item.description.length > 300 ? item.description.slice(0, 250) + " ..." : item.description || "No description available."}
-          </span>
+           <span className="text-sm text-foreground/50 mt-2 block">
+             {item.description.length > 300 ? item.description.slice(0, 250) + " ..." : item.description || t("list.noDescription")}
+           </span>
         </div>
 
 

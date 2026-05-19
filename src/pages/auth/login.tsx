@@ -12,7 +12,7 @@ import { setUser } from "@/store/auth/slice";
 
 
 export default function Login() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("auth");
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -27,10 +27,10 @@ export default function Login() {
     try {
       const response = await authApi.login({ username, password });
       dispatch(setUser(response.user));
-      toast.success(t("Login successful!"));
+      toast.success(t("login.feedback.success"));
       navigate("/media/home");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Login failed");
+      toast.error(error instanceof Error ? error.message : t("login.feedback.error"));
     } finally {
       setIsLoading(false);
     }
@@ -39,11 +39,11 @@ export default function Login() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md p-8">
-        <h1 className="mb-6 text-center text-3xl font-bold">Login</h1>
+        <h1 className="mb-6 text-center text-3xl font-bold">{t("login.title")}</h1>
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <Label htmlFor="username">Username</Label>
+            <Label htmlFor="username">{t("login.username")}</Label>
             <input
               id="username"
               name="username"
@@ -57,7 +57,7 @@ export default function Login() {
           </div>
 
           <div>
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t("login.password")}</Label>
             <input
               id="password"
               name="password"
@@ -71,19 +71,19 @@ export default function Login() {
           </div>
 
           <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "Loading..." : "Login"}
+            {isLoading ? t("login.submitting") : t("login.submit")}
           </Button>
         </form>
 
         <div className="mt-4 text-center">
           <p className="text-sm text-muted-foreground">
-            Don&apos;t have an account?{" "}
+            {t("login.noAccount")}{" "}
             <button
               type="button"
               onClick={() => navigate("/register")}
               className="text-primary hover:underline"
             >
-              Register
+              {t("login.registerLink")}
             </button>
           </p>
         </div>

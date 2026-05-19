@@ -3,6 +3,7 @@ import * as SelectPrimitive from "@radix-ui/react-select"
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react"
 import * as React from "react"
 import { Control } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 
 import { FormControl, FormField, FormItem } from "./form"
 import { Label } from "./label"
@@ -198,9 +199,12 @@ export function Select({
   control,
   options,
   width,
-  placeholder = "Selecione ...",
+  placeholder,
   ...props
 }: SelectProps) {
+  const { t } = useTranslation("common")
+  const resolvedPlaceholder = placeholder ?? t("form.selectPlaceholder")
+
   if (control) {
     return (
       <div className="flex flex-col gap-1" style={width ? { width: `${width}px` } : { width: "100%" }}>
@@ -221,7 +225,7 @@ export function Select({
                   value={field.value ?? ""}
                 >
                   <SelectTrigger className={cn("w-full")} id={id ?? name}>
-                    <SelectValue placeholder={placeholder} />
+                    <SelectValue placeholder={resolvedPlaceholder} />
                   </SelectTrigger>
 
                   <SelectContent>
@@ -251,7 +255,7 @@ export function Select({
 
       <SelectBase {...props}>
         <SelectTrigger className="w-full" id={id ?? name}>
-          <SelectValue placeholder={placeholder} />
+          <SelectValue placeholder={resolvedPlaceholder} />
         </SelectTrigger>
 
         <SelectContent>

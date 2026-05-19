@@ -1,8 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
 
 import { DetailsCard } from "./components/general/detailsCard";
 import { MediaInfo } from "./components/general/mediaInfo";
+import { MediaTabs } from "./components/general/mediaTabs";
 
 import { TrackMediaDialog } from "@/components/tw/dialogs/trackMediaDialog";
 import { ImageWithSkeleton } from "@/components/tw/generic/imageSkeleton";
@@ -15,6 +17,7 @@ import { getMediaByExternalIdWithLogs } from "@/querries/media/logged";
 import { mediaImageUrl } from "@/querries/media/logged"
 import { useAppSelector } from "@/store/auth/hooks";
 import { MediaTypeEnum } from "@/types/media";
+import { getMediaData } from "@/utils/mediaDataResponse";
 import { getPosterUrl } from "@/utils/mediaDataResponse";
 
 type MediaDetailsParams = {
@@ -23,6 +26,7 @@ type MediaDetailsParams = {
 }
 
 function MediaDetailsPage() {
+  const { t } = useTranslation("media");
   const { mediaType, id } = useParams() as MediaDetailsParams;
   const { user } = useAppSelector((state) => state.auth);
 
@@ -59,22 +63,26 @@ function MediaDetailsPage() {
 
   return (
     <div>
-      {isLoading && <p>Loading...</p>}
-      {isError && <p>Error: {error.message}</p>}
+      {isLoading && <p>{t("detailsPage.loading")}</p>}
+      {isError && <p>{t("detailsPage.errorPrefix")} {error.message}</p>}
       {data && (
         <div className="max-w-[1400px] mx-auto p-8">
           {/* {data.backdrop_path && <img src={tmdbPosterUrl(data.backdrop_path, "original")} alt={data.title} className="h-[400px] w-full object-cover" />} */}
 
           <div className="flex gap-4">
-            <div className="flex flex-col w-1/5 text-center text-wrap sticky top-16 self-start transition-all">
+            <div className="flex flex-col w-1/5 min-w-[200px] text-center text-wrap sticky top-16 self-start transition-all">
 
-              <ImageWithSkeleton src={existingMedia?.imagePath ? mediaImageUrl(existingMedia.imagePath)! : getPosterUrl(mediaType, data)} alt={data.title} className="mb-4 aspect-2/3" />
+              <ImageWithSkeleton
+                alt={data.title}
+                className="mb-4 aspect-2/3"
+                src={existingMedia?.imagePath ? mediaImageUrl(existingMedia.imagePath)! : getPosterUrl(mediaType, data)}
+              />
 
               {/* TODO: Alterar esse title para ser o certo */}
               <TrackMediaDialog
                 mediaType={mediaType}
                 defaultImage={existingMedia?.imagePath ? mediaImageUrl(existingMedia.imagePath)! : getPosterUrl(mediaType, data)}
-                title="data.title"
+                title={getMediaData(mediaType, data).title}
                 mediaData={data}
                 existingMedia={existingMedia}
               />
@@ -83,17 +91,20 @@ function MediaDetailsPage() {
 
             </div>
 
-            <MediaInfo mediaType={mediaType} data={data} />
+            <div>
 
 
+              <MediaInfo mediaType={mediaType} data={data} />
+
+              <MediaTabs data={data} mediaType={mediaType} />
+            </div>
           </div>
 
           <div className="flex gap-4 mt-5">
-            <DetailsCard mediaType={mediaType} data={data} />
+            {/*<DetailsCard mediaType={mediaType} data={data} existingMedia={existingMedia} />*/}
 
-            {/* <div className="flex flex-col w-4/5">
-              <MovieTabs movieData={data} />
-            </div> */}
+            <div className="flex flex-col w-4/5">
+            </div>
 
           </div>
         </div>

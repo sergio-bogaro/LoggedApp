@@ -23,23 +23,23 @@ export const mediaTypes = [
   {
     icon: BookOpen,
     type: MediaTypeEnum.BOOK,
-    path: "/media/list/books",
+    path: "/media/list/book",
   },
   {
     icon: Gamepad2,
     type: MediaTypeEnum.GAME,
-    path: "/media/list/games",
+    path: "/media/list/game",
   },
 ];
 
 export const mainNavigation = [
   {
-    title: "Home",
+    titleKey: "navigation.home",
     icon: Home,
     path: "/media/home",
   },
   {
-    title: "Search",
+    titleKey: "navigation.search",
     icon: Search,
     path: "/search",
   },
@@ -47,7 +47,7 @@ export const mainNavigation = [
 
 export const bottomNavigation = [
   {
-    title: "Configurações",
+    titleKey: "navigation.settings",
     icon: Settings,
     path: "/settings",
   },

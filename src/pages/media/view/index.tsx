@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
 
 import { GridItem } from "@/components/tw/media/grid";
@@ -10,6 +11,7 @@ import { MediaTypeEnum } from "@/types/media";
 import type { MediaItem } from "@/types/media";
 
 const MediaViewPage = () => {
+  const { t } = useTranslation("media");
   const { id } = useParams<{ id: string }>();
   const { user } = useAppSelector((state) => state.auth);
 
@@ -62,11 +64,11 @@ const MediaViewPage = () => {
   });
 
   if (viewLoading) {
-    return <div className="p-6">Carregando...</div>;
+    return <div className="p-6">{t("customView.loading")}</div>;
   }
 
   if (!view) {
-    return <div className="p-6 text-muted-foreground">View não encontrada.</div>;
+    return <div className="p-6 text-muted-foreground">{t("customView.notFound")}</div>;
   }
 
   return (
@@ -80,7 +82,7 @@ const MediaViewPage = () => {
       )}
 
       {mediaFetching ? (
-        <p>Carregando mídias...</p>
+        <p>{t("customView.loadingMedia")}</p>
       ) : data && data.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 m-2 gap-4">
           {data.map((item) => {
@@ -105,7 +107,7 @@ const MediaViewPage = () => {
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center h-64 text-muted-foreground">
-          <p>Nenhuma mídia encontrada para esta view</p>
+          <p>{t("customView.empty")}</p>
         </div>
       )}
     </div>

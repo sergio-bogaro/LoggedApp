@@ -17,7 +17,7 @@ export const MovieDetails = ({ data }: { data: TMDBMovieDetails }) => {
     <>
       <DetailsLabel
         label={t("details.duration", { ns: "media" })}
-        value={data?.runtime + "mins"}
+        value={t("details.durationMinutes", { ns: "media", count: data?.runtime ?? 0 })}
       />
 
       <DetailsLabel
@@ -47,7 +47,7 @@ export const MovieDetails = ({ data }: { data: TMDBMovieDetails }) => {
         label={t("details.source", { ns: "media" })}
         value={
           <Link to={`https://www.themoviedb.org/movie/${data.id}`} target="_blank" >
-            TMDB
+            {t("sources.tmdb", { ns: "media" })}
           </Link>}
       />
     </>

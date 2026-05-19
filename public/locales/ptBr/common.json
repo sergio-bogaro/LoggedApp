@@ -7,5 +7,37 @@
   "rating_mode": "Modo de Avaliação",
   "rating_numeric": "1 – 10",
   "rating_stars5": "5 Estrelas",
-  "rating_stars10": "10 Estrelas"
+  "rating_stars10": "10 Estrelas",
+  "branding": {
+    "sidebarName": "Logged",
+    "headerName": "LOGGED APP"
+  },
+  "languageOptions": {
+    "en": "English",
+    "ptBr": "Português (BR)"
+  },
+  "actions": {
+    "logout": "Sair"
+  },
+  "navigation": {
+    "home": "Início",
+    "search": "Buscar",
+    "settings": "Configurações"
+  },
+  "settings": {
+    "title": "Configurações",
+    "loggedInAs": "Conectado como",
+    "account": "Conta",
+    "logoutSuccess": "Sessão encerrada com sucesso"
+  },
+  "a11y": {
+    "close": "Fechar",
+    "toggleSidebar": "Alternar barra lateral",
+    "sidebarTitle": "Barra lateral",
+    "sidebarDescription": "Exibe a barra lateral no mobile.",
+    "loading": "Carregando..."
+  },
+  "form": {
+    "selectPlaceholder": "Selecione..."
+  }
 }

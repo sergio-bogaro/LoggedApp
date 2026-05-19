@@ -1,5 +1,16 @@
 {
   "label": "Media",
+  "history": {
+    "viewedOn": "Viewed on",
+    "finishedOn": "Finished on",
+    "startedOn": "Started on:",
+    "endedOn": "Finished on:",
+    "dialogTitle": "Log history",
+    "loading": "Loading history...",
+    "errorPrefix": "Error loading history:",
+    "empty": "No logs recorded for this media.",
+    "viewReview": "View review"
+  },
   "details": {
     "label": "Details",
     "title": "Title",
@@ -20,7 +31,15 @@
     "source": "Source",
     "duration": "Duration",
     "developer": "Developer",
-    "platforms": "Platforms"
+    "platforms": "Platforms",
+    "status": "Status",
+    "durationMinutes": "{{count}} mins",
+    "durationHours": "{{count}} hours",
+    "bookComingSoon": "Book details coming soon..."
+  },
+  "sources": {
+    "tmdb": "TMDB",
+    "gameBrain": "GameBrain"
   },
   "track": {
     "label": "Track",
@@ -44,7 +63,9 @@
     "completed": "Completed",
     "paused": "Paused",
     "dropped": "Dropped",
-    "planning": "Planning"
+    "planning": "Planning",
+    "coverAlt": "Media cover",
+    "previewAlt": "Preview image"
   },
   "type": {
     "movie": "Movie",
@@ -54,11 +75,93 @@
     "game": "Game",
     "book": "Book"
   },
+  "typePlural": {
+    "movies": "Movies",
+    "anime": "Anime",
+    "manga": "Manga",
+    "game": "Games",
+    "book": "Books"
+  },
   "status": {
     "in_progress": "In Progress",
     "dropped": "Dropped",
     "on_hold": "On Hold",
     "following": "Following",
     "finished": "Finished"
+  },
+  "moviesTabs": {
+    "tabs": {
+      "cast": "Cast",
+      "crew": "Crew",
+      "similar": "Similar"
+    },
+    "actions": {
+      "showMore": "Show more",
+      "showLess": "Show less"
+    },
+    "empty": {
+      "cast": "No cast found.",
+      "crew": "No crew found.",
+      "similar": "No similar movies found."
+    },
+    "crewLabels": {
+      "director": "Direction",
+      "screenplay": "Screenplay",
+      "source": "Original work",
+      "composer": "Soundtrack",
+      "producer": "Production",
+      "characters": "Character design",
+      "dop": "Cinematography"
+    }
+  },
+  "searchForm": {
+    "typeLabel": "Type",
+    "typePlaceholder": "Media type",
+    "searchLabel": "Search",
+    "searchPlaceholder": "Search by title",
+    "pageLabelMovies": "Search Movies (TMDB)",
+    "pagePlaceholderMovies": "Type a movie name",
+    "pageLabelDefault": "Search",
+    "pagePlaceholderDefault": "Type to search..."
+  },
+  "searchView": {
+    "startTitle": "Start your search",
+    "startDescription": "Use the search bar above to find media by title.",
+    "errorTitle": "Error",
+    "noResultsTitle": "No results found",
+    "noResultsDescription": "Try different keywords or remove filters. Check spelling and try broader terms."
+  },
+  "actions": {
+    "viewHistory": "View history",
+    "addToBacklog": "Add to backlog",
+    "removeFromBacklog": "Remove from backlog"
+  },
+  "feedback": {
+    "backlogAdded": "Added to backlog",
+    "backlogFailed": "Failed to add media",
+    "trackSuccess": "Media tracked successfully",
+    "trackFailed": "Failed to track media"
+  },
+  "home": {
+    "title": "Media Home Page",
+    "recentlyAdded": "Recently Added",
+    "chartByType": "Count by type",
+    "loading": "Loading..."
+  },
+  "list": {
+    "loading": "Loading...",
+    "empty": "No media found",
+    "emptyWithType": "Start by adding {{mediaType}} to your library",
+    "noDescription": "No description available."
+  },
+  "customView": {
+    "loading": "Loading...",
+    "notFound": "View not found.",
+    "loadingMedia": "Loading media...",
+    "empty": "No media found for this view"
+  },
+  "detailsPage": {
+    "loading": "Loading...",
+    "errorPrefix": "Error:"
   }
 }

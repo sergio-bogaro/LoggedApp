@@ -152,7 +152,7 @@ export async function searchMovies(query: string): Promise<Movie[]> {
 }
 
 export function tmdbPosterUrl(path: string | null | undefined, size = "w200") {
-  if (!path) return null;
+  if (!path) return "";
   return `https://image.tmdb.org/t/p/${size}${path}`;
 }
 

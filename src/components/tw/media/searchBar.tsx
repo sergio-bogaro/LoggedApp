@@ -1,7 +1,7 @@
-import { t } from "i18next";
 import { Grid, List, Search } from "lucide-react";
 import { useMemo } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 import { Button } from "../../ui/button";
 import { Form } from "../../ui/form";
@@ -11,7 +11,7 @@ import { Select } from "@/components/ui/select";
 import { useAppDispatch, useAppSelector } from "@/store/settings/hooks";
 import { setViewMode, ViewMode } from "@/store/settings/slice";
 import { MediaTypeEnum } from "@/types/media";
-import { getPageTranslation, mediaTypesOptions } from "@/utils/mediaText";
+import { getMediaTypesOptions, getPageTranslation } from "@/utils/mediaText";
 
 export type FormSearchProps = {
   searchFilter: string;
@@ -26,15 +26,17 @@ interface SearchContainerProps {
 }
 
 export const SearchContainer = ({ onSearch, page, defaultSearchValue, defaultMediaType }: SearchContainerProps) => {
+  const { t } = useTranslation("media");
   const { viewMode } = useAppSelector(state => state.ui)
   const isGrid = useMemo(() => viewMode === "grid", [viewMode]);
   const dispatch = useAppDispatch()
+  const mediaTypesOptions = useMemo(() => getMediaTypesOptions(t), [t]);
 
   const handleViewModeChange = (newTheme: ViewMode) => {
     dispatch(setViewMode(newTheme))
   }
 
-  const { label, placeholder } = getPageTranslation(page);
+  const { label, placeholder } = getPageTranslation(t, page);
 
   const form = useForm<FormSearchProps>({
     defaultValues: {
@@ -57,8 +59,8 @@ export const SearchContainer = ({ onSearch, page, defaultSearchValue, defaultMed
               options={mediaTypesOptions}
               name='mediaType'
               control={control}
-              placeholder={t("mediaType")}
-              label={t("Type")}
+              placeholder={t("searchForm.typePlaceholder")}
+              label={t("searchForm.typeLabel")}
               width={200}
             />
 
@@ -82,4 +84,3 @@ export const SearchContainer = ({ onSearch, page, defaultSearchValue, defaultMed
     </div>
   )
 }
-

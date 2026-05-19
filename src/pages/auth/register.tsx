@@ -12,7 +12,7 @@ import { setUser } from "@/store/auth/slice";
 
 
 export default function Register() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("auth");
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -25,12 +25,12 @@ export default function Register() {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      toast.error("Passwords do not match");
+      toast.error(t("register.feedback.passwordMismatch"));
       return;
     }
 
     if (password.length < 3) {
-      toast.error("Password must be at least 3 characters");
+      toast.error(t("register.feedback.passwordTooShort"));
       return;
     }
 
@@ -43,10 +43,10 @@ export default function Register() {
       const loginResponse = await authApi.login({ username, password });
       dispatch(setUser(loginResponse.user));
 
-      toast.success("Account created successfully!");
+      toast.success(t("register.feedback.success"));
       navigate("/media/home");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Registration failed");
+      toast.error(error instanceof Error ? error.message : t("register.feedback.error"));
     } finally {
       setIsLoading(false);
     }
@@ -57,11 +57,11 @@ export default function Register() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md p-8">
-        <h1 className="mb-6 text-center text-3xl font-bold">Create Account</h1>
+        <h1 className="mb-6 text-center text-3xl font-bold">{t("register.title")}</h1>
 
         <form onSubmit={handleRegister} className="space-y-4">
           <div>
-            <Label htmlFor="username">Username</Label>
+            <Label htmlFor="username">{t("register.username")}</Label>
             <input
               id="username"
               name="username"
@@ -76,7 +76,7 @@ export default function Register() {
           </div>
 
           <div>
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t("register.password")}</Label>
             <input
               id="password"
               name="password"
@@ -91,7 +91,7 @@ export default function Register() {
           </div>
 
           <div>
-            <Label htmlFor="confirmPassword">Confirm Password</Label>
+            <Label htmlFor="confirmPassword">{t("register.confirmPassword")}</Label>
             <input
               id="confirmPassword"
               name="confirmPassword"
@@ -106,19 +106,19 @@ export default function Register() {
           </div>
 
           <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "Creating account..." : "Register"}
+            {isLoading ? t("register.submitting") : t("register.submit")}
           </Button>
         </form>
 
         <div className="mt-4 text-center">
           <p className="text-sm text-muted-foreground">
-            Already have an account?{" "}
+            {t("register.hasAccount")}{" "}
             <button
               type="button"
               onClick={() => navigate("/login")}
               className="text-primary hover:underline"
             >
-              Login
+              {t("register.loginLink")}
             </button>
           </p>
         </div>

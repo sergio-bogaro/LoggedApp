@@ -1,4 +1,5 @@
 import { Star } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { StatusBadge } from "../generic/badges";
 import { Card } from "../generic/card";
@@ -21,12 +22,10 @@ const StarDisplay = ({ rating }: { rating: number }) => {
     <div className="flex items-center justify-center gap-0.5">
       {Array.from({ length: stars }, (_, i) => {
         const starIndex = i + 1;
-        const fillType =
-          displayValue >= starIndex
-            ? "full"
-            : displayValue >= starIndex - 0.5
-              ? "half"
-              : "empty";
+        const fillType = displayValue >= starIndex ? "full"
+          : displayValue >= starIndex - 0.5
+            ? "half"
+            : "empty";
 
         return (
           <div key={i} className="relative w-4 h-4">
@@ -50,7 +49,9 @@ const StarDisplay = ({ rating }: { rating: number }) => {
   );
 };
 
-export const LastLog = ({ lastLog }: { lastLog?: MediaLogResponse }) => {
+export const LastLog = ({ lastLog }: { lastLog: MediaLogResponse | null }) => {
+  const { t } = useTranslation("media");
+
   if (!lastLog) return null;
 
   return (
@@ -70,7 +71,7 @@ export const LastLog = ({ lastLog }: { lastLog?: MediaLogResponse }) => {
         {lastLog.review && (
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="review">
-              <AccordionTrigger>Ver review</AccordionTrigger>
+              <AccordionTrigger>{t("history.viewReview")}</AccordionTrigger>
               <AccordionContent>
                 <p className="text-sm text-muted-foreground whitespace-pre-wrap">
                   {lastLog.review}

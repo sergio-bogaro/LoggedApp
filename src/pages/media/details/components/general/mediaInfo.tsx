@@ -5,8 +5,8 @@ import { TMDBMovieDetails } from "@/querries/externalMedia/movies";
 import { MediaTypeEnum } from "@/types/media";
 
 type MediaInfoContainerProps = {
-  title: string;
-  dates: string;
+  title?: string;
+  dates?: string;
   tagline?: string;
   overview: string;
   tags: string[];
