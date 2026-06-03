@@ -114,6 +114,22 @@
       "dop": "Cinematography"
     }
   },
+  "animeTabs": {
+    "tabs": {
+      "similar": "Similar"
+    },
+    "empty": {
+      "similar": "No similar anime found."
+    }
+  },
+  "mangaTabs": {
+    "tabs": {
+      "similar": "Similar"
+    },
+    "empty": {
+      "similar": "No similar manga found."
+    }
+  },
   "searchForm": {
     "typeLabel": "Type",
     "typePlaceholder": "Media type",

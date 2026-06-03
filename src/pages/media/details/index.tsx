@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
 
-import { DetailsCard } from "./components/general/detailsCard";
 import { MediaInfo } from "./components/general/mediaInfo";
 import { MediaTabs } from "./components/general/mediaTabs";
 
@@ -15,7 +14,7 @@ import { getGameDetails } from "@/querries/externalMedia/gamebrain";
 import { getMovieDetails } from "@/querries/externalMedia/movies";
 import { getMediaByExternalIdWithLogs } from "@/querries/media/logged";
 import { mediaImageUrl } from "@/querries/media/logged"
-import { useAppSelector } from "@/store/auth/hooks";
+import { useAppSelector } from "@/store/auth/hooks";`
 import { MediaTypeEnum } from "@/types/media";
 import { getMediaData } from "@/utils/mediaDataResponse";
 import { getPosterUrl } from "@/utils/mediaDataResponse";
@@ -91,9 +90,7 @@ function MediaDetailsPage() {
 
             </div>
 
-            <div>
-
-
+            <div className="space-y-3">
               <MediaInfo mediaType={mediaType} data={data} />
 
               <MediaTabs data={data} mediaType={mediaType} />

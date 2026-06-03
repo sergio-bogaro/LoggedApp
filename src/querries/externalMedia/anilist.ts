@@ -106,6 +106,20 @@ export type AniListMediaDetails = {
       };
     }>;
   };
+  recommendations?: {
+    nodes: Array<{
+      mediaRecommendation?: {
+        id: number;
+        title?: {
+          romaji?: string;
+          english?: string;
+        };
+        coverImage?: {
+          large?: string;
+        };
+      };
+    }>;
+  };
 };
 
 const BASE = "https://graphql.anilist.co";

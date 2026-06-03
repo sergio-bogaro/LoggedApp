@@ -8,13 +8,12 @@ import { TMDBMovieDetails } from "@/querries/externalMedia/movies";
 import { formatFromIsoDate } from "@/utils/date"
 
 export const MovieDetails = ({ data }: { data: TMDBMovieDetails }) => {
-
   const director = data?.credits?.crew?.find(
     (member) => member.job === "Director"
   );
 
   return (
-    <>
+    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
       <DetailsLabel
         label={t("details.duration", { ns: "media" })}
         value={t("details.durationMinutes", { ns: "media", count: data?.runtime ?? 0 })}
@@ -33,9 +32,7 @@ export const MovieDetails = ({ data }: { data: TMDBMovieDetails }) => {
 
       <DetailsLabel
         label={t("details.productionBy", { ns: "media" })}
-        value={data?.production_companies.map((company, index) => (
-          `${index == 0 ? "" : ", "}   ${company?.name}`
-        ))}
+        value={data?.production_companies.map((company) => company?.name).filter(Boolean).join(", ")}
       />
 
       <DetailsLabel
@@ -50,8 +47,6 @@ export const MovieDetails = ({ data }: { data: TMDBMovieDetails }) => {
             {t("sources.tmdb", { ns: "media" })}
           </Link>}
       />
-    </>
+    </div>
   )
-
-
 }

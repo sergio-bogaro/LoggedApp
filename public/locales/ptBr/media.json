@@ -114,6 +114,22 @@
       "dop": "Fotografia"
     }
   },
+  "animeTabs": {
+    "tabs": {
+      "similar": "Similares"
+    },
+    "empty": {
+      "similar": "Nenhum anime similar encontrado."
+    }
+  },
+  "mangaTabs": {
+    "tabs": {
+      "similar": "Similares"
+    },
+    "empty": {
+      "similar": "Nenhum mangá similar encontrado."
+    }
+  },
   "searchForm": {
     "typeLabel": "Tipo",
     "typePlaceholder": "Tipo de mídia",
