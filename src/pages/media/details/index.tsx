@@ -14,7 +14,7 @@ import { getGameDetails } from "@/querries/externalMedia/gamebrain";
 import { getMovieDetails } from "@/querries/externalMedia/movies";
 import { getMediaByExternalIdWithLogs } from "@/querries/media/logged";
 import { mediaImageUrl } from "@/querries/media/logged"
-import { useAppSelector } from "@/store/auth/hooks";`
+import { useAppSelector } from "@/store/auth/hooks";
 import { MediaTypeEnum } from "@/types/media";
 import { getMediaData } from "@/utils/mediaDataResponse";
 import { getPosterUrl } from "@/utils/mediaDataResponse";
@@ -65,32 +65,34 @@ function MediaDetailsPage() {
       {isLoading && <p>{t("detailsPage.loading")}</p>}
       {isError && <p>{t("detailsPage.errorPrefix")} {error.message}</p>}
       {data && (
-        <div className="max-w-[1400px] mx-auto p-8">
+        <div className="max-w-[1400px] mx-auto p-4 sm:p-8">
           {/* {data.backdrop_path && <img src={tmdbPosterUrl(data.backdrop_path, "original")} alt={data.title} className="h-[400px] w-full object-cover" />} */}
 
-          <div className="flex gap-4">
-            <div className="flex flex-col w-1/5 min-w-[200px] text-center text-wrap sticky top-16 self-start transition-all">
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex flex-row gap-4 items-start md:flex-col md:w-1/5 md:min-w-[200px] md:sticky md:top-16 md:self-start md:text-center md:text-wrap transition-all">
 
               <ImageWithSkeleton
                 alt={data.title}
-                className="mb-4 aspect-2/3"
+                className="w-1/3 max-w-[130px] shrink-0 aspect-2/3 md:w-full md:max-w-full md:mb-4"
                 src={existingMedia?.imagePath ? mediaImageUrl(existingMedia.imagePath)! : getPosterUrl(mediaType, data)}
               />
 
-              {/* TODO: Alterar esse title para ser o certo */}
-              <TrackMediaDialog
-                mediaType={mediaType}
-                defaultImage={existingMedia?.imagePath ? mediaImageUrl(existingMedia.imagePath)! : getPosterUrl(mediaType, data)}
-                title={getMediaData(mediaType, data).title}
-                mediaData={data}
-                existingMedia={existingMedia}
-              />
+              <div className="flex flex-col gap-3 flex-1 min-w-0">
+                {/* TODO: Alterar esse title para ser o certo */}
+                <TrackMediaDialog
+                  mediaType={mediaType}
+                  defaultImage={existingMedia?.imagePath ? mediaImageUrl(existingMedia.imagePath)! : getPosterUrl(mediaType, data)}
+                  title={getMediaData(mediaType, data).title}
+                  mediaData={data}
+                  existingMedia={existingMedia}
+                />
 
-              <LastLog lastLog={lastLog} />
+                <LastLog lastLog={lastLog} />
+              </div>
 
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-3 flex-1 min-w-0">
               <MediaInfo mediaType={mediaType} data={data} />
 
               <MediaTabs data={data} mediaType={mediaType} />

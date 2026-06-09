@@ -15,7 +15,7 @@ export const AnimeDetails = ({ data }: { data: AniListMediaDetails }) => {
   const formattedEndDate = endDate?.year ? formatFromIsoDate(`${endDate.year}-${String(endDate.month).padStart(2, "0")}-${String(endDate.day).padStart(2, "0")}`) : " --- "
 
   return (
-    <>
+    <div className="divide-y divide-border">
       <DetailsLabel
         label={t("details.episodes", { ns: "media" })}
         value={getCountAndStatusLabel(data, MediaTypeEnum.ANIME)}
@@ -56,6 +56,6 @@ export const AnimeDetails = ({ data }: { data: AniListMediaDetails }) => {
           </Link>
         }
       />
-    </>
+    </div>
   )
 }

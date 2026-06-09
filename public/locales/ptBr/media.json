@@ -91,6 +91,7 @@
   },
   "moviesTabs": {
     "tabs": {
+      "trailers": "Trailers",
       "cast": "Elenco",
       "crew": "Equipe",
       "similar": "Similares"
@@ -100,6 +101,7 @@
       "showLess": "Ver menos"
     },
     "empty": {
+      "trailers": "Nenhum trailer disponível.",
       "cast": "Nenhum ator encontrado.",
       "crew": "Nenhuma equipe encontrada.",
       "similar": "Nenhum filme similar encontrado."
@@ -116,19 +118,56 @@
   },
   "animeTabs": {
     "tabs": {
-      "similar": "Similares"
+      "characters": "Personagens",
+      "staff": "Equipe",
+      "similar": "Similares",
+      "relations": "Relações"
     },
     "empty": {
-      "similar": "Nenhum anime similar encontrado."
+      "similar": "Nenhum anime similar encontrado.",
+      "characters": "Nenhum personagem encontrado.",
+      "staff": "Nenhuma equipe encontrada.",
+      "relations": "Nenhuma mídia relacionada encontrada."
+    },
+    "relationTypes": {
+      "ADAPTATION": "Adaptação",
+      "PREQUEL": "Prequel",
+      "SEQUEL": "Sequel",
+      "PARENT": "Série principal",
+      "SIDE_STORY": "História paralela",
+      "CHARACTER": "Personagem",
+      "SUMMARY": "Resumo",
+      "ALTERNATIVE": "Alternativo",
+      "SPIN_OFF": "Spin-off",
+      "OTHER": "Outro",
+      "SOURCE": "Obra original"
     }
   },
   "mangaTabs": {
     "tabs": {
-      "similar": "Similares"
+      "characters": "Personagens",
+      "staff": "Equipe",
+      "similar": "Similares",
+      "relations": "Relações"
     },
     "empty": {
-      "similar": "Nenhum mangá similar encontrado."
+      "similar": "Nenhum mangá similar encontrado.",
+      "characters": "Nenhum personagem encontrado.",
+      "staff": "Nenhuma equipe encontrada.",
+      "relations": "Nenhuma mídia relacionada encontrada."
     }
+  },
+  "gameTabs": {
+    "tabs": {
+      "screenshots": "Screenshots",
+      "offers": "Onde Comprar"
+    },
+    "empty": {
+      "screenshots": "Nenhum screenshot disponível.",
+      "offers": "Nenhuma opção de compra encontrada."
+    },
+    "officialStores": "Lojas Oficiais",
+    "allOffers": "Opções de Compra"
   },
   "searchForm": {
     "typeLabel": "Tipo",

@@ -13,7 +13,7 @@ export const MovieDetails = ({ data }: { data: TMDBMovieDetails }) => {
   );
 
   return (
-    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+    <div className="divide-y divide-border">
       <DetailsLabel
         label={t("details.duration", { ns: "media" })}
         value={t("details.durationMinutes", { ns: "media", count: data?.runtime ?? 0 })}

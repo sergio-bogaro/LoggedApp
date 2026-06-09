@@ -91,6 +91,7 @@
   },
   "moviesTabs": {
     "tabs": {
+      "trailers": "Trailers",
       "cast": "Cast",
       "crew": "Crew",
       "similar": "Similar"
@@ -100,6 +101,7 @@
       "showLess": "Show less"
     },
     "empty": {
+      "trailers": "No trailers available.",
       "cast": "No cast found.",
       "crew": "No crew found.",
       "similar": "No similar movies found."
@@ -116,19 +118,56 @@
   },
   "animeTabs": {
     "tabs": {
-      "similar": "Similar"
+      "characters": "Characters",
+      "staff": "Staff",
+      "similar": "Similar",
+      "relations": "Relations"
     },
     "empty": {
-      "similar": "No similar anime found."
+      "similar": "No similar anime found.",
+      "characters": "No characters found.",
+      "staff": "No staff found.",
+      "relations": "No related media found."
+    },
+    "relationTypes": {
+      "ADAPTATION": "Adaptation",
+      "PREQUEL": "Prequel",
+      "SEQUEL": "Sequel",
+      "PARENT": "Parent",
+      "SIDE_STORY": "Side Story",
+      "CHARACTER": "Character",
+      "SUMMARY": "Summary",
+      "ALTERNATIVE": "Alternative",
+      "SPIN_OFF": "Spin-off",
+      "OTHER": "Other",
+      "SOURCE": "Source"
     }
   },
   "mangaTabs": {
     "tabs": {
-      "similar": "Similar"
+      "characters": "Characters",
+      "staff": "Staff",
+      "similar": "Similar",
+      "relations": "Relations"
     },
     "empty": {
-      "similar": "No similar manga found."
+      "similar": "No similar manga found.",
+      "characters": "No characters found.",
+      "staff": "No staff found.",
+      "relations": "No related media found."
     }
+  },
+  "gameTabs": {
+    "tabs": {
+      "screenshots": "Screenshots",
+      "offers": "Where to Buy"
+    },
+    "empty": {
+      "screenshots": "No screenshots available.",
+      "offers": "No purchase options found."
+    },
+    "officialStores": "Official Stores",
+    "allOffers": "Buy Options"
   },
   "searchForm": {
     "typeLabel": "Type",

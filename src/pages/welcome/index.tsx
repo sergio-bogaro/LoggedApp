@@ -11,10 +11,10 @@ function WelcomePage() {
   const { isAuthenticated, user } = useAppSelector((state) => state.auth);
 
   return (
-    <div className="w-full flex justify-center items-center p-40">
-      <div className="flex flex-col gap-2 w-1/2 bg-accent rounded p-4">
-        <h2>{t("welcome.message")}</h2>
-        <p>{t("welcome.intro")}</p>
+    <div className="w-full min-h-screen flex justify-center items-center p-4 sm:p-10">
+      <div className="flex flex-col gap-3 w-full max-w-md bg-accent rounded p-4 sm:p-6">
+        <h2>{t("message")}</h2>
+        <p>{t("intro")}</p>
 
         <LanguageSwitcher />
         <ThemeSwitcher />
@@ -31,14 +31,14 @@ function WelcomePage() {
             </div>
           </>
         ) : (
-          <div className="flex gap-2">
-            <Button asChild variant="default">
-              <Link to="/login">{t("actions.login")}</Link>
-            </Button>
-            <Button asChild variant="outline">
-              <Link to="/register">{t("actions.register")}</Link>
-            </Button>
-          </div>
+          <div className="flex flex-col gap-2 sm:flex-row">
+              <Button asChild variant="default" className="w-full sm:w-auto">
+                <Link to="/login">{t("actions.login")}</Link>
+              </Button>
+              <Button asChild variant="outline" className="w-full sm:w-auto">
+                <Link to="/register">{t("actions.register")}</Link>
+              </Button>
+            </div>
         )}
       </div>
     </div>

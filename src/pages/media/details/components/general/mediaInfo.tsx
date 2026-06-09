@@ -19,9 +19,9 @@ type MediaInfoProps = {
 
 export const MediaInfoComponent = ({ title, dates, tags, tagline, overview }: MediaInfoContainerProps) => {
   return (
-    <div className="flex flex-col w-4/5">
-      <div className="flex gap-4 items-end">
-        <h1 className="text-3xl font-bold">
+    <div className="flex flex-col">
+      <div className="flex flex-wrap gap-2 items-baseline">
+        <h1 className="text-2xl font-bold sm:text-3xl">
           {title}
         </h1>
 

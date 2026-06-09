@@ -9,7 +9,7 @@ import { formatFromIsoDate } from "@/utils/date";
 export const GameDetails = ({ data }: { data: GameBrainGame }) => {
 
   return (
-    <>
+    <div className="divide-y divide-border">
       <DetailsLabel
         label={t("details.releaseDate", { ns: "media" })}
         value={formatFromIsoDate(data.release_date)}
@@ -17,7 +17,7 @@ export const GameDetails = ({ data }: { data: GameBrainGame }) => {
 
       <DetailsLabel
         label={t("details.rating", { ns: "media" })}
-        value={(data.rating.mean * 5).toFixed(1) + " ★"}
+        value={(( data.rating?.mean ?? 0) * 5).toFixed(1) + " ★"}
       />
 
       <DetailsLabel
@@ -44,6 +44,6 @@ export const GameDetails = ({ data }: { data: GameBrainGame }) => {
         }
       />
 
-    </>
+    </div>
   )
 }

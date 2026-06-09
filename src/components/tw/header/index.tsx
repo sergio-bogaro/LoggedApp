@@ -47,13 +47,13 @@ export function Header() {
 
       {!isSearchPage && (
         <Form {...form}>
-          <form className="flex gap-2 items-end w-md" onSubmit={form.handleSubmit(onSearch)}>
+          <form className="hidden sm:flex gap-2 items-end w-md" onSubmit={form.handleSubmit(onSearch)}>
             <Select
               options={mediaTypesOptions}
               name="mediaType"
               control={control}
               placeholder={t("searchForm.typePlaceholder", { ns: "media" })}
-              width={200}
+              width={150}
             />
 
             <Input

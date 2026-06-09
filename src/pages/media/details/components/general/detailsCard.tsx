@@ -10,7 +10,6 @@ import { MovieDetails } from "../movies/details";
 import { MediaHistoryDialog } from "@/components/tw/dialogs/mediaHistoryDialog";
 import { Card } from "@/components/tw/generic/card";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { AniListMediaDetails } from "@/querries/externalMedia/anilist";
 import { GameBrainGame } from "@/querries/externalMedia/gamebrain";
 import { RAWGGame } from "@/querries/externalMedia/games";
@@ -25,12 +24,11 @@ type DetailsCardProps = {
 
 export const DetailsLabel = ({ label, value }: { label: string; value: string | ReactNode }) => {
   return (
-    <div>
-      <Label>
+    <div className="flex items-start justify-between gap-4 py-2">
+      <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide shrink-0 pt-0.5">
         {label}
-      </Label>
-
-      <span>{value}</span>
+      </span>
+      <span className="text-sm font-medium text-right wrap-break-word min-w-0">{value}</span>
     </div>
   )
 }

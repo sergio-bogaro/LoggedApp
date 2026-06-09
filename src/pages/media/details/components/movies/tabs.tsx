@@ -7,7 +7,7 @@ import { CastMember, CrewMember, MovieSummary } from "./types";
 
 import { AppTabs } from "@/components/tw/tabs";
 import { Button } from "@/components/ui/button";
-import { tmdbPosterUrl } from "@/querries/externalMedia/movies";
+import { TMDBVideo, tmdbPosterUrl } from "@/querries/externalMedia/movies";
 
 interface ExtractedCast {
   name: string;
@@ -152,7 +152,7 @@ function CrewTab({ crewList }: { crewList: CrewMember[] }) {
     <div className="divide-y divide-border">
       {entries.map((entry, i) => (
         <div key={i} className="flex items-center justify-between py-3 gap-4">
-          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide w-32 flex-shrink-0">
+          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide w-32 shrink-0">
             {entry.label}
           </span>
           <div className="text-right min-w-0">
@@ -160,6 +160,48 @@ function CrewTab({ crewList }: { crewList: CrewMember[] }) {
             <p className="text-xs text-muted-foreground truncate">{entry.job}</p>
           </div>
         </div>
+      ))}
+    </div>
+  );
+}
+
+function TrailersTab({ videos }: { videos: TMDBVideo[] }) {
+  const { t } = useTranslation("media");
+
+  const youtubeVideos = videos.filter(
+    (v) => v.site === "YouTube" && (v.type === "Trailer" || v.type === "Teaser")
+  );
+
+  if (!youtubeVideos.length) {
+    return <p className="text-sm text-muted-foreground py-4">{t("moviesTabs.empty.trailers")}</p>;
+  }
+
+  return (
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      {youtubeVideos.map((video) => (
+        <a
+          key={video.id}
+          href={`https://www.youtube.com/watch?v=${video.key}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group flex flex-col gap-2"
+        >
+          <div className="relative overflow-hidden rounded">
+            <img
+              src={`https://img.youtube.com/vi/${video.key}/hqdefault.jpg`}
+              alt={video.name}
+              className="w-full aspect-video object-cover group-hover:scale-105 transition-transform"
+            />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-full bg-black/60 flex items-center justify-center">
+                <svg viewBox="0 0 24 24" fill="white" className="w-6 h-6 ml-1">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <p className="text-sm font-medium line-clamp-1">{video.name}</p>
+        </a>
       ))}
     </div>
   );
@@ -198,6 +240,11 @@ export function MovieTabs({ movieData }: { movieData: any }) {
           label: t("details.label"),
           value: "details",
           content: <MovieDetails data={movieData} />,
+        },
+        {
+          label: t("moviesTabs.tabs.trailers"),
+          value: "trailers",
+          content: <TrailersTab videos={movieData?.videos?.results ?? []} />,
         },
         {
           label: t("moviesTabs.tabs.cast"),

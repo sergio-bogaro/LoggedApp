@@ -105,31 +105,33 @@ function MediaSearchPage() {
     <div className="p-4 top-18">
       <div className="backdrop-blur-sm border-b mb-4">
         <Form {...form}>
-          <form className='w-full flex gap-1 items-end pb-3' onSubmit={handleSubmit(onSubmit)}>
-            <Select
-              options={mediaTypesOptions}
-              name='mediaType'
-              control={control}
-              placeholder={t("searchForm.typePlaceholder")}
-              label={t("searchForm.typeLabel")}
-              width={200}
-            />
+          <form className='w-full flex flex-col gap-2 pb-3 sm:flex-row sm:items-end sm:gap-1' onSubmit={handleSubmit(onSubmit)}>
+            <div className="flex gap-1 items-end">
+              <Select
+                options={mediaTypesOptions}
+                name='mediaType'
+                control={control}
+                placeholder={t("searchForm.typePlaceholder")}
+                label={t("searchForm.typeLabel")}
+                width={140}
+              />
+              <Button type="button" variant="outline" onClick={() => handleViewModeChange(isGrid ? "list" : "grid")} className="shrink-0 self-end">
+                <Grid className={`h-[1.2rem] w-[1.2rem] scale-0 -rotate-90  transition-all ${isGrid && "scale-100 rotate-0"} `} />
+                <List className={`absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-0 transition-all ${!isGrid && "scale-100 -rotate-90"}`} />
+              </Button>
+            </div>
 
-            <Input
-              name='searchFilter'
-              control={control}
-              label={t("searchForm.searchLabel")}
-              placeholder={t("searchForm.searchPlaceholder")}
-            />
-
-            <Button>
-              <Search />
-            </Button>
-
-            <Button type="button" variant="outline" onClick={() => handleViewModeChange(isGrid ? "list" : "grid")}>
-              <Grid className={`h-[1.2rem] w-[1.2rem] scale-0 -rotate-90  transition-all ${isGrid && "scale-100 rotate-0"} `} />
-              <List className={`absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-0 transition-all ${!isGrid && "scale-100 -rotate-90"}`} />
-            </Button>
+            <div className="flex gap-1 items-end flex-1">
+              <Input
+                name='searchFilter'
+                control={control}
+                label={t("searchForm.searchLabel")}
+                placeholder={t("searchForm.searchPlaceholder")}
+              />
+              <Button className="shrink-0 self-end">
+                <Search />
+              </Button>
+            </div>
           </form>
         </Form>
       </div>

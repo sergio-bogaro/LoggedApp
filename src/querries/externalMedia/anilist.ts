@@ -106,6 +106,41 @@ export type AniListMediaDetails = {
       };
     }>;
   };
+  characters?: {
+    nodes: Array<{
+      id: number;
+      name: {
+        full: string;
+      };
+      image?: {
+        large: string;
+      };
+    }>;
+  };
+  trailer?: {
+    id: string;
+    site: string;
+    thumbnail?: string;
+  };
+  tags?: Array<{
+    id: number;
+    name: string;
+    rank: number;
+  }>;
+  relations?: {
+    edges: Array<{
+      relationType: string;
+      node: {
+        id: number;
+        title: {
+          romaji?: string;
+          english?: string;
+        };
+        type: string;
+        format?: string;
+      };
+    }>;
+  };
   recommendations?: {
     nodes: Array<{
       mediaRecommendation?: {
