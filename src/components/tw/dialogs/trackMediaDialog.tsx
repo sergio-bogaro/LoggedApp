@@ -140,11 +140,11 @@ export function TrackMediaDialog({
 
         <div className="flex flex-col lg:flex-row w-full">
           <div className="w-full lg:w-1/3 flex flex-col gap-2 items-center text-center">
-              <img
-                src={selectedImage}
-                alt={t("track.coverAlt", { ns: "media" })}
-                className="rounded aspect-2/3 w-[80%]"
-              />
+            <img
+              src={selectedImage}
+              alt={t("track.coverAlt", { ns: "media" })}
+              className="rounded aspect-2/3 w-[80%]"
+            />
 
             <h3 className="text-wrap">{title}</h3>
 

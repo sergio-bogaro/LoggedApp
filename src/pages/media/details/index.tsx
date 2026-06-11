@@ -73,12 +73,11 @@ function MediaDetailsPage() {
 
               <ImageWithSkeleton
                 alt={data.title}
-                className="w-1/3 max-w-[130px] shrink-0 aspect-2/3 md:w-full md:max-w-full md:mb-4"
+                className="w-1/3 max-w-[60%] shrink-0 aspect-2/3 md:w-full md:max-w-full md:mb-4"
                 src={existingMedia?.imagePath ? mediaImageUrl(existingMedia.imagePath)! : getPosterUrl(mediaType, data)}
               />
 
               <div className="flex flex-col gap-3 flex-1 min-w-0">
-                {/* TODO: Alterar esse title para ser o certo */}
                 <TrackMediaDialog
                   mediaType={mediaType}
                   defaultImage={existingMedia?.imagePath ? mediaImageUrl(existingMedia.imagePath)! : getPosterUrl(mediaType, data)}
