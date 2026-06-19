@@ -8,16 +8,14 @@ import {
   Legend,
 } from "chart.js";
 import { useMemo } from "react";
-import { useTranslation } from "react-i18next";
 import { Bar } from "react-chartjs-2"
+import { useTranslation } from "react-i18next";
 
 import { GridItem } from "@/components/tw/media/grid";
 import { getMediaList } from "@/querries/media/logged";
 import { useAppSelector } from "@/store/auth/hooks";
 import { MediaResponse } from "@/types/logged";
 import { MediaItem } from "@/types/media";
-
-
 
 ChartJS.register(
   BarElement,
@@ -44,8 +42,8 @@ const MediaHomePage = () => {
 
   const chartData = useMemo(() => groupedByType && {
     labels: Object.keys(groupedByType),
-      datasets: [
-        {
+    datasets: [
+      {
         label: t("home.chartByType"),
         data: Object.values(groupedByType),
         backgroundColor: [

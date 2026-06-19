@@ -66,8 +66,6 @@ function MediaDetailsPage() {
       {isError && <p>{t("detailsPage.errorPrefix")} {error.message}</p>}
       {data && (
         <div className="max-w-[1400px] mx-auto p-4 sm:p-8">
-          {/* {data.backdrop_path && <img src={tmdbPosterUrl(data.backdrop_path, "original")} alt={data.title} className="h-[400px] w-full object-cover" />} */}
-
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex flex-row gap-4 items-start md:flex-col md:w-1/5 md:min-w-[200px] md:sticky md:top-16 md:self-start md:text-center md:text-wrap transition-all">
 
@@ -96,14 +94,6 @@ function MediaDetailsPage() {
 
               <MediaTabs data={data} mediaType={mediaType} />
             </div>
-          </div>
-
-          <div className="flex gap-4 mt-5">
-            {/*<DetailsCard mediaType={mediaType} data={data} existingMedia={existingMedia} />*/}
-
-            <div className="flex flex-col w-4/5">
-            </div>
-
           </div>
         </div>
       )

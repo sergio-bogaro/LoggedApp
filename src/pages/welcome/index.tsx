@@ -32,13 +32,13 @@ function WelcomePage() {
           </>
         ) : (
           <div className="flex flex-col gap-2 sm:flex-row">
-              <Button asChild variant="default" className="w-full sm:w-auto">
-                <Link to="/login">{t("actions.login")}</Link>
-              </Button>
-              <Button asChild variant="outline" className="w-full sm:w-auto">
-                <Link to="/register">{t("actions.register")}</Link>
-              </Button>
-            </div>
+            <Button asChild variant="default" className="w-full sm:w-auto">
+              <Link to="/login">{t("actions.login")}</Link>
+            </Button>
+            <Button asChild variant="outline" className="w-full sm:w-auto">
+              <Link to="/register">{t("actions.register")}</Link>
+            </Button>
+          </div>
         )}
       </div>
     </div>
