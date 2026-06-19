@@ -70,11 +70,7 @@ export function TrackMediaDialog({
 
   const form = useForm<FormType>({
     defaultValues: {
-      status: existingMedia
-        ? existingMedia.status
-        : isOneTimeConsumption
-          ? MediaStatusEnum.FINISHED
-          : MediaStatusEnum.IN_PROGRESS,
+      status: isOneTimeConsumption ? MediaStatusEnum.FINISHED : MediaStatusEnum.IN_PROGRESS,
       startDate: isOneTimeConsumption ? undefined : newIsoDate(),
       endDate: isOneTimeConsumption ? newIsoDate() : undefined,
     },
@@ -100,21 +96,10 @@ export function TrackMediaDialog({
     const mediaDataFormated = getMediaData(mediaType, mediaData);
 
     const formData = {
-      startDate:
-        data.startDate && data.startDate.trim() !== ""
-          ? data.startDate
-          : undefined,
-      endDate: isOneTimeConsumption
-        ? data.endDate
-        : data.status === MediaStatusEnum.FINISHED
-          ? data.endDate
-          : undefined,
-      status: isOneTimeConsumption
-        ? MediaStatusEnum.FINISHED
-        : data.endDate
-          ? MediaStatusEnum.FINISHED
-          : MediaStatusEnum.IN_PROGRESS,
-      rating: data.rating ? Number(data.rating) : undefined,
+      startDate: data.startDate && data.startDate.trim() !== "" ? data.startDate : undefined,
+      endDate: isOneTimeConsumption ? data.endDate : data.status === MediaStatusEnum.FINISHED ? data.endDate : undefined,
+      status:  data.status,
+      rating: data.rating,
       review: data.review,
     };
 

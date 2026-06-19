@@ -155,7 +155,7 @@ function SidebarProvider({
 function Sidebar({
   side = "left",
   variant = "sidebar",
-  collapsible = "offcanvas",
+  collapsible = "icon",
   className,
   children,
   ...props
@@ -275,10 +275,10 @@ function SidebarTrigger({
         toggleSidebar()
       }}
       {...props}
-      >
-        <PanelLeftIcon />
+    >
+      <PanelLeftIcon />
       <span className="sr-only">{t("a11y.toggleSidebar")}</span>
-      </Button>
+    </Button>
   )
 }
 

@@ -4,7 +4,7 @@ import { toast } from "sonner";
 
 import { createMedia, createMediaLog, deleteMedia, updateMedia, uploadMediaImage } from "@/querries/media/logged";
 import { useAppSelector } from "@/store/auth/hooks";
-import { MediaResponse } from "@/types/logged";
+import { MediaResponse, MediaWithLogsResponse } from "@/types/logged";
 import { MediaDataDetailsType, TrackMediaPayload } from "@/types/media";
 import { MediaItem } from "@/types/media";
 
@@ -47,7 +47,7 @@ export function useHandleBacklog() {
     },
   });
 
-  return (item: MediaItem, existingMedia?: MediaResponse) => mutation.mutate({ item, existingMedia });
+  return (item: MediaItem, existingMedia?: MediaWithLogsResponse) => mutation.mutate({ item, existingMedia });
 }
 
 export function useTrackMedia() {
@@ -58,7 +58,7 @@ export function useTrackMedia() {
   const mutation = useMutation({
     mutationFn: async ({ mediaData, existingMedia, trackData, imageFile }: {
       mediaData: MediaDataDetailsType;
-      existingMedia?: MediaResponse;
+      existingMedia?: MediaWithLogsResponse | null ;
       trackData: TrackMediaPayload;
       imageFile?: File;
     }) => {
@@ -120,7 +120,7 @@ export function useTrackMedia() {
     },
   });
 
-  return (mediaData: MediaDataDetailsType, existingMedia: MediaResponse | undefined, trackData: TrackMediaPayload, imageFile?: File) =>
+  return (mediaData: MediaDataDetailsType, existingMedia: MediaWithLogsResponse | undefined | null, trackData: TrackMediaPayload, imageFile?: File) =>
     mutation.mutate({ mediaData, existingMedia, trackData, imageFile });
 }
 

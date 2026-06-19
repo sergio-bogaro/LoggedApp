@@ -51,7 +51,7 @@ export function MediaHistoryDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="w-[90%] max-w-2xl">
+      <DialogContent className="w-[90%] max-w-2xl">
         <DialogHeader>
           <DialogTitle>{t("history.dialogTitle")}</DialogTitle>
           <DialogDescription>{media.title}</DialogDescription>

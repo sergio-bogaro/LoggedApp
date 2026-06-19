@@ -44,7 +44,7 @@ export function AppSidebar() {
                   >
                     <Link to={item.path}>
                       <item.icon />
-                       <span>{t(item.titleKey, { ns: "common" })}</span>
+                      <span>{t(item.titleKey, { ns: "common" })}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -87,7 +87,7 @@ export function AppSidebar() {
               >
                 <Link to={item.path}>
                   <item.icon />
-                   <span>{t(item.titleKey, { ns: "common" })}</span>
+                  <span>{t(item.titleKey, { ns: "common" })}</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
