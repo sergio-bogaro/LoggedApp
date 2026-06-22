@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AnimeTabs } from "../anime/tabs";
 import { GameTabs } from "../game/tabs";
 import { MangaTabs } from "../manga/tabs";

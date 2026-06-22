@@ -7,12 +7,13 @@ export function getMediaData(mediaType: MediaTypeEnum, mediaData: unknown): Medi
   switch (mediaType) {
     case MediaTypeEnum.MOVIES: {
       const movieData = mediaData as TMDBMovieDetails;
+
       return {
         id: String(movieData.id),
-        title: movieData.title,
+        title: movieData.title ?? "",
         type: mediaType,
-        coverUrl: tmdbPosterUrl(movieData.poster_path, "original") || undefined,
-        description: movieData.overview,
+        coverUrl: tmdbPosterUrl(movieData.poster_path, "original") || "",
+        description: movieData.overview ?? "",
         releaseDate: movieData.release_date,
         tags: movieData.genres?.map((g) => g.name) || [],
       };
@@ -20,9 +21,13 @@ export function getMediaData(mediaType: MediaTypeEnum, mediaData: unknown): Medi
     case MediaTypeEnum.ANIME: {
 
       const animeData = mediaData as AniListMediaDetails;
+      const formatedTitle = animeData.title.english ?
+        animeData.title.english === animeData.title.romaji ? animeData.title.english :
+          `${animeData.title.english} (${animeData.title.romaji})` : animeData.title.romaji;
+
       return {
         id: String(animeData.id),
-        title: animeData.title.romaji,
+        title: formatedTitle ?? "",
         type: mediaType,
         coverUrl: animeData.coverImage.large,
         description: animeData.description,
@@ -32,9 +37,13 @@ export function getMediaData(mediaType: MediaTypeEnum, mediaData: unknown): Medi
     }
     case MediaTypeEnum.MANGA: {
       const mangaData = mediaData as AniListMediaDetails;
+      const formatedTitle = mangaData.title.english ?
+        mangaData.title.english === mangaData.title.romaji ? mangaData.title.english :
+          `${mangaData.title.english} (${mangaData.title.romaji})` : mangaData.title.romaji;
+      
       return {
         id: String(mangaData.id),
-        title: mangaData.title.romaji,
+        title: formatedTitle ?? "",
         type: mediaType,
         coverUrl: mangaData.coverImage.large,
         description: mangaData.description,
@@ -48,10 +57,10 @@ export function getMediaData(mediaType: MediaTypeEnum, mediaData: unknown): Medi
         id: String(gameData.id),
         title: gameData.name,
         type: mediaType,
-        coverUrl: gameData.image,
+        coverUrl: gameData.image ?? "",
         description: gameData.description,
         releaseDate: gameData.release_date,
-        tags: gameData.tags.map((tag) => tag.name) || [],
+        tags: gameData.tags?.map((tag) => tag.name) || [],
       };
     }
     default:

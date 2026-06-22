@@ -8,7 +8,7 @@ export async function searchMangaNormalized(title: string): Promise<MediaItem[]>
   return mangas.map((m) => ({
     id: m.id,
     title: m.attributes.title?.en || Object.values(m.attributes.title)[0] || "",
-    coverUrl: m.coverUrl,
+    coverUrl: m.coverUrl ?? "",
     year: m.attributes.year,
     type: MediaTypeEnum.MANGA,
     description: m.attributes.description?.en || "",

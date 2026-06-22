@@ -67,7 +67,7 @@ export async function searchKitsuMangaNormalized(title: string): Promise<MediaIt
   return mangas.map((m) => ({
     id: m.id,
     title: m.attributes.canonicalTitle || Object.values(m.attributes.canonicalTitle || {})[0] || "",
-    coverUrl: m.attributes.posterImage?.medium || m.attributes.posterImage?.small || m.attributes.posterImage?.large,
+    coverUrl: m.attributes.posterImage?.medium ?? "",
     year: m.attributes.startDate ? new Date(m.attributes.startDate).getFullYear() : undefined,
     type: MediaTypeEnum.MANGA,
     description: m.attributes.synopsis || "",
@@ -82,7 +82,7 @@ export async function searchKitsuAnimeNormalized(title: string): Promise<MediaIt
   return animes.map((m) => ({
     id: m.id,
     title: m.attributes.canonicalTitle || Object.values(m.attributes.canonicalTitle || {})[0] || "",
-    coverUrl: m.attributes.posterImage?.medium || m.attributes.posterImage?.small || m.attributes.posterImage?.large,
+    coverUrl: m.attributes.posterImage?.medium ?? "",
     year: m.attributes.startDate ? new Date(m.attributes.startDate).getFullYear() : undefined,
     type: MediaTypeEnum.MOVIES,
     description: m.attributes.synopsis || "",

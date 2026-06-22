@@ -16,12 +16,7 @@ export const RatingDisplay = ({ rating }: { rating: number }) => {
     <div className="flex items-center gap-0.5">
       {Array.from({ length: stars }, (_, i) => {
         const starIndex = i + 1;
-        const fillType =
-          displayValue >= starIndex
-            ? "full"
-            : displayValue >= starIndex - 0.5
-              ? "half"
-              : "empty";
+        const fillType = displayValue >= starIndex ? "full" : displayValue >= starIndex - 0.5 ? "half" : "empty";
 
         return (
           <div key={i} className="relative h-4 w-4">
@@ -33,12 +28,7 @@ export const RatingDisplay = ({ rating }: { rating: number }) => {
             <div
               className="absolute top-0 left-0 h-full overflow-hidden"
               style={{
-                width:
-                  fillType === "full"
-                    ? "100%"
-                    : fillType === "half"
-                      ? "50%"
-                      : "0%",
+                width: fillType === "full" ? "100%" : fillType === "half" ? "50%" : "0%",
               }}
             >
               <Star

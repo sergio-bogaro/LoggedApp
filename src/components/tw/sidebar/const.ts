@@ -1,6 +1,5 @@
 import { Film, Tv, BookOpen, Gamepad2, Home, Settings, Search } from "lucide-react";
 
-
 import { MediaTypeEnum } from "@/types/media";
 
 export const mediaTypes = [

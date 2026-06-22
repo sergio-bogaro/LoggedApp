@@ -9,10 +9,10 @@ import { formatFromIsoDate } from "@/utils/date"
 
 export const MangaDetails = ({ data }: { data: AniListMediaDetails }) => {
   const startDate = data.startDate;
-  const formattedDate = formatFromIsoDate(`${startDate.year}-${String(startDate.month).padStart(2, "0")}-${String(startDate.day).padStart(2, "0")}`);
+  const formattedDate = formatFromIsoDate(`${startDate?.year}-${String(startDate?.month).padStart(2, "0")}-${String(startDate?.day).padStart(2, "0")}`);
 
   const endDate = data.endDate;
-  const formattedEndDate = endDate.year ? formatFromIsoDate(`${endDate.year}-${String(endDate.month).padStart(2, "0")}-${String(endDate.day).padStart(2, "0")}`) : " --- "
+  const formattedEndDate = endDate?.year ? formatFromIsoDate(`${endDate?.year}-${String(endDate?.month).padStart(2, "0")}-${String(endDate?.day).padStart(2, "0")}`) : " --- "
 
   return (
     <div className="divide-y divide-border">
@@ -45,7 +45,7 @@ export const MangaDetails = ({ data }: { data: AniListMediaDetails }) => {
 
       <DetailsLabel
         label={t("details.anilistScore", { ns: "media" })}
-        value={((data.averageScore * 0.1) / 2).toFixed(1) + " ★"}
+        value={((data.averageScore ?? 0 * 0.1) / 2).toFixed(1) + " ★"}
       />
 
       <DetailsLabel

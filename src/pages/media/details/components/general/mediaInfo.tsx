@@ -52,8 +52,8 @@ export const MediaInfo = ({ mediaType, data }: MediaInfoProps) => {
         return <MediaInfoComponent
           title={movieData.title}
           dates={movieData.release_date?.slice(0, 4) || ""}
-          tagline={movieData.tagline}
-          overview={movieData.overview}
+          tagline={movieData.tagline ?? ""}
+          overview={movieData.overview ?? ""}
           tags={movieData.genres?.map((genre) => genre.name) || []}
         />
       }
@@ -65,9 +65,9 @@ export const MediaInfo = ({ mediaType, data }: MediaInfoProps) => {
 
         return <MediaInfoComponent
           title={formatedTitle}
-          dates={animeData.startDate.year?.toString()}
-          overview={animeData.description}
-          tags={animeData.genres.map((genre) => genre) || []}
+          dates={animeData.startDate?.year?.toString()}
+          overview={animeData.description ?? ""}
+          tags={animeData.genres?.map((genre) => genre) || []}
         />
       }
       case MediaTypeEnum.MANGA: {
@@ -78,9 +78,9 @@ export const MediaInfo = ({ mediaType, data }: MediaInfoProps) => {
 
         return <MediaInfoComponent
           title={formatedTitle}
-          dates={mangaData.startDate.year?.toString()}
-          overview={mangaData.description}
-          tags={mangaData.genres.map((genre) => genre) || []}
+          dates={mangaData.startDate?.year?.toString()}
+          overview={mangaData.description ?? ""}
+          tags={mangaData.genres?.map((genre) => genre) || []}
         />
       }
 
@@ -90,7 +90,7 @@ export const MediaInfo = ({ mediaType, data }: MediaInfoProps) => {
         return <MediaInfoComponent
           title={gameData.name}
           dates={gameData.release_date?.slice(0, 4) || ""}
-          overview={gameData.description}
+          overview={gameData.description ?? ""}
           tags={gameData.genres?.map((genre) => genre.name) || []}
         />
       }

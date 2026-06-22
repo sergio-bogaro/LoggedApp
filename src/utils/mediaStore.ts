@@ -47,7 +47,7 @@ export function useHandleBacklog() {
     },
   });
 
-  return (item: MediaItem, existingMedia?: MediaWithLogsResponse) => mutation.mutate({ item, existingMedia });
+  return (item: MediaItem, existingMedia?: MediaResponse) => mutation.mutate({ item, existingMedia });
 }
 
 export function useTrackMedia() {

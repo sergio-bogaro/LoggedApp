@@ -2,6 +2,7 @@ import { tmdbPosterUrl } from "@/querries/externalMedia/movies";
 import { mediaImageUrl } from "@/querries/media/logged";
 import { MediaTypeEnum } from "@/types/media";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getPosterUrl(type: MediaTypeEnum, data: any) {
   switch (type) {
     case MediaTypeEnum.MOVIES:

@@ -7,7 +7,7 @@ export async function searchMoviesNormalized(query: string): Promise<MediaItem[]
   return movies.map((m) => ({
     id: String(m.id),
     title: m.title,
-    coverUrl: tmdbPosterUrl(m.poster_path) || undefined,
+    coverUrl: tmdbPosterUrl(m.poster_path) ?? "",
     year: m.release_date ? m.release_date.slice(0, 4) : undefined,
     releaseDate: m.release_date,
     type: MediaTypeEnum.MOVIES,
@@ -129,6 +129,7 @@ export type TMDBMovieDetails = {
   videos?: TMDBVideos;
   images?: TMDBImages;
   recommendations?: TMDBRecommendations;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 };
 

@@ -32,12 +32,12 @@ export const MovieDetails = ({ data }: { data: TMDBMovieDetails }) => {
 
       <DetailsLabel
         label={t("details.productionBy", { ns: "media" })}
-        value={data?.production_companies.map((company) => company?.name).filter(Boolean).join(", ")}
+        value={data?.production_companies?.map((company) => company?.name).filter(Boolean).join(", ")}
       />
 
       <DetailsLabel
         label={t("details.TMDBScore", { ns: "media" })}
-        value={data.vote_average.toFixed(1) + "★"}
+        value={data.vote_average?.toFixed(1) + "★"}
       />
 
       <DetailsLabel

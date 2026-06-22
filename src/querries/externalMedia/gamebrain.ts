@@ -303,7 +303,7 @@ export async function searchGamesNormalized(
   return response.results.map((g) => ({
     id: g.id.toString(),
     title: g.name,
-    coverUrl: g.image || undefined,
+    coverUrl: g.image || "",
     year: g.year,
     type: MediaTypeEnum.GAME,
     description: g.short_description || "",

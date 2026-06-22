@@ -3,8 +3,8 @@ import { Link } from "react-router";
 
 import { MangaDetails } from "./details";
 
-import { AppTabs } from "@/components/tw/tabs";
 import { ImageWithSkeleton } from "@/components/tw/generic/imageSkeleton";
+import { AppTabs } from "@/components/tw/tabs";
 import { AniListMediaDetails } from "@/querries/externalMedia/anilist";
 
 type MangaRecommendation = {

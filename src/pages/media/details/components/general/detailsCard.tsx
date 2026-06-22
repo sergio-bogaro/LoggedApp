@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { History, List } from "lucide-react";
 import { ReactNode, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -12,7 +13,7 @@ import { Card } from "@/components/tw/generic/card";
 import { Button } from "@/components/ui/button";
 import { AniListMediaDetails } from "@/querries/externalMedia/anilist";
 import { GameBrainGame } from "@/querries/externalMedia/gamebrain";
-import { RAWGGame } from "@/querries/externalMedia/games";
+//import { RAWGGame } from "@/querries/externalMedia/games";
 import { MediaResponse } from "@/types/logged";
 import { MediaTypeEnum } from "@/types/media";
 
@@ -58,7 +59,6 @@ export const DetailsCard = ({ mediaType, data, existingMedia }: DetailsCardProps
     <>
       <div className="flex flex-col w-1/5 text-wrap gap-3">
         <h3 className="mx-auto">{t("details.label")}</h3>
-
         <Card>
           {getDetails()}
         </Card>

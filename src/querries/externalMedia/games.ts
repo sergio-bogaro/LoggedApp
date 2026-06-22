@@ -12,7 +12,7 @@ export async function searchGamesNormalized(title: string): Promise<MediaItem[]>
   return games.map((g) => ({
     id: g.id.toString(),
     title: g.name,
-    coverUrl: g.background_image || undefined,
+    coverUrl: g.background_image || "",
     year: g.released ? new Date(g.released).getFullYear() : undefined,
     releaseDate: g.released,
     type: MediaTypeEnum.GAME,
@@ -229,7 +229,7 @@ export async function searchGames(title: string): Promise<RAWGGame[]> {
 
     if (searchCache.size > 100) {
       const oldestKey = searchCache.keys().next().value;
-      searchCache.delete(oldestKey);
+      searchCache.delete(oldestKey ?? "");
     }
 
     return results;
