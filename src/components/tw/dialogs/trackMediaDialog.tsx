@@ -1,6 +1,9 @@
 import { t } from "i18next";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { BookmarkPlus } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
+
+import { ImageWithSkeleton } from "../generic/imageSkeleton";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -30,9 +33,8 @@ import { statusAnimeOptions } from "@/utils/selectOptions";
 
 interface TrackMediaDialogProps {
   existingMedia?: MediaWithLogsResponse | null;
-  title: string;
   mediaType: MediaTypeEnum;
-  defaultImage: string;
+  image: string;
   mediaData: unknown;
 }
 
@@ -44,27 +46,11 @@ interface FormType {
   review?: string;
 }
 
-export function TrackMediaDialog({
-  mediaType,
-  defaultImage,
-  title,
-  mediaData,
-  existingMedia,
-}: TrackMediaDialogProps) {
-  const isOneTimeConsumption = useMemo(
-    () => mediaType === MediaTypeEnum.MOVIES,
-    [mediaType],
-  );
-  const endDateLabel = useMemo(
-    () => (isOneTimeConsumption ? "track.viewedOn" : "track.finishDate"),
-    [isOneTimeConsumption],
-  );
-
-  const [selectedImage, setSelectedImage] = useState(defaultImage);
-  const [selectedFile, setSelectedFile] = useState<File | undefined>(undefined);
+export function TrackMediaDialog({ mediaType, mediaData, existingMedia, image }: TrackMediaDialogProps) { 
   const [open, setOpen] = useState(false);
-  const [imageDialogOpen, setImageDialogOpen] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const isOneTimeConsumption = useMemo( () => mediaType === MediaTypeEnum.MOVIES, [mediaType] );
+  const endDateLabel = useMemo( () => (isOneTimeConsumption ? "track.viewedOn" : "track.finishDate"), [isOneTimeConsumption] );
 
   const trackMedia = useTrackMedia();
 
@@ -103,79 +89,39 @@ export function TrackMediaDialog({
       review: data.review,
     };
 
-    trackMedia(mediaDataFormated, existingMedia, formData, selectedFile);
+    trackMedia(mediaDataFormated, existingMedia, formData);
     setOpen(false);
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>{t("track.label", { ns: "media" })}</Button>
+        <Button
+          size="icon"
+          title={t("track.label", { ns: "media" })}
+        >
+          <BookmarkPlus className="h-4 w-4" />
+        </Button>
       </DialogTrigger>
 
       <DialogContent className="w-[80%] max-w-[1000px]">
         <DialogHeader>
           <DialogTitle>
-            {t("track.dialogTitle", {
-              ns: "media",
-              mediaType: t(`type.${mediaType}`, { ns: "media" }),
-            })}
+            {getMediaData(mediaType, mediaData).title}
           </DialogTitle>
+
+          <DialogDescription>
+            {t("track.dialogTitle", { ns: "media", mediaType: t(`type.${mediaType}`, { ns: "media" }) })}
+          </DialogDescription>
         </DialogHeader>
 
-        <div className="flex flex-col lg:flex-row w-full">
-          <div className="w-full lg:w-1/3 flex flex-col gap-2 items-center text-center">
-            <img
-              src={selectedImage}
-              alt={t("track.coverAlt", { ns: "media" })}
-              className="rounded aspect-2/3 w-[80%]"
-            />
+        <div className="flex flex-col gap-4 lg:flex-row w-full">
 
-            <h3 className="text-wrap">{title}</h3>
-
-            <Dialog open={imageDialogOpen} onOpenChange={setImageDialogOpen}>
-              <DialogTrigger asChild>
-                <Button>{t("track.changeImage", { ns: "media" })}</Button>
-              </DialogTrigger>
-
-              <DialogContent className="max-w-sm">
-                <DialogHeader>
-                  <DialogTitle>
-                    {t("track.changeImage", { ns: "media" })}
-                  </DialogTitle>
-                  <DialogDescription>
-                    {t("track.changeImageDescription", { ns: "media" })}
-                  </DialogDescription>
-                </DialogHeader>
-
-                <div className="flex flex-col items-center gap-4">
-                  <img
-                    src={selectedImage}
-                    alt={t("track.previewAlt", { ns: "media" })}
-                    className="rounded aspect-2/3 w-[60%] object-cover"
-                  />
-
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept=".jpg,.jpeg,.png,.webp,.gif"
-                    className="hidden"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (!file) return;
-                      setSelectedFile(file);
-                      setSelectedImage(URL.createObjectURL(file));
-                      setImageDialogOpen(false);
-                    }}
-                  />
-
-                  <Button onClick={() => fileInputRef.current?.click()}>
-                    {t("track.selectFile", { ns: "media" })}
-                  </Button>
-                </div>
-              </DialogContent>
-            </Dialog>
-          </div>
+          <ImageWithSkeleton
+            alt={t("track.coverAlt", { ns: "media" })}
+            className="w-full lg:w-1/3 max-w-[300px] aspect-2/3 flex flex-col items-center text-center"
+            src={image}
+          />
 
           <Form {...form}>
             <form

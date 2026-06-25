@@ -1,10 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
 
 import { MediaInfo } from "./components/general/mediaInfo";
 import { MediaTabs } from "./components/general/mediaTabs";
 
+import { ChangeImageDialog } from "@/components/tw/dialogs/changeImageDialog";
 import { TrackMediaDialog } from "@/components/tw/dialogs/trackMediaDialog";
 import { ImageWithSkeleton } from "@/components/tw/generic/imageSkeleton";
 import { LastLog } from "@/components/tw/media/lastLog";
@@ -29,11 +31,12 @@ function MediaDetailsPage() {
   const { mediaType, id } = useParams() as MediaDetailsParams;
   const { user } = useAppSelector((state) => state.auth);
 
+  
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["details", mediaType, id],
     queryFn: async () => {
       if (!mediaType || !id) return null;
-
+      
       switch (mediaType) {
         case MediaTypeEnum.MOVIES:
           return getMovieDetails(Number(id));
@@ -51,39 +54,52 @@ function MediaDetailsPage() {
     },
     enabled: !!mediaType && !!id,
   });
-
+  
   const { data: existingMedia } = useQuery({
     queryKey: ["existingMedia", id, mediaType],
     queryFn: () => getMediaByExternalIdWithLogs(id!, mediaType, user!.id),
     enabled: !!id && !!mediaType && !!user,
   });
-
+  
+  const mediaImage = useMemo(() => existingMedia?.imagePath ? mediaImageUrl(existingMedia.imagePath)! : getPosterUrl(mediaType, data) ,[existingMedia, mediaType, data])
   const lastLog = existingMedia?.logs && existingMedia.logs.length > 0 ? existingMedia.logs[existingMedia.logs.length - 1] : null;
-
+  
   return (
     <div>
       {isLoading && <p>{t("detailsPage.loading")}</p>}
+
       {isError && <p>{t("detailsPage.errorPrefix")} {error.message}</p>}
+
       {data && (
         <div className="max-w-[1400px] mx-auto p-4 sm:p-8">
           <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex flex-row gap-4 items-start md:flex-col md:w-1/5 md:min-w-[200px] md:sticky md:top-16 md:self-start md:text-center md:text-wrap transition-all">
-
-              <ImageWithSkeleton
-                alt={data.title}
-                className="w-1/3 max-w-[60%] shrink-0 aspect-2/3 md:w-full md:max-w-full md:mb-4"
-                src={existingMedia?.imagePath ? mediaImageUrl(existingMedia.imagePath)! : getPosterUrl(mediaType, data)}
-              />
-
-              <div className="flex flex-col gap-3 flex-1 min-w-0">
-                <TrackMediaDialog
-                  mediaType={mediaType}
-                  defaultImage={existingMedia?.imagePath ? mediaImageUrl(existingMedia.imagePath)! : getPosterUrl(mediaType, data)}
-                  title={getMediaData(mediaType, data).title}
-                  mediaData={data}
-                  existingMedia={existingMedia}
+            <div className="flex gap-4 items-start w-full flex-col md:w-1/5 md:min-w-[200px] md:text-center md:text-wrap md:max-w-[250px] transition-all">
+              <div className="relative w-[70%] md:w-full">
+                <ImageWithSkeleton
+                  alt={data.title}
+                  className="shrink-0 aspect-2/3 md:w-full md:max-w-full"
+                  src={mediaImage}
                 />
 
+                <div className="flex absolute bottom-4 justify-center gap-2 w-full">
+                  <ChangeImageDialog
+                    defaultImage={mediaImage}
+                    mediaData={data}
+                    existingMedia={existingMedia}
+                    mediaType={mediaType}
+                    originalCoverUrl={getPosterUrl(mediaType, data)}
+                  />
+
+                  <TrackMediaDialog
+                    mediaType={mediaType}
+                    mediaData={data}
+                    existingMedia={existingMedia}
+                    image={mediaImage}
+                  />
+                </div>
+              </div>
+
+              <div className="w-[70%] md:w-full">   
                 <LastLog lastLog={lastLog} />
               </div>
 

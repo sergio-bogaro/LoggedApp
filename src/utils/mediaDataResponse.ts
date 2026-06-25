@@ -70,6 +70,8 @@ export function getMediaData(mediaType: MediaTypeEnum, mediaData: unknown): Medi
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getPosterUrl(type: MediaTypeEnum, data: any) {
+  if(!data) return "";
+
   switch (type) {
     case MediaTypeEnum.MOVIES:
       return tmdbPosterUrl(data.poster_path, "original");

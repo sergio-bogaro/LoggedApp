@@ -2,10 +2,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
-import { createMedia, createMediaLog, deleteMedia, updateMedia, uploadMediaImage } from "@/querries/media/logged";
+import { createMedia, createMediaLog, deleteMedia, removeMediaImage, updateMedia, uploadMediaImage } from "@/querries/media/logged";
 import { useAppSelector } from "@/store/auth/hooks";
 import { MediaResponse, MediaWithLogsResponse } from "@/types/logged";
-import { MediaDataDetailsType, TrackMediaPayload } from "@/types/media";
+import { MediaDataDetailsType, MediaStatusEnum, TrackMediaPayload } from "@/types/media";
 import { MediaItem } from "@/types/media";
 
 export function useHandleBacklog() {
@@ -56,11 +56,10 @@ export function useTrackMedia() {
   const { user } = useAppSelector((state) => state.auth);
 
   const mutation = useMutation({
-    mutationFn: async ({ mediaData, existingMedia, trackData, imageFile }: {
+    mutationFn: async ({ mediaData, existingMedia, trackData }: {
       mediaData: MediaDataDetailsType;
       existingMedia?: MediaWithLogsResponse | null ;
       trackData: TrackMediaPayload;
-      imageFile?: File;
     }) => {
       if (!user) throw new Error("User not authenticated");
 
@@ -102,11 +101,6 @@ export function useTrackMedia() {
         endDate: trackData.endDate,
       });
 
-      // Upload custom image if provided
-      if (imageFile) {
-        await uploadMediaImage(media.id, imageFile, user.id);
-      }
-
       return media;
     },
 
@@ -120,7 +114,84 @@ export function useTrackMedia() {
     },
   });
 
-  return (mediaData: MediaDataDetailsType, existingMedia: MediaWithLogsResponse | undefined | null, trackData: TrackMediaPayload, imageFile?: File) =>
-    mutation.mutate({ mediaData, existingMedia, trackData, imageFile });
+  return (mediaData: MediaDataDetailsType, existingMedia: MediaWithLogsResponse | undefined | null, trackData: TrackMediaPayload) =>
+    mutation.mutate({ mediaData, existingMedia, trackData });
 }
 
+// Adicionar ao useChangeImage em utils/mediaStore.ts
+
+export function useChangeImage() {
+  const { t } = useTranslation("media");
+  const queryClient = useQueryClient();
+  const { user } = useAppSelector((state) => state.auth);
+
+  const mutation = useMutation({
+    mutationFn: async ({
+      mediaData,
+      existingMedia,
+      imageFile,
+      remove,
+    }: {
+      mediaData: MediaDataDetailsType;
+      existingMedia?: MediaWithLogsResponse | null;
+      imageFile?: File;
+      remove?: boolean;
+    }) => {
+      if (!user) throw new Error("User not authenticated");
+
+      let mediaId: number;
+
+      if (existingMedia) {
+        mediaId = existingMedia.id;
+      } else {
+        if (remove) return; // nada a remover se mídia nem existe
+        const media = await createMedia({
+          userId: user.id,
+          title: mediaData.title,
+          type: mediaData.type,
+          externalId: mediaData.id,
+          description: mediaData.description,
+          coverUrl: mediaData.coverUrl,
+          releaseDate: mediaData.releaseDate,
+          tags: mediaData.tags,
+          onList: true,
+        });
+        mediaId = media.id;
+      }
+
+      if (remove) {
+        await removeMediaImage(mediaId, user.id);
+      } else if (imageFile) {
+        await uploadMediaImage(mediaId, imageFile, user.id);
+      }
+    },
+
+    onSuccess: (_, { remove }) => {
+      queryClient.invalidateQueries({ queryKey: ["media"] });
+      queryClient.invalidateQueries({ queryKey: ["existingMedia"] });
+      toast.success(
+        remove
+          ? t("feedback.imageRemoveSuccess")
+          : t("feedback.imageUpdateSuccess")
+      );
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || t("feedback.imageUpdateFailed"));
+    },
+  });
+
+  return {
+    changeImage: (
+      mediaData: MediaDataDetailsType,
+      existingMedia: MediaWithLogsResponse | undefined | null,
+      imageFile: File
+    ) => mutation.mutate({ mediaData, existingMedia, imageFile }),
+
+    removeImage: (
+      mediaData: MediaDataDetailsType,
+      existingMedia: MediaWithLogsResponse | undefined | null
+    ) => mutation.mutate({ mediaData, existingMedia, remove: true }),
+
+    isPending: mutation.isPending,
+  };
+}

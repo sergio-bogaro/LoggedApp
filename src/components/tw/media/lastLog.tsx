@@ -55,7 +55,7 @@ export const LastLog = ({ lastLog }: { lastLog: MediaLogResponse | null }) => {
   if (!lastLog) return null;
 
   return (
-    <div className="mt-4 w-full flex flex-col gap-2">
+    <div className="w-full flex flex-col gap-2">
       <StatusBadge status={lastLog.status} />
 
       <Card className="gap-0">
