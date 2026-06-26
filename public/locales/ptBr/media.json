@@ -80,7 +80,8 @@
     "dropped": "Abandonado",
     "planning": "Planejando",
     "coverAlt": "Capa da mídia",
-    "previewAlt": "Imagem de pré-visualização"
+    "previewAlt": "Imagem de pré-visualização",
+    "removeImage": "Remover Imagem"
   },
   "status": {
     "in_progress": "Em Progresso",

@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import { t } from "i18next";
 import { ImagePlus } from "lucide-react";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import { ImageWithSkeleton } from "../generic/imageSkeleton";
 
@@ -13,35 +14,35 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { mediaImageUrl } from "@/querries/media/logged";
 import { MediaWithLogsResponse } from "@/types/logged";
 import { MediaTypeEnum } from "@/types/media";
 import { getMediaData } from "@/utils/mediaDataResponse";
 import { useChangeImage } from "@/utils/mediaStore";
+import { getPosterUrl } from "@/utils/posterPaths";
 
 interface ChangeImageDialogProps {
   existingMedia?: MediaWithLogsResponse | null;
   mediaType: MediaTypeEnum;
-  defaultImage: string;
-  originalCoverUrl: string;
   mediaData: unknown;
   onImageChange?: (objectUrl: string) => void;
 }
 
-export function ChangeImageDialog({
-  defaultImage,
-  originalCoverUrl,
-  existingMedia,
-  mediaData,
-  mediaType,
-  onImageChange,
-}: ChangeImageDialogProps) {
-  const [selectedImage, setSelectedImage] = useState(defaultImage);
+export function ChangeImageDialog({ existingMedia, mediaData, mediaType, onImageChange }: ChangeImageDialogProps) {
+  const originalCover = useMemo(() => getPosterUrl(mediaType, mediaData), [mediaData, mediaType])
+
+  const [selectedImage, setSelectedImage] = useState(null);
   const [imageDialogOpen, setImageDialogOpen] = useState(false);
-  
+
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const hasCustomImage = selectedImage !== originalCoverUrl;
+  const hasCustomImage = selectedImage !== originalCover;
 
   const { changeImage, removeImage, isPending } = useChangeImage();
+
+  useEffect(() => {
+    setSelectedImage(existingMedia?.imagePath ? mediaImageUrl(existingMedia.imagePath)! : originalCover)
+  }, [existingMedia])
+
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -61,8 +62,8 @@ export function ChangeImageDialog({
     const mediaDataFormatted = getMediaData(mediaType, mediaData);
     removeImage(mediaDataFormatted, existingMedia);
 
-    setSelectedImage(originalCoverUrl);
-    onImageChange?.(originalCoverUrl);
+    setSelectedImage(originalCover);
+    onImageChange?.(originalCover);
     setImageDialogOpen(false);
   };
 

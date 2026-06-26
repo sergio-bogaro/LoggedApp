@@ -65,7 +65,8 @@
     "dropped": "Dropped",
     "planning": "Planning",
     "coverAlt": "Media cover",
-    "previewAlt": "Preview image"
+    "previewAlt": "Preview Image",
+    "removeImage": "Remove Image"
   },
   "type": {
     "movie": "Movie",

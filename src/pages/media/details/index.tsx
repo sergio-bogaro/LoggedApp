@@ -18,7 +18,6 @@ import { getMediaByExternalIdWithLogs } from "@/querries/media/logged";
 import { mediaImageUrl } from "@/querries/media/logged"
 import { useAppSelector } from "@/store/auth/hooks";
 import { MediaTypeEnum } from "@/types/media";
-import { getMediaData } from "@/utils/mediaDataResponse";
 import { getPosterUrl } from "@/utils/mediaDataResponse";
 
 type MediaDetailsParams = {
@@ -31,12 +30,12 @@ function MediaDetailsPage() {
   const { mediaType, id } = useParams() as MediaDetailsParams;
   const { user } = useAppSelector((state) => state.auth);
 
-  
+
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["details", mediaType, id],
     queryFn: async () => {
       if (!mediaType || !id) return null;
-      
+
       switch (mediaType) {
         case MediaTypeEnum.MOVIES:
           return getMovieDetails(Number(id));
@@ -54,16 +53,16 @@ function MediaDetailsPage() {
     },
     enabled: !!mediaType && !!id,
   });
-  
+
   const { data: existingMedia } = useQuery({
     queryKey: ["existingMedia", id, mediaType],
     queryFn: () => getMediaByExternalIdWithLogs(id!, mediaType, user!.id),
     enabled: !!id && !!mediaType && !!user,
   });
-  
-  const mediaImage = useMemo(() => existingMedia?.imagePath ? mediaImageUrl(existingMedia.imagePath)! : getPosterUrl(mediaType, data) ,[existingMedia, mediaType, data])
+
+  const mediaImage = useMemo(() => existingMedia?.imagePath ? mediaImageUrl(existingMedia.imagePath)! : getPosterUrl(mediaType, data), [existingMedia, mediaType, data])
   const lastLog = existingMedia?.logs && existingMedia.logs.length > 0 ? existingMedia.logs[existingMedia.logs.length - 1] : null;
-  
+
   return (
     <div>
       {isLoading && <p>{t("detailsPage.loading")}</p>}
@@ -83,11 +82,9 @@ function MediaDetailsPage() {
 
                 <div className="flex absolute bottom-4 justify-center gap-2 w-full">
                   <ChangeImageDialog
-                    defaultImage={mediaImage}
                     mediaData={data}
                     existingMedia={existingMedia}
                     mediaType={mediaType}
-                    originalCoverUrl={getPosterUrl(mediaType, data)}
                   />
 
                   <TrackMediaDialog
@@ -99,7 +96,7 @@ function MediaDetailsPage() {
                 </div>
               </div>
 
-              <div className="w-[70%] md:w-full">   
+              <div className="w-[70%] md:w-full">
                 <LastLog lastLog={lastLog} />
               </div>
 
