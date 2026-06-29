@@ -8,6 +8,7 @@ import { MediaTabs } from "./components/general/mediaTabs";
 
 import { ChangeImageDialog } from "@/components/tw/dialogs/changeImageDialog";
 import { TrackMediaDialog } from "@/components/tw/dialogs/trackMediaDialog";
+import { DataExhibition } from "@/components/tw/generic/dataExhibition";
 import { ImageWithSkeleton } from "@/components/tw/generic/imageSkeleton";
 import { LastLog } from "@/components/tw/media/lastLog";
 import { getAniListDetails } from "@/querries/externalMedia/anilist";
@@ -65,52 +66,55 @@ function MediaDetailsPage() {
 
   return (
     <div>
-      {isLoading && <p>{t("detailsPage.loading")}</p>}
-
       {isError && <p>{t("detailsPage.errorPrefix")} {error.message}</p>}
 
-      {data && (
-        <div className="max-w-[1400px] mx-auto p-4 sm:p-8">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex gap-4 items-start w-full flex-col md:w-1/5 md:min-w-[200px] md:text-center md:text-wrap md:max-w-[250px] transition-all">
-              <div className="relative w-[70%] md:w-full">
-                <ImageWithSkeleton
-                  alt={data.title}
-                  className="shrink-0 aspect-2/3 md:w-full md:max-w-full"
-                  src={mediaImage}
-                />
-
-                <div className="flex absolute bottom-4 justify-center gap-2 w-full">
-                  <ChangeImageDialog
-                    mediaData={data}
-                    existingMedia={existingMedia}
-                    mediaType={mediaType}
+      <DataExhibition
+        isFetching={isLoading}
+      >
+        {data && (
+          <div className="max-w-[1400px] mx-auto p-4 sm:p-8">
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex gap-4 items-start w-full flex-col md:w-1/5 md:min-w-[200px] md:text-center md:text-wrap md:max-w-[250px] transition-all">
+                <div className="relative w-[70%] md:w-full">
+                  <ImageWithSkeleton
+                    alt={data.title}
+                    className="shrink-0 aspect-2/3 md:w-full md:max-w-full"
+                    src={mediaImage}
                   />
 
-                  <TrackMediaDialog
-                    mediaType={mediaType}
-                    mediaData={data}
-                    existingMedia={existingMedia}
-                    image={mediaImage}
-                  />
+                  <div className="flex absolute bottom-4 justify-center gap-2 w-full">
+                    <ChangeImageDialog
+                      mediaData={data}
+                      existingMedia={existingMedia}
+                      mediaType={mediaType}
+                    />
+
+                    <TrackMediaDialog
+                      mediaType={mediaType}
+                      mediaData={data}
+                      existingMedia={existingMedia}
+                      image={mediaImage}
+                    />
+                  </div>
                 </div>
+
+                <div className="w-[70%] md:w-full">
+                  <LastLog lastLog={lastLog} />
+                </div>
+
               </div>
 
-              <div className="w-[70%] md:w-full">
-                <LastLog lastLog={lastLog} />
+              <div className="space-y-3 flex-1 min-w-0">
+                <MediaInfo mediaType={mediaType} data={data} />
+
+                <MediaTabs data={data} mediaType={mediaType} />
               </div>
-
-            </div>
-
-            <div className="space-y-3 flex-1 min-w-0">
-              <MediaInfo mediaType={mediaType} data={data} />
-
-              <MediaTabs data={data} mediaType={mediaType} />
             </div>
           </div>
-        </div>
-      )
-      }
+        )
+        }
+
+      </DataExhibition>
     </div >
   )
 }

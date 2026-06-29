@@ -78,7 +78,8 @@ const MediaView = ({ isLoading, error, mediaData, existingMedia }: MediaViewProp
       "gap-4 mt-2 transition-all duration-300 ease-in-out",
       switching ? "opacity-80 translate-y-0.5" : "opacity-100 translate-0",
       viewMode === "list" ? "flex flex-col gap-4" : "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5"
-    )}>{mediaData.map((mediaItem) => {
+    )} >
+      {mediaData.map((mediaItem) => {
         const existingItem = getExistingMedia(existingMedia, mediaItem.id, mediaItem.type);
 
         return viewMode === "list" ? (
