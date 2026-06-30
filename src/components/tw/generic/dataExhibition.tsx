@@ -16,7 +16,7 @@ export const DataExhibition = ({ children, isFetching, skeleton, className }: Da
     <div>
       <Loading isLoading={isFetching} />
 
-      <div className={cn(className)}>
+      <div className={cn("min-w-0", className)}>
         {isFetching && skeleton ? skeleton : children}
       </div>
     </div>

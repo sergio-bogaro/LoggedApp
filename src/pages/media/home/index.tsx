@@ -1,94 +1,129 @@
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import React, { useRef, useState, useCallback } from "react";
+import { useQuery } from "@tanstack/react-query";
+import {
+  Chart as ChartJS,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import { useMemo } from "react";
+import { Bar } from "react-chartjs-2"
+import { useTranslation } from "react-i18next";
 
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { MediaHomePageSkeleton } from "./components/mediaHomeSkeleton";
 
-interface MediaCarouselProps {
-  children: React.ReactNode;
-  className?: string;
-}
+import { DataExhibition } from "@/components/tw/generic/dataExhibition";
+import { GridItem } from "@/components/tw/media/grid";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
+import { getMediaList } from "@/querries/media/logged";
+import { useAppSelector } from "@/store/auth/hooks";
+import { MediaResponse } from "@/types/logged";
+import { MediaItem } from "@/types/media";
 
-export const MediaCarousel = ({ children, className }: MediaCarouselProps) => {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
-  const dragStart = useRef<{ x: number; scrollLeft: number } | null>(null);
+ChartJS.register(
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Legend
+);
 
-  const updateScrollButtons = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    setCanScrollLeft(el.scrollLeft > 0);
-    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
-  }, []);
+const MediaHomePage = () => {
+  const { t } = useTranslation("media");
+  const { user } = useAppSelector((state) => state.auth);
+  
+  const { data, isFetching } = useQuery<MediaResponse[]>({
+    queryKey: ["media"],
+    queryFn: () => getMediaList(user!.id),
+    staleTime: 1000 * 60 * 5,
+    enabled: !!user,
+  });
 
-  const scroll = (direction: "left" | "right") => {
-    const el = scrollRef.current;
-    if (!el) return;
-    el.scrollBy({ left: direction === "left" ? -320 : 320, behavior: "smooth" });
-  };
+  const groupedByType = useMemo(() => data?.reduce((acc, item) => {
+    acc[item.type] = (acc[item.type] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>), [data])
 
-  const onMouseDown = (e: React.MouseEvent) => {
-    const el = scrollRef.current;
-    if (!el) return;
-    dragStart.current = { x: e.pageX, scrollLeft: el.scrollLeft };
-    setIsDragging(true);
-  };
-
-  const onMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging || !dragStart.current || !scrollRef.current) return;
-    e.preventDefault();
-    const delta = e.pageX - dragStart.current.x;
-    scrollRef.current.scrollLeft = dragStart.current.scrollLeft - delta;
-  };
-
-  const onMouseUp = () => {
-    setIsDragging(false);
-    dragStart.current = null;
-  };
+  const chartData = useMemo(() => groupedByType && {
+    labels: Object.keys(groupedByType),
+    datasets: [
+      {
+        label: t("home.chartByType"),
+        data: Object.values(groupedByType),
+        backgroundColor: [
+          "#FF6384",
+          "#36A2EB",
+          "#FFCE56",
+          "#4BC0C0",
+        ],
+        borderWidth: 1,
+      },
+    ],
+  }, [groupedByType, t])
 
   return (
-    <div className={cn("relative group/carousel", className)}>
-      {/* Botão esquerdo */}
-      <Button
-        variant="outline"
-        size="icon"
-        onClick={() => scroll("left")}
-        disabled={!canScrollLeft}
-        className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 z-20 h-8 w-8 rounded-full shadow-md opacity-0 group-hover/carousel:opacity-100 transition-opacity hidden sm:flex"
-      >
-        <ChevronLeft className="h-4 w-4" />
-      </Button>
+    <div className="w-full h-full">
+      <h1 className="text-2xl font-bold mb-4">{t("home.title")}</h1>
+      <div>
+        <h2>{t("home.recentlyAdded")}</h2>
 
-      {/* Track */}
-      <div
-        ref={scrollRef}
-        onScroll={updateScrollButtons}
-        onMouseDown={onMouseDown}
-        onMouseMove={onMouseMove}
-        onMouseUp={onMouseUp}
-        onMouseLeave={onMouseUp}
-        className={cn(
-          "flex gap-4 overflow-x-auto scroll-smooth px-2 py-2",
-          "scrollbar-hide",
-          "snap-x snap-mandatory",
-          isDragging ? "cursor-grabbing select-none" : "cursor-grab"
-        )}
-      >
-        {children}
+        <DataExhibition
+          isFetching={isFetching}
+          skeleton={<MediaHomePageSkeleton />}
+        >
+          {/* {chartData && (
+            <Bar
+              data={chartData}
+              options={{
+                responsive: true,
+                plugins: {
+                  legend: {
+                    display: true,
+                  },
+                },
+              }}
+            />
+          )} */}
+
+          <div className="md:px-12 mt-4">
+            <Carousel>
+              <CarouselContent>
+                {data?.map((item) => {
+                  const normalizedItem: MediaItem = {
+                    id: item.externalId,
+                    title: item.title,
+                    type: item.type,
+                    coverUrl: item.coverUrl ?? "",
+                    year: item.releaseDate ? item.releaseDate.slice(0, 4) : undefined,
+                    description: item.description,
+                  }
+
+                  return (
+                    <CarouselItem key={item.id} className="basis-1/2 lg:basis-1/4 xl:basis-1/6">
+                      <GridItem
+                        item={normalizedItem}
+                        existingItem={item}
+                        showMediaType
+                      />
+                    </CarouselItem>
+                  )
+                })}
+              </CarouselContent>
+              <CarouselPrevious />
+              <CarouselNext />
+            </Carousel>
+          </div>
+        </DataExhibition>
       </div>
-
-      {/* Botão direito */}
-      <Button
-        variant="outline"
-        size="icon"
-        onClick={() => scroll("right")}
-        disabled={!canScrollRight}
-        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-20 h-8 w-8 rounded-full shadow-md opacity-0 group-hover/carousel:opacity-100 transition-opacity hidden sm:flex"
-      >
-        <ChevronRight className="h-4 w-4" />
-      </Button>
     </div>
   );
 };
+
+export default MediaHomePage;

@@ -24,11 +24,12 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader>
-        <div className="flex items-center gap-2 px-2 py-2">
-          <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary text-primary-foreground font-bold">
-            L
+        <div className="flex items-center gap-2 py-2">
+          <div className="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-primary text-primary-foreground font-bold">
+             L
           </div>
-          <span className="text-lg font-semibold">{t("branding.sidebarName", { ns: "common" })}</span>
+
+          <SidebarGroupLabel className="text-lg font-semibold">{t("branding.sidebarName", { ns: "common" })}</SidebarGroupLabel>
         </div>
       </SidebarHeader>
 
