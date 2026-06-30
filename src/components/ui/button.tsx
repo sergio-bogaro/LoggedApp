@@ -2,6 +2,7 @@ import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
 import * as React from "react"
 
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
@@ -35,17 +36,41 @@ const buttonVariants = cva(
   }
 )
 
+interface ButtonProps extends React.ComponentProps<"button">, VariantProps<typeof buttonVariants> {
+  asChild?: boolean
+  tooltip?: string;
+  tooltipPosition?: "top" | "left" | "right" | "bottom"
+ }
+
 function Button({
   className,
   variant,
   size,
   asChild = false,
+  tooltip,
+  tooltipPosition = "top",
   ...props
-}: React.ComponentProps<"button"> &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean
-  }) {
+}: ButtonProps ) {
   const Comp = asChild ? Slot : "button"
+
+  if(tooltip) return(
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Comp
+          data-slot="button"
+          className={cn(buttonVariants({ variant, size, className }))}
+          {...props}
+        />
+      </TooltipTrigger>
+
+      <TooltipContent
+        side={tooltipPosition}
+        align="center"
+      >
+        {tooltip}
+      </TooltipContent>
+    </Tooltip>
+  )
 
   return (
     <Comp

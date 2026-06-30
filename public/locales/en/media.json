@@ -208,7 +208,9 @@
     "loading": "Loading...",
     "empty": "No media found",
     "emptyWithType": "Start by adding {{mediaType}} to your library",
-    "noDescription": "No description available."
+    "noDescription": "No description available.",
+    "favorites" : "Favoritos",
+    "addFavorites": "Adicione Itens aos Favoritos"
   },
   "customView": {
     "loading": "Loading...",

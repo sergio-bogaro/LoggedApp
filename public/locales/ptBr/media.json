@@ -208,7 +208,9 @@
     "loading": "Carregando...",
     "empty": "Nenhuma mídia encontrada",
     "emptyWithType": "Comece adicionando {{mediaType}} à sua biblioteca",
-    "noDescription": "Nenhuma descrição disponível."
+    "noDescription": "Nenhuma descrição disponível.",
+    "favorites" : "Favoritos",
+    "addFavorites": "Adicione Itens aos Favoritos"
   },
   "customView": {
     "loading": "Carregando...",

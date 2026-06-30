@@ -1,8 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
+import { Star } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
 
+import { DataExhibition } from "@/components/tw/generic/dataExhibition";
+import { MediaCardSkeleton } from "@/components/tw/generic/mediaCardSkeleton";
 import { GridItem } from "@/components/tw/media/grid";
+import { Button } from "@/components/ui/button";
 import { getMediaList } from "@/querries/media/logged";
 import { useAppSelector } from "@/store/auth/hooks";
 import { MediaResponse } from "@/types/logged";
@@ -28,14 +32,24 @@ const MediaListPage = () => {
   });
 
   return (
-    <div className="w-full h-full">
-      <h1 className="text-2xl font-bold mb-4">{title}</h1>
+    <div className="w-full h-full space-y-3">
+      <h1 className="text-2xl font-bold">{title}</h1>
 
-      {isFetching ? (
-        <p>{t("list.loading")}</p>
-      ) : data && data.length > 0 ? (
+      <DataExhibition
+        isFetching={isFetching}
+        skeleton={<MediaCardSkeleton />}
+      > 
+        <div className="flex justify-between">
+          <h2>{t("list.favorites")}</h2>
+
+          <Button size="icon" variant="outline" tooltip={t("list.addFavorites")}>
+            <Star />
+          </Button>
+        </div>
+
+
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 m-2 gap-4">
-          {data.map((item) => {
+          {data?.map((item) => {
             const normalizedItem: MediaItem = {
               id: item.externalId,
               title: item.title,
@@ -55,16 +69,16 @@ const MediaListPage = () => {
             );
           })}
         </div>
-      ) : (
-        <div className="flex flex-col items-center justify-center h-64 text-muted-foreground">
+
+        {/* <div className="flex flex-col items-center justify-center h-64 text-muted-foreground">
           <p>{t("list.empty")}</p>
           {mediaType && (
             <p className="text-sm mt-2">
               {t("list.emptyWithType", { mediaType: t(`typePlural.${mediaType}`).toLowerCase() })}
             </p>
           )}
-        </div>
-      )}
+        </div> */}
+      </DataExhibition>
     </div>
   );
 };

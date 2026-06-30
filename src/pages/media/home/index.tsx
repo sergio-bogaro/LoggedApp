@@ -11,9 +11,8 @@ import { useMemo } from "react";
 import { Bar } from "react-chartjs-2"
 import { useTranslation } from "react-i18next";
 
-import { MediaHomePageSkeleton } from "./components/mediaHomeSkeleton";
-
 import { DataExhibition } from "@/components/tw/generic/dataExhibition";
+import { MediaCardSkeleton } from "@/components/tw/generic/mediaCardSkeleton";
 import { GridItem } from "@/components/tw/media/grid";
 import {
   Carousel,
@@ -76,9 +75,9 @@ const MediaHomePage = () => {
 
         <DataExhibition
           isFetching={isFetching}
-          skeleton={<MediaHomePageSkeleton />}
+          skeleton={<MediaCardSkeleton />}
         >
-          {/* {chartData && (
+          {chartData && (
             <Bar
               data={chartData}
               options={{
@@ -90,7 +89,7 @@ const MediaHomePage = () => {
                 },
               }}
             />
-          )} */}
+          )}
 
           <div className="md:px-12 mt-4">
             <Carousel>
