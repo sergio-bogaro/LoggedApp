@@ -202,7 +202,32 @@
     "title": "Página inicial de mídias",
     "recentlyAdded": "Adicionados recentemente",
     "chartByType": "Quantidade por tipo",
-    "loading": "Carregando..."
+    "loading": "Carregando...",
+    "tabs": {
+      "list": "Biblioteca",
+      "stats": "Estatísticas"
+    },
+    "stats": {
+      "total": "Total de mídias"
+    },
+    "chart": {
+      "byType": "Distribuição por tipo",
+      "byDecade": "Mídias por década de lançamento",
+      "byWeekDay": "Logs por dia da semana",
+      "byStatus": "Distribuição por status",
+      "byRating": "Distribuição de notas",
+      "byMonth": "Mídias adicionadas por mês",
+      "topLogged": "Mídias mais revisitadas (top 10)",
+      "weekDays": {
+        "Sun": "Dom",
+        "Mon": "Seg",
+        "Tue": "Ter",
+        "Wed": "Qua",
+        "Thu": "Qui",
+        "Fri": "Sex",
+        "Sat": "Sáb"
+      }
+    }
   },
   "list": {
     "loading": "Carregando...",
@@ -221,5 +246,11 @@
   "detailsPage": {
     "loading": "Carregando...",
     "errorPrefix": "Erro:"
+  },
+  "sections": {
+    "recentlyAdded": "Adicionados recentemente",
+    "recentlyAddedDesc": "Medias adicionadas recentemente a sua biblioteca",
+    "favorites": "Favoritos",
+    "favoritesDesc": "Ultimas medias com nota 8 ou maior"
   }
 }

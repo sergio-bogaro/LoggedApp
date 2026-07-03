@@ -202,7 +202,32 @@
     "title": "Media Home Page",
     "recentlyAdded": "Recently Added",
     "chartByType": "Count by type",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "tabs": {
+      "list": "Library",
+      "stats": "Statistics"
+    },
+    "stats": {
+      "total": "Total media"
+    },
+    "chart": {
+      "byType": "Distribution by type",
+      "byDecade": "Media by release decade",
+      "byWeekDay": "Logs by day of the week",
+      "byStatus": "Distribution by status",
+      "byRating": "Rating distribution",
+      "byMonth": "Media added by month",
+      "topLogged": "Most revisited media (top 10)",
+      "weekDays": {
+        "Sun": "Sun",
+        "Mon": "Mon",
+        "Tue": "Tue",
+        "Wed": "Wed",
+        "Thu": "Thu",
+        "Fri": "Fri",
+        "Sat": "Sat"
+      }
+    }
   },
   "list": {
     "loading": "Loading...",
@@ -221,5 +246,11 @@
   "detailsPage": {
     "loading": "Loading...",
     "errorPrefix": "Error:"
+  },
+  "sections": {
+    "recentlyAdded": "Recently Added",
+    "recentlyAddedDesc": "Media recently added to your library",
+    "favorites": "Favorites",
+    "favoritesDesc": "Latest media rated 8 or higher"
   }
 }

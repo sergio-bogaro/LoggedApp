@@ -1,16 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
-import { Star } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
 
+import { LibraryDataMediaType } from "./components/library";
+
 import { DataExhibition } from "@/components/tw/generic/dataExhibition";
 import { MediaCardSkeleton } from "@/components/tw/generic/mediaCardSkeleton";
-import { GridItem } from "@/components/tw/media/grid";
-import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getMediaList } from "@/querries/media/logged";
 import { useAppSelector } from "@/store/auth/hooks";
 import { MediaResponse } from "@/types/logged";
-import { MediaItem, MediaTypeEnum } from "@/types/media";
+import { MediaTypeEnum } from "@/types/media";
 import { DEFAULT_STALE_TIME } from "@/utils/conts";
 
 const MediaListPage = () => {
@@ -35,49 +35,21 @@ const MediaListPage = () => {
     <div className="w-full h-full space-y-3">
       <h1 className="text-2xl font-bold">{title}</h1>
 
-      <DataExhibition
-        isFetching={isFetching}
-        skeleton={<MediaCardSkeleton />}
-      > 
-        <div className="flex justify-between">
-          <h2>{t("list.favorites")}</h2>
+      <DataExhibition isFetching={isFetching} skeleton={<MediaCardSkeleton />}>
+        <Tabs defaultValue="list" className="mt-4">
+          <TabsList>
+            <TabsTrigger value="list">{t("home.tabs.list")}</TabsTrigger>
+            <TabsTrigger value="stats">{t("home.tabs.stats")}</TabsTrigger>
+          </TabsList>
 
-          <Button size="icon" variant="outline" tooltip={t("list.addFavorites")}>
-            <Star />
-          </Button>
-        </div>
+          <TabsContent value="list">
+            <LibraryDataMediaType data={data} />
+          </TabsContent>
 
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 m-2 gap-4">
-          {data?.map((item) => {
-            const normalizedItem: MediaItem = {
-              id: item.externalId,
-              title: item.title,
-              type: item.type,
-              coverUrl: item.coverUrl ?? "",
-              year: item.releaseDate ? item.releaseDate.slice(0, 4) : undefined,
-              description: item.description,
-            };
-
-            return (
-              <GridItem
-                key={item.id}
-                item={normalizedItem}
-                existingItem={item}
-                showMediaType={false}
-              />
-            );
-          })}
-        </div>
-
-        {/* <div className="flex flex-col items-center justify-center h-64 text-muted-foreground">
-          <p>{t("list.empty")}</p>
-          {mediaType && (
-            <p className="text-sm mt-2">
-              {t("list.emptyWithType", { mediaType: t(`typePlural.${mediaType}`).toLowerCase() })}
-            </p>
-          )}
-        </div> */}
+          <TabsContent value="stats" className="mt-4 space-y-6">
+            {/* <StatusData data={data} />           */}
+          </TabsContent>
+        </Tabs>
       </DataExhibition>
     </div>
   );
