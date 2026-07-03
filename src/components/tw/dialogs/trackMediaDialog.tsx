@@ -6,6 +6,7 @@ import { useForm, useWatch } from "react-hook-form";
 import { ImageWithSkeleton } from "../generic/imageSkeleton";
 
 import { Button } from "@/components/ui/button";
+import { DatePicker } from "@/components/ui/dataPicker";
 import {
   Dialog,
   DialogClose,
@@ -16,7 +17,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { StarRating } from "@/components/ui/starRating";
 import { TextArea } from "@/components/ui/textarea";
@@ -61,12 +61,11 @@ export function TrackMediaDialog({ mediaType, mediaData, existingMedia, image }:
       endDate: isOneTimeConsumption ? newIsoDate() : undefined,
     },
   });
+
   const { control, handleSubmit } = form;
   const watchStatus = useWatch({ control, name: "status" });
-  const isFinished = useMemo(
-    () => finishedStatusEnumValues.includes(watchStatus),
-    [watchStatus],
-  );
+
+  const isFinished = useMemo(() => finishedStatusEnumValues.includes(watchStatus), [watchStatus] );
 
   useEffect(() => {
     if (isFinished && !isOneTimeConsumption) {
@@ -139,20 +138,18 @@ export function TrackMediaDialog({ mediaType, mediaData, existingMedia, image }:
 
               <div className="grid grid-cols-2 gap-4">
                 {!isOneTimeConsumption && (
-                  <Input
+                  <DatePicker
                     label={t("track.startDate", { ns: "media" })}
                     name="startDate"
-                    type="date"
                     control={control}
                   />
                 )}
 
                 {isFinished && (
-                  <Input
+                  <DatePicker
                     label={t(endDateLabel, { ns: "media" })}
                     name="endDate"
                     control={control}
-                    type="date"
                   />
                 )}
               </div>
@@ -179,7 +176,10 @@ export function TrackMediaDialog({ mediaType, mediaData, existingMedia, image }:
                     {t("cancel", { ns: "common" })}
                   </Button>
                 </DialogClose>
-                <Button type="submit">{t("save", { ns: "common" })}</Button>
+                
+                <Button type="submit">
+                  {t("save", { ns: "common" })}
+                </Button>
               </div>
             </form>
           </Form>
