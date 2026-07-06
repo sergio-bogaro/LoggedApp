@@ -7,7 +7,6 @@ export type MediaResponse = {
   title: string;
   type: MediaTypeEnum;
   status: MediaStatusEnum;
-  onList: boolean;
   description?: string;
   coverUrl?: string;
   imagePath?: string;
@@ -44,7 +43,6 @@ export type MediaCreatePayload = {
   status?: MediaStatusEnum;
   description?: string;
   coverUrl?: string;
-  onList?: boolean;
   releaseDate?: string;
   rating?: number;
   review?: string;
@@ -57,7 +55,6 @@ export type MediaUpdatePayload = {
   description?: string;
   coverUrl?: string;
   imagePath?: string;
-  onList?: boolean;
   releaseDate?: string;
   rating?: number;
   review?: string;

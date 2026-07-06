@@ -5,11 +5,13 @@ import { useTranslation } from "react-i18next";
 import { MediaHistoryDialog } from "../dialogs/mediaHistoryDialog";
 
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { checkBacklog, checkFavorite } from "@/querries/media/listItems";
+import { useAppSelector } from "@/store/auth/hooks";
 import { MediaResponse } from "@/types/logged";
 import { MediaItem } from "@/types/media";
-import { useHandleBacklog } from "@/utils/mediaStore";
+import { useHandleBacklog, useHandleFavorites } from "@/utils/mediaStore";
 
 
 interface MediaOptionsButtonProps {
@@ -22,8 +24,24 @@ export const MediaOptionsButton = ({ mediaItem, existingItem }: MediaOptionsButt
   const [isOpen, setIsOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const handleBacklog = useHandleBacklog();
+  const handleFavorites = useHandleFavorites();
+  const { user } = useAppSelector((state) => state.auth);
 
-  const isInBacklog = existingItem?.onList;
+  const [backlogStatus, setBacklogStatus] = useState<{ inList: boolean; itemId: number | null }>({ inList: false, itemId: null });
+  const [favoritesStatus, setFavoritesStatus] = useState<{ inList: boolean; itemId: number | null }>({ inList: false, itemId: null });
+
+  // Check backlog and favorites status when menu opens
+  const handleOpenChange = async (open: boolean) => {
+    setIsOpen(open);
+    if (open && user && mediaItem.id) {
+      const [backlog, favorites] = await Promise.all([
+        checkBacklog(user.id, mediaItem.id, mediaItem.type),
+        checkFavorite(user.id, mediaItem.id, mediaItem.type),
+      ]);
+      setBacklogStatus(backlog);
+      setFavoritesStatus(favorites);
+    }
+  };
 
   function handleTreeDotsClick(e: React.MouseEvent) {
     e.preventDefault();
@@ -34,7 +52,15 @@ export const MediaOptionsButton = ({ mediaItem, existingItem }: MediaOptionsButt
     event.preventDefault();
     event.stopPropagation();
 
-    handleBacklog(mediaItem, existingItem);
+    handleBacklog(mediaItem, backlogStatus.inList, backlogStatus.itemId);
+    setIsOpen(false);
+  }
+
+  function onHandleFavorite(event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    handleFavorites(mediaItem, favoritesStatus.inList, favoritesStatus.itemId);
     setIsOpen(false);
   }
 
@@ -54,7 +80,7 @@ export const MediaOptionsButton = ({ mediaItem, existingItem }: MediaOptionsButt
 
   return (
     <>
-      <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+      <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
         <DropdownMenuTrigger asChild>
           <Button
             onClick={handleTreeDotsClick}
@@ -70,11 +96,17 @@ export const MediaOptionsButton = ({ mediaItem, existingItem }: MediaOptionsButt
         </DropdownMenuTrigger>
 
         <DropdownMenuContent align="end">
-          {isInBacklog ? (
+          {backlogStatus.inList ? (
             <DropdownMenuItem onSelect={onHandleBacklog}>{t("actions.removeFromBacklog")}</DropdownMenuItem>
           ) : (
             <DropdownMenuItem onSelect={onHandleBacklog}>{t("actions.addToBacklog")}</DropdownMenuItem>
           )}
+          {favoritesStatus.inList ? (
+            <DropdownMenuItem onSelect={onHandleFavorite}>{t("actions.removeFavorite")}</DropdownMenuItem>
+          ) : (
+            <DropdownMenuItem onSelect={onHandleFavorite}>{t("actions.addFavorite")}</DropdownMenuItem>
+          )}
+          <DropdownMenuSeparator />
           <DropdownMenuItem disabled={!existingItem} onSelect={onViewHistory}>
             {t("actions.viewHistory")}
           </DropdownMenuItem>

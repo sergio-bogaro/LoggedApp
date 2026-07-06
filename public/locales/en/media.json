@@ -190,11 +190,17 @@
   "actions": {
     "viewHistory": "View history",
     "addToBacklog": "Add to backlog",
-    "removeFromBacklog": "Remove from backlog"
+    "removeFromBacklog": "Remove from backlog",
+    "addFavorite": "Add to favorites",
+    "removeFavorite": "Remove from favorites"
   },
   "feedback": {
     "backlogAdded": "Added to backlog",
-    "backlogFailed": "Failed to add media",
+    "backlogRemoved": "Removed from backlog",
+    "backlogFailed": "Failed to update backlog",
+    "favoriteAdded": "Added to favorites",
+    "favoriteRemoved": "Removed from favorites",
+    "favoriteFailed": "Failed to update favorites",
     "trackSuccess": "Media tracked successfully",
     "trackFailed": "Failed to track media"
   },
@@ -234,8 +240,10 @@
     "empty": "No media found",
     "emptyWithType": "Start by adding {{mediaType}} to your library",
     "noDescription": "No description available.",
-    "favorites" : "Favoritos",
-    "addFavorites": "Adicione Itens aos Favoritos"
+    "favorites" : "Favorites",
+    "addFavorites": "Add items to your favorites",
+    "backlog": "Backlog",
+    "addBacklog": "Add items to your backlog"
   },
   "customView": {
     "loading": "Loading...",

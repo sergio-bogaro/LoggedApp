@@ -2,10 +2,11 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
-import { createMedia, createMediaLog, deleteMedia, removeMediaImage, updateMedia, uploadMediaImage } from "@/querries/media/logged";
+import { addToBacklog, removeFromBacklog, addToFavorites, removeFromFavorites } from "@/querries/media/listItems";
+import { createMedia, createMediaLog, removeMediaImage, updateMedia, uploadMediaImage } from "@/querries/media/logged";
 import { useAppSelector } from "@/store/auth/hooks";
 import { MediaResponse, MediaWithLogsResponse } from "@/types/logged";
-import { MediaDataDetailsType, MediaStatusEnum, TrackMediaPayload } from "@/types/media";
+import { MediaDataDetailsType, TrackMediaPayload } from "@/types/media";
 import { MediaItem } from "@/types/media";
 
 export function useHandleBacklog() {
@@ -14,40 +15,106 @@ export function useHandleBacklog() {
   const { user } = useAppSelector((state) => state.auth);
 
   const mutation = useMutation({
-    mutationFn: async ({ item, existingMedia }: { item: MediaItem; existingMedia?: MediaResponse }) => {
+    mutationFn: async ({
+      item,
+      isInBacklog,
+      backlogItemId,
+    }: {
+      item: MediaItem;
+      isInBacklog: boolean;
+      backlogItemId?: number | null;
+    }) => {
       if (!user) throw new Error("User not authenticated");
 
-      const payload = {
+      if (isInBacklog && backlogItemId) {
+        return removeFromBacklog(backlogItemId, user.id);
+      }
+
+      return addToBacklog({
         userId: user.id,
-        title: item.title,
-        type: item.type,
+        mediaType: item.type,
         externalId: item.id,
+        title: item.title,
         description: item.description,
         coverUrl: item.coverUrl,
         releaseDate: item.releaseDate,
-        onList: !existingMedia ? true : !existingMedia.onList,
-      };
-
-      if (existingMedia) {
-        if (!payload.onList && !existingMedia.status) return deleteMedia(existingMedia.id, user.id);
-
-        return updateMedia(existingMedia.id, payload, user.id);
-      }
-
-      return createMedia(payload);
+      });
     },
 
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["media"] });
+      queryClient.invalidateQueries({ queryKey: ["backlog"] });
 
-      toast.success(t("feedback.backlogAdded"));
+      toast.success(
+        variables.isInBacklog
+          ? t("feedback.backlogRemoved")
+          : t("feedback.backlogAdded")
+      );
     },
     onError: (error: Error) => {
       toast.error(error.message || t("feedback.backlogFailed"));
     },
   });
 
-  return (item: MediaItem, existingMedia?: MediaResponse) => mutation.mutate({ item, existingMedia });
+  return (
+    item: MediaItem,
+    isInBacklog: boolean,
+    backlogItemId?: number | null
+  ) => mutation.mutate({ item, isInBacklog, backlogItemId });
+}
+
+export function useHandleFavorites() {
+  const { t } = useTranslation("media");
+  const queryClient = useQueryClient();
+  const { user } = useAppSelector((state) => state.auth);
+
+  const mutation = useMutation({
+    mutationFn: async ({
+      item,
+      isInFavorites,
+      favoriteItemId,
+    }: {
+      item: MediaItem;
+      isInFavorites: boolean;
+      favoriteItemId?: number | null;
+    }) => {
+      if (!user) throw new Error("User not authenticated");
+
+      if (isInFavorites && favoriteItemId) {
+        return removeFromFavorites(favoriteItemId, user.id);
+      }
+
+      return addToFavorites({
+        userId: user.id,
+        mediaType: item.type,
+        externalId: item.id,
+        title: item.title,
+        description: item.description,
+        coverUrl: item.coverUrl,
+        releaseDate: item.releaseDate,
+      });
+    },
+
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["media"] });
+      queryClient.invalidateQueries({ queryKey: ["favorites"] });
+
+      toast.success(
+        variables.isInFavorites
+          ? t("feedback.favoriteRemoved")
+          : t("feedback.favoriteAdded")
+      );
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || t("feedback.favoriteFailed"));
+    },
+  });
+
+  return (
+    item: MediaItem,
+    isInFavorites: boolean,
+    favoriteItemId?: number | null
+  ) => mutation.mutate({ item, isInFavorites, favoriteItemId });
 }
 
 export function useTrackMedia() {
@@ -86,7 +153,6 @@ export function useTrackMedia() {
           status: trackData.status,
           rating: trackData.rating,
           review: trackData.review,
-          onList: false,
         });
       }
 
@@ -154,7 +220,6 @@ export function useChangeImage() {
           coverUrl: mediaData.coverUrl,
           releaseDate: mediaData.releaseDate,
           tags: mediaData.tags,
-          onList: true,
         });
         mediaId = media.id;
       }

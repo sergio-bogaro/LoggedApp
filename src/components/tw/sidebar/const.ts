@@ -1,4 +1,4 @@
-import { Film, Tv, BookOpen, Gamepad2, Home, Settings, Search } from "lucide-react";
+import { Film, Tv, BookOpen, Gamepad2, Home, Settings, Search, Star, Bookmark } from "lucide-react";
 
 import { MediaTypeEnum } from "@/types/media";
 
@@ -40,6 +40,16 @@ export const mainNavigation = [
     titleKey: "navigation.search",
     icon: Search,
     path: "/search",
+  },
+  {
+    titleKey: "navigation.favorites",
+    icon: Star,
+    path: "/media/favorites",
+  },
+  {
+    titleKey: "navigation.backlog",
+    icon: Bookmark,
+    path: "/media/backlog",
   },
 ];
 

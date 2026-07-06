@@ -6,7 +6,6 @@ export interface CustomViewFilters {
   tags?: string[];
   year_from?: number;
   year_to?: number;
-  on_list?: boolean;
 }
 
 export interface CustomViewDisplaySettings {

@@ -190,11 +190,17 @@
   "actions": {
     "viewHistory": "Ver histórico",
     "addToBacklog": "Adicionar ao backlog",
-    "removeFromBacklog": "Remover do backlog"
+    "removeFromBacklog": "Remover do backlog",
+    "addFavorite": "Adicionar aos favoritos",
+    "removeFavorite": "Remover dos favoritos"
   },
   "feedback": {
     "backlogAdded": "Adicionado ao backlog",
-    "backlogFailed": "Falha ao adicionar mídia",
+    "backlogRemoved": "Removido do backlog",
+    "backlogFailed": "Falha ao atualizar backlog",
+    "favoriteAdded": "Adicionado aos favoritos",
+    "favoriteRemoved": "Removido dos favoritos",
+    "favoriteFailed": "Falha ao atualizar favoritos",
     "trackSuccess": "Mídia registrada com sucesso",
     "trackFailed": "Falha ao registrar mídia"
   },
@@ -235,7 +241,9 @@
     "emptyWithType": "Comece adicionando {{mediaType}} à sua biblioteca",
     "noDescription": "Nenhuma descrição disponível.",
     "favorites" : "Favoritos",
-    "addFavorites": "Adicione Itens aos Favoritos"
+    "addFavorites": "Adicione itens aos seus favoritos",
+    "backlog": "Backlog",
+    "addBacklog": "Adicione itens ao seu backlog"
   },
   "customView": {
     "loading": "Carregando...",

@@ -22,6 +22,8 @@
   "navigation": {
     "home": "Home",
     "search": "Search",
+    "favorites": "Favorites",
+    "backlog": "Backlog",
     "settings": "Settings"
   },
   "settings": {
