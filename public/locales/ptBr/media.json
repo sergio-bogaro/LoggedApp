@@ -243,7 +243,12 @@
     "favorites" : "Favoritos",
     "addFavorites": "Adicione itens aos seus favoritos",
     "backlog": "Backlog",
-    "addBacklog": "Adicione itens ao seu backlog"
+    "addBacklog": "Adicione itens ao seu backlog",
+    "chart": {
+      "completionRate": "Taxa de Conclusão",
+      "avgRating": "Nota Média",
+      "notFinished": "Não Finalizado"
+    }
   },
   "customView": {
     "loading": "Carregando...",
@@ -259,6 +264,8 @@
     "recentlyAdded": "Adicionados recentemente",
     "recentlyAddedDesc": "Mídias registradas recentemente na sua biblioteca",
     "favorites": "Favoritos",
-    "favoritesDesc": "Ultimas medias com nota 8 ou maior"
+    "favoritesDesc": "Ultimas medias com nota 8 ou maior",
+    "viewAll": "Ver Todos",
+    "noData": "Nenhum dado disponível ainda"
   }
 }

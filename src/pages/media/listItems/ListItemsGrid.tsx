@@ -56,14 +56,9 @@ const SKELETON_COUNT = 6;
 export const ListItemSkeleton = () => {
   return (
     <div className="md:px-12 mt-4">
-      <div className="flex -ml-4 overflow-hidden">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
         {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
-          <div
-            key={i}
-            className="pl-4 basis-1/2 lg:basis-1/4 xl:basis-1/6 shrink-0"
-          >
-            <GridItemSkeleton />
-          </div>
+          <GridItemSkeleton key={i} />
         ))}
       </div>
     </div>

@@ -27,13 +27,14 @@ async function apiFetch<T>(path: string, options?: globalThis.RequestInit): Prom
 // Media — CRUD
 // ──────────────────────────────────────────────
 
-export async function getMediaList(userId: number, params?: { type?: MediaTypeEnum; status?: MediaStatusEnum; search?: string; hasLogs?: boolean; }): Promise<MediaResponse[]> {
+export async function getMediaList(userId: number, params?: { type?: MediaTypeEnum; status?: MediaStatusEnum; search?: string; hasLogs?: boolean; limit?: number; }): Promise<MediaResponse[]> {
   const url = new URLSearchParams();
   url.set("user_id", userId.toString());
   if (params?.type) url.set("type", params.type);
   if (params?.status) url.set("status", params.status);
   if (params?.search) url.set("search", params.search);
   if (params?.hasLogs !== undefined) url.set("has_logs", params.hasLogs.toString());
+  if (params?.limit !== undefined) url.set("limit", params.limit.toString());
   
   const qs = url.toString();
   return apiFetch<MediaResponse[]>(`/api/media/${qs ? `?${qs}` : ""}`);

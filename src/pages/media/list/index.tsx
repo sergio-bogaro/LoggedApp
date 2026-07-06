@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
 
 import { LibraryDataMediaType } from "./components/library";
+import { ListStatusData } from "./components/listStatusData";
 
 import { DataExhibition } from "@/components/tw/generic/dataExhibition";
 import { MediaCardSkeleton } from "@/components/tw/generic/mediaCardSkeleton";
@@ -60,7 +61,7 @@ const MediaListPage = () => {
           </TabsContent>
 
           <TabsContent value="stats" className="mt-4 space-y-6">
-            {/* <StatusData data={data} />           */}
+            <ListStatusData data={data} />
           </TabsContent>
         </Tabs>
       </DataExhibition>

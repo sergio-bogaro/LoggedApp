@@ -11,11 +11,13 @@ import { getMediaList } from "@/querries/media/logged";
 import { useAppSelector } from "@/store/auth/hooks";
 import { MediaResponse } from "@/types/logged";
 
+const CAROUSEL_LIMIT = 10;
+
 const MediaHomePage = () => {
   const { t } = useTranslation("media");
   const { user } = useAppSelector((state) => state.auth);
 
-  const { data, isFetching } = useQuery<MediaResponse[]>({
+  const { data: allData, isFetching } = useQuery<MediaResponse[]>({
     queryKey: ["media"],
     queryFn: () => getMediaList(user!.id),
     staleTime: 1000 * 60 * 5,
@@ -24,7 +26,7 @@ const MediaHomePage = () => {
 
   const { data: recentlyLoggedData, isFetching: isFetchingRecent } = useQuery<MediaResponse[]>({
     queryKey: ["media", "recentlyLogged"],
-    queryFn: () => getMediaList(user!.id, { hasLogs: true }),
+    queryFn: () => getMediaList(user!.id, { hasLogs: true, limit: CAROUSEL_LIMIT }),
     staleTime: 1000 * 60 * 5,
     enabled: !!user,
   });
@@ -43,11 +45,11 @@ const MediaHomePage = () => {
           </TabsList>
 
           <TabsContent value="list">
-            <LibraryData data={data} recentlyLoggedData={recentlyLoggedData} />
+            <LibraryData data={allData} recentlyLoggedData={recentlyLoggedData} />
           </TabsContent>
 
           <TabsContent value="stats" className="mt-4 space-y-6">
-            <StatusData data={data} />          
+            <StatusData data={allData} />          
           </TabsContent>
         </Tabs>
       </DataExhibition>

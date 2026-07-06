@@ -1,7 +1,5 @@
 import { ReactNode } from "react";
 
-import { Loading } from "./loading";
-
 import { cn } from "@/lib/utils";
 
 interface DataExhibitionProps {
@@ -13,12 +11,8 @@ interface DataExhibitionProps {
 
 export const DataExhibition = ({ children, isFetching, skeleton, className }: DataExhibitionProps) => {
   return(
-    <div>
-      <Loading isLoading={isFetching} />
-
-      <div className={cn("min-w-0", className)}>
-        {isFetching && skeleton ? skeleton : children}
-      </div>
+    <div className={cn("min-w-0", className)}>
+      {isFetching && skeleton ? skeleton : children}
     </div>
   )
 }

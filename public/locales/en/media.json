@@ -243,7 +243,12 @@
     "favorites" : "Favorites",
     "addFavorites": "Add items to your favorites",
     "backlog": "Backlog",
-    "addBacklog": "Add items to your backlog"
+    "addBacklog": "Add items to your backlog",
+    "chart": {
+      "completionRate": "Completion Rate",
+      "avgRating": "Average Rating",
+      "notFinished": "Not Finished"
+    }
   },
   "customView": {
     "loading": "Loading...",
@@ -259,6 +264,8 @@
     "recentlyAdded": "Recently Logged",
     "recentlyAddedDesc": "Media recently logged in your library",
     "favorites": "Favorites",
-    "favoritesDesc": "Latest media rated 8 or higher"
+    "favoritesDesc": "Latest media rated 8 or higher",
+    "viewAll": "View All",
+    "noData": "No data available yet"
   }
 }
