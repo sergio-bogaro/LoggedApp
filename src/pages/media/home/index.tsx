@@ -22,11 +22,20 @@ const MediaHomePage = () => {
     enabled: !!user,
   });
 
+  const { data: recentlyLoggedData, isFetching: isFetchingRecent } = useQuery<MediaResponse[]>({
+    queryKey: ["media", "recentlyLogged"],
+    queryFn: () => getMediaList(user!.id, { hasLogs: true }),
+    staleTime: 1000 * 60 * 5,
+    enabled: !!user,
+  });
+
+  const isLoading = isFetching || isFetchingRecent;
+
   return (
     <div className="w-full h-full">
       <h1 className="text-2xl font-bold mb-4">{t("home.title")}</h1>
 
-      <DataExhibition isFetching={isFetching} skeleton={<MediaCardSkeleton />}>
+      <DataExhibition isFetching={isLoading} skeleton={<MediaCardSkeleton />}>
         <Tabs defaultValue="list" className="mt-4">
           <TabsList>
             <TabsTrigger value="list">{t("home.tabs.list")}</TabsTrigger>
@@ -34,7 +43,7 @@ const MediaHomePage = () => {
           </TabsList>
 
           <TabsContent value="list">
-            <LibraryData data={data} />
+            <LibraryData data={data} recentlyLoggedData={recentlyLoggedData} />
           </TabsContent>
 
           <TabsContent value="stats" className="mt-4 space-y-6">

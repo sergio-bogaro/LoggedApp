@@ -206,7 +206,7 @@
   },
   "home": {
     "title": "Media Home Page",
-    "recentlyAdded": "Recently Added",
+    "recentlyAdded": "Recently Logged",
     "chartByType": "Count by type",
     "loading": "Loading...",
     "tabs": {
@@ -256,8 +256,8 @@
     "errorPrefix": "Error:"
   },
   "sections": {
-    "recentlyAdded": "Recently Added",
-    "recentlyAddedDesc": "Media recently added to your library",
+    "recentlyAdded": "Recently Logged",
+    "recentlyAddedDesc": "Media recently logged in your library",
     "favorites": "Favorites",
     "favoritesDesc": "Latest media rated 8 or higher"
   }

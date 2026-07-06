@@ -16,6 +16,7 @@ export type MediaResponse = {
   createdAt: string;
   updatedAt: string;
   logCount: number;
+  lastLogDate?: string;
 };
 
 export type MediaLogResponse = {

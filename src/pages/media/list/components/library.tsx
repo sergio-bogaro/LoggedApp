@@ -15,34 +15,43 @@ import { MediaItem } from "@/types/media";
 
 interface LibraryDataProps {
   data?: MediaResponse[];
+  recentlyLoggedData?: MediaResponse[];
 }
 
-export const LibraryDataMediaType = ({ data }: LibraryDataProps) => {
+export const LibraryDataMediaType = ({ data, recentlyLoggedData }: LibraryDataProps) => {
   const { t } = useTranslation("media");
 
-  const sections = useMemo(() => {
+  const recentlyLogged = useMemo(() => {
+    if (!recentlyLoggedData) return [];
+    return [...recentlyLoggedData]
+      .sort((a, b) => new Date(b.lastLogDate!).getTime() - new Date(a.lastLogDate!).getTime())
+      .slice(0, 10);
+  }, [recentlyLoggedData]);
+
+  const favorites = useMemo(() => {
     if (!data) return [];
-  
+    return [...data]
+      .filter((item) => item.rating && item.rating >= 8)
+      .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+      .slice(0, 10);
+  }, [data]);
+
+  const sections = useMemo(() => {
     return [
       {
         key: "recent",
         titleKey: "sections.recentlyAdded",
         description: "sections.recentlyAddedDesc",
-        items: [...data]
-          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-          .slice(0, 10),
+        items: recentlyLogged,
       },
       {
         key: "favorites",
         titleKey: "sections.favorites",
         description: "sections.favoritesDesc",
-        items: [...data]
-          .filter((item) => item.rating && item.rating >= 8)
-          .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
-          .slice(0, 10),
+        items: favorites,
       },
     ].filter((section) => section.items.length > 0);
-  }, [data]);
+  }, [recentlyLogged, favorites]);
 
   return(
     <div className="md:px-12 mt-4 space-y-8">
@@ -86,8 +95,6 @@ export const LibraryDataMediaType = ({ data }: LibraryDataProps) => {
           </Carousel>
         </div>
       ))}
-      
-      
     </div>
   )
   
