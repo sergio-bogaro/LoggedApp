@@ -1,12 +1,21 @@
 import { useQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { MoreVertical } from "lucide-react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
 
 import { MediaInfo } from "./components/general/mediaInfo";
 import { MediaTabs } from "./components/general/mediaTabs";
 
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { ChangeImageDialog } from "@/components/tw/dialogs/changeImageDialog";
+import { MediaHistoryDialog } from "@/components/tw/dialogs/mediaHistoryDialog";
 import { TrackMediaDialog } from "@/components/tw/dialogs/trackMediaDialog";
 import { DataExhibition } from "@/components/tw/generic/dataExhibition";
 import { ImageWithSkeleton } from "@/components/tw/generic/imageSkeleton";
@@ -63,6 +72,8 @@ function MediaDetailsPage() {
 
   const mediaImage = useMemo(() => existingMedia?.imagePath ? mediaImageUrl(existingMedia.imagePath)! : getPosterUrl(mediaType, data), [existingMedia, mediaType, data])
   const lastLog = existingMedia?.logs && existingMedia.logs.length > 0 ? existingMedia.logs[existingMedia.logs.length - 1] : null;
+  const [optionsOpen, setOptionsOpen] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
 
   return (
     <div>
@@ -105,6 +116,33 @@ function MediaDetailsPage() {
               </div>
 
               <div className="space-y-3 flex-1 min-w-0">
+                <div className="flex justify-end">
+                  <DropdownMenu open={optionsOpen} onOpenChange={setOptionsOpen}>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon">
+                        <MoreVertical size={20} />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        disabled={!existingMedia}
+                        onSelect={() => {
+                          setOptionsOpen(false);
+                          setHistoryOpen(true);
+                        }}
+                      >
+                        {t("actions.viewHistory")}
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+
+                  <MediaHistoryDialog
+                    media={existingMedia ?? undefined}
+                    open={historyOpen}
+                    onOpenChange={setHistoryOpen}
+                  />
+                </div>
+
                 <MediaInfo mediaType={mediaType} data={data} />
 
                 <MediaTabs data={data} mediaType={mediaType} />
