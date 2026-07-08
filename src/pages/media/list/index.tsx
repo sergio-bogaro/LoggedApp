@@ -57,7 +57,7 @@ const MediaListPage = () => {
           </TabsList>
 
           <TabsContent value="list">
-            <LibraryDataMediaType data={data} recentlyLoggedData={recentlyLoggedData} />
+            <LibraryDataMediaType data={data} recentlyLoggedData={recentlyLoggedData} mediaType={mediaType} />
           </TabsContent>
 
           <TabsContent value="stats" className="mt-4 space-y-6">

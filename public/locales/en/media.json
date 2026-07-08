@@ -267,5 +267,13 @@
     "favoritesDesc": "Latest media rated 8 or higher",
     "viewAll": "View All",
     "noData": "No data available yet"
+  },
+  "logs": {
+    "title": "All Logs",
+    "titleFiltered": "All Logs — {{type}}",
+    "description": "All your media logs ordered by most recent",
+    "empty": "No logs yet",
+    "emptyHint": "Start tracking your media to see logs here",
+    "allLoaded": "All logs loaded"
   }
 }

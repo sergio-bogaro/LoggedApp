@@ -267,5 +267,13 @@
     "favoritesDesc": "Ultimas medias com nota 8 ou maior",
     "viewAll": "Ver Todos",
     "noData": "Nenhum dado disponível ainda"
+  },
+  "logs": {
+    "title": "Todos os Logs",
+    "titleFiltered": "Todos os Logs — {{type}}",
+    "description": "Todos os seus logs de mídia ordenados por mais recentes",
+    "empty": "Nenhum log ainda",
+    "emptyHint": "Comece a registrar suas mídias para ver os logs aqui",
+    "allLoaded": "Todos os logs carregados"
   }
 }

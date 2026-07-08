@@ -1,7 +1,9 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router";
 
 import { GridItem } from "@/components/tw/media/grid";
+import { Button } from "@/components/ui/button";
 import {
   Carousel,
   CarouselContent,
@@ -10,15 +12,16 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { MediaResponse } from "@/types/logged"
-import { MediaItem } from "@/types/media";
+import { MediaItem, MediaTypeEnum } from "@/types/media";
 
 
 interface LibraryDataProps {
   data?: MediaResponse[];
   recentlyLoggedData?: MediaResponse[];
+  mediaType?: MediaTypeEnum;
 }
 
-export const LibraryDataMediaType = ({ data, recentlyLoggedData }: LibraryDataProps) => {
+export const LibraryDataMediaType = ({ data, recentlyLoggedData, mediaType }: LibraryDataProps) => {
   const { t } = useTranslation("media");
 
   const recentlyLogged = useMemo(() => {
@@ -42,12 +45,14 @@ export const LibraryDataMediaType = ({ data, recentlyLoggedData }: LibraryDataPr
       titleKey: "sections.recentlyAdded",
       description: "sections.recentlyAddedDesc",
       items: recentlyLogged,
+      viewAllLink: mediaType ? `/media/logs/${mediaType}` : "/media/logs",
     },
     {
       key: "favorites",
       titleKey: "sections.favorites",
       description: "sections.favoritesDesc",
       items: favorites,
+      viewAllLink: "/media/list",
     },
   ];
 
@@ -59,6 +64,13 @@ export const LibraryDataMediaType = ({ data, recentlyLoggedData }: LibraryDataPr
             <h2 className="text-base font-semibold px-1">
               {t(section.titleKey)}
             </h2>
+            {section.viewAllLink && section.items.length > 0 && (
+              <Button variant="ghost" size="sm" asChild>
+                <Link to={section.viewAllLink}>
+                  {t("sections.viewAll")}
+                </Link>
+              </Button>
+            )}
           </div>
 
           <span className="px-1">

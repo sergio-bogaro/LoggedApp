@@ -9,6 +9,7 @@ import MediaDetailsPage from "./pages/media/details";
 import FavoritesPage from "./pages/media/favorites/FavoritesPage";
 import MediaHomePage from "./pages/media/home";
 import MediaListPage from "./pages/media/list";
+import MediaLogsPage from "./pages/media/logs";
 import MediaSearchPage from "./pages/media/search";
 import SettingsPage from "./pages/settings";
 import WelcomePage from "./pages/welcome";
@@ -33,6 +34,8 @@ export function Router() {
         <Route path="list/:type" element={<MediaListPage />} />
         <Route path="favorites" element={<FavoritesPage />} />
         <Route path="backlog" element={<BacklogPage />} />
+        <Route path="logs" element={<MediaLogsPage />} />
+        <Route path="logs/:type" element={<MediaLogsPage />} />
 
         <Route path=":mediaType">
           <Route path="details/:id" element={<MediaDetailsPage />} />

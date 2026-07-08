@@ -51,7 +51,7 @@ export const LibraryData = ({ data, recentlyLoggedData }: LibraryDataProps) => {
       titleKey: "sections.recentlyAdded",
       description: "sections.recentlyAddedDesc",
       items: recentlyLogged,
-      viewAllLink: "/media/list",
+      viewAllLink: "/media/logs",
     },
     {
       key: "favorites",
