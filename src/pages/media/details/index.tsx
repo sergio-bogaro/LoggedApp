@@ -7,6 +7,12 @@ import { useParams } from "react-router";
 import { MediaInfo } from "./components/general/mediaInfo";
 import { MediaTabs } from "./components/general/mediaTabs";
 
+import { ChangeImageDialog } from "@/components/tw/dialogs/changeImageDialog";
+import { MediaHistoryDialog } from "@/components/tw/dialogs/mediaHistoryDialog";
+import { TrackMediaDialog } from "@/components/tw/dialogs/trackMediaDialog";
+import { DataExhibition } from "@/components/tw/generic/dataExhibition";
+import { ImageWithSkeleton } from "@/components/tw/generic/imageSkeleton";
+import { LogCard } from "@/components/tw/media/logCard";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -14,12 +20,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChangeImageDialog } from "@/components/tw/dialogs/changeImageDialog";
-import { MediaHistoryDialog } from "@/components/tw/dialogs/mediaHistoryDialog";
-import { TrackMediaDialog } from "@/components/tw/dialogs/trackMediaDialog";
-import { DataExhibition } from "@/components/tw/generic/dataExhibition";
-import { ImageWithSkeleton } from "@/components/tw/generic/imageSkeleton";
-import { LastLog } from "@/components/tw/media/lastLog";
 import { getAniListDetails } from "@/querries/externalMedia/anilist";
 import { getBookDetails } from "@/querries/externalMedia/books";
 import { getGameDetails } from "@/querries/externalMedia/gamebrain";
@@ -110,7 +110,7 @@ function MediaDetailsPage() {
                 </div>
 
                 <div className="w-[70%] md:w-full">
-                  <LastLog lastLog={lastLog} />
+                  <LogCard log={lastLog} />
                 </div>
 
               </div>
