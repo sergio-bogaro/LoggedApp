@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
 import { addToBacklog, removeFromBacklog, addToFavorites, removeFromFavorites } from "@/querries/media/listItems";
-import { createMedia, createMediaLog, removeMediaImage, updateMedia, uploadMediaImage } from "@/querries/media/logged";
+import { createMedia, createMediaLog, removeMediaImage, updateMedia, uploadMediaImage, uploadMediaImageFromUrl } from "@/querries/media/logged";
 import { useAppSelector } from "@/store/auth/hooks";
 import { MediaResponse, MediaWithLogsResponse } from "@/types/logged";
 import { MediaDataDetailsType, TrackMediaPayload } from "@/types/media";
@@ -196,11 +196,13 @@ export function useChangeImage() {
       mediaData,
       existingMedia,
       imageFile,
+      imageUrl,
       remove,
     }: {
       mediaData: MediaDataDetailsType;
       existingMedia?: MediaWithLogsResponse | null;
       imageFile?: File;
+      imageUrl?: string;
       remove?: boolean;
     }) => {
       if (!user) throw new Error("User not authenticated");
@@ -226,6 +228,8 @@ export function useChangeImage() {
 
       if (remove) {
         await removeMediaImage(mediaId, user.id);
+      } else if (imageUrl) {
+        await uploadMediaImageFromUrl(mediaId, imageUrl, user.id);
       } else if (imageFile) {
         await uploadMediaImage(mediaId, imageFile, user.id);
       }
@@ -252,11 +256,18 @@ export function useChangeImage() {
       imageFile: File
     ) => mutation.mutate({ mediaData, existingMedia, imageFile }),
 
+    changeImageFromUrl: (
+      mediaData: MediaDataDetailsType,
+      existingMedia: MediaWithLogsResponse | undefined | null,
+      imageUrl: string
+    ) => mutation.mutate({ mediaData, existingMedia, imageUrl }),
+
     removeImage: (
       mediaData: MediaDataDetailsType,
       existingMedia: MediaWithLogsResponse | undefined | null
     ) => mutation.mutate({ mediaData, existingMedia, remove: true }),
 
     isPending: mutation.isPending,
+    isSuccess: mutation.isSuccess,
   };
 }

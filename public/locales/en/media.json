@@ -66,7 +66,12 @@
     "planning": "Planning",
     "coverAlt": "Media cover",
     "previewAlt": "Preview Image",
-    "removeImage": "Remove Image"
+    "removeImage": "Remove Image",
+    "uploadTab": "Upload File",
+    "browseTab": "Browse Online",
+    "loadingAlternatives": "Loading alternatives...",
+    "noAlternativesFound": "No alternative images found",
+    "savingImage": "Saving image..."
   },
   "type": {
     "movie": "Movie",

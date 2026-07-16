@@ -81,7 +81,12 @@
     "planning": "Planejando",
     "coverAlt": "Capa da mídia",
     "previewAlt": "Imagem de pré-visualização",
-    "removeImage": "Remover Imagem"
+    "removeImage": "Remover Imagem",
+    "uploadTab": "Enviar Arquivo",
+    "browseTab": "Buscar Online",
+    "loadingAlternatives": "Carregando alternativas...",
+    "noAlternativesFound": "Nenhuma imagem alternativa encontrada",
+    "savingImage": "Salvando imagem..."
   },
   "status": {
     "in_progress": "Em Progresso",

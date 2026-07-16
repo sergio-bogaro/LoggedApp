@@ -109,6 +109,42 @@ export async function getKitsuDetails(id: string, type: "anime" | "manga") {
   return await res.json();
 }
 
+// ============================================
+// Browse Alternative Posters
+// ============================================
+
+/**
+ * Search Kitsu for anime/manga posters by title.
+ * Returns poster URLs from multiple results as alternative images.
+ */
+export async function searchKitsuPosters(title: string, type: "anime" | "manga"): Promise<Array<{ url: string; label: string }>> {
+  if (!title || title.trim().length === 0) return [];
+
+  const params = new URLSearchParams();
+  params.set("filter[text]", title);
+  params.set("page[limit]", "10");
+  params.set("fields[type]", "canonicalTitle,posterImage");
+
+  const res = await fetch(`${KITSU_BASE}/${type}?${params.toString()}`, {
+    headers: { "Accept": "application/vnd.api+json" },
+  });
+
+  if (!res.ok) return [];
+
+  const data = await res.json();
+  const items = data.data || [];
+
+  return items
+    .map((item: any) => {
+      const posterUrl = item.attributes?.posterImage?.large
+        || item.attributes?.posterImage?.medium
+        || item.attributes?.posterImage?.small;
+      const label = item.attributes?.canonicalTitle || "";
+      return posterUrl ? { url: posterUrl, label } : null;
+    })
+    .filter((p): p is { url: string; label: string } => p !== null);
+}
+
 export async function getKitsuDetailsNormalized(
   id: string,
   type: "anime" | "manga"

@@ -25,7 +25,7 @@ import { getBookDetails } from "@/querries/externalMedia/books";
 import { getGameDetails } from "@/querries/externalMedia/gamebrain";
 import { getMovieDetails } from "@/querries/externalMedia/movies";
 import { getMediaByExternalIdWithLogs } from "@/querries/media/logged";
-import { mediaImageUrl } from "@/querries/media/logged"
+import { mediaImageUrl } from "@/querries/media/logged";
 import { useAppSelector } from "@/store/auth/hooks";
 import { MediaTypeEnum } from "@/types/media";
 import { getPosterUrl } from "@/utils/mediaDataResponse";
@@ -33,13 +33,12 @@ import { getPosterUrl } from "@/utils/mediaDataResponse";
 type MediaDetailsParams = {
   mediaType: MediaTypeEnum;
   id: string;
-}
+};
 
 function MediaDetailsPage() {
   const { t } = useTranslation("media");
   const { mediaType, id } = useParams() as MediaDetailsParams;
   const { user } = useAppSelector((state) => state.auth);
-
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["details", mediaType, id],
@@ -70,18 +69,29 @@ function MediaDetailsPage() {
     enabled: !!id && !!mediaType && !!user,
   });
 
-  const mediaImage = useMemo(() => existingMedia?.imagePath ? mediaImageUrl(existingMedia.imagePath)! : getPosterUrl(mediaType, data), [existingMedia, mediaType, data])
-  const lastLog = existingMedia?.logs && existingMedia.logs.length > 0 ? existingMedia.logs[existingMedia.logs.length - 1] : null;
+  const mediaImage = useMemo(
+    () =>
+      existingMedia?.imagePath
+        ? mediaImageUrl(existingMedia.imagePath)!
+        : getPosterUrl(mediaType, data),
+    [existingMedia, mediaType, data],
+  );
+  const lastLog =
+    existingMedia?.logs && existingMedia.logs.length > 0
+      ? existingMedia.logs[existingMedia.logs.length - 1]
+      : null;
   const [optionsOpen, setOptionsOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
 
   return (
     <div>
-      {isError && <p>{t("detailsPage.errorPrefix")} {error.message}</p>}
+      {isError && (
+        <p>
+          {t("detailsPage.errorPrefix")} {error.message}
+        </p>
+      )}
 
-      <DataExhibition
-        isFetching={isLoading}
-      >
+      <DataExhibition isFetching={isLoading}>
         {data && (
           <div className="max-w-[1400px] mx-auto p-4 sm:p-8">
             <div className="flex flex-col md:flex-row gap-4">
@@ -112,12 +122,14 @@ function MediaDetailsPage() {
                 <div className="w-[70%] md:w-full">
                   <LogCard log={lastLog} />
                 </div>
-
               </div>
 
               <div className="space-y-3 flex-1 min-w-0">
                 <div className="flex justify-end">
-                  <DropdownMenu open={optionsOpen} onOpenChange={setOptionsOpen}>
+                  <DropdownMenu
+                    open={optionsOpen}
+                    onOpenChange={setOptionsOpen}
+                  >
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="icon">
                         <MoreVertical size={20} />
@@ -149,12 +161,10 @@ function MediaDetailsPage() {
               </div>
             </div>
           </div>
-        )
-        }
-
+        )}
       </DataExhibition>
-    </div >
-  )
+    </div>
+  );
 }
 
 export default MediaDetailsPage;

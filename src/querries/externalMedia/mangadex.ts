@@ -124,6 +124,87 @@ export async function searchManga(title: string): Promise<MangaDexManga[]> {
   return items;
 }
 
+// ============================================
+// Cover Art — Browse alternative covers
+// ============================================
+
+export type MangaCoverArt = {
+  id: string;
+  volume: string | null;
+  fileName: string;
+  description: string | null;
+  locale: string;
+};
+
+/**
+ * Fetch all cover art for a manga by its MangaDex ID.
+ * Returns cover URLs ready for display.
+ */
+export async function getMangaCovers(mangaId: string): Promise<MangaCoverArt[]> {
+  const params = new URLSearchParams();
+  params.set("manga[]", mangaId);
+  params.set("limit", "20");
+  params.set("order[volume]", "asc");
+
+  const res = await fetch(`${BASE}/cover?${params.toString()}`);
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`MangaDex cover API error: ${res.status} ${text}`);
+  }
+
+  const data = await res.json();
+  const covers: MangaCoverArt[] = (data.data || []).map((c: any) => ({
+    id: c.id,
+    volume: c.attributes?.volume || null,
+    fileName: c.attributes?.fileName || "",
+    description: c.attributes?.description || null,
+    locale: c.attributes?.locale || "",
+  }));
+
+  return covers;
+}
+
+/**
+ * Build a MangaDex cover URL at the given size.
+ */
+export function mangaCoverUrl(mangaId: string, fileName: string, size: 256 | 512 = 512): string {
+  return `https://uploads.mangadex.org/covers/${mangaId}/${fileName}.${size}.jpg`;
+}
+
+/**
+ * Search MangaDex by title and return covers from the first result.
+ * Used when we have a title but not the MangaDex ID.
+ */
+export async function searchMangaCovers(title: string): Promise<Array<{ url: string; volume: string | null; label: string }>> {
+  if (!title || title.trim().length === 0) return [];
+
+  // Step 1: search for the manga
+  const searchParams = new URLSearchParams();
+  searchParams.set("title", title);
+  searchParams.set("limit", "1");
+  searchParams.set("includes[]", "cover_art");
+
+  const searchRes = await fetch(`${BASE}/manga?${searchParams.toString()}`);
+  if (!searchRes.ok) return [];
+
+  const searchData = await searchRes.json();
+  const manga = searchData.data?.[0];
+  if (!manga) return [];
+
+  const mangaId = manga.id as string;
+
+  // Step 2: fetch covers for that manga
+  const covers = await getMangaCovers(mangaId);
+
+  return covers
+    .filter((c) => c.fileName)
+    .map((c) => ({
+      url: mangaCoverUrl(mangaId, c.fileName, 512),
+      volume: c.volume,
+      label: c.volume ? `Vol. ${c.volume}` : "Cover",
+    }));
+}
+
 export async function getMangaDetails(id: string) {
   const params = new URLSearchParams();
   params.set("includes[]", "cover_art");

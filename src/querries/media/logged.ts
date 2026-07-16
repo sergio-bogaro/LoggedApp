@@ -110,6 +110,21 @@ export async function uploadMediaImage(id: number, file: File, userId: number): 
   return (await res.json()) as MediaResponse;
 }
 
+export async function uploadMediaImageFromUrl(id: number, imageUrl: string, userId: number): Promise<MediaResponse> {
+  const res = await fetch(`${API_BASE}/api/media/${id}/image-url?user_id=${userId}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ url: imageUrl }),
+  });
+
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`API error ${res.status}: ${body}`);
+  }
+
+  return (await res.json()) as MediaResponse;
+}
+
 export async function removeMediaImage(id: number, userId: number): Promise<MediaResponse> {
   const res = await fetch(`${API_BASE}/api/media/${id}/image?user_id=${userId}`, {
     method: "DELETE",
