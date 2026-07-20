@@ -1,10 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { MediaTypeEnum } from "@/types/media";
-
-import { TMDBImage, tmdbPosterUrl } from "@/querries/externalMedia/movies";
-import { searchMangaCovers } from "@/querries/externalMedia/mangadex";
 import { searchKitsuPosters } from "@/querries/externalMedia/kitsu";
-import { searchGames as searchRawgGames, getGameScreenshots as getRawgScreenshots } from "@/querries/externalMedia/games";
+import { searchMangaCovers } from "@/querries/externalMedia/mangadex";
+import { TMDBImage, tmdbPosterUrl } from "@/querries/externalMedia/movies";
+import { MediaTypeEnum } from "@/types/media";
 
 export type AlternativeImage = {
   url: string;
@@ -30,19 +28,47 @@ function getMovieAlternatives(mediaData: any): AlternativeImage[] {
 }
 
 // ──────────────────────────────────────────────
-// RAWG — Games
+// RAWG — Games (direct fetch, no shared controller)
 // ──────────────────────────────────────────────
 
-async function getGameAlternatives(_mediaData: any, title: string): Promise<AlternativeImage[]> {
+const RAWG_BASE = "https://api.rawg.io/api";
+
+async function getGameAlternatives(
+  _mediaData: any,
+  title: string,
+): Promise<AlternativeImage[]> {
   if (!title) return [];
 
-  try {
-    const rawgResults = await searchRawgGames(title);
-    const rawgGame = rawgResults[0];
-    if (!rawgGame) return [];
+  const apiKey = import.meta.env.VITE_RAWG_API_KEY as string;
+  if (!apiKey) return [];
 
-    const screenshots = await getRawgScreenshots(rawgGame.id);
-    return screenshots.map((s) => ({
+  try {
+    // Search RAWG for the game
+    const searchParams = new URLSearchParams();
+    searchParams.set("search", title);
+    searchParams.set("page_size", "1");
+    searchParams.set("key", apiKey);
+
+    const searchRes = await fetch(
+      `${RAWG_BASE}/games?${searchParams.toString()}`,
+    );
+    if (!searchRes.ok) return [];
+
+    const searchData = await searchRes.json();
+    const game = searchData.results?.[0];
+    if (!game) return [];
+
+    // Get screenshots for the found game
+    const screenshotParams = new URLSearchParams();
+    screenshotParams.set("key", apiKey);
+
+    const screenshotRes = await fetch(
+      `${RAWG_BASE}/games/${game.id}/screenshots?${screenshotParams.toString()}`,
+    );
+    if (!screenshotRes.ok) return [];
+
+    const screenshotData = await screenshotRes.json();
+    return (screenshotData.results || []).map((s: { image: string }) => ({
       url: s.image,
       label: "Screenshot",
     }));
@@ -69,14 +95,20 @@ function getBookAlternatives(mediaData: any): AlternativeImage[] {
 // AniList + Kitsu — Anime
 // ──────────────────────────────────────────────
 
-async function getAnimeAlternatives(mediaData: any, title: string): Promise<AlternativeImage[]> {
+async function getAnimeAlternatives(
+  mediaData: any,
+  title: string,
+): Promise<AlternativeImage[]> {
   const results: AlternativeImage[] = [];
 
   // Always include AniList cover variations
   const coverImage = mediaData?.coverImage;
   if (coverImage) {
     if (coverImage.extraLarge) {
-      results.push({ url: coverImage.extraLarge, label: "AniList (Extra Large)" });
+      results.push({
+        url: coverImage.extraLarge,
+        label: "AniList (Extra Large)",
+      });
     }
     if (coverImage.large) {
       results.push({ url: coverImage.large, label: "AniList (Large)" });
@@ -100,14 +132,20 @@ async function getAnimeAlternatives(mediaData: any, title: string): Promise<Alte
 // AniList + MangaDex — Manga
 // ──────────────────────────────────────────────
 
-async function getMangaAlternatives(mediaData: any, title: string): Promise<AlternativeImage[]> {
+async function getMangaAlternatives(
+  mediaData: any,
+  title: string,
+): Promise<AlternativeImage[]> {
   const results: AlternativeImage[] = [];
 
   // Include AniList cover variations
   const coverImage = mediaData?.coverImage;
   if (coverImage) {
     if (coverImage.extraLarge) {
-      results.push({ url: coverImage.extraLarge, label: "AniList (Extra Large)" });
+      results.push({
+        url: coverImage.extraLarge,
+        label: "AniList (Extra Large)",
+      });
     }
     if (coverImage.large) {
       results.push({ url: coverImage.large, label: "AniList (Large)" });
@@ -140,7 +178,7 @@ async function getMangaAlternatives(mediaData: any, title: string): Promise<Alte
 export async function getAlternativeImages(
   mediaType: MediaTypeEnum,
   mediaData: unknown,
-  title?: string
+  title?: string,
 ): Promise<AlternativeImage[]> {
   const data = mediaData as any;
 
@@ -155,10 +193,16 @@ export async function getAlternativeImages(
       return getBookAlternatives(data);
 
     case MediaTypeEnum.ANIME:
-      return getAnimeAlternatives(data, title || data?.title?.romaji || data?.title?.english || "");
+      return getAnimeAlternatives(
+        data,
+        title || data?.title?.romaji || data?.title?.english || "",
+      );
 
     case MediaTypeEnum.MANGA:
-      return getMangaAlternatives(data, title || data?.title?.romaji || data?.title?.english || "");
+      return getMangaAlternatives(
+        data,
+        title || data?.title?.romaji || data?.title?.english || "",
+      );
 
     default:
       return [];

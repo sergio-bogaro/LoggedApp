@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
 type ImageWithSkeletonProps = {
-  src: string;
+  src?: string;
   alt: string;
   className?: string;
   width?: number;
@@ -29,17 +29,15 @@ export function ImageWithSkeleton({
       }}
       aria-busy={!isLoaded}
     >
-      {!isLoaded && (
-        <Skeleton className="h-full w-full animate-pulse" />
-      )}
+      {!isLoaded && <Skeleton className="h-full w-full animate-pulse" />}
 
       <img
-        src={src}
+        src={src != "" ? src : undefined}
         alt={alt}
         onLoad={() => setIsLoaded(true)}
         className={cn(
           "relative block h-full w-full object-cover transition-opacity duration-300 ease-out",
-          isLoaded ? "opacity-100" : "opacity-0"
+          isLoaded ? "opacity-100" : "opacity-0",
         )}
         style={{ width: "100%", height: "100%" }}
         decoding="async"
