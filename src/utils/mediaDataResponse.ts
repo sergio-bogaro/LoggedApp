@@ -40,7 +40,7 @@ export function getMediaData(mediaType: MediaTypeEnum, mediaData: unknown): Medi
       const formatedTitle = mangaData.title.english ?
         mangaData.title.english === mangaData.title.romaji ? mangaData.title.english :
           `${mangaData.title.english} (${mangaData.title.romaji})` : mangaData.title.romaji;
-      
+
       return {
         id: String(mangaData.id),
         title: formatedTitle ?? "",
@@ -69,7 +69,7 @@ export function getMediaData(mediaType: MediaTypeEnum, mediaData: unknown): Medi
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function getPosterUrl(type: MediaTypeEnum, data: any) {
+export function getPosterUrl(type: MediaTypeEnum, data: any): string {
   if(!data) return "";
 
   switch (type) {

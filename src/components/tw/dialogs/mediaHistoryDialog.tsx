@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import { MediaLogCard } from "../media/historyCard";
 
+import { DataExhibition } from "@/components/tw/generic/dataExhibition";
 import {
   Dialog,
   DialogContent,
@@ -58,27 +59,21 @@ export function MediaHistoryDialog({
         </DialogHeader>
 
         <div className="max-h-[70vh] space-y-3 overflow-y-auto pr-2">
-          {isLoading && (
-            <p className="text-sm text-muted-foreground">
-              {t("history.loading")}
-            </p>
-          )}
+          <DataExhibition
+            isFetching={isLoading}
+            isError={isError}
+            errorMessage={`${t("history.errorPrefix")} ${error?.message ?? ""}`}
+          >
+            {logs.length === 0 && (
+              <p className="text-sm text-muted-foreground">
+                {t("history.empty")}
+              </p>
+            )}
 
-          {isError && (
-            <p className="text-sm text-destructive">
-              {t("history.errorPrefix")} {error.message}
-            </p>
-          )}
-
-          {!isLoading && !isError && logs.length === 0 && (
-            <p className="text-sm text-muted-foreground">
-              {t("history.empty")}
-            </p>
-          )}
-
-          {logs.map((log) => (
-            <MediaLogCard key={log.id} log={log} isOneTimeConsuption={isOneTimeConsumption} />
-          ))}
+            {logs.map((log) => (
+              <MediaLogCard key={log.id} log={log} isOneTimeConsuption={isOneTimeConsumption} />
+            ))}
+          </DataExhibition>
         </div>
       </DialogContent>
     </Dialog>

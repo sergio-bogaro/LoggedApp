@@ -127,8 +127,6 @@ export function ChangeImageDialog({ existingMedia, mediaData, mediaType, formate
     }
   };
 
-
-
   return (
     <Dialog open={imageDialogOpen} onOpenChange={handleDialogOpenChange}>
       <DialogTrigger asChild>
@@ -149,7 +147,6 @@ export function ChangeImageDialog({ existingMedia, mediaData, mediaType, formate
         </DialogHeader>
 
         <div className="flex flex-col items-center gap-4">
-          {/* Preview image with loading overlay */}
           <div className="relative w-full max-w-[200px]">
             <ImageWithSkeleton
               alt={t("track.previewAlt", { ns: "media" })}

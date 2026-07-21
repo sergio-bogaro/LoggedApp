@@ -12,7 +12,7 @@ const BacklogPage = () => {
   const { t } = useTranslation("media");
   const { user } = useAppSelector((state) => state.auth);
 
-  const { data, isFetching } = useQuery({
+  const { data, isFetching, isError, error } = useQuery({
     queryKey: ["backlog"],
     queryFn: () => getBacklog(user!.id),
     staleTime: DEFAULT_STALE_TIME,
@@ -23,7 +23,7 @@ const BacklogPage = () => {
     <div className="w-full h-full space-y-3">
       <h1 className="text-2xl font-bold">{t("list.backlog")}</h1>
 
-      <DataExhibition isFetching={isFetching} skeleton={<ListItemSkeleton />}>
+      <DataExhibition isFetching={isFetching} skeleton={<ListItemSkeleton />} isError={isError} errorMessage={`${t("errorLoading", { ns: "common" })} ${error?.message ?? ""}`}>
         <ListItemsGrid
           items={data}
           emptyMessage={t("list.addBacklog")}

@@ -36,9 +36,9 @@ type MediaDetailsParams = {
 };
 
 function MediaDetailsPage() {
-  const { t } = useTranslation("media");
   const { mediaType, id } = useParams() as MediaDetailsParams;
   const { user } = useAppSelector((state) => state.auth);
+  const { t } = useTranslation("media");
 
   const [optionsOpen, setOptionsOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
@@ -66,7 +66,7 @@ function MediaDetailsPage() {
     enabled: !!mediaType && !!id,
   });
 
-  const formatedData = useMemo(() => getMediaData(mediaType, data), [data, mediaType]);
+  const formatedData = useMemo(() => (data ? getMediaData(mediaType, data) : undefined), [data, mediaType]);
 
   const { data: existingMedia } = useQuery({
     queryKey: ["existingMedia", id, mediaType],
@@ -88,14 +88,12 @@ function MediaDetailsPage() {
 
   return (
     <div>
-      {isError && (
-        <p>
-          {t("detailsPage.errorPrefix")} {error.message}
-        </p>
-      )}
-
-      <DataExhibition isFetching={isLoading}>
-        {data && (
+      <DataExhibition
+        isFetching={isLoading}
+        isError={isError}
+        errorMessage={`${t("detailsPage.errorPrefix")} ${error?.message ?? ""}`}
+      >
+        {data && formatedData && (
           <div className="max-w-[1400px] mx-auto p-4 sm:p-8">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex gap-4 items-start w-full flex-col md:w-1/5 md:min-w-[200px] md:text-center md:text-wrap md:max-w-[250px] transition-all">

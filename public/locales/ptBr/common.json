@@ -41,5 +41,6 @@
   },
   "form": {
     "selectPlaceholder": "Selecione..."
-  }
+  },
+  "errorLoading": "Erro ao carregar dados:"
 }

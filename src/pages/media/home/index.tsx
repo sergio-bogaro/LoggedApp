@@ -17,14 +17,14 @@ const MediaHomePage = () => {
   const { t } = useTranslation("media");
   const { user } = useAppSelector((state) => state.auth);
 
-  const { data: allData, isFetching } = useQuery<MediaResponse[]>({
+  const { data: allData, isFetching, isError, error } = useQuery<MediaResponse[]>({
     queryKey: ["media"],
     queryFn: () => getMediaList(user!.id),
     staleTime: 1000 * 60 * 5,
     enabled: !!user,
   });
 
-  const { data: recentlyLoggedData, isFetching: isFetchingRecent } = useQuery<MediaResponse[]>({
+  const { data: recentlyLoggedData, isFetching: isFetchingRecent, isError: isErrorRecent, error: errorRecent } = useQuery<MediaResponse[]>({
     queryKey: ["media", "recentlyLogged"],
     queryFn: () => getMediaList(user!.id, { hasLogs: true, limit: CAROUSEL_LIMIT }),
     staleTime: 1000 * 60 * 5,
@@ -32,12 +32,14 @@ const MediaHomePage = () => {
   });
 
   const isLoading = isFetching || isFetchingRecent;
+  const isErrorCombined = isError || isErrorRecent;
+  const errorMessageCombined = error?.message || errorRecent?.message || "";
 
   return (
     <div className="w-full h-full">
       <h1 className="text-2xl font-bold mb-4">{t("home.title")}</h1>
 
-      <DataExhibition isFetching={isLoading} skeleton={<MediaCardSkeleton />}>
+      <DataExhibition isFetching={isLoading} skeleton={<MediaCardSkeleton />} isError={isErrorCombined} errorMessage={`${t("errorLoading", { ns: "common" })} ${errorMessageCombined}`}>
         <Tabs defaultValue="list" className="mt-4">
           <TabsList>
             <TabsTrigger value="list">{t("home.tabs.list")}</TabsTrigger>

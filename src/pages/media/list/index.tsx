@@ -22,7 +22,7 @@ const MediaListPage = () => {
   const mediaType = type as MediaTypeEnum;
   const title = mediaType ? t(`typePlural.${mediaType}`) : "";
 
-  const { data: data, isFetching } = useQuery<MediaResponse[]>({
+  const { data: data, isFetching, isError, error } = useQuery<MediaResponse[]>({
     queryKey: ["media", "list", mediaType],
     queryFn: () =>
       getMediaList(user!.id, {
@@ -32,7 +32,7 @@ const MediaListPage = () => {
     enabled: !!user,
   });
 
-  const { data: recentlyLoggedData, isFetching: isFetchingRecent } = useQuery<MediaResponse[]>({
+  const { data: recentlyLoggedData, isFetching: isFetchingRecent, isError: isErrorRecent, error: errorRecent } = useQuery<MediaResponse[]>({
     queryKey: ["media", "list", mediaType, "recentlyLogged"],
     queryFn: () =>
       getMediaList(user!.id, {
@@ -44,12 +44,14 @@ const MediaListPage = () => {
   });
 
   const isLoading = isFetching || isFetchingRecent;
+  const isErrorCombined = isError || isErrorRecent;
+  const errorMessageCombined = error?.message || errorRecent?.message || "";
 
   return (
     <div className="w-full h-full space-y-3">
       <h1 className="text-2xl font-bold">{title}</h1>
 
-      <DataExhibition isFetching={isLoading} skeleton={<MediaCardSkeleton />}>
+      <DataExhibition isFetching={isLoading} skeleton={<MediaCardSkeleton />} isError={isErrorCombined} errorMessage={`${t("errorLoading", { ns: "common" })} ${errorMessageCombined}`}>
         <Tabs defaultValue="list" className="mt-4">
           <TabsList>
             <TabsTrigger value="list">{t("home.tabs.list")}</TabsTrigger>
