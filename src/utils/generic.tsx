@@ -1,4 +1,4 @@
-function toBcp47Locale(locale: string): string {
+export function toBcp47Locale(locale: string): string {
   const normalized = locale?.toLowerCase() ?? ""
 
   if (normalized.startsWith("pt")) return "pt-BR"

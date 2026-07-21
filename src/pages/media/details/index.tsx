@@ -28,7 +28,7 @@ import { getMediaByExternalIdWithLogs } from "@/querries/media/logged";
 import { mediaImageUrl } from "@/querries/media/logged";
 import { useAppSelector } from "@/store/auth/hooks";
 import { MediaTypeEnum } from "@/types/media";
-import { getPosterUrl } from "@/utils/mediaDataResponse";
+import { getMediaData, getPosterUrl } from "@/utils/mediaDataResponse";
 
 type MediaDetailsParams = {
   mediaType: MediaTypeEnum;
@@ -39,6 +39,9 @@ function MediaDetailsPage() {
   const { t } = useTranslation("media");
   const { mediaType, id } = useParams() as MediaDetailsParams;
   const { user } = useAppSelector((state) => state.auth);
+
+  const [optionsOpen, setOptionsOpen] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["details", mediaType, id],
@@ -63,25 +66,25 @@ function MediaDetailsPage() {
     enabled: !!mediaType && !!id,
   });
 
+  const formatedData = useMemo(() => getMediaData(mediaType, data), [data, mediaType]);
+
   const { data: existingMedia } = useQuery({
     queryKey: ["existingMedia", id, mediaType],
     queryFn: () => getMediaByExternalIdWithLogs(id!, mediaType, user!.id),
     enabled: !!id && !!mediaType && !!user,
   });
 
-  const mediaImage = useMemo(
-    () =>
-      existingMedia?.imagePath
-        ? mediaImageUrl(existingMedia.imagePath)!
-        : getPosterUrl(mediaType, data),
-    [existingMedia, mediaType, data],
+  const lastLog = useMemo(() => existingMedia?.logs && existingMedia.logs.length > 0
+    ? existingMedia.logs[existingMedia.logs.length - 1]
+    : null
+  ,[existingMedia]
+  )
+
+  const mediaImage = useMemo(() => existingMedia?.imagePath
+    ? mediaImageUrl(existingMedia.imagePath)!
+    : getPosterUrl(mediaType, data)
+  , [existingMedia, mediaType, data]
   );
-  const lastLog =
-    existingMedia?.logs && existingMedia.logs.length > 0
-      ? existingMedia.logs[existingMedia.logs.length - 1]
-      : null;
-  const [optionsOpen, setOptionsOpen] = useState(false);
-  const [historyOpen, setHistoryOpen] = useState(false);
 
   return (
     <div>
@@ -98,7 +101,7 @@ function MediaDetailsPage() {
               <div className="flex gap-4 items-start w-full flex-col md:w-1/5 md:min-w-[200px] md:text-center md:text-wrap md:max-w-[250px] transition-all">
                 <div className="relative w-[70%] md:w-full">
                   <ImageWithSkeleton
-                    alt={data.title}
+                    alt={formatedData.title}
                     className="shrink-0 aspect-2/3 md:w-full md:max-w-full"
                     src={mediaImage}
                   />
@@ -108,13 +111,15 @@ function MediaDetailsPage() {
                       mediaData={data}
                       existingMedia={existingMedia}
                       mediaType={mediaType}
+                      formatedData={formatedData}
                     />
 
                     <TrackMediaDialog
                       mediaType={mediaType}
                       mediaData={data}
-                      existingMedia={existingMedia}
                       image={mediaImage}
+                      formatedData={formatedData}
+                      existingMedia={existingMedia}
                     />
                   </div>
                 </div>

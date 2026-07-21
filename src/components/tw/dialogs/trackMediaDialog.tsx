@@ -23,11 +23,11 @@ import { TextArea } from "@/components/ui/textarea";
 import { MediaWithLogsResponse } from "@/types/logged";
 import {
   finishedStatusEnumValues,
+  MediaDataDetailsType,
   MediaStatusEnum,
   MediaTypeEnum,
 } from "@/types/media";
 import { newIsoDate } from "@/utils/date";
-import { getMediaData } from "@/utils/mediaDataResponse";
 import { useTrackMedia } from "@/utils/mediaStore";
 import { statusAnimeOptions } from "@/utils/selectOptions";
 
@@ -36,6 +36,7 @@ interface TrackMediaDialogProps {
   mediaType: MediaTypeEnum;
   image: string;
   mediaData: unknown;
+  formatedData: MediaDataDetailsType;
 }
 
 interface FormType {
@@ -46,7 +47,7 @@ interface FormType {
   review?: string;
 }
 
-export function TrackMediaDialog({ mediaType, mediaData, existingMedia, image }: TrackMediaDialogProps) { 
+export function TrackMediaDialog({ mediaType, existingMedia, image, formatedData }: TrackMediaDialogProps) {
   const [open, setOpen] = useState(false);
 
   const isOneTimeConsumption = useMemo( () => mediaType === MediaTypeEnum.MOVIES, [mediaType] );
@@ -64,7 +65,6 @@ export function TrackMediaDialog({ mediaType, mediaData, existingMedia, image }:
 
   const { control, handleSubmit } = form;
   const watchStatus = useWatch({ control, name: "status" });
-
   const isFinished = useMemo(() => finishedStatusEnumValues.includes(watchStatus), [watchStatus] );
 
   useEffect(() => {
@@ -78,8 +78,6 @@ export function TrackMediaDialog({ mediaType, mediaData, existingMedia, image }:
   }, [isFinished]);
 
   const onSubmit = (data: FormType) => {
-    const mediaDataFormated = getMediaData(mediaType, mediaData);
-
     const formData = {
       startDate: data.startDate && data.startDate.trim() !== "" ? data.startDate : undefined,
       endDate: isOneTimeConsumption ? data.endDate : data.status === MediaStatusEnum.FINISHED ? data.endDate : undefined,
@@ -88,7 +86,7 @@ export function TrackMediaDialog({ mediaType, mediaData, existingMedia, image }:
       review: data.review,
     };
 
-    trackMedia(mediaDataFormated, existingMedia, formData);
+    trackMedia(formatedData, existingMedia, formData);
     setOpen(false);
   };
 
@@ -106,7 +104,7 @@ export function TrackMediaDialog({ mediaType, mediaData, existingMedia, image }:
       <DialogContent className="w-[80%] max-w-[1000px]">
         <DialogHeader>
           <DialogTitle>
-            {getMediaData(mediaType, mediaData).title}
+            {formatedData.title}
           </DialogTitle>
 
           <DialogDescription>
@@ -176,7 +174,7 @@ export function TrackMediaDialog({ mediaType, mediaData, existingMedia, image }:
                     {t("cancel", { ns: "common" })}
                   </Button>
                 </DialogClose>
-                
+
                 <Button type="submit">
                   {t("save", { ns: "common" })}
                 </Button>

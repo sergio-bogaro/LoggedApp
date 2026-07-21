@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 import { t } from "i18next";
 import { ImagePlus, Loader2 } from "lucide-react";
 import React, { useEffect, useMemo, useRef, useState } from "react";
@@ -17,12 +16,8 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { mediaImageUrl } from "@/querries/media/logged";
 import { MediaWithLogsResponse } from "@/types/logged";
-import { MediaTypeEnum } from "@/types/media";
-import {
-  AlternativeImage,
-  getAlternativeImages,
-} from "@/utils/alternativeImages";
-import { getMediaData } from "@/utils/mediaDataResponse";
+import { MediaDataDetailsType, MediaTypeEnum } from "@/types/media";
+import { AlternativeImage, getAlternativeImages } from "@/utils/alternativeImages";
 import { useChangeImage } from "@/utils/mediaStore";
 import { getPosterUrl } from "@/utils/posterPaths";
 
@@ -30,21 +25,14 @@ interface ChangeImageDialogProps {
   existingMedia?: MediaWithLogsResponse | null;
   mediaType: MediaTypeEnum;
   mediaData: unknown;
+  formatedData: MediaDataDetailsType;
   onImageChange?: (objectUrl: string) => void;
 }
 
-export function ChangeImageDialog({
-  existingMedia,
-  mediaData,
-  mediaType,
-  onImageChange,
-}: ChangeImageDialogProps) {
-  const originalCover = useMemo(
-    () => getPosterUrl(mediaType, mediaData),
-    [mediaData, mediaType],
-  );
+export function ChangeImageDialog({ existingMedia, mediaData, mediaType, formatedData, onImageChange }: ChangeImageDialogProps) {
+  const { changeImage, changeImageFromUrl, removeImage, isPending, isSuccess } = useChangeImage();
 
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string>();
   const [imageDialogOpen, setImageDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("upload");
   const [alternatives, setAlternatives] = useState<AlternativeImage[]>([]);
@@ -52,52 +40,31 @@ export function ChangeImageDialog({
   const [processingUrl, setProcessingUrl] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const hasCustomImage = selectedImage !== originalCover;
 
-  const { changeImage, changeImageFromUrl, removeImage, isPending, isSuccess } =
-    useChangeImage();
+  const originalCover = useMemo( () => getPosterUrl(mediaType, mediaData), [mediaData, mediaType]);
+  const hasCustomImage = useMemo(() => selectedImage !== originalCover , [selectedImage, originalCover]);
 
-  // Media title for searching alternatives
-  const mediaTitle = useMemo(() => {
-    const data = mediaData as any;
-    return (
-      data?.title?.romaji ||
-      data?.title?.english ||
-      data?.title ||
-      data?.name ||
-      ""
-    );
-  }, [mediaData]);
+  const isProcessing = isPending && processingUrl !== null;
 
-  useEffect(() => {
-    setSelectedImage(
-      existingMedia?.imagePath
-        ? mediaImageUrl(existingMedia.imagePath)!
-        : originalCover,
-    );
+  useEffect(() => { setSelectedImage( existingMedia?.imagePath
+    ? mediaImageUrl(existingMedia.imagePath)!
+    : originalCover,
+  );
   }, [existingMedia]);
 
-  // Close dialog when mutation succeeds
-  useEffect(() => {
-    if (isSuccess && processingUrl) {
-      setProcessingUrl(null);
-      setImageDialogOpen(false);
-    }
+  useEffect(() => { if (isSuccess && processingUrl) {
+    setProcessingUrl(null);
+    setImageDialogOpen(false);
+  }
   }, [isSuccess, processingUrl]);
 
-  // Load alternatives when switching to browse tab
+
   useEffect(() => {
-    if (
-      activeTab !== "browse" ||
-      alternatives.length > 0 ||
-      isLoadingAlternatives
-    )
-      return;
+    if (activeTab !== "browse" || alternatives.length > 0 || isLoadingAlternatives) return;
 
     setIsLoadingAlternatives(true);
-    getAlternativeImages(mediaType, mediaData, mediaTitle)
+    getAlternativeImages(mediaType, mediaData, formatedData.title)
       .then((imgs) => {
-        // Filter out duplicates and the current image
         const unique = imgs.filter(
           (img, i, self) =>
             img.url &&
@@ -115,8 +82,7 @@ export function ChangeImageDialog({
     mediaData,
     originalCover,
     alternatives.length,
-    isLoadingAlternatives,
-    mediaTitle,
+    isLoadingAlternatives
   ]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -127,15 +93,13 @@ export function ChangeImageDialog({
     setSelectedImage(objectUrl);
     onImageChange?.(objectUrl);
 
-    const mediaDataFormatted = getMediaData(mediaType, mediaData);
-    changeImage(mediaDataFormatted, existingMedia, file);
+    changeImage(formatedData, existingMedia, file);
 
     setImageDialogOpen(false);
   };
 
   const handleRemove = () => {
-    const mediaDataFormatted = getMediaData(mediaType, mediaData);
-    removeImage(mediaDataFormatted, existingMedia);
+    removeImage(formatedData, existingMedia);
 
     setSelectedImage(originalCover);
     onImageChange?.(originalCover);
@@ -143,24 +107,19 @@ export function ChangeImageDialog({
   };
 
   const handleSelectAlternative = (img: AlternativeImage) => {
-    // Show the selected poster as preview immediately
     setSelectedImage(img.url);
     onImageChange?.(img.url);
 
-    // Track which URL is being processed
     setProcessingUrl(img.url);
 
-    // Send the URL to the backend — dialog stays open while processing
-    const mediaDataFormatted = getMediaData(mediaType, mediaData);
-    changeImageFromUrl(mediaDataFormatted, existingMedia, img.url);
+    changeImageFromUrl(formatedData, existingMedia, img.url);
   };
 
   const handleDialogOpenChange = (open: boolean) => {
-    // Don't allow closing while processing
     if (!open && isPending) return;
     setImageDialogOpen(open);
+
     if (open) {
-      // Reset browse tab state when dialog opens
       setActiveTab("upload");
       setAlternatives([]);
       setIsLoadingAlternatives(false);
@@ -168,7 +127,7 @@ export function ChangeImageDialog({
     }
   };
 
-  const isProcessing = isPending && processingUrl !== null;
+
 
   return (
     <Dialog open={imageDialogOpen} onOpenChange={handleDialogOpenChange}>
@@ -229,7 +188,6 @@ export function ChangeImageDialog({
               </TabsTrigger>
             </TabsList>
 
-            {/* Upload Tab */}
             <TabsContent value="upload" className="mt-3">
               <div className="flex flex-col w-full gap-2">
                 <Button
@@ -268,6 +226,7 @@ export function ChangeImageDialog({
                   <div className="grid grid-cols-3 gap-2 max-h-[300px] overflow-y-auto pr-1">
                     {alternatives.map((img, index) => {
                       const isCurrentlyProcessing = processingUrl === img.url;
+
                       return (
                         <button
                           key={`${img.url}-${index}`}
@@ -277,7 +236,7 @@ export function ChangeImageDialog({
                           className={`relative aspect-2/3 rounded-md overflow-hidden border-2 transition-colors cursor-pointer disabled:opacity-50 group ${isCurrentlyProcessing
                             ? "border-primary ring-2 ring-primary/30"
                             : "border-transparent hover:border-primary"
-                            }`}
+                          }`}
                           title={img.label}
                         >
                           <ImageWithSkeleton

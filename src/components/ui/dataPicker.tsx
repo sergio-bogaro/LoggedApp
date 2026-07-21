@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import i18n from "i18next"
 import { CalendarIcon } from "lucide-react"
@@ -185,7 +184,7 @@ function DatePickerField({ field, id, disabled, placeholder }: DatePickerFieldPr
 
 export function DatePicker({ label, name, id, required, control, disabled, placeholder }: DatePickerProps) {
   const locale = useCurrentLocale()
-  
+
   const resolvedPlaceholder = placeholder ?? (toBcp47Locale(locale) === "pt-BR" ? "dd/mm/aaaa" : "mm/dd/yyyy")
 
   return (
