@@ -280,5 +280,17 @@
     "empty": "Nenhum log ainda",
     "emptyHint": "Comece a registrar suas mídias para ver os logs aqui",
     "allLoaded": "Todos os logs carregados"
+  },
+  "logCard": {
+    "youLoggedThisOn": "Você registrou isso em",
+    "youRatedThis": "Você avaliou com",
+    "logDetails": "Detalhes do Log",
+    "date": "Data",
+    "startDate": "Data de Início",
+    "endDate": "Data de Conclusão",
+    "noReview": "Sem avaliação",
+    "viewedOn": "Visto em",
+    "startedOn": "Início",
+    "finishedOn": "Fim"
   }
 }

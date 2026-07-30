@@ -280,5 +280,17 @@
     "empty": "No logs yet",
     "emptyHint": "Start tracking your media to see logs here",
     "allLoaded": "All logs loaded"
+  },
+  "logCard": {
+    "youLoggedThisOn": "You logged this on",
+    "youRatedThis": "You rated this",
+    "logDetails": "Log Details",
+    "date": "Date",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "noReview": "No review",
+    "viewedOn": "Viewed on",
+    "startedOn": "Started on",
+    "finishedOn": "Finished on"
   }
 }

@@ -23,30 +23,17 @@ interface MediaHistoryDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export function MediaHistoryDialog({
-  media,
-  open,
-  onOpenChange,
-}: MediaHistoryDialogProps) {
+export function MediaHistoryDialog({ media, open, onOpenChange }: MediaHistoryDialogProps) {
   const { t } = useTranslation("media");
-  const isOneTimeConsumption = useMemo(() => media?.type === MediaTypeEnum.MOVIES, [media]);
-
   const { user } = useAppSelector((state) => state.auth);
 
-  const { data, isLoading, isError, error } = useQuery({
+  const isOneTimeConsumption = useMemo(() => media?.type === MediaTypeEnum.MOVIES, [media]);
+
+  const { data: logs, isLoading, isError, error } = useQuery({
     queryKey: ["media-logs", media?.id],
     queryFn: () => getMediaLogs(media!.id, user!.id),
     enabled: open && !!media && !!user,
   });
-
-  const logs = useMemo(() => {
-    if (!data) return [];
-
-    return [...data].sort((a, b) =>
-      new Date(b.date || b.createdAt).getTime() -
-      new Date(a.date || a.createdAt).getTime(),
-    );
-  }, [data]);
 
   if (!media) return null;
 
@@ -64,13 +51,13 @@ export function MediaHistoryDialog({
             isError={isError}
             errorMessage={`${t("history.errorPrefix")} ${error?.message ?? ""}`}
           >
-            {logs.length === 0 && (
+            {logs?.length === 0 && (
               <p className="text-sm text-muted-foreground">
                 {t("history.empty")}
               </p>
             )}
 
-            {logs.map((log) => (
+            {logs?.map((log) => (
               <MediaLogCard key={log.id} log={log} isOneTimeConsuption={isOneTimeConsumption} />
             ))}
           </DataExhibition>

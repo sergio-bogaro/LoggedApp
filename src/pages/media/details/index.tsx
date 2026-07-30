@@ -8,6 +8,7 @@ import { MediaInfo } from "./components/general/mediaInfo";
 import { MediaTabs } from "./components/general/mediaTabs";
 
 import { ChangeImageDialog } from "@/components/tw/dialogs/changeImageDialog";
+import { LogDetailsDialog } from "@/components/tw/dialogs/logDetailsDialog";
 import { MediaHistoryDialog } from "@/components/tw/dialogs/mediaHistoryDialog";
 import { TrackMediaDialog } from "@/components/tw/dialogs/trackMediaDialog";
 import { DataExhibition } from "@/components/tw/generic/dataExhibition";
@@ -29,6 +30,7 @@ import { mediaImageUrl } from "@/querries/media/logged";
 import { useAppSelector } from "@/store/auth/hooks";
 import { MediaTypeEnum } from "@/types/media";
 import { getMediaData, getPosterUrl } from "@/utils/mediaDataResponse";
+import { DEFAULT_STALE_TIME } from "@/utils/conts";
 
 type MediaDetailsParams = {
   mediaType: MediaTypeEnum;
@@ -42,6 +44,7 @@ function MediaDetailsPage() {
 
   const [optionsOpen, setOptionsOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [logDetailsOpen, setLogDetailsOpen] = useState(false);
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["details", mediaType, id],
@@ -64,6 +67,7 @@ function MediaDetailsPage() {
       }
     },
     enabled: !!mediaType && !!id,
+    staleTime: DEFAULT_STALE_TIME,
   });
 
   const formatedData = useMemo(() => (data ? getMediaData(mediaType, data) : undefined), [data, mediaType]);
@@ -72,6 +76,7 @@ function MediaDetailsPage() {
     queryKey: ["existingMedia", id, mediaType],
     queryFn: () => getMediaByExternalIdWithLogs(id!, mediaType, user!.id),
     enabled: !!id && !!mediaType && !!user,
+    staleTime: DEFAULT_STALE_TIME,
   });
 
   const lastLog = useMemo(() => existingMedia?.logs && existingMedia.logs.length > 0
@@ -123,7 +128,7 @@ function MediaDetailsPage() {
                 </div>
 
                 <div className="w-[70%] md:w-full">
-                  <LogCard log={lastLog} />
+                  <LogCard log={lastLog} onClick={() => setLogDetailsOpen(true)} />
                 </div>
               </div>
 
@@ -155,6 +160,13 @@ function MediaDetailsPage() {
                     media={existingMedia ?? undefined}
                     open={historyOpen}
                     onOpenChange={setHistoryOpen}
+                  />
+
+                  <LogDetailsDialog
+                    log={lastLog}
+                    mediaType={mediaType}
+                    open={logDetailsOpen}
+                    onOpenChange={setLogDetailsOpen}
                   />
                 </div>
 
