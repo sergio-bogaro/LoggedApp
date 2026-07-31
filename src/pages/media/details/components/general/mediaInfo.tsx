@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AniListMediaDetails } from "@/querries/externalMedia/anilist";
-import { GameBrainGame } from "@/querries/externalMedia/gamebrain";
+import { RAWGGame } from "@/querries/externalMedia/games";
 import { TMDBMovieDetails } from "@/querries/externalMedia/movies";
 import { MediaTypeEnum } from "@/types/media";
 
@@ -85,11 +85,11 @@ export const MediaInfo = ({ mediaType, data }: MediaInfoProps) => {
       }
 
       case MediaTypeEnum.GAME: {
-        const gameData = data as GameBrainGame;
+        const gameData = data as RAWGGame;
 
         return <MediaInfoComponent
           title={gameData.name}
-          dates={gameData.release_date?.slice(0, 4) || ""}
+          dates={gameData.released?.slice(0, 4) || ""}
           overview={gameData.description ?? ""}
           tags={gameData.genres?.map((genre) => genre.name) || []}
         />

@@ -3,26 +3,26 @@ import { Link } from "react-router";
 
 import { DetailsLabel } from "../general/detailsCard";
 
-import { GameBrainGame, getPlatformNames } from "@/querries/externalMedia/gamebrain";
+import { RAWGGame, getPlatformNames, getPrimaryDeveloper } from "@/querries/externalMedia/games";
 import { formatFromIsoDate } from "@/utils/date";
 
-export const GameDetails = ({ data }: { data: GameBrainGame }) => {
+export const GameDetails = ({ data }: { data: RAWGGame }) => {
 
   return (
     <div className="divide-y divide-border">
       <DetailsLabel
         label={t("details.releaseDate", { ns: "media" })}
-        value={formatFromIsoDate(data.release_date)}
+        value={formatFromIsoDate(data.released)}
       />
 
       <DetailsLabel
         label={t("details.rating", { ns: "media" })}
-        value={(( data.rating?.mean ?? 0) * 5).toFixed(1) + " ★"}
+        value={data.rating ? `${data.rating.toFixed(1)} ★` : ""}
       />
 
       <DetailsLabel
         label={t("details.duration", { ns: "media" })}
-        value={t("details.durationHours", { ns: "media", count: Number((data.playtime?.mean ?? 0).toFixed(1)) })}
+        value={data.playtime ? t("details.durationHours", { ns: "media", count: data.playtime }) : ""}
       />
 
       <DetailsLabel
@@ -32,14 +32,14 @@ export const GameDetails = ({ data }: { data: GameBrainGame }) => {
 
       <DetailsLabel
         label={t("details.developer", { ns: "media" })}
-        value={data.developer || ""}
+        value={getPrimaryDeveloper(data) ?? ""}
       />
 
       <DetailsLabel
         label={t("details.source", { ns: "media" })}
         value={
-          <Link to={data.link} target="_blank" >
-            {t("sources.gameBrain", { ns: "media" })}
+          <Link to={`https://rawg.io/games/${data.slug}`} target="_blank" >
+            {t("sources.rawg", { ns: "media" })}
           </Link>
         }
       />

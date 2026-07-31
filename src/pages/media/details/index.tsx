@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { getAniListDetails } from "@/querries/externalMedia/anilist";
 import { getBookDetails } from "@/querries/externalMedia/books";
-import { getGameDetails } from "@/querries/externalMedia/gamebrain";
+import { getGameDetails } from "@/querries/externalMedia/games";
 import { getMovieDetails } from "@/querries/externalMedia/movies";
 import { getMediaByExternalIdWithLogs } from "@/querries/media/logged";
 import { mediaImageUrl } from "@/querries/media/logged";

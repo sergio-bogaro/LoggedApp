@@ -3,10 +3,9 @@ import { useTranslation } from "react-i18next";
 import { GameDetails } from "./details";
 
 import { AppTabs } from "@/components/tw/tabs";
-import { GameBrainGame } from "@/querries/externalMedia/gamebrain";
+import { RAWGGame } from "@/querries/externalMedia/games";
 
-type GameOffer = NonNullable<GameBrainGame["offers"]>[number];
-type OfficialStore = NonNullable<GameBrainGame["official_stores"]>[number];
+type RAWGStore = NonNullable<RAWGGame["stores"]>[number];
 
 function ScreenshotsTab({ screenshots }: { screenshots: string[] }) {
   const { t } = useTranslation("media");
@@ -30,68 +29,39 @@ function ScreenshotsTab({ screenshots }: { screenshots: string[] }) {
   );
 }
 
-function OffersTab({ offers, officialStores }: { offers: GameOffer[]; officialStores: OfficialStore[] }) {
+function StoresTab({ stores }: { stores: RAWGStore[] }) {
   const { t } = useTranslation("media");
 
-  if (!offers.length && !officialStores.length) {
+  if (!stores.length) {
     return <p className="text-sm text-muted-foreground py-4">{t("gameTabs.empty.offers")}</p>;
   }
 
   return (
     <div className="flex flex-col gap-4">
-      {officialStores.length > 0 && (
-        <div>
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
-            {t("gameTabs.officialStores")}
-          </p>
-          <div className="divide-y divide-border">
-            {officialStores.map((store, i) => (
-              <a
-                key={i}
-                href={store.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-between py-3 hover:text-primary transition-colors"
-              >
-                <span className="text-sm font-medium capitalize">{store.source}</span>
-                <span className="text-xs text-muted-foreground">↗</span>
-              </a>
-            ))}
-          </div>
+      <div>
+        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
+          {t("gameTabs.allOffers")}
+        </p>
+        <div className="divide-y divide-border">
+          {stores.map((store, i) => (
+            <a
+              key={i}
+              href={store.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-between py-3 hover:text-primary transition-colors"
+            >
+              <span className="text-sm font-medium capitalize">{store.store.name}</span>
+              <span className="text-xs text-muted-foreground">↗</span>
+            </a>
+          ))}
         </div>
-      )}
-
-      {offers.length > 0 && (
-        <div>
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
-            {t("gameTabs.allOffers")}
-          </p>
-          <div className="divide-y divide-border">
-            {offers.map((offer, i) => (
-              <a
-                key={i}
-                href={offer.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-between py-3 hover:text-primary transition-colors"
-              >
-                <div>
-                  <p className="text-sm font-medium">{offer.store_name}</p>
-                  <p className="text-xs text-muted-foreground">{offer.platform}</p>
-                </div>
-                <span className="text-sm font-semibold">
-                  {offer.price.value.toFixed(2)} {offer.price.currency}
-                </span>
-              </a>
-            ))}
-          </div>
-        </div>
-      )}
+      </div>
     </div>
   );
 }
 
-export function GameTabs({ data }: { data: GameBrainGame }) {
+export function GameTabs({ data }: { data: RAWGGame }) {
   const { t } = useTranslation("media");
 
   return (
@@ -106,15 +76,14 @@ export function GameTabs({ data }: { data: GameBrainGame }) {
         {
           label: t("gameTabs.tabs.screenshots"),
           value: "screenshots",
-          content: <ScreenshotsTab screenshots={data?.screenshots ?? []} />,
+          content: <ScreenshotsTab screenshots={data?.short_screenshots?.map((s) => s.image) ?? []} />,
         },
         {
           label: t("gameTabs.tabs.offers"),
           value: "offers",
-          content: <OffersTab offers={data?.offers ?? []} officialStores={data?.official_stores ?? []} />,
+          content: <StoresTab stores={data?.stores ?? []} />,
         },
       ]}
     />
   );
 }
-

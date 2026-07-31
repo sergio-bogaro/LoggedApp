@@ -39,7 +39,8 @@
   },
   "sources": {
     "tmdb": "TMDB",
-    "gameBrain": "GameBrain"
+    "gameBrain": "GameBrain",
+    "rawg": "RAWG"
   },
   "track": {
     "label": "Track",
