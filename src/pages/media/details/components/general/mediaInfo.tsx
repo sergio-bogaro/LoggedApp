@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AniListMediaDetails } from "@/querries/externalMedia/anilist";
-import { RAWGGame } from "@/querries/externalMedia/games";
+import { IGDBGame } from "@/querries/externalMedia/games";
 import { TMDBMovieDetails } from "@/querries/externalMedia/movies";
 import { MediaTypeEnum } from "@/types/media";
 
@@ -85,12 +85,12 @@ export const MediaInfo = ({ mediaType, data }: MediaInfoProps) => {
       }
 
       case MediaTypeEnum.GAME: {
-        const gameData = data as RAWGGame;
+        const gameData = data as IGDBGame;
 
         return <MediaInfoComponent
           title={gameData.name}
-          dates={gameData.released?.slice(0, 4) || ""}
-          overview={gameData.description ?? ""}
+          dates={gameData.firstReleaseDate?.slice(0, 4) || ""}
+          overview={gameData.summary ?? ""}
           tags={gameData.genres?.map((genre) => genre.name) || []}
         />
       }

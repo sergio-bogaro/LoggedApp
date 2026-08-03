@@ -31,6 +31,7 @@
     "source": "Source",
     "duration": "Duration",
     "developer": "Developer",
+    "publisher": "Publisher",
     "platforms": "Platforms",
     "status": "Status",
     "durationMinutes": "{{count}} mins",
@@ -40,7 +41,8 @@
   "sources": {
     "tmdb": "TMDB",
     "gameBrain": "GameBrain",
-    "rawg": "RAWG"
+    "rawg": "RAWG",
+    "igdb": "IGDB"
   },
   "track": {
     "label": "Track",
@@ -166,13 +168,19 @@
   },
   "gameTabs": {
     "tabs": {
+      "story": "Story",
       "screenshots": "Screenshots",
-      "offers": "Where to Buy"
+      "videos": "Videos",
+      "links": "Links"
     },
     "empty": {
+      "story": "No story available.",
       "screenshots": "No screenshots available.",
-      "offers": "No purchase options found."
+      "videos": "No videos available.",
+      "links": "No links available."
     },
+    "stores": "Stores",
+    "community": "Community",
     "officialStores": "Official Stores",
     "allOffers": "Buy Options"
   },

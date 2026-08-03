@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { MediaItem } from "@/types/media";
-import { MediaTypeEnum } from "@/types/media";
+import { MediaItem, MediaTypeEnum } from "@/types/media";
 import { capitalizeFirstLetter } from "@/utils/string";
 
 const searchCache = new Map<string, { data: AniListMediaDetails[]; timestamp: number }>();
@@ -283,7 +282,7 @@ export async function searchAniList(
     // Limpar cache antigo (manter apenas últimas 100 buscas)
     if (searchCache.size > 100) {
       const oldestKey = searchCache.keys().next().value;
-      searchCache.delete(oldestKey);
+      searchCache.delete(oldestKey ?? "");
     }
 
     return items;
@@ -585,7 +584,7 @@ export function getStudios(media: AniListMediaDetails): Array<{
   favourites?: number;
   isFavourite?: boolean;
 }> {
-  const studios = media.studios.nodes.filter((edge) => edge.isAnimationStudio);
+  const studios = media.studios?.nodes.filter((edge) => edge.isAnimationStudio);
   return studios ? studios : [];
 }
 
@@ -626,6 +625,6 @@ export function anilistDateToIso(date?: { year?: number; month?: number; day?: n
 
   const month = date.month ? String(date.month).padStart(2, "0") : "01";
   const day = date.day ? String(date.day).padStart(2, "0") : "01";
-  
+
   return `${date.year}-${month}-${day}`;
 }

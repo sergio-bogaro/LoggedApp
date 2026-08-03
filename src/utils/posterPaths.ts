@@ -14,7 +14,7 @@ export function getPosterUrl(type: MediaTypeEnum, data: any) {
     case MediaTypeEnum.BOOK:
       return data.coverImageUrl;
     case MediaTypeEnum.GAME:
-      return data.background_image;
+      return data.coverUrl;
     default:
       return "";
   }

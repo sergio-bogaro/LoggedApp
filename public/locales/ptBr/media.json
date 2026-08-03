@@ -32,6 +32,7 @@
     "TMDBScore": "Nota TMDB",
     "anilistScore": "Nota Anilist",
     "developer": "Desenvolvedor",
+    "publisher": "Publicadora",
     "platforms": "Plataformas",
     "durationMinutes": "{{count}} min",
     "durationHours": "{{count}} horas",
@@ -40,7 +41,8 @@
   "sources": {
     "tmdb": "TMDB",
     "gameBrain": "GameBrain",
-    "rawg": "RAWG"
+    "rawg": "RAWG",
+    "igdb": "IGDB"
   },
   "type": {
     "movie": "Filme",
@@ -166,13 +168,19 @@
   },
   "gameTabs": {
     "tabs": {
+      "story": "História",
       "screenshots": "Screenshots",
-      "offers": "Onde Comprar"
+      "videos": "Vídeos",
+      "links": "Links"
     },
     "empty": {
+      "story": "História não disponível.",
       "screenshots": "Nenhum screenshot disponível.",
-      "offers": "Nenhuma opção de compra encontrada."
+      "videos": "Nenhum vídeo disponível.",
+      "links": "Nenhum link disponível."
     },
+    "stores": "Lojas",
+    "community": "Comunidade",
     "officialStores": "Lojas Oficiais",
     "allOffers": "Opções de Compra"
   },

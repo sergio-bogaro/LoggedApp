@@ -28,53 +28,22 @@ function getMovieAlternatives(mediaData: any): AlternativeImage[] {
 }
 
 // ──────────────────────────────────────────────
-// RAWG — Games (direct fetch, no shared controller)
+// IGDB — Games (uses screenshots already in data)
 // ──────────────────────────────────────────────
 
-const RAWG_BASE = "https://api.rawg.io/api";
+function getGameAlternatives(mediaData: any): AlternativeImage[] {
+  const result: AlternativeImage[] = [];
 
-async function getGameAlternatives(
-  _mediaData: any,
-  title: string,
-): Promise<AlternativeImage[]> {
-  if (!title) return [];
-
-  const apiKey = import.meta.env.VITE_RAWG_API_KEY as string;
-  if (!apiKey) return [];
-
-  try {
-    // Search RAWG for the game
-    const searchParams = new URLSearchParams();
-    searchParams.set("search", title);
-    searchParams.set("page_size", "1");
-    searchParams.set("key", apiKey);
-
-    const searchRes = await fetch(
-      `${RAWG_BASE}/games?${searchParams.toString()}`,
-    );
-    if (!searchRes.ok) return [];
-
-    const searchData = await searchRes.json();
-    const game = searchData.results?.[0];
-    if (!game) return [];
-
-    // Get screenshots for the found game
-    const screenshotParams = new URLSearchParams();
-    screenshotParams.set("key", apiKey);
-
-    const screenshotRes = await fetch(
-      `${RAWG_BASE}/games/${game.id}/screenshots?${screenshotParams.toString()}`,
-    );
-    if (!screenshotRes.ok) return [];
-
-    const screenshotData = await screenshotRes.json();
-    return (screenshotData.results || []).map((s: { image: string }) => ({
-      url: s.image,
-      label: "Screenshot",
-    }));
-  } catch {
-    return [];
+  if (mediaData?.coverUrl) {
+    result.push({ url: mediaData.coverUrl, label: "Cover" });
   }
+
+  const artworks: Array<{ id: number; url: string }> = mediaData?.artworks || [];
+  artworks.forEach((a, i) => {
+    result.push({ url: a.url, label: `Artwork ${i + 1}` });
+  });
+
+  return result;
 }
 
 // ──────────────────────────────────────────────
@@ -172,7 +141,7 @@ async function getMangaAlternatives(
 /**
  * Get alternative images for a media item based on its type.
  * Movies: instant (data already in mediaData)
- * Games/Anime/Manga: may make additional API calls to RAWG/Kitsu/MangaDex
+ * Games/Anime/Manga: may make additional API calls to IGDB/Kitsu/MangaDex
  * Books: instant (data already in mediaData)
  */
 export async function getAlternativeImages(
@@ -187,7 +156,7 @@ export async function getAlternativeImages(
       return getMovieAlternatives(data);
 
     case MediaTypeEnum.GAME:
-      return getGameAlternatives(data, title || data?.name || "");
+      return getGameAlternatives(data);
 
     case MediaTypeEnum.BOOK:
       return getBookAlternatives(data);

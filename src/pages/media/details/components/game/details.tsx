@@ -3,26 +3,21 @@ import { Link } from "react-router";
 
 import { DetailsLabel } from "../general/detailsCard";
 
-import { RAWGGame, getPlatformNames, getPrimaryDeveloper } from "@/querries/externalMedia/games";
+import { IGDBGame, getPlatformNames, getPrimaryDeveloper, getPrimaryPublisher } from "@/querries/externalMedia/games";
 import { formatFromIsoDate } from "@/utils/date";
 
-export const GameDetails = ({ data }: { data: RAWGGame }) => {
+export const GameDetails = ({ data }: { data: IGDBGame }) => {
 
   return (
     <div className="divide-y divide-border">
       <DetailsLabel
         label={t("details.releaseDate", { ns: "media" })}
-        value={formatFromIsoDate(data.released)}
+        value={formatFromIsoDate(data.firstReleaseDate ?? undefined)}
       />
 
       <DetailsLabel
         label={t("details.rating", { ns: "media" })}
-        value={data.rating ? `${data.rating.toFixed(1)} ★` : ""}
-      />
-
-      <DetailsLabel
-        label={t("details.duration", { ns: "media" })}
-        value={data.playtime ? t("details.durationHours", { ns: "media", count: data.playtime }) : ""}
+        value={data.rating ? `${data.rating.toFixed(1)} ★${data.totalRatingCount ? ` (${data.totalRatingCount.toLocaleString()})` : ""}` : ""}
       />
 
       <DetailsLabel
@@ -36,10 +31,15 @@ export const GameDetails = ({ data }: { data: RAWGGame }) => {
       />
 
       <DetailsLabel
+        label={t("details.publisher", { ns: "media" })}
+        value={getPrimaryPublisher(data) ?? ""}
+      />
+
+      <DetailsLabel
         label={t("details.source", { ns: "media" })}
         value={
-          <Link to={`https://rawg.io/games/${data.slug}`} target="_blank" >
-            {t("sources.rawg", { ns: "media" })}
+          <Link to={`https://www.igdb.com/games/${data.slug}`} target="_blank" >
+            {t("sources.igdb", { ns: "media" })}
           </Link>
         }
       />

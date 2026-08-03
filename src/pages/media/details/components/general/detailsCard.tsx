@@ -12,7 +12,7 @@ import { MediaHistoryDialog } from "@/components/tw/dialogs/mediaHistoryDialog";
 import { Card } from "@/components/tw/generic/card";
 import { Button } from "@/components/ui/button";
 import { AniListMediaDetails } from "@/querries/externalMedia/anilist";
-import { RAWGGame } from "@/querries/externalMedia/games";
+import { IGDBGame } from "@/querries/externalMedia/games";
 import { MediaResponse } from "@/types/logged";
 import { MediaTypeEnum } from "@/types/media";
 
@@ -48,7 +48,7 @@ export const DetailsCard = ({ mediaType, data, existingMedia }: DetailsCardProps
       case MediaTypeEnum.BOOK:
         return <p>{t("details.bookComingSoon")}</p>;
       case MediaTypeEnum.GAME:
-        return <GameDetails data={data as RAWGGame} />;
+        return <GameDetails data={data as IGDBGame} />;
 
       default: return null;
     }

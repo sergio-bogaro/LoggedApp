@@ -29,8 +29,8 @@ import { getMediaByExternalIdWithLogs } from "@/querries/media/logged";
 import { mediaImageUrl } from "@/querries/media/logged";
 import { useAppSelector } from "@/store/auth/hooks";
 import { MediaTypeEnum } from "@/types/media";
-import { getMediaData, getPosterUrl } from "@/utils/mediaDataResponse";
 import { DEFAULT_STALE_TIME } from "@/utils/conts";
+import { getMediaData, getPosterUrl } from "@/utils/mediaDataResponse";
 
 type MediaDetailsParams = {
   mediaType: MediaTypeEnum;
