@@ -1,5 +1,9 @@
 {
   "light": "Claro",
   "dark": "Escuro",
+  "rosePineDawn": "Roxo (Claro)",
+  "rosePine": "Roxo (Escuro)",
+  "greenLight": "Verde (Claro)",
+  "greenDark": "Verde (Escuro)",
   "test": "Teste"
 }

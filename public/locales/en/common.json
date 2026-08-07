@@ -9,8 +9,7 @@
   "rating_stars5": "5 Stars",
   "rating_stars10": "10 Stars",
   "branding": {
-    "sidebarName": "Logged",
-    "headerName": "LOGGED APP"
+    "sidebarName": "Logged"
   },
   "languageOptions": {
     "en": "English",
@@ -30,7 +29,13 @@
     "title": "Settings",
     "loggedInAs": "Logged in as",
     "account": "Account",
-    "logoutSuccess": "Logged out successfully"
+    "logoutSuccess": "Logged out successfully",
+    "tracking": {
+      "title": "Media Tracking",
+      "description": "Choose which media types you want to log",
+      "saving": "Saving...",
+      "disabledHint": "Requires {{key}} in the .env file"
+    }
   },
   "a11y": {
     "close": "Close",

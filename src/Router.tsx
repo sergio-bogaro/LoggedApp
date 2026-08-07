@@ -11,6 +11,7 @@ import MediaHomePage from "./pages/media/home";
 import MediaListPage from "./pages/media/list";
 import MediaLogsPage from "./pages/media/logs";
 import MediaSearchPage from "./pages/media/search";
+import OnboardingPage from "./pages/onboarding";
 import SettingsPage from "./pages/settings";
 import WelcomePage from "./pages/welcome";
 
@@ -20,6 +21,15 @@ export function Router() {
       <Route path="/" element={<WelcomePage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
+
+      <Route
+        path="/onboarding"
+        element={
+          <ProtectedRoute>
+            <OnboardingPage />
+          </ProtectedRoute>
+        }
+      />
 
       <Route
         path="/media"

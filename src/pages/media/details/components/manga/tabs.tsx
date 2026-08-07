@@ -99,10 +99,10 @@ function StaffTab({ staff }: { staff: StaffEdge[] }) {
       {staff.map((edge, i) => (
         <div key={i} className="flex items-center gap-3 py-3">
           {edge.node.image?.large ? (
-            <img
+            <ImageWithSkeleton
               src={edge.node.image.large}
               alt={edge.node.name.full}
-              className="w-10 h-10 rounded-full object-cover shrink-0 bg-muted"
+              className="w-10 h-10 rounded-full shrink-0"
             />
           ) : (
             <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center shrink-0 text-xs font-medium text-muted-foreground">

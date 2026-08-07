@@ -1,0 +1,19 @@
+{
+  "title": "Welcome to {{appName}}",
+  "subtitle": "Let's set up your account",
+  "step1Title": "What is Logged?",
+  "features": [
+    "Track movies, anime, manga, games and books in one place",
+    "Log progress, ratings and reviews for each title",
+    "View statistics and charts about your library",
+    "Organize everything with favorites, backlog and custom views"
+  ],
+  "step2Title": "Customize your experience",
+  "step2Description": "Choose your language, theme and rating mode",
+  "step3Title": "What do you want to track?",
+  "step3Description": "Select the media types you want to log. Types without a configured source stay disabled.",
+  "back": "Back",
+  "next": "Next",
+  "finish": "Finish",
+  "saved": "Setup complete!"
+}

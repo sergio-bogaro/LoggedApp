@@ -23,7 +23,7 @@ export const MediaCardSkeleton = () => {
             <Skeleton className="h-4 w-64 mb-4" />
 
             {/* Cards carousel */}
-            <div className="flex -ml-4 overflow-hidden">
+            <div className="flex -ml-4 overflow-hidden min-h-72">
               {Array.from({ length: CARD_COUNT }).map((_, i) => (
                 <div
                   key={i}

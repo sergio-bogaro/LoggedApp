@@ -9,8 +9,7 @@
   "rating_stars5": "5 Estrelas",
   "rating_stars10": "10 Estrelas",
   "branding": {
-    "sidebarName": "Logged",
-    "headerName": "LOGGED APP"
+    "sidebarName": "Logged"
   },
   "languageOptions": {
     "en": "English",
@@ -30,7 +29,13 @@
     "title": "Configurações",
     "loggedInAs": "Conectado como",
     "account": "Conta",
-    "logoutSuccess": "Sessão encerrada com sucesso"
+    "logoutSuccess": "Sessão encerrada com sucesso",
+    "tracking": {
+      "title": "Mídias a Registrar",
+      "description": "Escolha quais tipos de mídia deseja logar",
+      "saving": "Salvando...",
+      "disabledHint": "Requer {{key}} no arquivo .env"
+    }
   },
   "a11y": {
     "close": "Fechar",

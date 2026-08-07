@@ -55,7 +55,7 @@ const SKELETON_COUNT = 6;
 
 export const ListItemSkeleton = () => {
   return (
-    <div className="md:px-12 mt-4">
+    <div className="md:px-12 mt-4 min-h-72">
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
         {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
           <GridItemSkeleton key={i} />
@@ -75,7 +75,7 @@ export const ListItemsGrid = ({ items, emptyMessage }: ListItemsGridProps) => {
 
   if (!items || items.length === 0) {
     return (
-      <div className="md:px-12 mt-8 text-center text-muted-foreground">
+      <div className="md:px-12 mt-4 min-h-72 flex items-center justify-center text-center text-muted-foreground">
         {emptyMessage ?? t("list.empty")}
       </div>
     );

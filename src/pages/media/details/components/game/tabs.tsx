@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 
 import { GameDetails } from "./details";
 
+import { ImageWithSkeleton } from "@/components/tw/generic/imageSkeleton";
 import { AppTabs } from "@/components/tw/tabs";
 import { IGDBGame, IgdbVideo } from "@/querries/externalMedia/games";
 
@@ -39,10 +40,11 @@ function ScreenshotsTab({ screenshots }: { screenshots: string[] }) {
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
       {screenshots.map((url, i) => (
         <a key={i} href={url} target="_blank" rel="noopener noreferrer">
-          <img
+          <ImageWithSkeleton
             src={url}
             alt={`Screenshot ${i + 1}`}
-            className="w-full rounded hover:scale-105 transition-transform cursor-pointer"
+            className="aspect-video w-full rounded"
+            imgClassName="hover:scale-105 cursor-pointer"
           />
         </a>
       ))}

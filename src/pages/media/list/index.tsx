@@ -44,6 +44,7 @@ const MediaListPage = () => {
   });
 
   const isLoading = isFetching || isFetchingRecent;
+  const isInitialLoading = isLoading && (!data || !recentlyLoggedData);
   const isErrorCombined = isError || isErrorRecent;
   const errorMessageCombined = error?.message || errorRecent?.message || "";
 
@@ -51,7 +52,7 @@ const MediaListPage = () => {
     <div className="w-full h-full space-y-3">
       <h1 className="text-2xl font-bold">{title}</h1>
 
-      <DataExhibition isFetching={isLoading} skeleton={<MediaCardSkeleton />} isError={isErrorCombined} errorMessage={`${t("errorLoading", { ns: "common" })} ${errorMessageCombined}`}>
+      <DataExhibition isLoading={isInitialLoading} isFetching={isLoading} skeleton={<MediaCardSkeleton />} isError={isErrorCombined} errorMessage={`${t("errorLoading", { ns: "common" })} ${errorMessageCombined}`}>
         <Tabs defaultValue="list" className="mt-4">
           <TabsList>
             <TabsTrigger value="list">{t("home.tabs.list")}</TabsTrigger>

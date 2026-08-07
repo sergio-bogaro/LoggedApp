@@ -6,6 +6,7 @@ import { Link } from "react-router";
 import { MovieDetails } from "./details";
 import { CastMember, CrewMember, MovieSummary } from "./types";
 
+import { ImageWithSkeleton } from "@/components/tw/generic/imageSkeleton";
 import { AppTabs } from "@/components/tw/tabs";
 import { Button } from "@/components/ui/button";
 import { TMDBVideo, tmdbPosterUrl } from "@/querries/externalMedia/movies";
@@ -84,10 +85,10 @@ function Avatar({ name, photo }: { name: string; photo: string | null }) {
 
   if (photo) {
     return (
-      <img
+      <ImageWithSkeleton
         src={photo}
         alt={name}
-        className="w-10 h-10 rounded-full object-cover shrink-0 bg-muted"
+        className="w-10 h-10 rounded-full shrink-0"
       />
     );
   }
@@ -187,11 +188,12 @@ function TrailersTab({ videos }: { videos: TMDBVideo[] }) {
           rel="noopener noreferrer"
           className="group flex flex-col gap-2"
         >
-          <div className="relative overflow-hidden rounded">
-            <img
+          <div className="relative">
+            <ImageWithSkeleton
               src={`https://img.youtube.com/vi/${video.key}/hqdefault.jpg`}
               alt={video.name}
-              className="w-full aspect-video object-cover group-hover:scale-105 transition-transform"
+              className="aspect-video w-full rounded"
+              imgClassName="group-hover:scale-105"
             />
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="w-12 h-12 rounded-full bg-black/60 flex items-center justify-center">
@@ -219,10 +221,11 @@ function SimilarTab({ similarList }: { similarList: MovieSummary[] }) {
     <div className="grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
       {similarList.map(movie => (
         <Link to={`/media/movies/details/${movie.id}`} key={movie.id}>
-          <img
+          <ImageWithSkeleton
             src={tmdbPosterUrl(movie.poster_path)}
             alt={movie.title}
-            className="rounded hover:scale-105 transition-transform cursor-pointer w-full"
+            className="aspect-2/3 w-full rounded"
+            imgClassName="hover:scale-105 cursor-pointer"
           />
         </Link>
       ))}

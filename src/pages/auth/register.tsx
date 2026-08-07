@@ -44,7 +44,7 @@ export default function Register() {
       dispatch(setUser(loginResponse.user));
 
       toast.success(t("register.feedback.success"));
-      navigate("/media/home");
+      navigate("/onboarding");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : t("register.feedback.error"));
     } finally {

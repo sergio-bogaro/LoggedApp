@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
@@ -9,6 +9,7 @@ type ImageWithSkeletonProps = {
   className?: string;
   width?: number;
   height?: number;
+  imgClassName?: string;
 };
 
 export function ImageWithSkeleton({
@@ -17,30 +18,59 @@ export function ImageWithSkeleton({
   className,
   width,
   height,
+  imgClassName,
 }: ImageWithSkeletonProps) {
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isGone, setIsGone] = useState(false);
+
+  useEffect(() => {
+    setIsLoaded(false);
+    setIsGone(false);
+
+    if (!src) {
+      setIsLoaded(true);
+      setIsGone(true);
+    }
+  }, [src]);
+
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    const timeout = setTimeout(() => setIsGone(true), 500);
+    return () => clearTimeout(timeout);
+  }, [isLoaded]);
 
   return (
     <div
-      className={cn("overflow-hidden rounded-md bg-muted", className)}
+      className={cn("relative overflow-hidden rounded-md bg-muted", className)}
       style={{
         width: width ? `${width}px` : "100%",
         height: height ? `${height}px` : "auto",
       }}
       aria-busy={!isLoaded}
     >
-      {!isLoaded && <Skeleton className="h-full w-full animate-pulse" />}
+      {!isGone && (
+        <Skeleton
+          className={cn(
+            "absolute inset-0 h-full w-full animate-pulse pointer-events-none transition-opacity duration-500",
+            isLoaded && "opacity-0",
+          )}
+        />
+      )}
 
       <img
+        key={src ?? "empty"}
         src={src != "" ? src : undefined}
         alt={alt}
         onLoad={() => setIsLoaded(true)}
+        loading="lazy"
+        decoding="async"
         className={cn(
-          "relative block h-full w-full object-cover transition-opacity duration-300 ease-out",
-          isLoaded ? "opacity-100" : "opacity-0",
+          "relative block h-full w-full object-cover transition-[opacity,transform] duration-500 ease-out",
+          isLoaded ? "opacity-100 scale-100" : "opacity-0 scale-[1.03]",
+          imgClassName,
         )}
         style={{ width: "100%", height: "100%" }}
-        decoding="async"
       />
     </div>
   );

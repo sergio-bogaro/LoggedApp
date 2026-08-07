@@ -4,7 +4,7 @@ import { Grid, List, Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useSearchParams } from "react-router";
+import { Navigate, useSearchParams } from "react-router";
 
 import MediaView from "@/components/tw/media/view";
 import { Button } from "@/components/ui/button";
@@ -17,10 +17,11 @@ import { searchGamesNormalized } from "@/querries/externalMedia/games";
 import { searchMoviesNormalized } from "@/querries/externalMedia/movies";
 import { useExistingMedia } from "@/querries/media/existingMedias";
 import { useAppDispatch, useAppSelector } from "@/store/settings/hooks";
-import { setViewMode, ViewMode } from "@/store/settings/slice";
+import { setLastSearchType, setViewMode, ViewMode } from "@/store/settings/slice";
 import { MediaItem } from "@/types/media";
 import { MediaTypeEnum } from "@/types/media";
 import { getMediaTypesOptions } from "@/utils/mediaText";
+import { getTrackFlags } from "@/utils/mediaTrack";
 
 export type FormSearchProps = {
   searchFilter: string;
@@ -32,15 +33,27 @@ function MediaSearchPage() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [searchName, setSearchName] = useState(searchParams.get("searchFilter") || "");
-  const { viewMode } = useAppSelector(state => state.ui)
+  const { viewMode, lastSearchType } = useAppSelector(state => state.ui)
+  const { user } = useAppSelector((state) => state.auth);
   const isGrid = useMemo(() => viewMode === "grid", [viewMode]);
   const dispatch = useAppDispatch();
+
+  const trackFlags = getTrackFlags(user);
   const mediaTypesOptions = useMemo(() => getMediaTypesOptions(t), [t]);
+  const trackedOptions = useMemo(
+    () => mediaTypesOptions.filter((option) => trackFlags[option.value as MediaTypeEnum]),
+    [mediaTypesOptions, trackFlags]
+  );
+
+  const defaultMediaType = (searchParams.get("mediaType") as MediaTypeEnum) || (lastSearchType as MediaTypeEnum) || MediaTypeEnum.MOVIES;
+  const resolvedMediaType = trackFlags[defaultMediaType]
+    ? defaultMediaType
+    : (trackedOptions[0].value as MediaTypeEnum);
 
   const form = useForm<FormSearchProps>({
     defaultValues: {
       searchFilter: searchParams.get("searchFilter") || "",
-      mediaType: (searchParams.get("mediaType") as MediaTypeEnum) || MediaTypeEnum.MOVIES,
+      mediaType: resolvedMediaType,
     }
   });
 
@@ -92,6 +105,7 @@ function MediaSearchPage() {
     if (data.searchFilter && data.searchFilter.trim().length > 0) params.searchFilter = data.searchFilter;
     if (data.mediaType) params.mediaType = String(data.mediaType as unknown as string);
 
+    dispatch(setLastSearchType(String(data.mediaType as unknown as string)));
     handleSearchParamsChange();
     setSearchName(params.searchFilter || "");
   }
@@ -101,6 +115,10 @@ function MediaSearchPage() {
      
   }, [watchedMediaType]);
 
+  if (trackedOptions.length === 0) {
+    return <Navigate to="/media/home" replace />;
+  }
+
   return (
     <div className="p-4 top-18">
       <div className="backdrop-blur-sm border-b mb-4">
@@ -108,7 +126,7 @@ function MediaSearchPage() {
           <form className='w-full flex flex-col gap-2 pb-3 sm:flex-row sm:items-end sm:gap-1' onSubmit={handleSubmit(onSubmit)}>
             <div className="flex gap-1 items-end">
               <Select
-                options={mediaTypesOptions}
+                options={trackedOptions}
                 name='mediaType'
                 control={control}
                 placeholder={t("searchForm.typePlaceholder")}

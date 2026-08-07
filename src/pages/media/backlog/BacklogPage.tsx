@@ -23,7 +23,7 @@ const BacklogPage = () => {
     <div className="w-full h-full space-y-3">
       <h1 className="text-2xl font-bold">{t("list.backlog")}</h1>
 
-      <DataExhibition isFetching={isFetching} skeleton={<ListItemSkeleton />} isError={isError} errorMessage={`${t("errorLoading", { ns: "common" })} ${error?.message ?? ""}`}>
+      <DataExhibition isLoading={isFetching && !data} isFetching={isFetching} skeleton={<ListItemSkeleton />} isError={isError} errorMessage={`${t("errorLoading", { ns: "common" })} ${error?.message ?? ""}`}>
         <ListItemsGrid
           items={data}
           emptyMessage={t("list.addBacklog")}

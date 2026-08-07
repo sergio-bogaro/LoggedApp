@@ -14,6 +14,10 @@ function ThemeSwitcher() {
   const themeOptions = [
     { value: "light", label: t("light", { ns: "themes" }) },
     { value: "dark", label: t("dark", { ns: "themes" }) },
+    { value: "rose-pine-dawn", label: t("rosePineDawn", { ns: "themes" }) },
+    { value: "rose-pine", label: t("rosePine", { ns: "themes" }) },
+    { value: "green-light", label: t("greenLight", { ns: "themes" }) },
+    { value: "green-dark", label: t("greenDark", { ns: "themes" }) },
     { value: "test", label: t("test", { ns: "themes" }) },
   ]
 

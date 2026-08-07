@@ -1,26 +1,31 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-export type Theme = "light" | "dark" | "test";
+export type Theme = "light" | "dark" | "test" | "rose-pine" | "rose-pine-dawn" | "green-light" | "green-dark";
 export type ViewMode = "list" | "grid";
 export type RatingMode = "numeric" | "stars5" | "stars10";
+
+export const THEME_CLASSES = ["light", "dark", "test", "rose-pine", "rose-pine-dawn", "green-light", "green-dark"] as const;
 
 interface UIState {
   theme: Theme;
   viewMode: ViewMode;
   ratingMode: RatingMode;
+  lastSearchType: string;
 }
 
 const savedTheme = (localStorage.getItem("theme") as Theme) || "light";
 const savedViewMode = (localStorage.getItem("viewMode") as ViewMode) || "list";
 const savedRatingMode = (localStorage.getItem("ratingMode") as RatingMode) || "stars5";
+const savedLastSearchType = localStorage.getItem("lastSearchType") || "movies";
 
-document.documentElement.classList.remove("light", "dark", "test");
+document.documentElement.classList.remove(...THEME_CLASSES);
 document.documentElement.classList.add(savedTheme);
 
 const initialState: UIState = {
   theme: savedTheme,
   viewMode: savedViewMode,
   ratingMode: savedRatingMode,
+  lastSearchType: savedLastSearchType,
 };
 
 export const uiSlice = createSlice({
@@ -31,7 +36,7 @@ export const uiSlice = createSlice({
       state.theme = action.payload;
       localStorage.setItem("theme", action.payload);
 
-      document.documentElement.classList.remove("light", "dark", "test");
+      document.documentElement.classList.remove(...THEME_CLASSES);
       document.documentElement.classList.add(action.payload);
     },
 
@@ -44,8 +49,13 @@ export const uiSlice = createSlice({
       state.ratingMode = action.payload;
       localStorage.setItem("ratingMode", action.payload);
     },
+
+    setLastSearchType: (state, action: PayloadAction<string>) => {
+      state.lastSearchType = action.payload;
+      localStorage.setItem("lastSearchType", action.payload);
+    },
   },
 });
 
-export const { setTheme, setViewMode, setRatingMode } = uiSlice.actions;
+export const { setTheme, setViewMode, setRatingMode, setLastSearchType } = uiSlice.actions;
 export default uiSlice.reducer;

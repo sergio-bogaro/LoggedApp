@@ -16,10 +16,20 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
+import { useAppSelector } from "@/store/auth/hooks";
+import { getTrackFlags } from "@/utils/mediaTrack";
 
 export function AppSidebar() {
   const { t } = useTranslation(["common", "media"]);
   const location = useLocation();
+  const { user } = useAppSelector((state) => state.auth);
+
+  const trackFlags = getTrackFlags(user);
+  const visibleMediaTypes = mediaTypes.filter((item) => trackFlags[item.type]);
+  const hasTrackedMedia = visibleMediaTypes.length > 0;
+  const visibleMainNavigation = mainNavigation.filter(
+    (item) => hasTrackedMedia || item.path !== "/search"
+  );
 
   return (
     <Sidebar>
@@ -37,7 +47,7 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {mainNavigation.map((item) => (
+              {visibleMainNavigation.map((item) => (
                 <SidebarMenuItem key={item.path}>
                   <SidebarMenuButton
                     asChild
@@ -54,28 +64,30 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarSeparator />
+        {hasTrackedMedia && <SidebarSeparator />}
 
-        <SidebarGroup>
-          <SidebarGroupLabel>{t("label", { ns: "media" })}</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {mediaTypes.map((item) => (
-                <SidebarMenuItem key={item.path}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={location.pathname === item.path}
-                  >
-                    <Link to={item.path}>
-                      <item.icon />
-                      <span>{t(`type.${item.type}`, { ns: "media" })}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {hasTrackedMedia && (
+          <SidebarGroup>
+            <SidebarGroupLabel>{t("label", { ns: "media" })}</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {visibleMediaTypes.map((item) => (
+                  <SidebarMenuItem key={item.path}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={location.pathname === item.path}
+                    >
+                      <Link to={item.path}>
+                        <item.icon />
+                        <span>{t(`type.${item.type}`, { ns: "media" })}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
       </SidebarContent>
 
       <SidebarFooter>

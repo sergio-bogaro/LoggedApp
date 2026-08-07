@@ -142,7 +142,7 @@ export async function searchKitsuPosters(title: string, type: "anime" | "manga")
       const label = item.attributes?.canonicalTitle || "";
       return posterUrl ? { url: posterUrl, label } : null;
     })
-    .filter((p): p is { url: string; label: string } => p !== null);
+    .filter((p: { url: string; label: string } | null): p is { url: string; label: string } => p !== null);
 }
 
 export async function getKitsuDetailsNormalized(

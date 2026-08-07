@@ -1,0 +1,19 @@
+{
+  "title": "Bem-vindo ao {{appName}}",
+  "subtitle": "Vamos configurar sua conta",
+  "step1Title": "O que é o Logged?",
+  "features": [
+    "Registre filmes, animes, mangás, jogos e livros em um só lugar",
+    "Registre progresso, avaliações e reviews de cada título",
+    "Veja estatísticas e gráficos da sua biblioteca",
+    "Organize tudo com favoritos, backlog e visualizações personalizadas"
+  ],
+  "step2Title": "Personalize sua experiência",
+  "step2Description": "Escolha idioma, tema e modo de avaliação",
+  "step3Title": "O que você quer registrar?",
+  "step3Description": "Selecione os tipos de mídia que deseja logar. Tipos sem fonte configurada ficam desabilitados.",
+  "back": "Voltar",
+  "next": "Avançar",
+  "finish": "Concluir",
+  "saved": "Configuração concluída!"
+}

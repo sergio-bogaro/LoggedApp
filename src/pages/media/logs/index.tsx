@@ -4,7 +4,9 @@ import { useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router";
 
+import { Loading } from "@/components/tw/generic/loading";
 import { GridItem } from "@/components/tw/media/grid";
+import { GridItemSkeleton } from "@/components/tw/media/gridSkeleton";
 import { Button } from "@/components/ui/button";
 import { getMediaList } from "@/querries/media/logged";
 import { useAppSelector } from "@/store/auth/hooks";
@@ -30,6 +32,7 @@ const MediaLogsPage = () => {
     hasNextPage,
     isFetchingNextPage,
     isLoading,
+    isFetching,
   } = useInfiniteQuery<MediaResponse[], Error, { pages: MediaResponse[]; pageParams: number[] }, typeof queryKey, number>({
     queryKey: queryKey as ["media", "logs", ...string[]],
     queryFn: ({ pageParam = 0 }) =>
@@ -82,37 +85,40 @@ const MediaLogsPage = () => {
       </p>
 
       {isLoading ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 min-h-72">
           {Array.from({ length: PAGE_SIZE }).map((_, i) => (
-            <div key={i} className="animate-pulse bg-muted rounded aspect-2/3" />
+            <GridItemSkeleton key={i} />
           ))}
         </div>
       ) : allItems.length === 0 ? (
-        <div className="text-center py-16 text-muted-foreground">
+        <div className="text-center py-16 min-h-72 flex flex-col items-center justify-center text-muted-foreground">
           <p className="text-lg">{t("logs.empty")}</p>
           <p className="text-sm mt-1">{t("logs.emptyHint")}</p>
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-            {allItems.map((item) => {
-              const normalizedItem: MediaItem = {
-                id: item.externalId,
-                title: item.title,
-                type: item.type,
-                coverUrl: item.coverUrl ?? "",
-                year: item.releaseDate?.slice(0, 4),
-                description: item.description,
-              };
-              return (
-                <GridItem
-                  key={item.id}
-                  item={normalizedItem}
-                  existingItem={item}
-                  showMediaType
-                />
-              );
-            })}
+          <div className="relative">
+            <Loading isLoading={isFetching && !isFetchingNextPage} />
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+              {allItems.map((item) => {
+                const normalizedItem: MediaItem = {
+                  id: item.externalId,
+                  title: item.title,
+                  type: item.type,
+                  coverUrl: item.coverUrl ?? "",
+                  year: item.releaseDate?.slice(0, 4),
+                  description: item.description,
+                };
+                return (
+                  <GridItem
+                    key={item.id}
+                    item={normalizedItem}
+                    existingItem={item}
+                    showMediaType
+                  />
+                );
+              })}
+            </div>
           </div>
 
           {/* Infinite scroll sentinel */}

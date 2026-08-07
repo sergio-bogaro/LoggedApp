@@ -1,12 +1,12 @@
 interface LoadingProps {
-  isLoading?: boolean; 
+  isLoading?: boolean;
 }
 
 export const Loading = ({ isLoading }: LoadingProps) => {
-  if(!isLoading) return null
+  if (!isLoading) return null;
 
-  return(
-    <div className="absolute inset-0 z-10 flex items-center justify-center rounded-md bg-background/60 backdrop-blur-sm">
+  return (
+    <div className="absolute inset-0 z-10 flex items-center justify-center rounded-md bg-background/40">
       <div className="flex items-center gap-2">
         <span
           className="h-2 w-2 animate-bounce rounded-full bg-primary [animation-delay:-0.3s]"
@@ -19,7 +19,5 @@ export const Loading = ({ isLoading }: LoadingProps) => {
         />
       </div>
     </div>
-  )
-
-
-}
+  );
+};

@@ -113,7 +113,7 @@ export const LibraryData = ({ data, recentlyLoggedData }: LibraryDataProps) => {
               <CarouselNext />
             </Carousel>
           ) : (
-            <div className="mt-4 text-sm text-muted-foreground px-1">
+            <div className="min-h-72 mt-4 flex items-center justify-center text-sm text-muted-foreground px-1">
               {t("sections.noData")}
             </div>
           )}
