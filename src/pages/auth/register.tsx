@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
 
 import { Card } from "@/components/tw/generic/card";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { authApi } from "@/querries/auth/auth";
 import { useAppDispatch } from "@/store/auth/hooks";
 import { setUser } from "@/store/auth/slice";
@@ -39,7 +39,6 @@ export default function Register() {
     try {
       await authApi.register({ username, password });
 
-      // Após registrar, fazer login automaticamente
       const loginResponse = await authApi.login({ username, password });
       dispatch(setUser(loginResponse.user));
 
@@ -52,58 +51,44 @@ export default function Register() {
     }
   };
 
-  const inputClassName = "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm";
-
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md p-8">
         <h1 className="mb-6 text-center text-3xl font-bold">{t("register.title")}</h1>
 
         <form onSubmit={handleRegister} className="space-y-4">
-          <div>
-            <Label htmlFor="username">{t("register.username")}</Label>
-            <input
-              id="username"
-              name="username"
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-              minLength={3}
-              disabled={isLoading}
-              className={inputClassName}
-            />
-          </div>
+          <Input
+            label={t("register.username")}
+            name="username"
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+            minLength={3}
+            disabled={isLoading}
+          />
 
-          <div>
-            <Label htmlFor="password">{t("register.password")}</Label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={3}
-              disabled={isLoading}
-              className={inputClassName}
-            />
-          </div>
+          <Input
+            label={t("register.password")}
+            name="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            minLength={3}
+            disabled={isLoading}
+          />
 
-          <div>
-            <Label htmlFor="confirmPassword">{t("register.confirmPassword")}</Label>
-            <input
-              id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-              minLength={3}
-              disabled={isLoading}
-              className={inputClassName}
-            />
-          </div>
+          <Input
+            label={t("register.confirmPassword")}
+            name="confirmPassword"
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+            minLength={3}
+            disabled={isLoading}
+          />
 
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? t("register.submitting") : t("register.submit")}
@@ -113,13 +98,9 @@ export default function Register() {
         <div className="mt-4 text-center">
           <p className="text-sm text-muted-foreground">
             {t("register.hasAccount")}{" "}
-            <button
-              type="button"
-              onClick={() => navigate("/login")}
-              className="text-primary hover:underline"
-            >
-              {t("register.loginLink")}
-            </button>
+            <Button asChild variant="link">
+              <Link to="/login">{t("register.loginLink")}</Link>
+            </Button>
           </p>
         </div>
       </Card>

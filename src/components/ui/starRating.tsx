@@ -9,30 +9,20 @@ import { Label } from "./label"
 import { useAppSelector } from "@/store/settings/hooks"
 import type { RatingMode } from "@/store/settings/slice"
 
-
-// ─── Helpers ────────────────────────────────────────────────────────────────
-
-/** Map a stored 0-10 value to the star display scale */
-const toDisplay = (v: number, mode: RatingMode) =>
-  mode === "stars5" ? v / 2 : v
-
-/** Map a display value back to the 0-10 stored scale */
-const toRating = (v: number, mode: RatingMode) =>
-  mode === "stars5" ? v * 2 : v
-
 const STAR_COUNT: Record<RatingMode, number> = {
   numeric: 0,
   stars5: 5,
   stars10: 10,
 }
 
-// ─── Stars base ─────────────────────────────────────────────────────────────
-
 type StarsBaseProps = {
   value: number
   onChange: (value: number) => void
   mode: "stars5" | "stars10"
 }
+
+const toDisplay = (v: number, mode: RatingMode) => mode === "stars5" ? v / 2 : v
+const toRating = (v: number, mode: RatingMode) => mode === "stars5" ? v * 2 : v
 
 function StarsBase({ value, onChange, mode }: StarsBaseProps) {
   const [hovered, setHovered] = React.useState<number | null>(null)
@@ -92,8 +82,6 @@ function StarsBase({ value, onChange, mode }: StarsBaseProps) {
   )
 }
 
-// ─── Numeric base ────────────────────────────────────────────────────────────
-
 type NumericBaseProps = {
   value: number
   onChange: (value: number) => void
@@ -117,8 +105,6 @@ function NumericBase({ value, onChange }: NumericBaseProps) {
     </div>
   )
 }
-
-// ─── Public component ────────────────────────────────────────────────────────
 
 type StarRatingBaseProps = {
   value?: number
@@ -177,4 +163,3 @@ export function StarRating({ label, name, required, control }: StarRatingProps) 
 
   return <StarRatingBase mode={ratingMode} />
 }
-

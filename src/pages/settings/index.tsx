@@ -61,13 +61,13 @@ function SettingsPage() {
           <h2 className="text-lg font-semibold mb-1">{t("settings.tracking.title")}</h2>
           <p className="text-sm text-muted-foreground mb-2">{t("settings.tracking.description")}</p>
         </div>
+
         <MediaTrackToggles
           values={values}
           onChange={handleChange}
         />
-        {savingType && (
-          <p className="text-xs text-muted-foreground">{t("settings.tracking.saving")}</p>
-        )}
+
+        {savingType && ( <p className="text-xs text-muted-foreground">{t("settings.tracking.saving")} </p> )}
       </div>
     </div>
   )

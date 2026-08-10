@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
 
 import { Card } from "@/components/tw/generic/card";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { authApi } from "@/querries/auth/auth";
 import { useAppDispatch } from "@/store/auth/hooks";
 import { setUser } from "@/store/auth/slice";
@@ -42,33 +42,25 @@ export default function Login() {
         <h1 className="mb-6 text-center text-3xl font-bold">{t("login.title")}</h1>
 
         <form onSubmit={handleLogin} className="space-y-4">
-          <div>
-            <Label htmlFor="username">{t("login.username")}</Label>
-            <input
-              id="username"
-              name="username"
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-              disabled={isLoading}
-              className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-            />
-          </div>
+          <Input
+            label={t("login.username")}
+            name="username"
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+            disabled={isLoading}
+          />
 
-          <div>
-            <Label htmlFor="password">{t("login.password")}</Label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              disabled={isLoading}
-              className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-            />
-          </div>
+          <Input
+            label={t("login.password")}
+            name="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            disabled={isLoading}
+          />
 
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? t("login.submitting") : t("login.submit")}
@@ -78,13 +70,9 @@ export default function Login() {
         <div className="mt-4 text-center">
           <p className="text-sm text-muted-foreground">
             {t("login.noAccount")}{" "}
-            <button
-              type="button"
-              onClick={() => navigate("/register")}
-              className="text-primary hover:underline"
-            >
-              {t("login.registerLink")}
-            </button>
+            <Button asChild variant="link">
+              <Link to="/register">{t("login.registerLink")}</Link>
+            </Button>
           </p>
         </div>
       </Card>

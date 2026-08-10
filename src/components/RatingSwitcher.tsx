@@ -14,9 +14,9 @@ function RatingSwitcher() {
   const dispatch = useAppDispatch();
 
   const ratingOptions = [
-    { value: RatingModeEnum.Numeric, label: t("rating_numeric", { ns: "common" }) },
     { value: RatingModeEnum.Stars5, label: t("rating_stars5", { ns: "common" }) },
     { value: RatingModeEnum.Stars10, label: t("rating_stars10", { ns: "common" }) },
+    { value: RatingModeEnum.Numeric, label: t("rating_numeric", { ns: "common" }) },
   ]
 
   return (
