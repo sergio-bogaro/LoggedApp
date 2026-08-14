@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
 
@@ -10,6 +11,8 @@ import { MediaCardSkeleton } from "@/components/tw/generic/mediaCardSkeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getMediaList } from "@/querries/media/logged";
 import { useAppSelector } from "@/store/auth/hooks";
+import { useAppDispatch } from "@/store/settings/hooks";
+import { setBreadcrumbs } from "@/store/settings/slice";
 import { MediaResponse } from "@/types/logged";
 import { MediaTypeEnum } from "@/types/media";
 import { DEFAULT_STALE_TIME } from "@/utils/conts";
@@ -18,9 +21,21 @@ const MediaListPage = () => {
   const { t } = useTranslation("media");
   const { type } = useParams<{ type: string }>();
   const { user } = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
 
   const mediaType = type as MediaTypeEnum;
   const title = mediaType ? t(`typePlural.${mediaType}`) : "";
+
+  useEffect(() => {
+    const mediaCrumb = { label: t("label"), to: "/media/home" };
+    dispatch(
+      setBreadcrumbs(
+        mediaType
+          ? [mediaCrumb, { label: t(`typePlural.${mediaType}`) }]
+          : [mediaCrumb]
+      )
+    );
+  }, [dispatch, t, mediaType]);
 
   const { data: data, isFetching, isError, error } = useQuery<MediaResponse[]>({
     queryKey: ["media", "list", mediaType],

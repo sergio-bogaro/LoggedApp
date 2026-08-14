@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { MoreVertical } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
 
@@ -28,6 +28,8 @@ import { getMovieDetails } from "@/querries/externalMedia/movies";
 import { getMediaByExternalIdWithLogs } from "@/querries/media/logged";
 import { mediaImageUrl } from "@/querries/media/logged";
 import { useAppSelector } from "@/store/auth/hooks";
+import { useAppDispatch } from "@/store/settings/hooks";
+import { setBreadcrumbs } from "@/store/settings/slice";
 import { MediaTypeEnum } from "@/types/media";
 import { DEFAULT_STALE_TIME } from "@/utils/conts";
 import { getMediaData, getPosterUrl } from "@/utils/mediaDataResponse";
@@ -41,6 +43,17 @@ function MediaDetailsPage() {
   const { mediaType, id } = useParams() as MediaDetailsParams;
   const { user } = useAppSelector((state) => state.auth);
   const { t } = useTranslation("media");
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (!mediaType) return;
+    dispatch(
+      setBreadcrumbs([
+        { label: t(`typePlural.${mediaType}`), to: `/media/list/${mediaType}` },
+        { label: t("details.label") },
+      ])
+    );
+  }, [dispatch, t, mediaType]);
 
   const [optionsOpen, setOptionsOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);

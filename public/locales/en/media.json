@@ -254,7 +254,7 @@
     "empty": "No media found",
     "emptyWithType": "Start by adding {{mediaType}} to your library",
     "noDescription": "No description available.",
-    "favorites" : "Favorites",
+    "favorites": "Favorites",
     "addFavorites": "Add items to your favorites",
     "backlog": "Backlog",
     "addBacklog": "Add items to your backlog",

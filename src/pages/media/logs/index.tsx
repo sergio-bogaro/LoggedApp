@@ -10,6 +10,8 @@ import { GridItemSkeleton } from "@/components/tw/media/gridSkeleton";
 import { Button } from "@/components/ui/button";
 import { getMediaList } from "@/querries/media/logged";
 import { useAppSelector } from "@/store/auth/hooks";
+import { useAppDispatch } from "@/store/settings/hooks";
+import { setBreadcrumbs } from "@/store/settings/slice";
 import { MediaResponse } from "@/types/logged";
 import { MediaItem, MediaTypeEnum } from "@/types/media";
 import { DEFAULT_STALE_TIME } from "@/utils/conts";
@@ -21,10 +23,22 @@ const MediaLogsPage = () => {
   const { user } = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
   const { type } = useParams<{ type?: string }>();
+  const dispatch = useAppDispatch();
 
   const mediaType = type as MediaTypeEnum | undefined;
   const title = mediaType ? t("logs.titleFiltered", { type: t(`typePlural.${mediaType}`) }) : t("logs.title");
   const queryKey: (string | number | undefined)[] = ["media", "logs", mediaType];
+
+  useEffect(() => {
+    const logsCrumb = { label: t("logs.title"), to: "/media/logs" };
+    dispatch(
+      setBreadcrumbs(
+        mediaType
+          ? [logsCrumb, { label: t(`typePlural.${mediaType}`) }]
+          : [logsCrumb]
+      )
+    );
+  }, [dispatch, t, mediaType]);
 
   const {
     data,

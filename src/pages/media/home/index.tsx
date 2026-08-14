@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 import { LibraryData } from "./components/library";
@@ -9,6 +10,8 @@ import { MediaCardSkeleton } from "@/components/tw/generic/mediaCardSkeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getMediaList } from "@/querries/media/logged";
 import { useAppSelector } from "@/store/auth/hooks";
+import { useAppDispatch } from "@/store/settings/hooks";
+import { setBreadcrumbs } from "@/store/settings/slice";
 import { MediaResponse } from "@/types/logged";
 
 const CAROUSEL_LIMIT = 10;
@@ -16,6 +19,11 @@ const CAROUSEL_LIMIT = 10;
 const MediaHomePage = () => {
   const { t } = useTranslation("media");
   const { user } = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(setBreadcrumbs([{ label: t("navigation.home", { ns: "common" }) }]));
+  }, [dispatch, t]);
 
   const { data: allData, isFetching, isError, error } = useQuery<MediaResponse[]>({
     queryKey: ["media"],
@@ -52,7 +60,7 @@ const MediaHomePage = () => {
           </TabsContent>
 
           <TabsContent value="stats" className="mt-4 space-y-6">
-            <StatusData data={allData} />          
+            <StatusData data={allData} />
           </TabsContent>
         </Tabs>
       </DataExhibition>

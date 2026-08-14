@@ -3,6 +3,10 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 export type Theme = "light" | "dark" | "test" | "rose-pine" | "rose-pine-dawn" | "green-light" | "green-dark";
 export type ViewMode = "list" | "grid";
 export type RatingMode = "numeric" | "stars5" | "stars10";
+export type Crumb = {
+  label: string;
+  to?: string;
+};
 
 export const THEME_CLASSES = ["light", "dark", "test", "rose-pine", "rose-pine-dawn", "green-light", "green-dark"] as const;
 
@@ -11,6 +15,7 @@ interface UIState {
   viewMode: ViewMode;
   ratingMode: RatingMode;
   lastSearchType: string;
+  breadcrumbs: Crumb[];
 }
 
 const savedTheme = (localStorage.getItem("theme") as Theme) || "light";
@@ -26,6 +31,7 @@ const initialState: UIState = {
   viewMode: savedViewMode,
   ratingMode: savedRatingMode,
   lastSearchType: savedLastSearchType,
+  breadcrumbs: [],
 };
 
 export const uiSlice = createSlice({
@@ -54,8 +60,12 @@ export const uiSlice = createSlice({
       state.lastSearchType = action.payload;
       localStorage.setItem("lastSearchType", action.payload);
     },
+
+    setBreadcrumbs: (state, action: PayloadAction<Crumb[]>) => {
+      state.breadcrumbs = action.payload;
+    },
   },
 });
 
-export const { setTheme, setViewMode, setRatingMode, setLastSearchType } = uiSlice.actions;
+export const { setTheme, setViewMode, setRatingMode, setLastSearchType, setBreadcrumbs } = uiSlice.actions;
 export default uiSlice.reducer;

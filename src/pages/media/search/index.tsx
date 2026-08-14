@@ -17,7 +17,7 @@ import { searchGamesNormalized } from "@/querries/externalMedia/games";
 import { searchMoviesNormalized } from "@/querries/externalMedia/movies";
 import { useExistingMedia } from "@/querries/media/existingMedias";
 import { useAppDispatch, useAppSelector } from "@/store/settings/hooks";
-import { setLastSearchType, setViewMode, ViewMode } from "@/store/settings/slice";
+import { setBreadcrumbs, setLastSearchType, setViewMode, ViewMode } from "@/store/settings/slice";
 import { MediaItem } from "@/types/media";
 import { MediaTypeEnum } from "@/types/media";
 import { getMediaTypesOptions } from "@/utils/mediaText";
@@ -37,6 +37,10 @@ function MediaSearchPage() {
   const { user } = useAppSelector((state) => state.auth);
   const isGrid = useMemo(() => viewMode === "grid", [viewMode]);
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(setBreadcrumbs([{ label: t("navigation.search", { ns: "common" }) }]));
+  }, [dispatch, t]);
 
   const trackFlags = getTrackFlags(user);
   const mediaTypesOptions = useMemo(() => getMediaTypesOptions(t), [t]);

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
@@ -9,6 +9,7 @@ import MediaTrackToggles from "@/components/tw/settings/MediaTrackToggles";
 import { authApi } from "@/querries/auth/auth";
 import { useAppDispatch, useAppSelector } from "@/store/auth/hooks";
 import { updateUserSettings } from "@/store/auth/slice";
+import { setBreadcrumbs } from "@/store/settings/slice";
 import { MediaTypeEnum } from "@/types/media";
 import { getTrackFlags } from "@/utils/mediaTrack";
 
@@ -16,6 +17,10 @@ function SettingsPage() {
   const { t } = useTranslation("common");
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
+
+  useEffect(() => {
+    dispatch(setBreadcrumbs([{ label: t("navigation.settings") }]));
+  }, [dispatch, t]);
 
   const [values, setValues] = useState(() => getTrackFlags(user));
   const [savingType, setSavingType] = useState<MediaTypeEnum | null>(null);

@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 import { ListItemSkeleton, ListItemsGrid } from "../listItems/ListItemsGrid";
@@ -6,11 +7,18 @@ import { ListItemSkeleton, ListItemsGrid } from "../listItems/ListItemsGrid";
 import { DataExhibition } from "@/components/tw/generic/dataExhibition";
 import { getFavorites } from "@/querries/media/listItems";
 import { useAppSelector } from "@/store/auth/hooks";
+import { useAppDispatch } from "@/store/settings/hooks";
+import { setBreadcrumbs } from "@/store/settings/slice";
 import { DEFAULT_STALE_TIME } from "@/utils/conts";
 
 const FavoritesPage = () => {
   const { t } = useTranslation("media");
   const { user } = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(setBreadcrumbs([{ label: t("navigation.favorites", { ns: "common" }) }]));
+  }, [dispatch, t]);
 
   const { data, isFetching, isError, error } = useQuery({
     queryKey: ["favorites"],
