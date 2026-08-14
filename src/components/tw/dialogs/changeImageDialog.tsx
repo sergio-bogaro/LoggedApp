@@ -46,16 +46,15 @@ export function ChangeImageDialog({ existingMedia, mediaData, mediaType, formate
 
   const isProcessing = isPending && processingUrl !== null;
 
-  useEffect(() => { setSelectedImage( existingMedia?.imagePath
-    ? mediaImageUrl(existingMedia.imagePath)!
-    : originalCover,
-  );
+  useEffect(() => {
+    setSelectedImage(existingMedia?.imagePath ? mediaImageUrl(existingMedia.imagePath)! : originalCover );
   }, [existingMedia]);
 
-  useEffect(() => { if (isSuccess && processingUrl) {
-    setProcessingUrl(null);
-    setImageDialogOpen(false);
-  }
+  useEffect(() => {
+    if (isSuccess && processingUrl) {
+      setProcessingUrl(null);
+      setImageDialogOpen(false);
+    }
   }, [isSuccess, processingUrl]);
 
 

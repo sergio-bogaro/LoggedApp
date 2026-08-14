@@ -18,8 +18,8 @@ const ListItem = ({ item, existingItem }: ListItemProps) => {
     <Link
       key={item.id}
       to={`/media/${item.type}/details/${item.id}`}
-      className="flex group border rounded overflow-hidden p-2 cursor-pointer hover:shadow hover:bg-accent/30 transition">
-
+      className="flex group border rounded overflow-hidden p-2 cursor-pointer hover:shadow hover:bg-accent/30 transition"
+    >
       <ImageWithSkeleton
         src={item.coverUrl}
         alt={item.title}

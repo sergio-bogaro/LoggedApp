@@ -25,7 +25,6 @@ export const MediaTypeBadge = ({ type }: { type: MediaTypeEnum }) => {
     }
   }
 
-
   return (
     <Badge className="bg-primary">
       {getTypeText(type)}

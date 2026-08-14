@@ -21,16 +21,14 @@ export function UserMenu() {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
 
-  if (!user) {
-    return null;
-  }
-
   const handleLogout = () => {
     dispatch(logout());
 
     toast.success(t("settings.logoutSuccess"));
     navigate("/");
   };
+
+  if (!user) return null;
 
   return (
     <DropdownMenu>

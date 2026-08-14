@@ -4,7 +4,6 @@ import { Loading } from "./loading";
 
 import { cn } from "@/lib/utils";
 
-
 interface DataExhibitionProps {
   isLoading?: boolean;
   isFetching?: boolean;

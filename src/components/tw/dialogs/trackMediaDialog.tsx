@@ -50,10 +50,10 @@ interface FormType {
 export function TrackMediaDialog({ mediaType, existingMedia, image, formatedData }: TrackMediaDialogProps) {
   const [open, setOpen] = useState(false);
 
+  const trackMedia = useTrackMedia();
+
   const isOneTimeConsumption = useMemo( () => mediaType === MediaTypeEnum.MOVIES, [mediaType] );
   const endDateLabel = useMemo( () => (isOneTimeConsumption ? "track.viewedOn" : "track.finishDate"), [isOneTimeConsumption] );
-
-  const trackMedia = useTrackMedia();
 
   const form = useForm<FormType>({
     defaultValues: {

@@ -12,14 +12,7 @@ type ImageWithSkeletonProps = {
   imgClassName?: string;
 };
 
-export function ImageWithSkeleton({
-  src,
-  alt,
-  className,
-  width,
-  height,
-  imgClassName,
-}: ImageWithSkeletonProps) {
+export function ImageWithSkeleton({ src, alt, className, width, height, imgClassName, }: ImageWithSkeletonProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isGone, setIsGone] = useState(false);
 
@@ -43,11 +36,11 @@ export function ImageWithSkeleton({
   return (
     <div
       className={cn("relative overflow-hidden rounded-md bg-muted", className)}
+      aria-busy={!isLoaded}
       style={{
         width: width ? `${width}px` : "100%",
         height: height ? `${height}px` : "auto",
       }}
-      aria-busy={!isLoaded}
     >
       {!isGone && (
         <Skeleton

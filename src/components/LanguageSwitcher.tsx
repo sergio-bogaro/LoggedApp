@@ -4,6 +4,7 @@ import { Select } from "./ui/select";
 
 const LanguageSwitcher = () => {
   const { i18n, t } = useTranslation("common");
+
   const languageOptions = [
     { value: "en", label: t("languageOptions.en") },
     { value: "ptBr", label: t("languageOptions.ptBr") },

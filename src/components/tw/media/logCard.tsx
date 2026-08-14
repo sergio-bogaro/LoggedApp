@@ -16,7 +16,6 @@ export const LogCard = ({ log, onClick }: LogCardProps) => {
   const { t } = useTranslation("media");
 
   if (!log) return null;
-
   const hasRating = typeof log.rating === "number" && log.rating > 0;
 
   return (
@@ -32,18 +31,14 @@ export const LogCard = ({ log, onClick }: LogCardProps) => {
           {hasRating ? (
             <>
               {t("logCard.youRatedThis")}
+
               <span className="inline-flex items-center">
                 <RatingDisplay rating={log.rating!} discrete />
               </span>
-              {log.date && (
-                <span>- {formatFromIsoDate(log.date)}</span>
-              )}
+
+              {log.date && ( <span>- {formatFromIsoDate(log.date)}</span> )}
             </>
-          ) : (
-            <>
-              {t("logCard.youLoggedThisOn")} {log.date && formatFromIsoDate(log.date)}
-            </>
-          )}
+          ) : ( <> {t("logCard.youLoggedThisOn")} {log.date && formatFromIsoDate(log.date)} </> )}
         </span>
       </Card>
     </div>

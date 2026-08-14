@@ -20,17 +20,17 @@ interface MediaOptionsButtonProps {
 }
 
 export const MediaOptionsButton = ({ mediaItem, existingItem }: MediaOptionsButtonProps) => {
+  const { user } = useAppSelector((state) => state.auth);
   const { t } = useTranslation("media");
+
   const [isOpen, setIsOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
-  const handleBacklog = useHandleBacklog();
-  const handleFavorites = useHandleFavorites();
-  const { user } = useAppSelector((state) => state.auth);
-
   const [backlogStatus, setBacklogStatus] = useState<{ inList: boolean; itemId: number | null }>({ inList: false, itemId: null });
   const [favoritesStatus, setFavoritesStatus] = useState<{ inList: boolean; itemId: number | null }>({ inList: false, itemId: null });
 
-  // Check backlog and favorites status when menu opens
+  const handleBacklog = useHandleBacklog();
+  const handleFavorites = useHandleFavorites();
+
   const handleOpenChange = async (open: boolean) => {
     setIsOpen(open);
     if (open && user && mediaItem.id) {
@@ -38,6 +38,7 @@ export const MediaOptionsButton = ({ mediaItem, existingItem }: MediaOptionsButt
         checkBacklog(user.id, mediaItem.id, mediaItem.type),
         checkFavorite(user.id, mediaItem.id, mediaItem.type),
       ]);
+
       setBacklogStatus(backlog);
       setFavoritesStatus(favorites);
     }

@@ -11,6 +11,7 @@ import { RatingModeEnum } from "@/types/settings"
 function RatingSwitcher() {
   const { t } = useTranslation(["common"])
   const { ratingMode } = useAppSelector(state => state.ui)
+
   const dispatch = useAppDispatch();
 
   const ratingOptions = [

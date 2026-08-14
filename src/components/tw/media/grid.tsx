@@ -15,7 +15,6 @@ interface GridItemProps {
 }
 
 export const GridItem = ({ item, existingItem, showMediaType = false }: GridItemProps) => {
-
   return (
     <div className="relative group rounded">
       <span className="absolute top-2 right-2 z-10">

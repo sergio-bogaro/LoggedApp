@@ -63,6 +63,7 @@ export function LogDetailsDialog({ log, mediaType, open, onOpenChange }: LogDeta
             <span className="text-sm font-medium text-muted-foreground">
               {t("details.review")}
             </span>
+
             {log.review ? (
               <p className="whitespace-pre-wrap text-sm">{log.review}</p>
             ) : (
