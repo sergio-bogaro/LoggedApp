@@ -19,7 +19,12 @@ function SettingsPage() {
   const { user } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
-    dispatch(setBreadcrumbs([{ label: t("navigation.settings") }]));
+    dispatch(
+      setBreadcrumbs([
+        { label: t("label", { ns: "media" }), to: "/media/home" },
+        { label: t("navigation.settings") },
+      ])
+    );
   }, [dispatch, t]);
 
   const [values, setValues] = useState(() => getTrackFlags(user));

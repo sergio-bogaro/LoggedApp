@@ -22,7 +22,7 @@ const MediaHomePage = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(setBreadcrumbs([{ label: t("navigation.home", { ns: "common" }) }]));
+    dispatch(setBreadcrumbs([{ label: t("label"), to: "/media/home" }]));
   }, [dispatch, t]);
 
   const { data: allData, isFetching, isError, error } = useQuery<MediaResponse[]>({
@@ -48,7 +48,13 @@ const MediaHomePage = () => {
     <div className="w-full h-full">
       <h1 className="text-2xl font-bold mb-4">{t("home.title")}</h1>
 
-      <DataExhibition isLoading={isInitialLoading} isFetching={isLoading} skeleton={<MediaCardSkeleton />} isError={isErrorCombined} errorMessage={`${t("errorLoading", { ns: "common" })} ${errorMessageCombined}`}>
+      <DataExhibition
+        isFetching={isLoading}
+        isError={isErrorCombined}
+        isLoading={isInitialLoading}
+        skeleton={<MediaCardSkeleton />}
+        errorMessage={`${t("errorLoading", { ns: "common" })} ${errorMessageCombined}`}
+      >
         <Tabs defaultValue="list" className="mt-4">
           <TabsList>
             <TabsTrigger value="list">{t("home.tabs.list")}</TabsTrigger>

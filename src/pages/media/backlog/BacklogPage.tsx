@@ -17,7 +17,12 @@ const BacklogPage = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(setBreadcrumbs([{ label: t("navigation.backlog", { ns: "common" }) }]));
+    dispatch(
+      setBreadcrumbs([
+        { label: t("label"), to: "/media/home" },
+        { label: t("navigation.backlog", { ns: "common" }) },
+      ])
+    );
   }, [dispatch, t]);
 
   const { data, isFetching, isError, error } = useQuery({

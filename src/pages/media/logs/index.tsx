@@ -31,11 +31,12 @@ const MediaLogsPage = () => {
 
   useEffect(() => {
     const logsCrumb = { label: t("logs.title"), to: "/media/logs" };
+    const mediaCrumb = { label: t("label"), to: "/media/home" };
     dispatch(
       setBreadcrumbs(
         mediaType
-          ? [logsCrumb, { label: t(`typePlural.${mediaType}`) }]
-          : [logsCrumb]
+          ? [mediaCrumb, logsCrumb, { label: t(`typePlural.${mediaType}`) }]
+          : [mediaCrumb, logsCrumb]
       )
     );
   }, [dispatch, t, mediaType]);

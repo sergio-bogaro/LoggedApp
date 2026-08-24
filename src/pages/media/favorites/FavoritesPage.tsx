@@ -17,7 +17,12 @@ const FavoritesPage = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(setBreadcrumbs([{ label: t("navigation.favorites", { ns: "common" }) }]));
+    dispatch(
+      setBreadcrumbs([
+        { label: t("label"), to: "/media/home" },
+        { label: t("navigation.favorites", { ns: "common" }) },
+      ])
+    );
   }, [dispatch, t]);
 
   const { data, isFetching, isError, error } = useQuery({

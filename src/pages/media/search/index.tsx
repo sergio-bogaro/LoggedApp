@@ -39,7 +39,12 @@ function MediaSearchPage() {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(setBreadcrumbs([{ label: t("navigation.search", { ns: "common" }) }]));
+    dispatch(
+      setBreadcrumbs([
+        { label: t("label"), to: "/media/home" },
+        { label: t("navigation.search", { ns: "common" }) },
+      ])
+    );
   }, [dispatch, t]);
 
   const trackFlags = getTrackFlags(user);

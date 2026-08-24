@@ -49,6 +49,7 @@ function MediaDetailsPage() {
     if (!mediaType) return;
     dispatch(
       setBreadcrumbs([
+        { label: t("label"), to: "/media/home" },
         { label: t(`typePlural.${mediaType}`), to: `/media/list/${mediaType}` },
         { label: t("details.label") },
       ])
