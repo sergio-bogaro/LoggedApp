@@ -67,10 +67,10 @@ export function AppSidebar() {
         {hasTrackedMedia && <SidebarSeparator />}
 
         {hasTrackedMedia && (
-          <SidebarGroup>
-            <SidebarGroupLabel>{t("label", { ns: "media" })}</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
+          <SidebarGroup className="overflow-y-auto">
+            <SidebarGroupLabel> {t("label", { ns: "media" })} </SidebarGroupLabel>
+            <SidebarGroupContent >
+              <SidebarMenu >
                 {visibleMediaTypes.map((item) => (
                   <SidebarMenuItem key={item.path}>
                     <SidebarMenuButton

@@ -17,8 +17,17 @@ export const MediaCardSkeleton = () => {
       <div className="md:px-12 space-y-8">
         {Array.from({ length: SECTION_COUNT }).map((_, sectionIdx) => (
           <div key={sectionIdx}>
-            {/* Section title */}
-            <Skeleton className="h-5 w-40 mb-2" />
+            {/* Section title + view all/buttons cluster */}
+            <div className="flex items-center justify-between mb-2">
+              <Skeleton className="h-6 w-44" />
+              <div className="flex flex-col items-center gap-1">
+                <Skeleton className="h-8 w-24 rounded-md" />
+                <div className="hidden md:flex gap-2">
+                  <Skeleton className="size-8 rounded-full" />
+                  <Skeleton className="size-8 rounded-full" />
+                </div>
+              </div>
+            </div>
             {/* Section description */}
             <Skeleton className="h-4 w-64 mb-4" />
 

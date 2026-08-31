@@ -66,25 +66,31 @@ export const LibraryData = ({ data, recentlyLoggedData }: LibraryDataProps) => {
     <div className="md:px-12 mt-4 space-y-8">
       {sections.map((section) => (
         <div key={section.key}>
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="text-base font-semibold px-1">
-              {t(section.titleKey)}
-            </h2>
-            {section.viewAllLink && section.items.length > 0 && (
-              <Button variant="ghost" size="sm" asChild>
-                <Link to={section.viewAllLink}>
-                  {t("sections.viewAll")}
-                </Link>
-              </Button>
-            )}
-          </div>
+          <Carousel>
+            <div className="flex items-center justify-between mb-2">
+              <h2 className="text-lg font-semibold px-1">
+                {t(section.titleKey)}
+              </h2>
+              {section.viewAllLink && section.items.length > 0 && (
+                <div className="flex flex-col items-center gap-1">
+                  <Button variant="ghost" size="sm" asChild>
+                    <Link to={section.viewAllLink}>
+                      {t("sections.viewAll")}
+                    </Link>
+                  </Button>
+                  <div className="hidden md:flex gap-2">
+                    <CarouselPrevious />
+                    <CarouselNext />
+                  </div>
+                </div>
+              )}
+            </div>
 
-          <span className="px-1">
-            {t(section.description)}
-          </span>
+            <span className="px-1 text-sm text-muted-foreground">
+              {t(section.description)}
+            </span>
 
-          {section.items.length > 0 ? (
-            <Carousel>
+            {section.items.length > 0 ? (
               <CarouselContent>
                 {section.items.map((item) => {
                   const normalizedItem: MediaItem = {
@@ -109,14 +115,12 @@ export const LibraryData = ({ data, recentlyLoggedData }: LibraryDataProps) => {
                   );
                 })}
               </CarouselContent>
-              <CarouselPrevious />
-              <CarouselNext />
-            </Carousel>
-          ) : (
-            <div className="min-h-72 mt-4 flex items-center justify-center text-sm text-muted-foreground px-1">
-              {t("sections.noData")}
-            </div>
-          )}
+            ) : (
+              <div className="min-h-72 mt-4 flex items-center justify-center text-sm text-muted-foreground px-1">
+                {t("sections.noData")}
+              </div>
+            )}
+          </Carousel>
         </div>
       ))}
     </div>
