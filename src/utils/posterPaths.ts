@@ -8,11 +8,13 @@ export function getPosterUrl(type: MediaTypeEnum, data: any) {
     case MediaTypeEnum.MOVIES:
       return tmdbPosterUrl(data.poster_path, "original");
     case MediaTypeEnum.MANGA:
-      return data.coverImage?.large;
+      return data.coverImage?.extraLarge || data.coverImage?.large;
     case MediaTypeEnum.ANIME:
-      return data.coverImage?.large;
+      return data.coverImage?.extraLarge || data.coverImage?.large;
     case MediaTypeEnum.BOOK:
-      return data.coverImageUrl;
+      return data.covers?.[0]
+        ? `https://covers.openlibrary.org/b/id/${data.covers[0]}-L.jpg`
+        : "";
     case MediaTypeEnum.GAME:
       return data.coverUrl;
     default:

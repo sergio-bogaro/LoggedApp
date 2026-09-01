@@ -1,5 +1,4 @@
-import { MediaItem } from "@/types/media";
-import { MediaTypeEnum } from "@/types/media";
+import { MediaItem, MediaTypeEnum } from "@/types/media";
 
 export async function searchMoviesNormalized(query: string): Promise<MediaItem[]> {
   const movies = await searchMovies(query);

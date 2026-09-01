@@ -27,6 +27,7 @@ export function AppSidebar() {
   const trackFlags = getTrackFlags(user);
   const visibleMediaTypes = mediaTypes.filter((item) => trackFlags[item.type]);
   const hasTrackedMedia = visibleMediaTypes.length > 0;
+
   const visibleMainNavigation = mainNavigation.filter(
     (item) => hasTrackedMedia || item.path !== "/search"
   );

@@ -29,7 +29,7 @@ export function getMediaData(mediaType: MediaTypeEnum, mediaData: unknown): Medi
         id: String(animeData.id),
         title: formatedTitle ?? "",
         type: mediaType,
-        coverUrl: animeData.coverImage.large,
+        coverUrl: animeData.coverImage.extraLarge || animeData.coverImage.large,
         description: animeData.description,
         releaseDate: animeData.startDate ? anilistDateToIso(animeData.startDate) : undefined,
         tags: animeData.genres || [],
@@ -45,7 +45,7 @@ export function getMediaData(mediaType: MediaTypeEnum, mediaData: unknown): Medi
         id: String(mangaData.id),
         title: formatedTitle ?? "",
         type: mediaType,
-        coverUrl: mangaData.coverImage.large,
+        coverUrl: mangaData.coverImage.extraLarge || mangaData.coverImage.large,
         description: mangaData.description,
         releaseDate: mangaData.startDate ? anilistDateToIso(mangaData.startDate) : undefined,
         tags: mangaData.genres || [],
@@ -63,6 +63,19 @@ export function getMediaData(mediaType: MediaTypeEnum, mediaData: unknown): Medi
         tags: gameData.genres?.map((genre) => genre.name) || [],
       };
     }
+    case MediaTypeEnum.BOOK: {
+      const bookData = mediaData as { key?: string; title?: string; covers?: number[] };
+      const coverId = bookData.covers?.[0];
+
+      return {
+        id: bookData.key?.split("/").pop() ?? "",
+        title: bookData.title ?? "",
+        type: mediaType,
+        coverUrl: coverId ? `https://covers.openlibrary.org/b/id/${coverId}-L.jpg` : "",
+        description: "",
+        tags: [],
+      };
+    }
     default:
       throw new Error("Unknown media type");
   }
@@ -76,11 +89,13 @@ export function getPosterUrl(type: MediaTypeEnum, data: any): string {
     case MediaTypeEnum.MOVIES:
       return tmdbPosterUrl(data.poster_path, "original");
     case MediaTypeEnum.MANGA:
-      return data.coverImage?.large;
+      return data.coverImage?.extraLarge || data.coverImage?.large;
     case MediaTypeEnum.ANIME:
-      return data.coverImage?.large;
+      return data.coverImage?.extraLarge || data.coverImage?.large;
     case MediaTypeEnum.BOOK:
-      return data.coverImageUrl;
+      return data.covers?.[0]
+        ? `https://covers.openlibrary.org/b/id/${data.covers[0]}-L.jpg`
+        : "";
     case MediaTypeEnum.GAME:
       return data.coverUrl;
     default:
