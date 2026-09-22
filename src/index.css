@@ -481,4 +481,20 @@
     @apply bg-background text-foreground;
     letter-spacing: var(--tracking-normal);
   }
+
+  /*
+   * Tailwind v4 preflight does not set `cursor: pointer` on buttons, so every
+   * clickable primitive (tabs, accordion, switch, menu items, select options)
+   * would otherwise show the default arrow. Utilities still win over this layer,
+   * so `cursor-*` classes and `disabled:cursor-not-allowed` keep working.
+   */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  [role="tab"]:not(:disabled),
+  [role="menuitem"]:not([data-disabled]),
+  [role="option"]:not([data-disabled]),
+  [role="switch"]:not(:disabled),
+  summary {
+    cursor: pointer;
+  }
 }

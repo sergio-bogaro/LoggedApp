@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
+import { EmptyState } from "@/components/tw/generic/EmptyState";
 import { GridItem } from "@/components/tw/media/grid";
 import { Button } from "@/components/ui/button";
 import {
@@ -111,9 +112,11 @@ export const LibraryDataMediaType = ({ data, recentlyLoggedData, mediaType }: Li
                 })}
               </CarouselContent>
             ) : (
-              <div className="min-h-72 mt-4 flex items-center justify-center text-sm text-muted-foreground px-1">
-                {t("sections.noData")}
-              </div>
+              <EmptyState
+                title={t("sections.noData")}
+                className="mt-4 min-h-72 px-1"
+                titleClassName="text-sm"
+              />
             )}
           </Carousel>
         </div>

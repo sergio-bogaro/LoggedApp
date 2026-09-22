@@ -8,6 +8,7 @@ import { ListStatusData } from "./components/listStatusData";
 
 import { DataExhibition } from "@/components/tw/generic/dataExhibition";
 import { MediaCardSkeleton } from "@/components/tw/generic/mediaCardSkeleton";
+import { PageHeader } from "@/components/tw/generic/PageHeader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getMediaList } from "@/querries/media/logged";
 import { useAppSelector } from "@/store/auth/hooks";
@@ -65,7 +66,7 @@ const MediaListPage = () => {
 
   return (
     <div className="w-full h-full space-y-3">
-      <h1 className="text-2xl font-bold">{title}</h1>
+      <PageHeader title={title || t("label")} />
 
       <DataExhibition isLoading={isInitialLoading} isFetching={isLoading} skeleton={<MediaCardSkeleton />} isError={isErrorCombined} errorMessage={`${t("errorLoading", { ns: "common" })} ${errorMessageCombined}`}>
         <Tabs defaultValue="list" className="mt-4">

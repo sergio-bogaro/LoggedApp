@@ -39,12 +39,11 @@ function ScreenshotsTab({ screenshots }: { screenshots: string[] }) {
   return (
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
       {screenshots.map((url, i) => (
-        <a key={i} href={url} target="_blank" rel="noopener noreferrer">
+        <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="group block overflow-hidden rounded">
           <ImageWithSkeleton
             src={url}
             alt={`Screenshot ${i + 1}`}
-            className="aspect-video w-full rounded"
-            imgClassName="hover:scale-105 cursor-pointer"
+            className="aspect-video w-full rounded transition-transform duration-300 ease-out group-hover:scale-[1.03]"
           />
         </a>
       ))}

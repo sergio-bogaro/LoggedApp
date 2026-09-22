@@ -7,6 +7,7 @@ import { StatusData } from "./components/status";
 
 import { DataExhibition } from "@/components/tw/generic/dataExhibition";
 import { MediaCardSkeleton } from "@/components/tw/generic/mediaCardSkeleton";
+import { PageHeader } from "@/components/tw/generic/PageHeader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getMediaList } from "@/querries/media/logged";
 import { useAppSelector } from "@/store/auth/hooks";
@@ -46,7 +47,7 @@ const MediaHomePage = () => {
 
   return (
     <div className="w-full h-full">
-      <h1 className="text-2xl font-bold mb-4">{t("home.title")}</h1>
+      <PageHeader title={t("home.title")} />
 
       <DataExhibition
         isFetching={isLoading}

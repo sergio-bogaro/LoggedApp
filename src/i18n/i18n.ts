@@ -27,4 +27,11 @@ i18n
     },
   });
 
+const applyDocumentLanguage = (lng: string) => {
+  document.documentElement.lang = lng.toLowerCase().startsWith("pt") ? "pt-BR" : "en";
+};
+
+i18n.on("languageChanged", applyDocumentLanguage);
+applyDocumentLanguage(i18n.resolvedLanguage ?? i18n.language ?? "en");
+
 export default i18n;

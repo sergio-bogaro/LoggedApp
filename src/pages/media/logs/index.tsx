@@ -4,7 +4,9 @@ import { useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router";
 
+import { EmptyState } from "@/components/tw/generic/EmptyState";
 import { Loading } from "@/components/tw/generic/loading";
+import { PageHeader } from "@/components/tw/generic/PageHeader";
 import { GridItem } from "@/components/tw/media/grid";
 import { GridItemSkeleton } from "@/components/tw/media/gridSkeleton";
 import { Button } from "@/components/ui/button";
@@ -54,8 +56,8 @@ const MediaLogsPage = () => {
     queryFn: ({ pageParam = 0 }) =>
       getMediaList(user!.id, { hasLogs: true, limit: PAGE_SIZE, offset: pageParam, type: mediaType }),
     initialPageParam: 0,
-    getNextPageParam: (lastPage) =>
-      lastPage.length === PAGE_SIZE ? lastPage.length : undefined,
+    getNextPageParam: (lastPage, allPages) =>
+      lastPage.length === PAGE_SIZE ? allPages.length * PAGE_SIZE : undefined,
     staleTime: DEFAULT_STALE_TIME,
     enabled: !!user,
   });
@@ -84,21 +86,21 @@ const MediaLogsPage = () => {
 
   return (
     <div className="w-full h-full">
-      <div className="flex items-center gap-3 mb-4">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => navigate(-1)}
-          className="shrink-0"
-        >
-          <ArrowLeft className="h-4 w-4" />
-        </Button>
-        <h1 className="text-2xl font-bold">{title}</h1>
-      </div>
-
-      <p className="text-sm text-muted-foreground mb-6 px-10">
-        {t("logs.description")}
-      </p>
+      <PageHeader
+        title={title}
+        description={t("logs.description")}
+        leading={
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate(-1)}
+            className="shrink-0"
+            aria-label={t("actions.back", { ns: "common" })}
+          >
+            <ArrowLeft aria-hidden="true" className="h-4 w-4" />
+          </Button>
+        }
+      />
 
       {isLoading ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 min-h-72">
@@ -107,10 +109,7 @@ const MediaLogsPage = () => {
           ))}
         </div>
       ) : allItems.length === 0 ? (
-        <div className="text-center py-16 min-h-72 flex flex-col items-center justify-center text-muted-foreground">
-          <p className="text-lg">{t("logs.empty")}</p>
-          <p className="text-sm mt-1">{t("logs.emptyHint")}</p>
-        </div>
+        <EmptyState title={t("logs.empty")} description={t("logs.emptyHint")} />
       ) : (
         <>
           <div className="relative">

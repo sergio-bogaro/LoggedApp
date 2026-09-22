@@ -16,7 +16,8 @@
     "pt-BR": "Português (BR)"
   },
   "actions": {
-    "logout": "Logout"
+    "logout": "Logout",
+    "back": "Go back"
   },
   "navigation": {
     "home": "Home",

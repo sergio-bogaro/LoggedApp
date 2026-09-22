@@ -24,10 +24,10 @@ const ListItem = ({ item, existingItem }: ListItemProps) => {
       <Link
         key={item.id}
         to={`/media/${item.type}/details/${item.id}`}
-        className="flex border rounded overflow-hidden p-2 cursor-pointer hover:shadow hover:bg-accent/30 transition"
+        className="flex border rounded overflow-hidden p-2 cursor-pointer transition hover:bg-accent/50 hover:shadow-md"
       >
         <ImageWithSkeleton
-          src={existingItem?.imagePath ? mediaImageUrl(existingItem.imagePath)! : item.coverUrl}
+          src={existingItem?.imagePath ? (mediaImageUrl(existingItem.imagePath) ?? "") : item.coverUrl}
           alt=""
           height={220}
           width={180}

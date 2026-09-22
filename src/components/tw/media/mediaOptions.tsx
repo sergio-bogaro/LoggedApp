@@ -92,7 +92,7 @@ export const MediaOptionsButton = ({ mediaItem, existingItem }: MediaOptionsButt
               "bg-popover/70 p-2 transition-all relative",
               isOpen
                 ? "opacity-100 bg-popover"
-                : "opacity-0 group-hover:opacity-100 focus-visible:opacity-100 data-[state=open]:opacity-100"
+                : "opacity-0 group-hover:opacity-100 focus-visible:opacity-100 data-[state=open]:opacity-100 pointer-coarse:opacity-100"
             )}
           >
             <MoreVertical className="size-5" aria-hidden="true" />

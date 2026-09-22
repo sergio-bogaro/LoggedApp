@@ -16,7 +16,8 @@
     "pt-BR": "Português (BR)"
   },
   "actions": {
-    "logout": "Sair"
+    "logout": "Sair",
+    "back": "Voltar"
   },
   "navigation": {
     "home": "Início",

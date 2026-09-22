@@ -131,11 +131,18 @@ export async function searchKitsuPosters(title: string, type: "anime" | "manga")
 
   if (!res.ok) return [];
 
-  const data = await res.json();
+  const data = (await res.json()) as {
+    data?: Array<{
+      attributes?: {
+        canonicalTitle?: string;
+        posterImage?: { large?: string; medium?: string; small?: string };
+      };
+    }>;
+  };
   const items = data.data || [];
 
   return items
-    .map((item: any) => {
+    .map((item) => {
       const posterUrl = item.attributes?.posterImage?.large
         || item.attributes?.posterImage?.medium
         || item.attributes?.posterImage?.small;

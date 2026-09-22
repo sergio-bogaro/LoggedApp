@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import RatingSwitcher from "@/components/RatingSwitcher";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
+import { PageHeader } from "@/components/tw/generic/PageHeader";
 import MediaTrackToggles from "@/components/tw/settings/MediaTrackToggles";
 import { authApi } from "@/querries/auth/auth";
 import { useAppDispatch, useAppSelector } from "@/store/auth/hooks";
@@ -55,8 +56,8 @@ function SettingsPage() {
   };
 
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold mb-4">{t("settings.title")}</h1>
+    <div className="space-y-6">
+      <PageHeader title={t("settings.title")} />
 
       <div className="space-y-2">
         <LanguageSwitcher />

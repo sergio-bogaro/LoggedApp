@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
 import { MediaTypeBadge } from "@/components/tw/generic/badges";
+import { EmptyState } from "@/components/tw/generic/EmptyState";
 import { ImageWithSkeleton } from "@/components/tw/generic/imageSkeleton";
 import { GridItemSkeleton } from "@/components/tw/media/gridSkeleton";
 import { MediaListItem } from "@/types/mediaList";
@@ -25,12 +26,12 @@ const ListItemCard = ({ item }: ListItemCardProps) => {
   return (
     <Link
       to={`/media/${item.mediaType}/details/${media.externalId}`}
-      className="block rounded overflow-hidden shadow-md hover:shadow-xl transition-all hover:opacity-70"
+      className="relative block rounded overflow-hidden shadow-md transition-shadow hover:shadow-lg"
     >
       <ImageWithSkeleton
         src={coverUrl ?? ""}
         alt={media.title}
-        className="h-full w-auto aspect-2/3 object-cover"
+        className="h-full w-auto aspect-2/3 object-cover transition-transform duration-300 ease-out group-hover:scale-[1.03]"
       />
 
       <div className="absolute top-2 left-2">
@@ -41,7 +42,7 @@ const ListItemCard = ({ item }: ListItemCardProps) => {
         <div className="flex items-end justify-between gap-2">
           <div className="flex flex-col-reverse min-w-0">
             <p className="text-white/60 text-xs">{year ?? "-"}</p>
-            <h3 className="text-white font-semibold text-sm">
+            <h3 className="text-white font-semibold text-sm line-clamp-2">
               {media.title}
             </h3>
           </div>
@@ -75,9 +76,10 @@ export const ListItemsGrid = ({ items, emptyMessage }: ListItemsGridProps) => {
 
   if (!items || items.length === 0) {
     return (
-      <div className="md:px-12 mt-4 min-h-72 flex items-center justify-center text-center text-muted-foreground">
-        {emptyMessage ?? t("list.empty")}
-      </div>
+      <EmptyState
+        title={emptyMessage ?? t("list.empty")}
+        className="md:px-12 mt-4"
+      />
     );
   }
 

@@ -6,6 +6,7 @@ import { useForm, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Navigate, useSearchParams } from "react-router";
 
+import { PageHeader } from "@/components/tw/generic/PageHeader";
 import MediaView from "@/components/tw/media/view";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
@@ -57,7 +58,7 @@ function MediaSearchPage() {
   const defaultMediaType = (searchParams.get("mediaType") as MediaTypeEnum) || (lastSearchType as MediaTypeEnum) || MediaTypeEnum.MOVIES;
   const resolvedMediaType = trackFlags[defaultMediaType]
     ? defaultMediaType
-    : (trackedOptions[0].value as MediaTypeEnum);
+    : ((trackedOptions[0]?.value as MediaTypeEnum) ?? MediaTypeEnum.MOVIES);
 
   const form = useForm<FormSearchProps>({
     defaultValues: {
@@ -129,7 +130,9 @@ function MediaSearchPage() {
   }
 
   return (
-    <div className="p-4 top-18">
+    <div className="p-4">
+      <PageHeader title={t("navigation.search", { ns: "common" })} />
+
       <div className="backdrop-blur-sm border-b mb-4">
         <Form {...form}>
           <form className='w-full flex flex-col gap-2 pb-3 sm:flex-row sm:items-end sm:gap-1' onSubmit={handleSubmit(onSubmit)}>
@@ -142,9 +145,15 @@ function MediaSearchPage() {
                 label={t("searchForm.typeLabel")}
                 width={140}
               />
-              <Button type="button" variant="outline" onClick={() => handleViewModeChange(isGrid ? "list" : "grid")} className="shrink-0 self-end">
-                <Grid className={`h-[1.2rem] w-[1.2rem] scale-0 -rotate-90  transition-all ${isGrid && "scale-100 rotate-0"} `} />
-                <List className={`absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-0 transition-all ${!isGrid && "scale-100 -rotate-90"}`} />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => handleViewModeChange(isGrid ? "list" : "grid")}
+                className="shrink-0 self-end"
+                aria-label={isGrid ? t("searchForm.viewList") : t("searchForm.viewGrid")}
+              >
+                <Grid aria-hidden="true" className={`h-[1.2rem] w-[1.2rem] scale-0 -rotate-90  transition-all ${isGrid && "scale-100 rotate-0"} `} />
+                <List aria-hidden="true" className={`absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-0 transition-all ${!isGrid && "scale-100 -rotate-90"}`} />
               </Button>
             </div>
 

@@ -157,8 +157,8 @@ function MediaDetailsPage() {
                     onOpenChange={setOptionsOpen}
                   >
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon">
-                        <MoreVertical size={20} />
+                      <Button variant="ghost" size="icon" aria-label={t("actions.more")}>
+                        <MoreVertical aria-hidden="true" size={20} />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">

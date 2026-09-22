@@ -44,12 +44,12 @@ function SimilarTab({ similarList }: { similarList: MangaRecommendation[] }) {
         <Link
           to={`/media/manga/details/${manga.id}`}
           key={manga.id}
-          className="group flex flex-col gap-2"
+          className="group flex flex-col gap-2 overflow-hidden rounded"
         >
           <ImageWithSkeleton
             src={manga.coverImage?.large ?? ""}
             alt={manga.title?.english || manga.title?.romaji || ""}
-            className="aspect-2/3 w-full rounded"
+            className="aspect-2/3 w-full rounded transition-transform duration-300 ease-out group-hover:scale-[1.03]"
           />
           <span className="line-clamp-2 text-sm font-medium text-foreground/90 transition-colors group-hover:text-primary">
             {manga.title?.english || manga.title?.romaji}

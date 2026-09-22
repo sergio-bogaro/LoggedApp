@@ -25,13 +25,13 @@ export const GridItem = ({ item, existingItem, showMediaType = false }: GridItem
       <Link
         key={item.id}
         to={`/media/${item.type}/details/${item.id}`}
-        className="block rounded overflow-hidden shadow-md hover:shadow-xl transition-all hover:opacity-70"
+        className="relative block rounded overflow-hidden shadow-md transition-shadow hover:shadow-lg"
       >
 
         <ImageWithSkeleton
-          src={existingItem?.imagePath ? mediaImageUrl(existingItem.imagePath)! : item.coverUrl}
+          src={existingItem?.imagePath ? (mediaImageUrl(existingItem.imagePath) ?? "") : item.coverUrl}
           alt={item.title}
-          className="h-full w-auto aspect-2/3 object-cover"
+          className="h-full w-auto aspect-2/3 object-cover transition-transform duration-300 ease-out group-hover:scale-[1.03]"
         />
 
         <div className="absolute top-2 left-2">
@@ -43,7 +43,7 @@ export const GridItem = ({ item, existingItem, showMediaType = false }: GridItem
             <div className="flex flex-col-reverse min-w-0">
               <p className="text-white/60 text-xs">{item.year ?? "-"}</p>
 
-              <h3 className="text-white font-semibold text-sm">
+              <h3 className="text-white font-semibold text-sm line-clamp-2">
                 {item.title}
               </h3>
             </div>
