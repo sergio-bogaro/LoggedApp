@@ -22,6 +22,24 @@ export function getPageTranslation(t: TFunction, page?: MediaTypeEnum): MediaTyp
   }
 }
 
+export const MEDIA_TYPE_PATH: Record<MediaTypeEnum, string> = {
+  [MediaTypeEnum.MOVIES]: "movies",
+  [MediaTypeEnum.ANIME]: "anime",
+  [MediaTypeEnum.MANGA]: "manga",
+  [MediaTypeEnum.BOOK]: "books",
+  [MediaTypeEnum.GAME]: "games",
+};
+
+export function mediaTypeToPath(type: MediaTypeEnum): string {
+  return MEDIA_TYPE_PATH[type] ?? type;
+}
+
+export function pathToMediaType(path?: string): MediaTypeEnum | undefined {
+  if (!path) return undefined;
+  const entry = Object.entries(MEDIA_TYPE_PATH).find(([, segment]) => segment === path);
+  return entry ? (entry[0] as MediaTypeEnum) : undefined;
+}
+
 export function getMediaTypesOptions(t: TFunction) {
   return [
     { value: MediaTypeEnum.MOVIES, label: t("typePlural.movies", { ns: "media" }) },

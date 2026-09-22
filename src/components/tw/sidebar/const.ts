@@ -1,32 +1,33 @@
 import { Film, Tv, BookOpen, BookText, Gamepad2, Home, Settings, Search, Star, Bookmark } from "lucide-react";
 
 import { MediaTypeEnum } from "@/types/media";
+import { mediaTypeToPath } from "@/utils/mediaText";
 
 export const mediaTypes = [
   {
     icon: Film,
     type: MediaTypeEnum.MOVIES,
-    path: "/media/list/movies",
+    path: `/media/list/${mediaTypeToPath(MediaTypeEnum.MOVIES)}`,
   },
   {
     icon: Tv,
     type: MediaTypeEnum.ANIME,
-    path: "/media/list/anime",
+    path: `/media/list/${mediaTypeToPath(MediaTypeEnum.ANIME)}`,
   },
   {
     icon: BookOpen,
     type: MediaTypeEnum.MANGA,
-    path: "/media/list/manga",
+    path: `/media/list/${mediaTypeToPath(MediaTypeEnum.MANGA)}`,
   },
   {
     icon: BookText,
     type: MediaTypeEnum.BOOK,
-    path: "/media/list/book",
+    path: `/media/list/${mediaTypeToPath(MediaTypeEnum.BOOK)}`,
   },
   {
     icon: Gamepad2,
     type: MediaTypeEnum.GAME,
-    path: "/media/list/game",
+    path: `/media/list/${mediaTypeToPath(MediaTypeEnum.GAME)}`,
   },
 ];
 

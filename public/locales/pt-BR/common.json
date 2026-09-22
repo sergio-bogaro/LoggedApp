@@ -44,10 +44,12 @@
     "sidebarDescription": "Exibe a barra lateral no mobile.",
     "loading": "Carregando...",
     "breadcrumb": "Trilha de navegação",
-    "rating": "Avaliação"
+    "rating": "Avaliação",
+    "selectDate": "Selecionar data"
   },
   "form": {
-    "selectPlaceholder": "Selecione..."
+    "selectPlaceholder": "Selecione...",
+    "datePlaceholder": "dd/mm/aaaa"
   },
   "errorLoading": "Erro ao carregar dados:"
 }

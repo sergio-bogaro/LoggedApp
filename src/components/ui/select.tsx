@@ -59,6 +59,7 @@ function SelectTrigger({
         "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
         "data-placeholder:text-muted-foreground",
         "data-[size=default]:h-9 data-[size=sm]:h-8",
+        "pointer-coarse:h-11",
         "[&_svg]:pointer-events-none [&_svg]:shrink-0",
         "[&_svg:not([class*='size-'])]:size-4",
         "[&_svg:not([class*='text-'])]:text-muted-foreground",

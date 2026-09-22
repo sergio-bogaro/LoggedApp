@@ -13,8 +13,9 @@ import { useAppSelector } from "@/store/auth/hooks";
 import { useAppDispatch } from "@/store/settings/hooks";
 import { setBreadcrumbs } from "@/store/settings/slice";
 import { MediaResponse } from "@/types/logged";
-import { MediaItem, MediaTypeEnum } from "@/types/media";
+import { MediaItem } from "@/types/media";
 import { DEFAULT_STALE_TIME } from "@/utils/conts";
+import { pathToMediaType } from "@/utils/mediaText";
 
 const PAGE_SIZE = 20;
 
@@ -25,7 +26,7 @@ const MediaLogsPage = () => {
   const { type } = useParams<{ type?: string }>();
   const dispatch = useAppDispatch();
 
-  const mediaType = type as MediaTypeEnum | undefined;
+  const mediaType = pathToMediaType(type);
   const title = mediaType ? t("logs.titleFiltered", { type: t(`typePlural.${mediaType}`) }) : t("logs.title");
   const queryKey: (string | number | undefined)[] = ["media", "logs", mediaType];
 

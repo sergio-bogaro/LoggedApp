@@ -13,6 +13,7 @@ import { MediaHistoryDialog } from "@/components/tw/dialogs/mediaHistoryDialog";
 import { TrackMediaDialog } from "@/components/tw/dialogs/trackMediaDialog";
 import { DataExhibition } from "@/components/tw/generic/dataExhibition";
 import { ImageWithSkeleton } from "@/components/tw/generic/imageSkeleton";
+import { MediaDetailsSkeleton } from "@/components/tw/generic/mediaDetailsSkeleton";
 import { LogCard } from "@/components/tw/media/logCard";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,6 +34,7 @@ import { setBreadcrumbs } from "@/store/settings/slice";
 import { MediaTypeEnum } from "@/types/media";
 import { DEFAULT_STALE_TIME } from "@/utils/conts";
 import { getMediaData, getPosterUrl } from "@/utils/mediaDataResponse";
+import { mediaTypeToPath } from "@/utils/mediaText";
 
 type MediaDetailsParams = {
   mediaType: MediaTypeEnum;
@@ -50,7 +52,7 @@ function MediaDetailsPage() {
     dispatch(
       setBreadcrumbs([
         { label: t("label"), to: "/media/home" },
-        { label: t(`typePlural.${mediaType}`), to: `/media/list/${mediaType}` },
+        { label: t(`typePlural.${mediaType}`), to: `/media/list/${mediaTypeToPath(mediaType)}` },
         { label: t("details.label") },
       ])
     );
@@ -60,7 +62,7 @@ function MediaDetailsPage() {
   const [historyOpen, setHistoryOpen] = useState(false);
   const [logDetailsOpen, setLogDetailsOpen] = useState(false);
 
-  const { data, isLoading, isError, error } = useQuery({
+  const { data, isLoading, isFetching, isError, error } = useQuery({
     queryKey: ["details", mediaType, id],
     queryFn: async () => {
       if (!mediaType || !id) return null;
@@ -108,9 +110,11 @@ function MediaDetailsPage() {
   return (
     <div>
       <DataExhibition
-        isFetching={isLoading}
+        isLoading={isLoading}
+        isFetching={isFetching}
         isError={isError}
         errorMessage={`${t("detailsPage.errorPrefix")} ${error?.message ?? ""}`}
+        skeleton={<MediaDetailsSkeleton />}
       >
         {data && formatedData && (
           <div className="max-w-[1400px] mx-auto p-4 sm:p-8">

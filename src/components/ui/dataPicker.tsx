@@ -3,6 +3,7 @@ import i18n from "i18next"
 import { CalendarIcon } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Control, ControllerRenderProps } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
@@ -110,6 +111,7 @@ function parseTypedInput(value: string, locale: string): Date | undefined {
 }
 
 function DatePickerField({ field, id, disabled, placeholder }: DatePickerFieldProps) {
+  const { t } = useTranslation("common")
   const locale = useCurrentLocale()
   const selectedDate = parseIsoDateString(field.value)
 
@@ -151,12 +153,12 @@ function DatePickerField({ field, id, disabled, placeholder }: DatePickerFieldPr
             type="button"
             variant="ghost"
             size="icon"
-            aria-label="Select date"
+            aria-label={t("a11y.selectDate")}
             disabled={disabled}
-            className="absolute right-1 top-1/2 size-7 -translate-y-1/2"
+            className="absolute right-1 top-1/2 size-7 -translate-y-1/2 pointer-coarse:size-10"
           >
-            <CalendarIcon className="size-4" />
-            <span className="sr-only">Select date</span>
+            <CalendarIcon className="size-4" aria-hidden="true" />
+            <span className="sr-only">{t("a11y.selectDate")}</span>
           </Button>
         </PopoverTrigger>
         <PopoverContent
@@ -183,16 +185,15 @@ function DatePickerField({ field, id, disabled, placeholder }: DatePickerFieldPr
 }
 
 export function DatePicker({ label, name, id, required, control, disabled, placeholder }: DatePickerProps) {
-  const locale = useCurrentLocale()
-
-  const resolvedPlaceholder = placeholder ?? (toBcp47Locale(locale) === "pt-BR" ? "dd/mm/aaaa" : "mm/dd/yyyy")
+  const { t } = useTranslation("common")
+  const resolvedPlaceholder = placeholder ?? t("form.datePlaceholder")
 
   return (
     <div className="flex w-full flex-col gap-1">
       <Label className="font-bold" htmlFor={id ?? name}>
         {label}
         {required && (
-          <span className="text-destructive font-extrabold -ml-1.5">*</span>
+          <span aria-hidden="true" className="text-destructive font-extrabold -ml-1.5">*</span>
         )}
       </Label>
 

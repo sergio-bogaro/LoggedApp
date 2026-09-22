@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/carousel";
 import { MediaResponse } from "@/types/logged"
 import { MediaItem, MediaTypeEnum } from "@/types/media";
+import { mediaTypeToPath } from "@/utils/mediaText";
 
 
 interface LibraryDataProps {
@@ -45,7 +46,7 @@ export const LibraryDataMediaType = ({ data, recentlyLoggedData, mediaType }: Li
       titleKey: "sections.recentlyAdded",
       description: "sections.recentlyAddedDesc",
       items: recentlyLogged,
-      viewAllLink: mediaType ? `/media/logs/${mediaType}` : "/media/logs",
+      viewAllLink: mediaType ? `/media/logs/${mediaTypeToPath(mediaType)}` : "/media/logs",
     },
     {
       key: "favorites",

@@ -14,8 +14,8 @@ import { useAppSelector } from "@/store/auth/hooks";
 import { useAppDispatch } from "@/store/settings/hooks";
 import { setBreadcrumbs } from "@/store/settings/slice";
 import { MediaResponse } from "@/types/logged";
-import { MediaTypeEnum } from "@/types/media";
 import { DEFAULT_STALE_TIME } from "@/utils/conts";
+import { pathToMediaType } from "@/utils/mediaText";
 
 const MediaListPage = () => {
   const { t } = useTranslation("media");
@@ -23,7 +23,7 @@ const MediaListPage = () => {
   const { user } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
 
-  const mediaType = type as MediaTypeEnum;
+  const mediaType = pathToMediaType(type);
   const title = mediaType ? t(`typePlural.${mediaType}`) : "";
 
   useEffect(() => {

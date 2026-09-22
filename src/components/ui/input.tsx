@@ -30,6 +30,7 @@ const BaseInput = React.forwardRef<HTMLInputElement, BaseInputProps>(function Ba
       data-slot="input"
       className={cn(
         "flex h-9 w-full min-w-0 rounded-md border bg-transparent border-default px-3 py-1 text-base",
+        "pointer-coarse:h-11",
         "shadow-xs outline-none transition-[color,box-shadow]",
         "file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground",
         "placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground",

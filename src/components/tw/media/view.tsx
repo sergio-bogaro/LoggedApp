@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { GridItem } from "./grid";
@@ -22,13 +22,18 @@ const MediaView = ({ isLoading, error, mediaData, existingMedia }: MediaViewProp
   const { t } = useTranslation(["common", "media"]);
   const { viewMode } = useAppSelector(state => state.ui)
   const [switching, setSwitching] = useState(false)
+  const hasMounted = useRef(false)
 
   useEffect(() => {
-    const timeoutStart = setTimeout(() => setSwitching(true), 0)
+    if (!hasMounted.current) {
+      hasMounted.current = true
+      return
+    }
+
+    setSwitching(true)
     const timeoutEnd = setTimeout(() => setSwitching(false), 320)
 
     return () => {
-      clearTimeout(timeoutStart)
       clearTimeout(timeoutEnd)
     }
   }, [viewMode])

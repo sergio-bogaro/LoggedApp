@@ -44,10 +44,12 @@
     "sidebarDescription": "Displays the mobile sidebar.",
     "loading": "Loading...",
     "breadcrumb": "Breadcrumb",
-    "rating": "Rating"
+    "rating": "Rating",
+    "selectDate": "Select date"
   },
   "form": {
-    "selectPlaceholder": "Select..."
+    "selectPlaceholder": "Select...",
+    "datePlaceholder": "mm/dd/yyyy"
   },
   "errorLoading": "Error loading data:"
 }
