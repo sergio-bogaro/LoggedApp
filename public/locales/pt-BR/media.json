@@ -1,5 +1,8 @@
 {
   "label": "Mídias",
+  "rating": {
+    "value": "{{rating}} / 10"
+  },
   "history": {
     "viewedOn": "Visto em",
     "finishedOn": "Terminado em",
@@ -192,7 +195,10 @@
     "pageLabelMovies": "Buscar filmes (TMDB)",
     "pagePlaceholderMovies": "Digite o nome de um filme",
     "pageLabelDefault": "Buscar",
-    "pagePlaceholderDefault": "Digite para buscar..."
+    "pagePlaceholderDefault": "Digite para buscar...",
+    "submit": "Buscar",
+    "viewGrid": "Mudar para visualização em grade",
+    "viewList": "Mudar para visualização em lista"
   },
   "searchView": {
     "startTitle": "Comece sua busca",
@@ -202,6 +208,7 @@
     "noResultsDescription": "Tente palavras-chave diferentes ou remova filtros. Verifique a grafia e tente termos mais amplos."
   },
   "actions": {
+    "more": "Mais opções",
     "viewHistory": "Ver histórico",
     "addToBacklog": "Adicionar ao backlog",
     "removeFromBacklog": "Remover do backlog",

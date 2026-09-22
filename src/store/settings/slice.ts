@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-export type Theme = "light" | "dark" | "test" | "rose-pine" | "rose-pine-dawn" | "green-light" | "green-dark";
+export type Theme = "light" | "dark" | "rose-pine" | "rose-pine-dawn" | "green-light" | "green-dark";
 export type ViewMode = "list" | "grid";
 export type RatingMode = "numeric" | "stars5" | "stars10";
 export type Crumb = {
@@ -8,7 +8,7 @@ export type Crumb = {
   to?: string;
 };
 
-export const THEME_CLASSES = ["light", "dark", "test", "rose-pine", "rose-pine-dawn", "green-light", "green-dark"] as const;
+export const THEME_CLASSES = ["light", "dark", "rose-pine", "rose-pine-dawn", "green-light", "green-dark"] as const;
 
 interface UIState {
   theme: Theme;
@@ -18,7 +18,9 @@ interface UIState {
   breadcrumbs: Crumb[];
 }
 
-const savedTheme = (localStorage.getItem("theme") as Theme) || "light";
+const storedTheme = localStorage.getItem("theme") as Theme | null;
+const savedTheme: Theme =
+  storedTheme && (THEME_CLASSES as readonly string[]).includes(storedTheme) ? storedTheme : "light";
 const savedViewMode = (localStorage.getItem("viewMode") as ViewMode) || "list";
 const savedRatingMode = (localStorage.getItem("ratingMode") as RatingMode) || "stars5";
 const savedLastSearchType = localStorage.getItem("lastSearchType") || "movies";

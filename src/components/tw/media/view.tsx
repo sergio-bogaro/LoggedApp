@@ -47,15 +47,6 @@ const MediaView = ({ isLoading, error, mediaData, existingMedia }: MediaViewProp
     )
   }
 
-  if (mediaData === undefined) {
-    return (
-      <div className="p-4">
-        <p className="text-lg font-semibold">{t("searchView.startTitle", { ns: "media" })}</p>
-        <p className="mt-1 text-sm">{t("searchView.startDescription", { ns: "media" })}</p>
-      </div>
-    )
-  }
-
   if (error) {
     return (
       <div className="p-4">
@@ -65,9 +56,18 @@ const MediaView = ({ isLoading, error, mediaData, existingMedia }: MediaViewProp
     )
   }
 
-  if (mediaData.length === 0) {
+  if (mediaData === undefined) {
     return (
       <div className="p-4">
+        <p className="text-lg font-semibold">{t("searchView.startTitle", { ns: "media" })}</p>
+        <p className="mt-1 text-sm">{t("searchView.startDescription", { ns: "media" })}</p>
+      </div>
+    )
+  }
+
+  if (mediaData.length === 0) {
+    return (
+      <div className="p-4 flex flex-col items-center">
         <p className="mt-4 text-lg font-semibold">{t("searchView.noResultsTitle", { ns: "media" })}</p>
         <p className="mt-2 text-sm text-muted-foreground max-w-prose text-center">{t("searchView.noResultsDescription", { ns: "media" })}</p>
       </div>

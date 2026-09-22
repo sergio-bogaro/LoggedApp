@@ -62,12 +62,14 @@ function MediaTrackToggles({ values, onChange }: MediaTrackTogglesProps) {
               </div>
             </div>
 
-            <Switch
-              checked={values[type]}
-              onCheckedChange={(checked) => onChange(type, checked)}
-              disabled={!available}
-              aria-label={t(`typePlural.${type}`, { ns: "media" })}
-            />
+            <span onClick={(e) => e.stopPropagation()}>
+              <Switch
+                checked={values[type]}
+                onCheckedChange={(checked) => onChange(type, checked)}
+                disabled={!available}
+                aria-label={t(`typePlural.${type}`, { ns: "media" })}
+              />
+            </span>
           </div>
         );
       })}

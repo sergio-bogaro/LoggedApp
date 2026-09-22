@@ -1,7 +1,7 @@
-import { t } from "i18next";
 import { BookmarkPlus } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 import { ImageWithSkeleton } from "../generic/imageSkeleton";
 
@@ -48,6 +48,7 @@ interface FormType {
 }
 
 export function TrackMediaDialog({ mediaType, existingMedia, image, formatedData }: TrackMediaDialogProps) {
+  const { t } = useTranslation("media");
   const [open, setOpen] = useState(false);
 
   const trackMedia = useTrackMedia();
@@ -95,9 +96,10 @@ export function TrackMediaDialog({ mediaType, existingMedia, image, formatedData
       <DialogTrigger asChild>
         <Button
           size="icon"
-          title={t("track.label", { ns: "media" })}
+          title={t("track.label")}
+          aria-label={t("track.label")}
         >
-          <BookmarkPlus className="h-4 w-4" />
+          <BookmarkPlus className="h-4 w-4" aria-hidden="true" />
         </Button>
       </DialogTrigger>
 
@@ -118,6 +120,7 @@ export function TrackMediaDialog({ mediaType, existingMedia, image, formatedData
             alt={t("track.coverAlt", { ns: "media" })}
             className="w-full lg:w-1/3 max-w-[300px] aspect-2/3 flex flex-col items-center text-center"
             src={image}
+            priority
           />
 
           <Form {...form}>

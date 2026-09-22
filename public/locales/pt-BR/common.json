@@ -13,7 +13,7 @@
   },
   "languageOptions": {
     "en": "English",
-    "ptBr": "Português (BR)"
+    "pt-BR": "Português (BR)"
   },
   "actions": {
     "logout": "Sair"
@@ -42,7 +42,9 @@
     "toggleSidebar": "Alternar barra lateral",
     "sidebarTitle": "Barra lateral",
     "sidebarDescription": "Exibe a barra lateral no mobile.",
-    "loading": "Carregando..."
+    "loading": "Carregando...",
+    "breadcrumb": "Trilha de navegação",
+    "rating": "Avaliação"
   },
   "form": {
     "selectPlaceholder": "Selecione..."

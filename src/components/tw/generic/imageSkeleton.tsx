@@ -11,9 +11,10 @@ type ImageWithSkeletonProps = {
   width?: number;
   height?: number;
   imgClassName?: string;
+  priority?: boolean;
 };
 
-export function ImageWithSkeleton({ src, alt, className, width, height, imgClassName, }: ImageWithSkeletonProps) {
+export function ImageWithSkeleton({ src, alt, className, width, height, imgClassName, priority = false, }: ImageWithSkeletonProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isGone, setIsGone] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -45,15 +46,16 @@ export function ImageWithSkeleton({ src, alt, className, width, height, imgClass
       {!isGone && !showPlaceholder && (
         <Skeleton
           className={cn(
-            "absolute inset-0 h-full w-full animate-pulse pointer-events-none transition-opacity duration-500",
+            "absolute inset-0 h-full w-full animate-pulse motion-reduce:animate-none pointer-events-none transition-opacity duration-500",
             isLoaded && "opacity-0",
           )}
         />
       )}
 
       {showPlaceholder ? (
-        <div className="absolute inset-0 flex items-center justify-center" aria-hidden="true">
-          <ImageOff className="w-8 h-8 text-muted-foreground/50" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <ImageOff aria-hidden="true" className="w-8 h-8 text-muted-foreground/50" />
+          {alt && <span className="sr-only">{alt}</span>}
         </div>
       ) : (
         <img
@@ -62,7 +64,7 @@ export function ImageWithSkeleton({ src, alt, className, width, height, imgClass
           alt={alt}
           onLoad={() => setIsLoaded(true)}
           onError={() => setIsError(true)}
-          loading="lazy"
+          loading={priority ? "eager" : "lazy"}
           decoding="async"
           className={cn(
             "relative block h-full w-full object-cover transition-[opacity,transform] duration-500 ease-out",

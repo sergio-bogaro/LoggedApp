@@ -13,7 +13,7 @@
   },
   "languageOptions": {
     "en": "English",
-    "ptBr": "Português (BR)"
+    "pt-BR": "Português (BR)"
   },
   "actions": {
     "logout": "Logout"
@@ -42,7 +42,9 @@
     "toggleSidebar": "Toggle sidebar",
     "sidebarTitle": "Sidebar",
     "sidebarDescription": "Displays the mobile sidebar.",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "breadcrumb": "Breadcrumb",
+    "rating": "Rating"
   },
   "form": {
     "selectPlaceholder": "Select..."

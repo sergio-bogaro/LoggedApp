@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMemo } from "react";
+import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
+import { z } from "zod";
 
 import { Card } from "@/components/tw/generic/card";
 import { Button } from "@/components/ui/button";
+import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { authApi } from "@/querries/auth/auth";
 import { useAppDispatch } from "@/store/auth/hooks";
@@ -16,23 +20,35 @@ export default function Login() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const schema = useMemo(
+    () =>
+      z.object({
+        username: z.string().min(1, t("login.validation.usernameRequired")),
+        password: z.string().min(1, t("login.validation.passwordRequired")),
+      }),
+    [t]
+  );
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
+  type LoginForm = z.infer<typeof schema>;
 
+  const form = useForm<LoginForm>({
+    resolver: zodResolver(schema),
+    defaultValues: { username: "", password: "" },
+  });
+
+  const isLoading = form.formState.isSubmitting;
+  const rootError = form.formState.errors.root?.message;
+
+  const handleLogin = async (data: LoginForm) => {
     try {
-      const response = await authApi.login({ username, password });
+      const response = await authApi.login(data);
       dispatch(setUser(response.user));
       toast.success(t("login.feedback.success"));
       navigate("/media/home");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : t("login.feedback.error"));
-    } finally {
-      setIsLoading(false);
+      const message = error instanceof Error ? error.message : t("login.feedback.error");
+      form.setError("root", { message });
+      toast.error(message);
     }
   };
 
@@ -41,36 +57,43 @@ export default function Login() {
       <Card className="w-full max-w-md p-8">
         <h1 className="mb-6 text-center text-3xl font-bold">{t("login.title")}</h1>
 
-        <form onSubmit={handleLogin} className="space-y-4">
-          <Input
-            label={t("login.username")}
-            name="username"
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-            disabled={isLoading}
-          />
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleLogin)} className="space-y-4" noValidate>
+            <Input
+              control={form.control}
+              label={t("login.username")}
+              name="username"
+              type="text"
+              autoComplete="username"
+              autoFocus
+              required
+              disabled={isLoading}
+            />
 
-          <Input
-            label={t("login.password")}
-            name="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            disabled={isLoading}
-          />
+            <Input
+              control={form.control}
+              label={t("login.password")}
+              name="password"
+              type="password"
+              autoComplete="current-password"
+              required
+              disabled={isLoading}
+            />
 
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? t("login.submitting") : t("login.submit")}
-          </Button>
-        </form>
+            {rootError && (
+              <p role="alert" className="text-sm text-destructive">{rootError}</p>
+            )}
+
+            <Button type="submit" className="w-full" disabled={isLoading} aria-busy={isLoading}>
+              {isLoading ? t("login.submitting") : t("login.submit")}
+            </Button>
+          </form>
+        </Form>
 
         <div className="mt-4 text-center">
           <p className="text-sm text-muted-foreground">
             {t("login.noAccount")}{" "}
-            <Button asChild variant="link">
+            <Button asChild variant="link" className="h-auto p-1">
               <Link to="/register">{t("login.registerLink")}</Link>
             </Button>
           </p>

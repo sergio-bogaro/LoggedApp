@@ -2,7 +2,7 @@
 import * as React from "react"
 import { Control } from "react-hook-form"
 
-import { FormControl, FormField, FormItem } from "./form"
+import { FormControl, FormField, FormItem, FormMessage } from "./form"
 import { Label } from "./label"
 
 import { cn } from "@/lib/utils"
@@ -50,10 +50,12 @@ function Input({ label, name, id, required, control, ...props }: InputProps) {
   if (control) {
     return (
       <div className="flex flex-col w-full gap-1">
-        <Label className="font-bold" htmlFor={id ?? name}>
-          {label}
-          {required && <span className="text-destructive font-extrabold -ml-1.5">*</span>}
-        </Label>
+        {label && (
+          <Label className="font-bold" htmlFor={id ?? name}>
+            {label}
+            {required && <span aria-hidden="true" className="text-destructive font-extrabold -ml-1.5">*</span>}
+          </Label>
+        )}
 
         <FormField
           control={control}
@@ -68,8 +70,10 @@ function Input({ label, name, id, required, control, ...props }: InputProps) {
                     {...fieldRest}
                     id={id ?? name}
                     value={value ?? ""}
+                    aria-required={required || undefined}
                   />
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )
           }}
@@ -80,10 +84,12 @@ function Input({ label, name, id, required, control, ...props }: InputProps) {
 
   return (
     <div className="flex flex-col w-full gap-1">
-      <Label className="font-bold" htmlFor={id ?? name}>
-        {label}
-        {required && <span className="text-destructive font-extrabold -ml-1.5">*</span>}
-      </Label>
+      {label && (
+        <Label className="font-bold" htmlFor={id ?? name}>
+          {label}
+          {required && <span aria-hidden="true" className="text-destructive font-extrabold -ml-1.5">*</span>}
+        </Label>
+      )}
       <BaseInput id={id ?? name} name={name} required={required} {...props} />
     </div>
   )

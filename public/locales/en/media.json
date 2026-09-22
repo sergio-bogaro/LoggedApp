@@ -1,5 +1,8 @@
 {
   "label": "Media",
+  "rating": {
+    "value": "{{rating}} / 10"
+  },
   "history": {
     "viewedOn": "Viewed on",
     "finishedOn": "Finished on",
@@ -192,7 +195,10 @@
     "pageLabelMovies": "Search Movies (TMDB)",
     "pagePlaceholderMovies": "Type a movie name",
     "pageLabelDefault": "Search",
-    "pagePlaceholderDefault": "Type to search..."
+    "pagePlaceholderDefault": "Type to search...",
+    "submit": "Search",
+    "viewGrid": "Switch to grid view",
+    "viewList": "Switch to list view"
   },
   "searchView": {
     "startTitle": "Start your search",
@@ -202,6 +208,7 @@
     "noResultsDescription": "Try different keywords or remove filters. Check spelling and try broader terms."
   },
   "actions": {
+    "more": "More options",
     "viewHistory": "View history",
     "addToBacklog": "Add to backlog",
     "removeFromBacklog": "Remove from backlog",

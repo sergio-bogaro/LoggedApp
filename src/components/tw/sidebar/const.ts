@@ -1,4 +1,4 @@
-import { Film, Tv, BookOpen, Gamepad2, Home, Settings, Search, Star, Bookmark } from "lucide-react";
+import { Film, Tv, BookOpen, BookText, Gamepad2, Home, Settings, Search, Star, Bookmark } from "lucide-react";
 
 import { MediaTypeEnum } from "@/types/media";
 
@@ -19,7 +19,7 @@ export const mediaTypes = [
     path: "/media/list/manga",
   },
   {
-    icon: BookOpen,
+    icon: BookText,
     type: MediaTypeEnum.BOOK,
     path: "/media/list/book",
   },

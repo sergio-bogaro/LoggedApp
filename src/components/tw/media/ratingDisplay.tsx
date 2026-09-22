@@ -1,4 +1,5 @@
 import { Star } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { cn } from "@/lib/utils";
 import { useAppSelector } from "@/store/settings/hooks";
@@ -9,12 +10,15 @@ interface RatingDisplayProps {
 }
 
 export const RatingDisplay = ({ rating, discrete }: RatingDisplayProps) => {
+  const { t } = useTranslation("media");
   const { ratingMode } = useAppSelector((state) => state.ui);
+
+  const ratingLabel = t("rating.value", { rating });
 
   if (ratingMode === "numeric") {
     return (
-      <span className={cn("font-medium", discrete ? "text-xs" : "text-sm")}>
-        {rating}/10
+      <span className={cn("font-medium", discrete ? "text-xs" : "text-sm")} aria-label={ratingLabel}>
+        {ratingLabel}
       </span>
     );
   }
@@ -24,16 +28,19 @@ export const RatingDisplay = ({ rating, discrete }: RatingDisplayProps) => {
 
   const sizeClass = discrete ? "h-3 w-3" : "h-4 w-4";
   const emptyStarColor = discrete ? "currentColor" : "var(--muted-foreground)";
-  const filledStarColor = discrete ? "currentColor" : "#facc15";
 
   return (
-    <div className={cn("flex items-center", discrete ? "gap-px" : "gap-0.5")}>
+    <div
+      role="img"
+      aria-label={ratingLabel}
+      className={cn("flex items-center", discrete ? "gap-px" : "gap-0.5")}
+    >
       {Array.from({ length: stars }, (_, i) => {
         const starIndex = i + 1;
         const fillType = displayValue >= starIndex ? "full" : displayValue >= starIndex - 0.5 ? "half" : "empty";
 
         return (
-          <div key={i} className={cn("relative", sizeClass)}>
+          <div key={i} className={cn("relative", sizeClass)} aria-hidden="true">
             <Star
               className={cn("absolute top-0 left-0", sizeClass, discrete && "opacity-25")}
               fill="transparent"
@@ -46,9 +53,8 @@ export const RatingDisplay = ({ rating, discrete }: RatingDisplayProps) => {
               }}
             >
               <Star
-                className={sizeClass}
+                className={cn(sizeClass, "text-amber-400")}
                 fill="currentColor"
-                style={{ color: filledStarColor }}
               />
             </div>
           </div>

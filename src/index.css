@@ -189,40 +189,6 @@
   --shadow-2xl: 0px 1px 3px 0px hsl(0 0% 0% / 0.43);
 }
 
-.test {
-  --background: oklch(0.98 0.02 180);
-  --foreground: oklch(0.2 0.02 180);
-  --card: oklch(0.95 0.02 180);
-  --card-foreground: oklch(0.2 0.02 180);
-  --popover: oklch(0.95 0.02 180);
-  --popover-foreground: oklch(0.2 0.02 180);
-  --primary: oklch(0.6 0.2 200);
-  --primary-foreground: oklch(0.98 0.02 180);
-  --secondary: oklch(0.9 0.1 190);
-  --secondary-foreground: oklch(0.2 0.02 180);
-  --muted: oklch(0.9 0.1 190);
-  --muted-foreground: oklch(0.5 0.05 180);
-  --accent: oklch(0.9 0.1 190);
-  --accent-foreground: oklch(0.2 0.02 180);
-  --destructive: oklch(0.7 0.2 22);
-  --border: oklch(0.8 0.05 180);
-  --input: oklch(0.8 0.05 180);
-  --ring: oklch(0.6 0.1 200);
-  --chart-1: oklch(0.65 0.2 200);
-  --chart-2: oklch(0.7 0.18 160);
-  --chart-3: oklch(0.75 0.19 70);
-  --chart-4: oklch(0.63 0.25 300);
-  --chart-5: oklch(0.65 0.25 15);
-  --sidebar: oklch(0.95 0.02 180);
-  --sidebar-foreground: oklch(0.2 0.02 180);
-  --sidebar-primary: oklch(0.6 0.2 200);
-  --sidebar-primary-foreground: oklch(0.98 0.02 180);
-  --sidebar-accent: oklch(0.9 0.1 190);
-  --sidebar-accent-foreground: oklch(0.2 0.02 180);
-  --sidebar-border: oklch(0.8 0.05 180);
-  --sidebar-ring: oklch(0.6 0.1 200);
-}
-
 /* Rosé Pine — dark, moody, subtle. https://rosepinetheme.com */
 .rose-pine {
   --radius: 0.5rem;
@@ -509,10 +475,6 @@
 @layer base {
   * {
     @apply border-border;
-  }
-
-  button {
-    @apply outline-0;
   }
 
   body {

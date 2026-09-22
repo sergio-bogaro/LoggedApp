@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+
 import { GridItemSkeleton } from "@/components/tw/media/gridSkeleton";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -5,16 +7,18 @@ const CARD_COUNT = 6;
 const SECTION_COUNT = 2;
 
 export const MediaCardSkeleton = () => {
+  const { t } = useTranslation("common");
+
   return (
-    <div className="w-full mt-4">
+    <div className="w-full mt-4" role="status" aria-busy="true" aria-label={t("a11y.loading")}>
       {/* Tabs skeleton */}
-      <div className="flex gap-2 mb-4">
+      <div className="flex gap-2 mb-4" aria-hidden="true">
         <Skeleton className="h-9 w-24 rounded-md" />
         <Skeleton className="h-9 w-24 rounded-md" />
       </div>
 
       {/* Sections skeleton */}
-      <div className="md:px-12 space-y-8">
+      <div className="md:px-12 space-y-8" aria-hidden="true">
         {Array.from({ length: SECTION_COUNT }).map((_, sectionIdx) => (
           <div key={sectionIdx}>
             {/* Section title + view all/buttons cluster */}

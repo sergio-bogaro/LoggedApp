@@ -32,6 +32,9 @@ export function AppSidebar() {
     (item) => hasTrackedMedia || item.path !== "/search"
   );
 
+  const isPathActive = (path: string) =>
+    location.pathname === path || location.pathname.startsWith(`${path}/`);
+
   return (
     <Sidebar>
       <SidebarHeader>
@@ -48,19 +51,21 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {visibleMainNavigation.map((item) => (
-                <SidebarMenuItem key={item.path}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={location.pathname === item.path}
-                  >
-                    <Link to={item.path}>
-                      <item.icon />
-                      <span>{t(item.titleKey, { ns: "common" })}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {visibleMainNavigation.map((item) => {
+                const label = t(item.titleKey, { ns: "common" });
+                const active = isPathActive(item.path);
+
+                return (
+                  <SidebarMenuItem key={item.path}>
+                    <SidebarMenuButton asChild isActive={active} tooltip={label}>
+                      <Link to={item.path} aria-current={active ? "page" : undefined}>
+                        <item.icon aria-hidden="true" />
+                        <span>{label}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -72,19 +77,23 @@ export function AppSidebar() {
             <SidebarGroupLabel> {t("label", { ns: "media" })} </SidebarGroupLabel>
             <SidebarGroupContent >
               <SidebarMenu >
-                {visibleMediaTypes.map((item) => (
-                  <SidebarMenuItem key={item.path}>
-                    <SidebarMenuButton
-                      asChild
-                      isActive={location.pathname === item.path}
-                    >
-                      <Link to={item.path}>
-                        <item.icon />
-                        <span>{t(`type.${item.type}`, { ns: "media" })}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
+                {visibleMediaTypes.map((item) => {
+                  const label = t(`type.${item.type}`, { ns: "media" });
+                  const active =
+                    isPathActive(item.path) ||
+                    location.pathname.startsWith(`/media/${item.type}/details`);
+
+                  return (
+                    <SidebarMenuItem key={item.path}>
+                      <SidebarMenuButton asChild isActive={active} tooltip={label}>
+                        <Link to={item.path} aria-current={active ? "page" : undefined}>
+                          <item.icon aria-hidden="true" />
+                          <span>{label}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
@@ -93,19 +102,21 @@ export function AppSidebar() {
 
       <SidebarFooter>
         <SidebarMenu>
-          {bottomNavigation.map((item) => (
-            <SidebarMenuItem key={item.path}>
-              <SidebarMenuButton
-                asChild
-                isActive={location.pathname === item.path}
-              >
-                <Link to={item.path}>
-                  <item.icon />
-                  <span>{t(item.titleKey, { ns: "common" })}</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
+          {bottomNavigation.map((item) => {
+            const label = t(item.titleKey, { ns: "common" });
+            const active = isPathActive(item.path);
+
+            return (
+              <SidebarMenuItem key={item.path}>
+                <SidebarMenuButton asChild isActive={active} tooltip={label}>
+                  <Link to={item.path} aria-current={active ? "page" : undefined}>
+                    <item.icon aria-hidden="true" />
+                    <span>{label}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            );
+          })}
         </SidebarMenu>
       </SidebarFooter>
     </Sidebar>

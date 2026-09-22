@@ -5,7 +5,7 @@ import * as React from "react"
 import { Control } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 
-import { FormControl, FormField, FormItem } from "./form"
+import { FormControl, FormField, FormItem, FormMessage } from "./form"
 import { Label } from "./label"
 
 import { cn } from "@/lib/utils"
@@ -212,7 +212,7 @@ export function Select({
       <div className="flex flex-col gap-1" style={width ? { width: `${width}px` } : { width: "100%" }}>
         <Label className="font-bold" htmlFor={id ?? name}>
           {label}
-          {required && <span className="text-destructive font-extrabold -ml-1.5">*</span>}
+          {required && <span aria-hidden="true" className="text-destructive font-extrabold -ml-1.5">*</span>}
         </Label>
 
         <FormField
@@ -220,27 +220,29 @@ export function Select({
           name={name}
           render={({ field }) => (
             <FormItem >
-              <FormControl>
-                <SelectBase
-                  {...props}
-                  onValueChange={field.onChange}
-                  value={field.value ?? ""}
-                >
+              <SelectBase
+                {...props}
+                onValueChange={field.onChange}
+                value={field.value ?? ""}
+              >
+                <FormControl>
                   <SelectTrigger className={cn("w-full")} id={id ?? name}>
                     <SelectValue placeholder={resolvedPlaceholder} />
                   </SelectTrigger>
+                </FormControl>
 
-                  <SelectContent>
-                    <SelectGroup>
-                      {options.map(({ value, label }) => (
-                        <SelectItem key={value} value={value}>
-                          {label}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </SelectBase>
-              </FormControl>
+                <SelectContent>
+                  <SelectGroup>
+                    {options.map(({ value, label }) => (
+                      <SelectItem key={value} value={value}>
+                        {label}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </SelectBase>
+
+              <FormMessage />
             </FormItem>
           )}
         />

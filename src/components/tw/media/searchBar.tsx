@@ -70,13 +70,19 @@ export const SearchContainer = ({ onSearch, page, defaultSearchValue, defaultMed
               label={label}
               placeholder={placeholder}
             />
-            <Button>
-              <Search />
+            <Button aria-label={t("searchForm.submit")}>
+              <Search aria-hidden="true" />
             </Button>
 
-            <Button type="button" variant="outline" onClick={() => handleViewModeChange(isGrid ? "list" : "grid")}>
-              <Grid className={`h-[1.2rem] w-[1.2rem] scale-0 -rotate-90  transition-all ${isGrid && "scale-100 rotate-0"} `} />
-              <List className={`absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-0 transition-all ${!isGrid && "scale-100 -rotate-90"}`} />
+            <Button
+              type="button"
+              variant="outline"
+              aria-label={t(isGrid ? "searchForm.viewList" : "searchForm.viewGrid")}
+              aria-pressed={isGrid}
+              onClick={() => handleViewModeChange(isGrid ? "list" : "grid")}
+            >
+              <Grid aria-hidden="true" className={`h-[1.2rem] w-[1.2rem] scale-0 -rotate-90  transition-all ${isGrid && "scale-100 rotate-0"} `} />
+              <List aria-hidden="true" className={`absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-0 transition-all ${!isGrid && "scale-100 -rotate-90"}`} />
             </Button>
           </form>
         </Form>

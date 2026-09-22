@@ -7,7 +7,7 @@ const LanguageSwitcher = () => {
 
   const languageOptions = [
     { value: "en", label: t("languageOptions.en") },
-    { value: "ptBr", label: t("languageOptions.ptBr") },
+    { value: "pt-BR", label: t("languageOptions.pt-BR") },
   ];
 
   const changeLanguage = (lng: string) => {
@@ -19,7 +19,7 @@ const LanguageSwitcher = () => {
     <Select
       label={t("language")}
       name="language"
-      value={i18n.language}
+      value={i18n.resolvedLanguage ?? i18n.language}
       options={languageOptions}
       onValueChange={(e) => changeLanguage(e)}
     />

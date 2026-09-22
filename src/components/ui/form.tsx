@@ -39,7 +39,7 @@ const useFormField = () => {
   const formState = useFormState({ name: fieldContext.name })
   const fieldState = getFieldState(fieldContext.name, formState)
 
-  if (!fieldContext) {
+  if (!fieldContext?.name) {
     throw new Error("useFormField should be used within <FormField>")
   }
 
@@ -93,17 +93,13 @@ function FormLabel({
 }
 
 function FormControl({ ...props }: React.ComponentProps<typeof Slot>) {
-  const { error, formItemId, formDescriptionId, formMessageId } = useFormField()
+  const { error, formItemId, formMessageId } = useFormField()
 
   return (
     <Slot
       data-slot="form-control"
       id={formItemId}
-      aria-describedby={
-        !error
-          ? `${formDescriptionId}`
-          : `${formDescriptionId} ${formMessageId}`
-      }
+      aria-describedby={error ? formMessageId : undefined}
       aria-invalid={!!error}
       {...props}
     />
@@ -135,6 +131,8 @@ function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
     <p
       data-slot="form-message"
       id={formMessageId}
+      role="alert"
+      aria-live="polite"
       className={cn("text-destructive text-sm", className)}
       {...props}
     >

@@ -87,12 +87,15 @@ export const MediaOptionsButton = ({ mediaItem, existingItem }: MediaOptionsButt
             onClick={handleTreeDotsClick}
             variant="ghost"
             size="xs"
+            aria-label={t("actions.more")}
             className={cn(
               "bg-popover/70 p-2 transition-all relative",
-              isOpen ? "opacity-100 bg-popover" : "opacity-0 group-hover:opacity-100"
+              isOpen
+                ? "opacity-100 bg-popover"
+                : "opacity-0 group-hover:opacity-100 focus-visible:opacity-100 data-[state=open]:opacity-100"
             )}
           >
-            <MoreVertical size={20} />
+            <MoreVertical className="size-5" aria-hidden="true" />
           </Button>
         </DropdownMenuTrigger>
 

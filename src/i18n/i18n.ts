@@ -9,12 +9,18 @@ i18n
   .use(initReactI18next)
   .init({
     fallbackLng: "en",
-    supportedLngs: ["en", "ptBr"],
+    supportedLngs: ["en", "pt-BR"],
+    load: "currentOnly",
     debug: false,
     ns: ["common", "themes", "welcome", "media", "auth", "onboarding"],
     defaultNS: "common",
     interpolation: {
       escapeValue: false,
+    },
+    detection: {
+      convertDetectedLanguage: (lng) =>
+        lng.toLowerCase().startsWith("pt") ? "pt-BR" : lng,
+      caches: ["localStorage"],
     },
     backend: {
       loadPath: "/locales/{{lng}}/{{ns}}.json",
