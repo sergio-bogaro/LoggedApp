@@ -47,6 +47,7 @@ export function useMediaStats(data?: MediaResponse[]) {
   const groupedByStatus = useMemo(
     () =>
       data?.reduce((acc, item) => {
+        if (!item.status) return acc;
         acc[item.status] = (acc[item.status] || 0) + 1;
         return acc;
       }, {} as Record<string, number>) ?? {},

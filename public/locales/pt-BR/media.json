@@ -226,11 +226,12 @@
     "trackFailed": "Falha ao registrar mídia"
   },
   "home": {
-    "title": "Página inicial de mídias",
+    "title": "Registro",
     "recentlyAdded": "Adicionados recentemente",
     "chartByType": "Quantidade por tipo",
     "loading": "Carregando...",
     "tabs": {
+      "log": "Registros",
       "list": "Biblioteca",
       "stats": "Estatísticas"
     },
@@ -296,6 +297,12 @@
     "empty": "Nenhum log ainda",
     "emptyHint": "Comece a registrar suas mídias para ver os logs aqui",
     "allLoaded": "Todos os logs carregados"
+  },
+  "log": {
+    "empty": "Nada registrado ainda",
+    "emptyHint": "Registre um título e ele aparece aqui, do mais recente ao mais antigo.",
+    "revisits_one": "{{count}} registro",
+    "revisits_other": "{{count}} registros"
   },
   "logCard": {
     "youLoggedThisOn": "Você registrou isso em",

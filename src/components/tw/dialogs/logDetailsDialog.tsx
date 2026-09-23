@@ -45,6 +45,7 @@ export function LogDetailsDialog({ log, mediaType, open, onOpenChange }: LogDeta
                 {t("details.status")}
               </span>
               <StatusMark status={log.status} />
+              {!log.status && <span className="text-sm text-muted-foreground">-</span>}
             </div>
           </div>
 

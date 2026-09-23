@@ -65,9 +65,15 @@ const statusSpec: Record<MediaStatusEnum, StatusSpec> = {
   [MediaStatusEnum.DROPPED]: { mark: "border-muted-foreground bg-transparent", text: "text-muted-foreground" },
 }
 
-export const StatusMark = ({ status, className }: { status: MediaStatusEnum; className?: string }) => {
+/*
+ * Status is nullable in the API — a title can be tracked without one. An
+ * unknown or absent status renders nothing rather than guessing.
+ */
+export const StatusMark = ({ status, className }: { status?: MediaStatusEnum | null; className?: string }) => {
   const { t } = useTranslation("media")
-  const spec = statusSpec[status]
+  const spec = status ? statusSpec[status] : undefined
+
+  if (!spec) return null
 
   return (
     <span className={cn("inline-flex items-center gap-2 text-step-1", spec.text, className)}>

@@ -226,11 +226,12 @@
     "trackFailed": "Failed to track media"
   },
   "home": {
-    "title": "Media Home Page",
+    "title": "Logbook",
     "recentlyAdded": "Recently Logged",
     "chartByType": "Count by type",
     "loading": "Loading...",
     "tabs": {
+      "log": "Entries",
       "list": "Library",
       "stats": "Statistics"
     },
@@ -296,6 +297,12 @@
     "empty": "No logs yet",
     "emptyHint": "Start tracking your media to see logs here",
     "allLoaded": "All logs loaded"
+  },
+  "log": {
+    "empty": "Nothing logged yet",
+    "emptyHint": "Track a title and it will appear here, newest first.",
+    "revisits_one": "{{count}} log",
+    "revisits_other": "{{count}} logs"
   },
   "logCard": {
     "youLoggedThisOn": "You logged this on",

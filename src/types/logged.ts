@@ -6,7 +6,7 @@ export type MediaResponse = {
   externalId: string;
   title: string;
   type: MediaTypeEnum;
-  status: MediaStatusEnum;
+  status: MediaStatusEnum | null;
   description?: string;
   coverUrl?: string;
   imagePath?: string;
@@ -24,7 +24,7 @@ export type MediaLogResponse = {
   userId: number;
   mediaId: number;
   date: string;
-  status: MediaStatusEnum;
+  status: MediaStatusEnum | null;
   rating?: number;
   review?: string;
   createdAt: string;

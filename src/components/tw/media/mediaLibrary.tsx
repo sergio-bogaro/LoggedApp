@@ -16,17 +16,26 @@ import { MediaResponse } from "@/types/logged";
 import { MediaItem, MediaTypeEnum } from "@/types/media";
 import { mediaTypeToPath } from "@/utils/mediaText";
 
+export type MediaLibrarySection = "recent" | "favorites";
+
 interface MediaLibraryProps {
   data?: MediaResponse[];
   recentlyLoggedData?: MediaResponse[];
   mediaType?: MediaTypeEnum;
+  /** Which shelves to render. Defaults to both. */
+  sections?: MediaLibrarySection[];
 }
 
 /**
  * "Recently logged" + "Favorites" carousels, shared by the media home page
  * (no type filter) and the per-type list page.
  */
-export const MediaLibrary = ({ data, recentlyLoggedData, mediaType }: MediaLibraryProps) => {
+export const MediaLibrary = ({
+  data,
+  recentlyLoggedData,
+  mediaType,
+  sections: visibleSections = ["recent", "favorites"],
+}: MediaLibraryProps) => {
   const { t } = useTranslation("media");
 
   const recentlyLogged = useMemo(() => {
@@ -46,20 +55,20 @@ export const MediaLibrary = ({ data, recentlyLoggedData, mediaType }: MediaLibra
 
   const sections = [
     {
-      key: "recent",
+      key: "recent" as const,
       titleKey: "sections.recentlyAdded",
       description: "sections.recentlyAddedDesc",
       items: recentlyLogged,
       viewAllLink: mediaType ? `/media/logs/${mediaTypeToPath(mediaType)}` : "/media/logs",
     },
     {
-      key: "favorites",
+      key: "favorites" as const,
       titleKey: "sections.favorites",
       description: "sections.favoritesDesc",
       items: favorites,
       viewAllLink: "/media/list",
     },
-  ];
+  ].filter((section) => visibleSections.includes(section.key));
 
   return (
     <div className="md:px-12 mt-4 space-y-8">

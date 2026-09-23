@@ -1,12 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import { StatusData } from "./components/status";
 
 import { DataExhibition } from "@/components/tw/generic/dataExhibition";
-import { MediaCardSkeleton } from "@/components/tw/generic/mediaCardSkeleton";
 import { PageHeader } from "@/components/tw/generic/PageHeader";
+import { LogStream } from "@/components/tw/log/LogStream";
+import { LogStreamSkeleton } from "@/components/tw/log/LogStreamSkeleton";
 import { MediaLibrary } from "@/components/tw/media/mediaLibrary";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getMediaList } from "@/querries/media/logged";
@@ -14,8 +15,7 @@ import { useAppSelector } from "@/store/auth/hooks";
 import { useAppDispatch } from "@/store/settings/hooks";
 import { setBreadcrumbs } from "@/store/settings/slice";
 import { MediaResponse } from "@/types/logged";
-
-const CAROUSEL_LIMIT = 10;
+import { DEFAULT_STALE_TIME } from "@/utils/conts";
 
 const MediaHomePage = () => {
   const { t } = useTranslation("media");
@@ -26,48 +26,44 @@ const MediaHomePage = () => {
     dispatch(setBreadcrumbs([{ label: t("label"), to: "/media/home" }]));
   }, [dispatch, t]);
 
-  const { data: allData, isFetching, isError, error } = useQuery<MediaResponse[]>({
+  const { data, isFetching, isError, error } = useQuery<MediaResponse[]>({
     queryKey: ["media"],
     queryFn: () => getMediaList(user!.id),
-    staleTime: 1000 * 60 * 5,
+    staleTime: DEFAULT_STALE_TIME,
     enabled: !!user,
   });
 
-  const { data: recentlyLoggedData, isFetching: isFetchingRecent, isError: isErrorRecent, error: errorRecent } = useQuery<MediaResponse[]>({
-    queryKey: ["media", "recentlyLogged"],
-    queryFn: () => getMediaList(user!.id, { hasLogs: true, limit: CAROUSEL_LIMIT }),
-    staleTime: 1000 * 60 * 5,
-    enabled: !!user,
-  });
-
-  const isLoading = isFetching || isFetchingRecent;
-  const isInitialLoading = isLoading && (!allData || !recentlyLoggedData);
-  const isErrorCombined = isError || isErrorRecent;
-  const errorMessageCombined = error?.message || errorRecent?.message || "";
+  /* The register only holds entries that actually have logs. Titles that are
+     tracked but never logged stay in the library. */
+  const logged = useMemo(
+    () => (data ?? []).filter((item) => item.logCount > 0),
+    [data]
+  );
 
   return (
     <div className="w-full h-full">
       <PageHeader title={t("home.title")} />
 
       <DataExhibition
-        isFetching={isLoading}
-        isError={isErrorCombined}
-        isLoading={isInitialLoading}
-        skeleton={<MediaCardSkeleton />}
-        errorMessage={`${t("errorLoading", { ns: "common" })} ${errorMessageCombined}`}
+        isFetching={isFetching}
+        isError={isError}
+        isLoading={isFetching && !data}
+        skeleton={<LogStreamSkeleton />}
+        errorMessage={`${t("errorLoading", { ns: "common" })} ${error?.message ?? ""}`}
       >
-        <Tabs defaultValue="list" className="mt-4">
+        <Tabs defaultValue="log">
           <TabsList>
-            <TabsTrigger value="list">{t("home.tabs.list")}</TabsTrigger>
+            <TabsTrigger value="log">{t("home.tabs.log")}</TabsTrigger>
             <TabsTrigger value="stats">{t("home.tabs.stats")}</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="list">
-            <MediaLibrary data={allData} recentlyLoggedData={recentlyLoggedData} />
+          <TabsContent value="log" className="space-y-10">
+            <LogStream items={logged} />
+            <MediaLibrary data={data} sections={["favorites"]} />
           </TabsContent>
 
-          <TabsContent value="stats" className="mt-4 space-y-6">
-            <StatusData data={allData} />
+          <TabsContent value="stats" className="space-y-6">
+            <StatusData data={data} />
           </TabsContent>
         </Tabs>
       </DataExhibition>
