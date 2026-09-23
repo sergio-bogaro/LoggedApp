@@ -62,3 +62,11 @@ export function formatShortDay(iso: string, language?: string): string {
 
   return format(date, "d MMM", { locale: resolveLocale(language) }).replace(/\.$/, "");
 }
+
+/** "31 August 2026" / "31 de agosto de 2026" */
+export function formatLongDate(iso?: string | null, language?: string): string {
+  const date = parseIsoDate(iso);
+  if (!date) return "";
+
+  return format(date, "PPP", { locale: resolveLocale(language) });
+}

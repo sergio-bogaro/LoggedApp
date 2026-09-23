@@ -6,12 +6,12 @@ import { MovieTabs } from "../movies/tabs";
 
 import { MediaTypeEnum } from "@/types/media";
 
-type DetailsCardProps = {
+type MediaTabsProps = {
   mediaType: MediaTypeEnum;
   data: any;
 }
 
-export const MediaTabs = ({ data, mediaType }: DetailsCardProps) => {
+export const MediaTabs = ({ data, mediaType }: MediaTabsProps) => {
   function getTabData() {
     switch (mediaType) {
       case MediaTypeEnum.MOVIES:

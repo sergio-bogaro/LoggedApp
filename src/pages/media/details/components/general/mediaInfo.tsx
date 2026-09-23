@@ -20,24 +20,27 @@ type MediaInfoProps = {
 export const MediaInfoComponent = ({ title, dates, tags, tagline, overview }: MediaInfoContainerProps) => {
   return (
     <div className="flex flex-col">
-      <div className="flex flex-wrap gap-2 items-baseline">
-        <h1 className="text-2xl font-bold sm:text-3xl">
-          {title}
-        </h1>
+      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+        <h1 className="font-serif text-step-6 font-medium">{title}</h1>
 
-        <span className="text-foreground/70">{dates}</span>
+        {dates && <span className="text-step-1 text-muted-foreground">{dates}</span>}
       </div>
 
-      <div className="flex flex-wrap gap-2 my-3">
-        {tags.map((tag) => (
-          <span key={tag} className="text-sm text-primary-foreground bg-primary rounded-md px-3 py-1">{tag}</span>
-        ))}
-      </div>
+      {tags.length > 0 && (
+        <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-step-1 text-muted-foreground">
+          {tags.map((tag) => (
+            <span key={tag}>{tag}</span>
+          ))}
+        </div>
+      )}
 
-      <div className="flex flex-col gap-4">
-        <p className="font-light">{tagline} </p>
+      <div className="mt-6 flex flex-col gap-4">
+        {tagline && <p className="max-w-[70ch] font-serif text-step-3 italic">{tagline}</p>}
 
-        <p dangerouslySetInnerHTML={{ __html: overview }} />
+        <p
+          className="max-w-[70ch] text-step-2 leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: overview }}
+        />
       </div>
     </div>
   )

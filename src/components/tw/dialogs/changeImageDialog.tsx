@@ -1,6 +1,6 @@
 import { t } from "i18next";
 import { ImagePlus, Loader2 } from "lucide-react";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { ReactNode, useEffect, useMemo, useRef, useState } from "react";
 
 import { ImageWithSkeleton } from "../generic/imageSkeleton";
 
@@ -27,9 +27,11 @@ interface ChangeImageDialogProps {
   mediaData: unknown;
   formatedData: MediaDataDetailsType;
   onImageChange?: (objectUrl: string) => void;
+  /** Replaces the default icon trigger. Must be a single element. */
+  trigger?: ReactNode;
 }
 
-export function ChangeImageDialog({ existingMedia, mediaData, mediaType, formatedData, onImageChange }: ChangeImageDialogProps) {
+export function ChangeImageDialog({ existingMedia, mediaData, mediaType, formatedData, onImageChange, trigger }: ChangeImageDialogProps) {
   const { changeImage, changeImageFromUrl, removeImage, isPending, isSuccess } = useChangeImage();
 
   const [selectedImage, setSelectedImage] = useState<string>();
@@ -129,9 +131,11 @@ export function ChangeImageDialog({ existingMedia, mediaData, mediaType, formate
   return (
     <Dialog open={imageDialogOpen} onOpenChange={handleDialogOpenChange}>
       <DialogTrigger asChild>
-        <Button size="icon" title={t("track.changeImage", { ns: "media" })}>
-          <ImagePlus className="h-4 w-4" />
-        </Button>
+        {trigger ?? (
+          <Button size="icon" title={t("track.changeImage", { ns: "media" })}>
+            <ImagePlus className="h-4 w-4" aria-hidden="true" />
+          </Button>
+        )}
       </DialogTrigger>
 
       <DialogContent

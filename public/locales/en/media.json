@@ -304,16 +304,22 @@
     "revisits_one": "{{count}} log",
     "revisits_other": "{{count}} logs"
   },
+  "record": {
+    "title": "Your record",
+    "logs": "Logs",
+    "lastLog": "Last log",
+    "period": "Period",
+    "empty": "Not logged yet",
+    "emptyHint": "Log this title to start its history.",
+    "logAgain": "Log again",
+    "review": "Your review"
+  },
   "logCard": {
-    "youLoggedThisOn": "You logged this on",
-    "youRatedThis": "You rated this",
     "logDetails": "Log Details",
     "date": "Date",
     "startDate": "Start Date",
     "endDate": "End Date",
     "noReview": "No review",
-    "viewedOn": "Viewed on",
-    "startedOn": "Started on",
-    "finishedOn": "Finished on"
+    "viewedOn": "Viewed on"
   }
 }

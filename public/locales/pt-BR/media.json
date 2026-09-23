@@ -304,16 +304,22 @@
     "revisits_one": "{{count}} registro",
     "revisits_other": "{{count}} registros"
   },
+  "record": {
+    "title": "Seu registro",
+    "logs": "Registros",
+    "lastLog": "Último registro",
+    "period": "Período",
+    "empty": "Ainda não registrado",
+    "emptyHint": "Registre este título para começar o histórico.",
+    "logAgain": "Registrar de novo",
+    "review": "Sua avaliação"
+  },
   "logCard": {
-    "youLoggedThisOn": "Você registrou isso em",
-    "youRatedThis": "Você avaliou com",
     "logDetails": "Detalhes do Log",
     "date": "Data",
     "startDate": "Data de Início",
     "endDate": "Data de Conclusão",
     "noReview": "Sem avaliação",
-    "viewedOn": "Visto em",
-    "startedOn": "Início",
-    "finishedOn": "Fim"
+    "viewedOn": "Visto em"
   }
 }

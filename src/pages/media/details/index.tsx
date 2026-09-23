@@ -14,7 +14,7 @@ import { TrackMediaDialog } from "@/components/tw/dialogs/trackMediaDialog";
 import { DataExhibition } from "@/components/tw/generic/dataExhibition";
 import { ImageWithSkeleton } from "@/components/tw/generic/imageSkeleton";
 import { MediaDetailsSkeleton } from "@/components/tw/generic/mediaDetailsSkeleton";
-import { LogCard } from "@/components/tw/media/logCard";
+import { MediaRecord } from "@/components/tw/media/mediaRecord";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -26,8 +26,7 @@ import { getAniListDetails } from "@/querries/externalMedia/anilist";
 import { getBookDetails } from "@/querries/externalMedia/books";
 import { getGameDetails } from "@/querries/externalMedia/games";
 import { getMovieDetails } from "@/querries/externalMedia/movies";
-import { getMediaByExternalIdWithLogs } from "@/querries/media/logged";
-import { mediaImageUrl } from "@/querries/media/logged";
+import { getMediaByExternalIdWithLogs, mediaImageUrl } from "@/querries/media/logged";
 import { useAppSelector } from "@/store/auth/hooks";
 import { useAppDispatch } from "@/store/settings/hooks";
 import { setBreadcrumbs } from "@/store/settings/slice";
@@ -102,7 +101,7 @@ function MediaDetailsPage() {
   )
 
   const mediaImage = useMemo(() => existingMedia?.imagePath
-    ? mediaImageUrl(existingMedia.imagePath)!
+    ? (mediaImageUrl(existingMedia.imagePath) ?? undefined)
     : getPosterUrl(mediaType, data)
   , [existingMedia, mediaType, data]
   );
@@ -117,50 +116,58 @@ function MediaDetailsPage() {
         skeleton={<MediaDetailsSkeleton />}
       >
         {data && formatedData && (
-          <div className="max-w-[1400px] mx-auto p-4 sm:p-8">
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="flex gap-4 items-start w-full flex-col md:w-1/5 md:min-w-[200px] md:text-center md:text-wrap md:max-w-[250px] transition-all">
-                <div className="relative w-[70%] md:w-full">
-                  <ImageWithSkeleton
-                    alt={formatedData.title}
-                    className="shrink-0 aspect-2/3 md:w-full md:max-w-full"
-                    src={mediaImage}
+          <div className="mx-auto max-w-[1100px] p-4 sm:p-8">
+            <div className="flex flex-col gap-6 md:flex-row md:gap-10">
+              {/* Poster and the app's own record share the left column. */}
+              <div className="w-full shrink-0 space-y-4 sm:mx-auto sm:max-w-[360px] md:mx-0 md:max-w-none md:w-72 lg:w-80">
+                <ImageWithSkeleton
+                  alt={formatedData.title}
+                  className="aspect-2/3 w-full rounded-lg"
+                  src={mediaImage}
+                  priority
+                />
+
+                <MediaRecord
+                  media={existingMedia}
+                  lastLog={lastLog}
+                  onOpenLogDetails={() => setLogDetailsOpen(true)}
+                >
+                  <TrackMediaDialog
+                    mediaType={mediaType}
+                    mediaData={data}
+                    image={mediaImage}
+                    formatedData={formatedData}
+                    existingMedia={existingMedia}
+                    trigger={
+                      <Button className="w-full">
+                        {existingMedia ? t("record.logAgain") : t("track.label")}
+                      </Button>
+                    }
                   />
 
-                  <div className="flex absolute bottom-4 justify-center gap-2 w-full">
-                    <ChangeImageDialog
-                      mediaData={data}
-                      existingMedia={existingMedia}
-                      mediaType={mediaType}
-                      formatedData={formatedData}
-                    />
-
-                    <TrackMediaDialog
-                      mediaType={mediaType}
-                      mediaData={data}
-                      image={mediaImage}
-                      formatedData={formatedData}
-                      existingMedia={existingMedia}
-                    />
-                  </div>
-                </div>
-
-                <div className="w-[70%] md:w-full">
-                  <LogCard log={lastLog} onClick={() => setLogDetailsOpen(true)} />
-                </div>
+                  <ChangeImageDialog
+                    mediaData={data}
+                    existingMedia={existingMedia}
+                    mediaType={mediaType}
+                    formatedData={formatedData}
+                    trigger={
+                      <Button variant="outline" className="w-full">
+                        {t("track.changeImage")}
+                      </Button>
+                    }
+                  />
+                </MediaRecord>
               </div>
 
-              <div className="space-y-3 flex-1 min-w-0">
+              <div className="min-w-0 flex-1">
                 <div className="flex justify-end">
-                  <DropdownMenu
-                    open={optionsOpen}
-                    onOpenChange={setOptionsOpen}
-                  >
+                  <DropdownMenu open={optionsOpen} onOpenChange={setOptionsOpen}>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="icon" aria-label={t("actions.more")}>
                         <MoreVertical aria-hidden="true" size={20} />
                       </Button>
                     </DropdownMenuTrigger>
+
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem
                         disabled={!existingMedia}
@@ -173,26 +180,28 @@ function MediaDetailsPage() {
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
-
-                  <MediaHistoryDialog
-                    media={existingMedia ?? undefined}
-                    open={historyOpen}
-                    onOpenChange={setHistoryOpen}
-                  />
-
-                  <LogDetailsDialog
-                    log={lastLog}
-                    mediaType={mediaType}
-                    open={logDetailsOpen}
-                    onOpenChange={setLogDetailsOpen}
-                  />
                 </div>
 
                 <MediaInfo mediaType={mediaType} data={data} />
 
-                <MediaTabs data={data} mediaType={mediaType} />
+                <div className="mt-10">
+                  <MediaTabs data={data} mediaType={mediaType} />
+                </div>
               </div>
             </div>
+
+            <MediaHistoryDialog
+              media={existingMedia ?? undefined}
+              open={historyOpen}
+              onOpenChange={setHistoryOpen}
+            />
+
+            <LogDetailsDialog
+              log={lastLog}
+              mediaType={mediaType}
+              open={logDetailsOpen}
+              onOpenChange={setLogDetailsOpen}
+            />
           </div>
         )}
       </DataExhibition>

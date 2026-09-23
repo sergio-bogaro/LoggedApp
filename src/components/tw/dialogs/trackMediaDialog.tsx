@@ -1,5 +1,5 @@
 import { BookmarkPlus } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
@@ -34,9 +34,11 @@ import { statusAnimeOptions } from "@/utils/selectOptions";
 interface TrackMediaDialogProps {
   existingMedia?: MediaWithLogsResponse | null;
   mediaType: MediaTypeEnum;
-  image: string;
+  image?: string;
   mediaData: unknown;
   formatedData: MediaDataDetailsType;
+  /** Replaces the default icon trigger. Must be a single element. */
+  trigger?: ReactNode;
 }
 
 interface FormType {
@@ -47,7 +49,7 @@ interface FormType {
   review?: string;
 }
 
-export function TrackMediaDialog({ mediaType, existingMedia, image, formatedData }: TrackMediaDialogProps) {
+export function TrackMediaDialog({ mediaType, existingMedia, image, formatedData, trigger }: TrackMediaDialogProps) {
   const { t } = useTranslation("media");
   const [open, setOpen] = useState(false);
 
@@ -94,13 +96,15 @@ export function TrackMediaDialog({ mediaType, existingMedia, image, formatedData
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
-          size="icon"
-          title={t("track.label")}
-          aria-label={t("track.label")}
-        >
-          <BookmarkPlus className="h-4 w-4" aria-hidden="true" />
-        </Button>
+        {trigger ?? (
+          <Button
+            size="icon"
+            title={t("track.label")}
+            aria-label={t("track.label")}
+          >
+            <BookmarkPlus className="h-4 w-4" aria-hidden="true" />
+          </Button>
+        )}
       </DialogTrigger>
 
       <DialogContent className="w-[80%] max-w-[1000px]">
