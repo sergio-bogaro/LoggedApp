@@ -5,6 +5,7 @@ import * as React from "react"
 import { Control } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 
+import { fieldSurface } from "./fieldStyles"
 import { FormControl, FormField, FormItem, FormMessage } from "./form"
 import { Label } from "./label"
 
@@ -49,13 +50,9 @@ function SelectTrigger({
       data-slot="select-trigger"
       data-size={size}
       className={cn(
-        "flex w-fit items-center justify-between gap-2",
-        "rounded-control px-3 py-2",
-        "border border-input bg-background",
-        "text-step-2 whitespace-nowrap",
-        "outline-none transition-colors",
-        "cursor-pointer disabled:cursor-not-allowed disabled:opacity-50",
-        "focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/25",
+        fieldSurface,
+        "flex w-fit items-center justify-between gap-2 px-3 py-2",
+        "cursor-pointer text-step-2 whitespace-nowrap",
         "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
         "data-placeholder:text-muted-foreground",
         "data-[size=default]:h-9 data-[size=sm]:h-8",
@@ -211,9 +208,9 @@ export function Select({
   if (control) {
     return (
       <div className="flex flex-col gap-1" style={width ? { width: `${width}px` } : { width: "100%" }}>
-        <Label className="font-bold" htmlFor={id ?? name}>
+        <Label htmlFor={id ?? name}>
           {label}
-          {required && <span aria-hidden="true" className="text-destructive font-extrabold -ml-1.5">*</span>}
+          {required && <span aria-hidden="true" className="-ml-1 text-destructive">*</span>}
         </Label>
 
         <FormField
@@ -252,10 +249,10 @@ export function Select({
   }
 
   return (
-    <div className="flex flex-col w-full gap-1">
+    <div className="flex flex-col gap-1" style={width ? { width: `${width}px` } : { width: "100%" }}>
       <Label htmlFor={id ?? name}>
         {label}
-        {required && <span className="text-destructive font-extrabold -ml-1.5">*</span>}
+        {required && <span aria-hidden="true" className="-ml-1 text-destructive">*</span>}
       </Label>
 
       <SelectBase {...props}>

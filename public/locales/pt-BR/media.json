@@ -227,24 +227,17 @@
   },
   "home": {
     "title": "Registro",
-    "recentlyAdded": "Adicionados recentemente",
-    "chartByType": "Quantidade por tipo",
-    "loading": "Carregando...",
     "tabs": {
       "log": "Registros",
       "list": "Biblioteca",
       "stats": "Estatísticas"
     },
-    "stats": {
-      "total": "Total de mídias"
-    },
     "chart": {
       "byType": "Distribuição por tipo",
-      "byDecade": "Mídias por década de lançamento",
+      "byDecade": "Registros por década de lançamento",
       "byWeekDay": "Logs por dia da semana",
-      "byStatus": "Distribuição por status",
       "byRating": "Distribuição de notas",
-      "byMonth": "Mídias adicionadas por mês",
+      "byMonth": "Registros por mês",
       "topLogged": "Mídias mais revisitadas (top 10)",
       "weekDays": {
         "Sun": "Dom",
@@ -267,9 +260,7 @@
     "backlog": "Backlog",
     "addBacklog": "Adicione itens ao seu backlog",
     "chart": {
-      "completionRate": "Taxa de Conclusão",
-      "avgRating": "Nota Média",
-      "notFinished": "Não Finalizado"
+      "avgRating": "Nota Média"
     }
   },
   "customView": {
@@ -301,8 +292,8 @@
   "log": {
     "empty": "Nada registrado ainda",
     "emptyHint": "Registre um título e ele aparece aqui, do mais recente ao mais antigo.",
-    "revisits_one": "{{count}} registro",
-    "revisits_other": "{{count}} registros"
+    "emptyPeriod": "Nenhum registro neste período",
+    "emptyPeriodHint": "Tente um período maior ou volte para Tudo."
   },
   "record": {
     "title": "Seu registro",
@@ -313,6 +304,25 @@
     "emptyHint": "Registre este título para começar o histórico.",
     "logAgain": "Registrar de novo",
     "review": "Sua avaliação"
+  },
+  "stats": {
+    "headline": "Registros",
+    "headlineCaption": "em {{count}} títulos",
+    "finishedHint": "{{percent}}% do total",
+    "period": {
+      "label": "Período",
+      "all": "Tudo",
+      "week": "Esta semana",
+      "month": "Este mês",
+      "year": "Este ano",
+      "custom": "Personalizado",
+      "range": "Intervalo"
+    },
+    "sections": {
+      "consumption": "O que você consome",
+      "when": "Quando",
+      "rating": "Como você avalia"
+    }
   },
   "logCard": {
     "logDetails": "Detalhes do Log",

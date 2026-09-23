@@ -2,7 +2,7 @@
 import i18n from "i18next"
 import { CalendarIcon } from "lucide-react"
 import { useEffect, useState } from "react"
-import { Control, ControllerRenderProps } from "react-hook-form"
+import { Control } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 
 import { Button } from "@/components/ui/button"
@@ -15,6 +15,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { cn } from "@/lib/utils"
+import { formatDisplayDate } from "@/utils/date"
 
 interface DatePickerProps {
   label?: string
@@ -26,20 +28,14 @@ interface DatePickerProps {
   placeholder?: string
 }
 
-interface DatePickerFieldProps {
-  field: ControllerRenderProps<any, string>
+interface DateFieldProps {
   id?: string
+  /** ISO day (yyyy-MM-dd). */
+  value?: string
+  onChange: (value: string) => void
   disabled?: boolean
   placeholder?: string
-}
-
-function toBcp47Locale(locale: string): string {
-  const normalized = locale?.toLowerCase() ?? ""
-
-  if (normalized.startsWith("pt")) return "pt-BR"
-  if (normalized.startsWith("en")) return "en-US"
-
-  return "en-US"
+  className?: string
 }
 
 function useCurrentLocale() {
@@ -52,15 +48,6 @@ function useCurrentLocale() {
   }, [])
 
   return locale
-}
-
-function formatDisplayDate(date: Date | undefined, locale: string) {
-  if (!date) return ""
-  return date.toLocaleDateString(toBcp47Locale(locale), {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  })
 }
 
 function isValidDate(date: Date | undefined): date is Date {
@@ -101,7 +88,7 @@ function parseTypedInput(value: string, locale: string): Date | undefined {
     number,
   ]
 
-  const isPtBr = toBcp47Locale(locale) === "pt-BR"
+  const isPtBr = locale?.toLowerCase().startsWith("pt")
   const [day, month, year] = isPtBr ? [first, second, third] : [second, first, third]
 
   if (month < 1 || month > 12 || day < 1 || day > 31) return undefined
@@ -110,21 +97,32 @@ function parseTypedInput(value: string, locale: string): Date | undefined {
   return isValidDate(date) ? date : undefined
 }
 
-function DatePickerField({ field, id, disabled, placeholder }: DatePickerFieldProps) {
+/**
+ * Controlled date input with a calendar popover. Form-bound callers should use
+ * `DatePicker`; this is the same field for everything else.
+ */
+export function DateField({
+  id,
+  value,
+  onChange,
+  disabled,
+  placeholder,
+  className,
+}: DateFieldProps) {
   const { t } = useTranslation("common")
   const locale = useCurrentLocale()
-  const selectedDate = parseIsoDateString(field.value)
+  const selectedDate = parseIsoDateString(value)
 
   const [open, setOpen] = useState(false)
-  const [inputValue, setInputValue] = useState( formatDisplayDate(selectedDate, locale) )
+  const [inputValue, setInputValue] = useState(formatDisplayDate(selectedDate, locale))
   const [month, setMonth] = useState<Date | undefined>(selectedDate)
 
   useEffect(() => {
-    setInputValue(formatDisplayDate(parseIsoDateString(field.value), locale))
-  }, [field.value, locale])
+    setInputValue(formatDisplayDate(parseIsoDateString(value), locale))
+  }, [value, locale])
 
   return (
-    <div className="relative">
+    <div className={cn("relative", className)}>
       <BaseInput
         id={id}
         value={inputValue}
@@ -135,7 +133,7 @@ function DatePickerField({ field, id, disabled, placeholder }: DatePickerFieldPr
           setInputValue(e.target.value)
           const parsedDate = parseTypedInput(e.target.value, locale)
           if (parsedDate) {
-            field.onChange(toIsoDateString(parsedDate))
+            onChange(toIsoDateString(parsedDate))
             setMonth(parsedDate)
           }
         }}
@@ -173,7 +171,7 @@ function DatePickerField({ field, id, disabled, placeholder }: DatePickerFieldPr
             month={month}
             onMonthChange={setMonth}
             onSelect={(date) => {
-              field.onChange(toIsoDateString(date))
+              onChange(toIsoDateString(date))
               setInputValue(formatDisplayDate(date, locale))
               setOpen(false)
             }}
@@ -190,10 +188,10 @@ export function DatePicker({ label, name, id, required, control, disabled, place
 
   return (
     <div className="flex w-full flex-col gap-1">
-      <Label className="font-bold" htmlFor={id ?? name}>
+      <Label htmlFor={id ?? name}>
         {label}
         {required && (
-          <span aria-hidden="true" className="text-destructive font-extrabold -ml-1.5">*</span>
+          <span aria-hidden="true" className="-ml-1 text-destructive">*</span>
         )}
       </Label>
 
@@ -203,9 +201,10 @@ export function DatePicker({ label, name, id, required, control, disabled, place
         render={({ field }) => (
           <FormItem>
             <FormControl className="m-0">
-              <DatePickerField
-                field={field}
+              <DateField
                 id={id ?? name}
+                value={field.value}
+                onChange={field.onChange}
                 disabled={disabled}
                 placeholder={resolvedPlaceholder}
               />

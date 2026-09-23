@@ -1,15 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
 
-import { ListStatusData } from "./components/listStatusData";
-
+import { MediaStats } from "@/components/tw/charts/MediaStats";
 import { DataExhibition } from "@/components/tw/generic/dataExhibition";
 import { MediaCardSkeleton } from "@/components/tw/generic/mediaCardSkeleton";
 import { PageHeader } from "@/components/tw/generic/PageHeader";
 import { MediaLibrary } from "@/components/tw/media/mediaLibrary";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useMediaLogs } from "@/hooks/useMediaLogs";
 import { getMediaList } from "@/querries/media/logged";
 import { useAppSelector } from "@/store/auth/hooks";
 import { useAppDispatch } from "@/store/settings/hooks";
@@ -59,6 +59,17 @@ const MediaListPage = () => {
     enabled: !!user,
   });
 
+  /* The endpoint has no type filter, so the per-type slice is taken here. */
+  const { data: allLogs } = useMediaLogs({});
+
+  const logs = useMemo(
+    () =>
+      mediaType
+        ? (allLogs ?? []).filter((log) => log.media?.type === mediaType)
+        : allLogs ?? [],
+    [allLogs, mediaType]
+  );
+
   const isLoading = isFetching || isFetchingRecent;
   const isInitialLoading = isLoading && (!data || !recentlyLoggedData);
   const isErrorCombined = isError || isErrorRecent;
@@ -80,7 +91,7 @@ const MediaListPage = () => {
           </TabsContent>
 
           <TabsContent value="stats" className="mt-4 space-y-6">
-            <ListStatusData data={data} />
+            <MediaStats logs={logs} />
           </TabsContent>
         </Tabs>
       </DataExhibition>

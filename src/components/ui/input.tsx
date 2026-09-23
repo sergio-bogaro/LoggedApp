@@ -2,6 +2,7 @@
 import * as React from "react"
 import { Control } from "react-hook-form"
 
+import { fieldSurface } from "./fieldStyles"
 import { FormControl, FormField, FormItem, FormMessage } from "./form"
 import { Label } from "./label"
 
@@ -29,13 +30,12 @@ const BaseInput = React.forwardRef<HTMLInputElement, BaseInputProps>(function Ba
       type={type}
       data-slot="input"
       className={cn(
-        "flex h-9 w-full min-w-0 rounded-control border border-input bg-background px-3 py-1 text-step-2",
+        fieldSurface,
+        "flex h-9 w-full min-w-0 px-3 py-1 text-step-2",
         "pointer-coarse:h-11",
-        "outline-none transition-colors",
+        "disabled:pointer-events-none",
         "file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-step-1 file:font-medium file:text-foreground",
         "placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground",
-        "disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-50",
-        "focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/25",
         "aria-invalid:border-destructive aria-invalid:ring-destructive/25",
         className
       )}

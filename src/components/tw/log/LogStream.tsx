@@ -5,11 +5,13 @@ import { LogRow } from "./LogRow";
 import { MonthDivider } from "./MonthDivider";
 
 import { EmptyState } from "@/components/tw/generic/EmptyState";
-import { MediaResponse } from "@/types/logged";
+import type { MediaLogWithMedia } from "@/querries/media/logged";
 import { formatMonthLabel, monthKey } from "@/utils/date";
 
 interface LogStreamProps {
-  items: MediaResponse[];
+  logs: MediaLogWithMedia[];
+  /** True when a period filter is narrowing the view, for the empty message. */
+  filtered?: boolean;
 }
 
 /*
@@ -17,41 +19,41 @@ interface LogStreamProps {
  * Time is the spine, so the month is the only structural break and rows are
  * separated by rhythm and hover rather than by rules.
  */
-export const LogStream = ({ items }: LogStreamProps) => {
+export const LogStream = ({ logs, filtered = false }: LogStreamProps) => {
   const { i18n, t } = useTranslation("media");
 
   const groups = useMemo(() => {
-    const ordered = [...items].sort((a, b) =>
-      (b.lastLogDate ?? b.createdAt).localeCompare(a.lastLogDate ?? a.createdAt)
-    );
+    const ordered = [...logs].sort((a, b) => b.date.localeCompare(a.date));
 
-    const buckets = new Map<string, MediaResponse[]>();
-    for (const item of ordered) {
-      const key = monthKey(item.lastLogDate ?? item.createdAt);
+    const buckets = new Map<string, MediaLogWithMedia[]>();
+    for (const log of ordered) {
+      const key = monthKey(log.date);
       const bucket = buckets.get(key);
-      if (bucket) bucket.push(item);
-      else buckets.set(key, [item]);
+      if (bucket) bucket.push(log);
+      else buckets.set(key, [log]);
     }
 
     return [...buckets.entries()];
-  }, [items]);
+  }, [logs]);
 
-  if (items.length === 0) {
-    return <EmptyState title={t("log.empty")} description={t("log.emptyHint")} />;
+  if (logs.length === 0) {
+    return filtered ? (
+      <EmptyState title={t("log.emptyPeriod")} description={t("log.emptyPeriodHint")} />
+    ) : (
+      <EmptyState title={t("log.empty")} description={t("log.emptyHint")} />
+    );
   }
 
   return (
     <div className="space-y-8">
       {groups.map(([key, group]) => (
         <section key={key}>
-          <MonthDivider
-            label={formatMonthLabel(group[0].lastLogDate ?? group[0].createdAt, i18n.language)}
-          />
+          <MonthDivider label={formatMonthLabel(group[0].date, i18n.language)} />
 
           <ul className="mt-2">
-            {group.map((item) => (
-              <li key={item.id}>
-                <LogRow item={item} />
+            {group.map((log) => (
+              <li key={log.id}>
+                <LogRow log={log} />
               </li>
             ))}
           </ul>

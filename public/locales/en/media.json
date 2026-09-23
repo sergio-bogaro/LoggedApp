@@ -227,24 +227,17 @@
   },
   "home": {
     "title": "Logbook",
-    "recentlyAdded": "Recently Logged",
-    "chartByType": "Count by type",
-    "loading": "Loading...",
     "tabs": {
       "log": "Entries",
       "list": "Library",
       "stats": "Statistics"
     },
-    "stats": {
-      "total": "Total media"
-    },
     "chart": {
       "byType": "Distribution by type",
-      "byDecade": "Media by release decade",
+      "byDecade": "Logs by release decade",
       "byWeekDay": "Logs by day of the week",
-      "byStatus": "Distribution by status",
       "byRating": "Rating distribution",
-      "byMonth": "Media added by month",
+      "byMonth": "Logs by month",
       "topLogged": "Most revisited media (top 10)",
       "weekDays": {
         "Sun": "Sun",
@@ -267,9 +260,7 @@
     "backlog": "Backlog",
     "addBacklog": "Add items to your backlog",
     "chart": {
-      "completionRate": "Completion Rate",
-      "avgRating": "Average Rating",
-      "notFinished": "Not Finished"
+      "avgRating": "Average Rating"
     }
   },
   "customView": {
@@ -301,8 +292,8 @@
   "log": {
     "empty": "Nothing logged yet",
     "emptyHint": "Track a title and it will appear here, newest first.",
-    "revisits_one": "{{count}} log",
-    "revisits_other": "{{count}} logs"
+    "emptyPeriod": "Nothing logged in this period",
+    "emptyPeriodHint": "Try a wider period or switch to All time."
   },
   "record": {
     "title": "Your record",
@@ -313,6 +304,25 @@
     "emptyHint": "Log this title to start its history.",
     "logAgain": "Log again",
     "review": "Your review"
+  },
+  "stats": {
+    "headline": "Logs",
+    "headlineCaption": "across {{count}} titles",
+    "finishedHint": "{{percent}}% of total",
+    "period": {
+      "label": "Period",
+      "all": "All time",
+      "week": "This week",
+      "month": "This month",
+      "year": "This year",
+      "custom": "Custom",
+      "range": "Range"
+    },
+    "sections": {
+      "consumption": "What you consume",
+      "when": "When",
+      "rating": "How you rate"
+    }
   },
   "logCard": {
     "logDetails": "Log Details",

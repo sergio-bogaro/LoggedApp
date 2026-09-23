@@ -173,6 +173,7 @@ export function useTrackMedia() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["media"] });
       queryClient.invalidateQueries({ queryKey: ["existingMedia"] });
+      queryClient.invalidateQueries({ queryKey: ["media-logs"] });
       toast.success(t("feedback.trackSuccess"));
     },
     onError: (error: Error) => {

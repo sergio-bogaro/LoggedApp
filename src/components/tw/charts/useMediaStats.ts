@@ -6,18 +6,11 @@ import "./chartSetup";
 
 import { useChartTheme } from "./useChartTheme";
 
-import { MediaResponse } from "@/types/logged";
+import { MediaLogWithMedia } from "@/querries/media/logged";
 import { MediaStatusEnum, MediaTypeEnum } from "@/types/media";
+import { monthKey, parseIsoDate } from "@/utils/date";
 
 const WEEK_DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
-const STATUS_COLOR_INDEX: Record<MediaStatusEnum, number> = {
-  [MediaStatusEnum.FINISHED]: 0,
-  [MediaStatusEnum.IN_PROGRESS]: 1,
-  [MediaStatusEnum.ON_HOLD]: 2,
-  [MediaStatusEnum.DROPPED]: 3,
-  [MediaStatusEnum.FOLLOWING]: 4,
-};
 
 const emptyTypeCount = (): Record<MediaTypeEnum, number> =>
   Object.values(MediaTypeEnum).reduce((acc, type) => {
@@ -26,111 +19,115 @@ const emptyTypeCount = (): Record<MediaTypeEnum, number> =>
   }, {} as Record<MediaTypeEnum, number>);
 
 /**
- * Every aggregation the media statistics views need, plus theme-aware chart
- * data and options. Shared by the home and per-type list statistics tabs.
+ * Aggregations for the statistics views, computed over **log entries** rather
+ * than over the library: the charts describe what was consumed in the selected
+ * period, not what is sitting on the shelf.
+ *
+ * This is also what makes "logs by day of the week" honest — the previous
+ * version counted `media.createdAt`, i.e. the day a title was added.
  */
-export function useMediaStats(data?: MediaResponse[]) {
+export function useMediaStats(logs?: MediaLogWithMedia[]) {
   const { t } = useTranslation("media");
   const { series, text, grid } = useChartTheme();
 
-  const total = data?.length ?? 0;
+  const entries = useMemo(() => logs ?? [], [logs]);
+  const totalLogs = entries.length;
 
-  const groupedByType = useMemo(
-    () =>
-      data?.reduce((acc, item) => {
-        if (item.type in acc) acc[item.type as MediaTypeEnum]++;
-        return acc;
-      }, emptyTypeCount()) ?? emptyTypeCount(),
-    [data]
+  const totalTitles = useMemo(
+    () => new Set(entries.map((log) => log.mediaId)).size,
+    [entries]
   );
 
-  const groupedByStatus = useMemo(
-    () =>
-      data?.reduce((acc, item) => {
-        if (!item.status) return acc;
-        acc[item.status] = (acc[item.status] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>) ?? {},
-    [data]
-  );
-
-  const groupedByDecade = useMemo(() => {
-    if (!data) return {};
-
-    const groups = data.reduce((acc, item) => {
-      if (!item.releaseDate) return acc;
-      const year = parseInt(item.releaseDate.slice(0, 4));
-      if (isNaN(year)) return acc;
-      const decade = `${Math.floor(year / 10) * 10}s`;
-      acc[decade] = (acc[decade] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-
-    return Object.fromEntries(
-      Object.entries(groups).sort(([a], [b]) => a.localeCompare(b))
-    );
-  }, [data]);
-
-  const groupedByWeekDay = useMemo(() => {
-    const counts = Array(7).fill(0) as number[];
-
-    data?.forEach((item) => {
-      if (!item.createdAt) return;
-      const day = new Date(item.createdAt).getDay(); // 0 = Sun ... 6 = Sat
-      counts[day]++;
-    });
-
+  const groupedByType = useMemo(() => {
+    const counts = emptyTypeCount();
+    for (const log of entries) {
+      const type = log.media?.type;
+      if (type && type in counts) counts[type]++;
+    }
     return counts;
-  }, [data]);
+  }, [entries]);
+
+  const groupedByStatus = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const log of entries) {
+      if (!log.status) continue;
+      counts[log.status] = (counts[log.status] || 0) + 1;
+    }
+    return counts;
+  }, [entries]);
 
   const groupedByMonth = useMemo(() => {
     const counts: Record<string, number> = {};
-
-    data?.forEach((item) => {
-      const date = new Date(item.createdAt);
-      const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+    for (const log of entries) {
+      const key = monthKey(log.date);
       counts[key] = (counts[key] || 0) + 1;
-    });
-
+    }
     return Object.fromEntries(
       Object.entries(counts).sort(([a], [b]) => a.localeCompare(b)).slice(-12)
     );
-  }, [data]);
+  }, [entries]);
+
+  const groupedByWeekDay = useMemo(() => {
+    const counts = Array(7).fill(0) as number[];
+    for (const log of entries) {
+      const date = parseIsoDate(log.date);
+      if (!date) continue;
+      counts[date.getDay()]++;
+    }
+    return counts;
+  }, [entries]);
+
+  const groupedByDecade = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const log of entries) {
+      const release = log.media?.releaseDate;
+      if (!release) continue;
+      const year = parseInt(release.slice(0, 4));
+      if (isNaN(year)) continue;
+      const decade = `${Math.floor(year / 10) * 10}s`;
+      counts[decade] = (counts[decade] || 0) + 1;
+    }
+    return Object.fromEntries(
+      Object.entries(counts).sort(([a], [b]) => a.localeCompare(b))
+    );
+  }, [entries]);
 
   const ratingDistribution = useMemo(() => {
     const counts = Array.from({ length: 10 }, (_, i) => ({
       label: String(i + 1),
       count: 0,
     }));
-    data?.forEach((item) => {
-      if (item.rating != null && item.rating >= 1 && item.rating <= 10) {
-        counts[Math.floor(item.rating) - 1].count++;
+    for (const log of entries) {
+      if (log.rating != null && log.rating >= 1 && log.rating <= 10) {
+        counts[Math.floor(log.rating) - 1].count++;
       }
-    });
+    }
     return counts;
-  }, [data]);
+  }, [entries]);
 
-  const topLogged = useMemo(
-    () =>
-      [...(data ?? [])]
-        .filter((item) => item.logCount > 0)
-        .sort((a, b) => b.logCount - a.logCount)
-        .slice(0, 10),
-    [data]
-  );
+  const topLogged = useMemo(() => {
+    const byMedia = new Map<number, { title: string; count: number }>();
+
+    for (const log of entries) {
+      const current = byMedia.get(log.mediaId);
+      if (current) current.count++;
+      else byMedia.set(log.mediaId, { title: log.media?.title ?? "", count: 1 });
+    }
+
+    return [...byMedia.values()].sort((a, b) => b.count - a.count).slice(0, 10);
+  }, [entries]);
 
   const averageRating = useMemo(() => {
-    if (!data) return 0;
-    const rated = data.filter((item) => item.rating != null);
+    const rated = entries.filter((log) => log.rating != null);
     if (rated.length === 0) return 0;
-    return rated.reduce((sum, item) => sum + (item.rating ?? 0), 0) / rated.length;
-  }, [data]);
+    return rated.reduce((sum, log) => sum + (log.rating ?? 0), 0) / rated.length;
+  }, [entries]);
 
   const completionRate = useMemo(() => {
-    if (!total) return 0;
-    const finished = data?.filter((item) => item.status === MediaStatusEnum.FINISHED).length ?? 0;
-    return Math.round((finished / total) * 100);
-  }, [data, total]);
+    if (!totalLogs) return 0;
+    const finished = groupedByStatus[MediaStatusEnum.FINISHED] ?? 0;
+    return Math.round((finished / totalLogs) * 100);
+  }, [groupedByStatus, totalLogs]);
 
   const typeChartData = useMemo(
     () => ({
@@ -148,40 +145,6 @@ export function useMediaStats(data?: MediaResponse[]) {
     }),
     [groupedByType, series, t]
   );
-
-  const statusChartData = useMemo(
-    () => ({
-      labels: Object.keys(groupedByStatus).map((s) => t(`status.${s}`)),
-      datasets: [
-        {
-          data: Object.values(groupedByStatus),
-          backgroundColor: Object.keys(groupedByStatus).map(
-            (s) => series[STATUS_COLOR_INDEX[s as MediaStatusEnum] ?? 0]
-          ),
-          borderWidth: 2,
-          borderColor: "transparent",
-        },
-      ],
-    }),
-    [groupedByStatus, series, t]
-  );
-
-  const completionChartData = useMemo(() => {
-    const finished = groupedByStatus[MediaStatusEnum.FINISHED] ?? 0;
-    const others = total - finished;
-
-    return {
-      labels: [t(`status.${MediaStatusEnum.FINISHED}`), t("list.chart.notFinished")],
-      datasets: [
-        {
-          data: [finished, others],
-          backgroundColor: [series[0], grid],
-          borderWidth: 2,
-          borderColor: "transparent",
-        },
-      ],
-    };
-  }, [groupedByStatus, total, series, grid, t]);
 
   const decadeChartData = useMemo(
     () => ({
@@ -246,7 +209,7 @@ export function useMediaStats(data?: MediaResponse[]) {
       datasets: [
         {
           label: t("home.chart.topLogged"),
-          data: topLogged.map((item) => item.logCount),
+          data: topLogged.map((item) => item.count),
           backgroundColor: series[3],
           borderRadius: 4,
           borderWidth: 0,
@@ -320,14 +283,13 @@ export function useMediaStats(data?: MediaResponse[]) {
   );
 
   return {
-    total,
+    totalLogs,
+    totalTitles,
     averageRating,
     completionRate,
     groupedByStatus,
     topLogged,
     typeChartData,
-    statusChartData,
-    completionChartData,
     decadeChartData,
     weekDayChartData,
     monthChartData,

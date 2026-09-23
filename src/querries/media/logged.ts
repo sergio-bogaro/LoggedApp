@@ -172,6 +172,35 @@ export async function deleteMediaLog(logId: number, userId: number): Promise<voi
   await apiFetch<void>(`/api/media-logs/${logId}?user_id=${userId}`, { method: "DELETE" });
 }
 
+export type MediaLogMediaSummary = {
+  id: number;
+  externalId: string;
+  title: string;
+  type: MediaTypeEnum;
+  coverUrl?: string | null;
+  imagePath?: string | null;
+  releaseDate?: string | null;
+};
+
+/** A log together with the media it belongs to — the unit of the register. */
+export type MediaLogWithMedia = MediaLogResponse & {
+  media: MediaLogMediaSummary | null;
+};
+
+export async function getUserMediaLogs(
+  userId: number,
+  params?: { start?: string; end?: string; limit?: number; offset?: number }
+): Promise<MediaLogWithMedia[]> {
+  const url = new URLSearchParams();
+  url.set("user_id", userId.toString());
+  if (params?.start) url.set("start", params.start);
+  if (params?.end) url.set("end", params.end);
+  if (params?.limit !== undefined) url.set("limit", params.limit.toString());
+  if (params?.offset !== undefined) url.set("offset", params.offset.toString());
+
+  return apiFetch<MediaLogWithMedia[]>(`/api/media-logs/?${url.toString()}`);
+}
+
 // ──────────────────────────────────────────────
 // Helpers — URLs de imagem
 // ──────────────────────────────────────────────
