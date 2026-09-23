@@ -22,7 +22,7 @@ type TabsProps = {
 export function AppTabs({ defaultValue, options, className }: TabsProps) {
   return (
     <BaseTabs defaultValue={defaultValue} className={className}>
-      <TabsList className="flex gap-2">
+      <TabsList>
         {options.map(({ label, value }) => (
           <TabsTrigger key={value} value={value}>
             {label}

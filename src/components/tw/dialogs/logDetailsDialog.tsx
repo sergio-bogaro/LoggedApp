@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 
-import { StatusBadge } from "../generic/badges";
+import { StatusMark } from "../generic/badges";
 import { RatingDisplay } from "../media/ratingDisplay";
 
 import {
@@ -44,7 +44,7 @@ export function LogDetailsDialog({ log, mediaType, open, onOpenChange }: LogDeta
               <span className="text-sm font-medium text-muted-foreground">
                 {t("details.status")}
               </span>
-              <StatusBadge status={log.status} />
+              <StatusMark status={log.status} />
             </div>
           </div>
 

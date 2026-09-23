@@ -1,6 +1,11 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* The .agents skill data ships Tailwind class names inside CSVs/JSON that are
+   not app source. Without this, Tailwind's automatic detection turns them into
+   real utilities in the production bundle. */
+@source not "../.agents";
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {

@@ -49,7 +49,7 @@ function SheetContent({ className, children, side = "right", ...props }: React.C
       <SheetPrimitive.Content
         data-slot="sheet-content"
         className={cn(
-          "fixed z-50 flex flex-col gap-4 bg-background shadow-lg",
+          "fixed z-50 flex flex-col gap-4 bg-card border-border shadow-xl",
           "transition ease-in-out",
           "data-[state=closed]:animate-out data-[state=open]:animate-in",
           "data-[state=closed]:duration-300 data-[state=open]:duration-500",

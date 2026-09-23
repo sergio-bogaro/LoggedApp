@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 
-import { MediaTypeBadge } from "../generic/badges";
+import { TypeMark } from "../generic/badges";
 
 import { ImageWithSkeleton } from "@/components/tw/generic/imageSkeleton";
 import { MediaOptionsButton } from "@/components/tw/media/mediaOptions";
@@ -35,7 +35,7 @@ export const GridItem = ({ item, existingItem, showMediaType = false }: GridItem
         />
 
         <div className="absolute top-2 left-2">
-          {showMediaType && <MediaTypeBadge type={item.type} />}
+          {showMediaType && <TypeMark type={item.type} tone="overlay" />}
         </div>
 
         <div className="absolute rounded-md bottom-0 left-0 right-0 bg-linear-to-t from-black/90 via-black/50 to-transparent p-3">

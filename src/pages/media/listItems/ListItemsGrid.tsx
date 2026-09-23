@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
-import { MediaTypeBadge } from "@/components/tw/generic/badges";
+import { TypeMark } from "@/components/tw/generic/badges";
 import { EmptyState } from "@/components/tw/generic/EmptyState";
 import { ImageWithSkeleton } from "@/components/tw/generic/imageSkeleton";
 import { GridItemSkeleton } from "@/components/tw/media/gridSkeleton";
@@ -35,7 +35,7 @@ const ListItemCard = ({ item }: ListItemCardProps) => {
       />
 
       <div className="absolute top-2 left-2">
-        <MediaTypeBadge type={item.mediaType} />
+        <TypeMark type={item.mediaType} tone="overlay" />
       </div>
 
       <div className="absolute rounded-md bottom-0 left-0 right-0 bg-linear-to-t from-black/90 via-black/50 to-transparent p-3">

@@ -1,75 +1,78 @@
-import { ReactNode } from "react"
 import { useTranslation } from "react-i18next"
 
 import { cn } from "@/lib/utils"
 import { MediaStatusEnum, MediaTypeEnum } from "@/types/media"
 
-const Badge = ({ children, className }: { children: ReactNode, className?: string }) => {
+/*
+ * One hue per media type — the categorical ramp. A short rule is the only
+ * place color carries type meaning, so there are no colored pills and no
+ * badge soup competing with the artwork.
+ */
+const typeRule: Record<MediaTypeEnum, string> = {
+  [MediaTypeEnum.MOVIES]: "bg-type-film",
+  [MediaTypeEnum.ANIME]: "bg-type-anime",
+  [MediaTypeEnum.MANGA]: "bg-type-manga",
+  [MediaTypeEnum.GAME]: "bg-type-game",
+  [MediaTypeEnum.BOOK]: "bg-type-book",
+}
+
+interface TypeMarkProps {
+  type: MediaTypeEnum
+  /** "overlay" sits on artwork and needs its own scrim; "plain" sits on a plane. */
+  tone?: "overlay" | "plain"
+  className?: string
+}
+
+export const TypeMark = ({ type, tone = "plain", className }: TypeMarkProps) => {
+  const { t } = useTranslation("media")
+  const label = t(`type.${type}`)
+
+  if (tone === "overlay") {
+    return (
+      <span
+        className={cn(
+          "inline-flex items-center gap-1.5 rounded-control bg-black/70 px-2 py-0.5",
+          "text-step-1 font-medium text-white backdrop-blur-sm",
+          className
+        )}
+      >
+        <span aria-hidden="true" className={cn("size-1.5 rounded-full", typeRule[type])} />
+        {label}
+      </span>
+    )
+  }
+
   return (
-    <span className={cn("text-sm px-2 py-1 rounded-sm", className)}>
-      {children}
+    <span className={cn("inline-flex items-center gap-2 text-step-1 text-muted-foreground", className)}>
+      <span aria-hidden="true" className={cn("h-0.5 w-5 rounded-full", typeRule[type])} />
+      {label}
     </span>
   )
 }
 
-export const MediaTypeBadge = ({ type }: { type: MediaTypeEnum }) => {
-  const { t } = useTranslation("media")
+/*
+ * Status is encoded by a mark, not by hue: the categorical ramp already owns
+ * color, so the mark only separates active / done / inactive and the label
+ * carries the specific status.
+ */
+type StatusSpec = { mark: string; text: string }
 
-  function getTypeText(type: MediaTypeEnum) {
-    switch (type) {
-      case MediaTypeEnum.MOVIES:
-        return t("type.movie")
-      case MediaTypeEnum.ANIME:
-        return t("type.anime")
-      case MediaTypeEnum.MANGA:
-        return t("type.manga")
-      case MediaTypeEnum.BOOK:
-        return t("type.book")
-      case MediaTypeEnum.GAME:
-        return t("type.game")
-      default:
-        return type
-    }
-  }
-
-  return (
-    <Badge className="bg-primary text-primary-foreground">
-      {getTypeText(type)}
-    </Badge>
-  )
+const statusSpec: Record<MediaStatusEnum, StatusSpec> = {
+  [MediaStatusEnum.IN_PROGRESS]: { mark: "border-primary bg-primary", text: "text-foreground" },
+  [MediaStatusEnum.FOLLOWING]: { mark: "border-primary bg-primary", text: "text-foreground" },
+  [MediaStatusEnum.FINISHED]: { mark: "border-foreground bg-foreground", text: "text-foreground" },
+  [MediaStatusEnum.ON_HOLD]: { mark: "border-muted-foreground bg-transparent", text: "text-muted-foreground" },
+  [MediaStatusEnum.DROPPED]: { mark: "border-muted-foreground bg-transparent", text: "text-muted-foreground" },
 }
 
-export const StatusBadge = ({ status }: { status: MediaStatusEnum }) => {
+export const StatusMark = ({ status, className }: { status: MediaStatusEnum; className?: string }) => {
   const { t } = useTranslation("media")
-
-  const statusColors: Record<MediaStatusEnum, string> = {
-    [MediaStatusEnum.IN_PROGRESS]: "bg-blue-600 text-white",
-    [MediaStatusEnum.FOLLOWING]: "bg-slate-600 text-white",
-    [MediaStatusEnum.ON_HOLD]: "bg-amber-500 text-amber-950",
-    [MediaStatusEnum.DROPPED]: "bg-red-600 text-white",
-    [MediaStatusEnum.FINISHED]: "bg-green-600 text-white",
-  };
-
-  function getStatusText(status: MediaStatusEnum) {
-    switch (status) {
-      case MediaStatusEnum.IN_PROGRESS:
-        return t("status.in_progress")
-      case MediaStatusEnum.FOLLOWING:
-        return t("status.following")
-      case MediaStatusEnum.ON_HOLD:
-        return t("status.on_hold")
-      case MediaStatusEnum.DROPPED:
-        return t("status.dropped")
-      case MediaStatusEnum.FINISHED:
-        return t("status.finished")
-      default:
-        return status
-    }
-  }
+  const spec = statusSpec[status]
 
   return (
-    <Badge className={statusColors[status]}>
-      {getStatusText(status)}
-    </Badge>
+    <span className={cn("inline-flex items-center gap-2 text-step-1", spec.text, className)}>
+      <span aria-hidden="true" className={cn("size-2 rounded-[2px] border", spec.mark)} />
+      {t(`status.${status}`)}
+    </span>
   )
 }

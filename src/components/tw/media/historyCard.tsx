@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 
-import { StatusBadge } from "../generic/badges";
+import { StatusMark } from "../generic/badges";
 import { Card } from "../generic/card";
 
 import { RatingDisplay } from "./ratingDisplay";
@@ -31,7 +31,7 @@ export const MediaLogCard = ({ log, isOneTimeConsuption }: MediaLogCardProps) =>
           </div>
         )}
 
-        {log.status && <StatusBadge status={log.status} />}
+        {log.status && <StatusMark status={log.status} />}
       </div>
 
       {typeof log.rating === "number" && log.rating > 0 && (
