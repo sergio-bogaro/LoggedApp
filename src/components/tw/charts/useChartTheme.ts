@@ -8,7 +8,17 @@ export interface ChartTheme {
   grid: string;
 }
 
-const FALLBACK_SERIES = ["#4bc0c0", "#36a2eb", "#ffce56", "#9966ff", "#ff6384"];
+const FALLBACK_SERIES = ["#3e6fa8", "#7c5ba6", "#a8516e", "#2f7a73", "#8f6a24"];
+
+/* The categorical ramp is the single source of data color: one hue per media
+ * type, shared by charts and type marks. */
+const CATEGORICAL_VARS = [
+  "--type-film",
+  "--type-anime",
+  "--type-manga",
+  "--type-game",
+  "--type-book",
+] as const;
 
 const readVar = (name: string, fallback: string) => {
   if (typeof window === "undefined") return fallback;
@@ -18,7 +28,7 @@ const readVar = (name: string, fallback: string) => {
 
 /**
  * Resolves the active theme's data colors from the CSS custom properties, so
- * charts follow light/dark/rose-pine/green instead of Chart.js defaults.
+ * charts follow the canonical light/dark themes instead of Chart.js defaults.
  */
 export function useChartTheme(): ChartTheme {
   const theme = useAppSelector((state) => state.ui.theme);
@@ -29,11 +39,9 @@ export function useChartTheme(): ChartTheme {
     void theme;
 
     return {
-      series: FALLBACK_SERIES.map((fallback, index) =>
-        readVar(`--chart-${index + 1}`, fallback)
-      ),
-      text: readVar("--muted-foreground", "#6b7280"),
-      grid: readVar("--border", "rgba(127, 127, 127, 0.2)"),
+      series: CATEGORICAL_VARS.map((name, index) => readVar(name, FALLBACK_SERIES[index])),
+      text: readVar("--muted-foreground", "#6e7276"),
+      grid: readVar("--border", "#dcdcd6"),
     };
   }, [theme]);
 }

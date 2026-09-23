@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-export type Theme = "light" | "dark" | "rose-pine" | "rose-pine-dawn" | "green-light" | "green-dark";
+export type Theme = "light" | "dark";
 export type ViewMode = "list" | "grid";
 export type RatingMode = "numeric" | "stars5" | "stars10";
 export type Crumb = {
@@ -8,7 +8,25 @@ export type Crumb = {
   to?: string;
 };
 
-export const THEME_CLASSES = ["light", "dark", "rose-pine", "rose-pine-dawn", "green-light", "green-dark"] as const;
+export const THEME_CLASSES = ["light", "dark"] as const;
+
+/*
+ * Themes dropped in the redesign. A stored value under an old name is mapped
+ * onto its closest surviving counterpart so existing users keep a sane theme.
+ */
+const LEGACY_THEME_MAP: Record<string, Theme> = {
+  "rose-pine": "dark",
+  "green-dark": "dark",
+  "rose-pine-dawn": "light",
+  "green-light": "light",
+};
+
+function resolveStoredTheme(): Theme {
+  const stored = localStorage.getItem("theme");
+  if (!stored) return "light";
+  if ((THEME_CLASSES as readonly string[]).includes(stored)) return stored as Theme;
+  return LEGACY_THEME_MAP[stored] ?? "light";
+}
 
 interface UIState {
   theme: Theme;
@@ -18,9 +36,8 @@ interface UIState {
   breadcrumbs: Crumb[];
 }
 
-const storedTheme = localStorage.getItem("theme") as Theme | null;
-const savedTheme: Theme =
-  storedTheme && (THEME_CLASSES as readonly string[]).includes(storedTheme) ? storedTheme : "light";
+const savedTheme = resolveStoredTheme();
+localStorage.setItem("theme", savedTheme);
 const savedViewMode = (localStorage.getItem("viewMode") as ViewMode) || "list";
 const savedRatingMode = (localStorage.getItem("ratingMode") as RatingMode) || "stars5";
 const savedLastSearchType = localStorage.getItem("lastSearchType") || "movies";
