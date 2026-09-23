@@ -3,12 +3,12 @@ import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
 
-import { LibraryDataMediaType } from "./components/library";
 import { ListStatusData } from "./components/listStatusData";
 
 import { DataExhibition } from "@/components/tw/generic/dataExhibition";
 import { MediaCardSkeleton } from "@/components/tw/generic/mediaCardSkeleton";
 import { PageHeader } from "@/components/tw/generic/PageHeader";
+import { MediaLibrary } from "@/components/tw/media/mediaLibrary";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getMediaList } from "@/querries/media/logged";
 import { useAppSelector } from "@/store/auth/hooks";
@@ -76,7 +76,7 @@ const MediaListPage = () => {
           </TabsList>
 
           <TabsContent value="list">
-            <LibraryDataMediaType data={data} recentlyLoggedData={recentlyLoggedData} mediaType={mediaType} />
+            <MediaLibrary data={data} recentlyLoggedData={recentlyLoggedData} mediaType={mediaType} />
           </TabsContent>
 
           <TabsContent value="stats" className="mt-4 space-y-6">

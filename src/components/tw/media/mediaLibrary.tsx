@@ -12,18 +12,21 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { MediaResponse } from "@/types/logged"
+import { MediaResponse } from "@/types/logged";
 import { MediaItem, MediaTypeEnum } from "@/types/media";
 import { mediaTypeToPath } from "@/utils/mediaText";
 
-
-interface LibraryDataProps {
+interface MediaLibraryProps {
   data?: MediaResponse[];
   recentlyLoggedData?: MediaResponse[];
   mediaType?: MediaTypeEnum;
 }
 
-export const LibraryDataMediaType = ({ data, recentlyLoggedData, mediaType }: LibraryDataProps) => {
+/**
+ * "Recently logged" + "Favorites" carousels, shared by the media home page
+ * (no type filter) and the per-type list page.
+ */
+export const MediaLibrary = ({ data, recentlyLoggedData, mediaType }: MediaLibraryProps) => {
   const { t } = useTranslation("media");
 
   const recentlyLogged = useMemo(() => {
@@ -58,7 +61,7 @@ export const LibraryDataMediaType = ({ data, recentlyLoggedData, mediaType }: Li
     },
   ];
 
-  return(
+  return (
     <div className="md:px-12 mt-4 space-y-8">
       {sections.map((section) => (
         <div key={section.key}>
@@ -123,4 +126,4 @@ export const LibraryDataMediaType = ({ data, recentlyLoggedData, mediaType }: Li
       ))}
     </div>
   )
-}
+};

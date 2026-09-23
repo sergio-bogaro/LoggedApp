@@ -43,11 +43,11 @@ export const StatusBadge = ({ status }: { status: MediaStatusEnum }) => {
   const { t } = useTranslation("media")
 
   const statusColors: Record<MediaStatusEnum, string> = {
-    [MediaStatusEnum.IN_PROGRESS]: "bg-blue-600 text-white dark:bg-blue-500",
-    [MediaStatusEnum.FOLLOWING]: "bg-slate-600 text-white dark:bg-slate-500",
+    [MediaStatusEnum.IN_PROGRESS]: "bg-blue-600 text-white",
+    [MediaStatusEnum.FOLLOWING]: "bg-slate-600 text-white",
     [MediaStatusEnum.ON_HOLD]: "bg-amber-500 text-amber-950",
-    [MediaStatusEnum.DROPPED]: "bg-red-600 text-white dark:bg-red-500",
-    [MediaStatusEnum.FINISHED]: "bg-green-600 text-white dark:bg-green-500",
+    [MediaStatusEnum.DROPPED]: "bg-red-600 text-white",
+    [MediaStatusEnum.FINISHED]: "bg-green-600 text-white",
   };
 
   function getStatusText(status: MediaStatusEnum) {

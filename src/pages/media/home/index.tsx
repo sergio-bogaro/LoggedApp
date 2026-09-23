@@ -2,12 +2,12 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
-import { LibraryData } from "./components/library";
 import { StatusData } from "./components/status";
 
 import { DataExhibition } from "@/components/tw/generic/dataExhibition";
 import { MediaCardSkeleton } from "@/components/tw/generic/mediaCardSkeleton";
 import { PageHeader } from "@/components/tw/generic/PageHeader";
+import { MediaLibrary } from "@/components/tw/media/mediaLibrary";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getMediaList } from "@/querries/media/logged";
 import { useAppSelector } from "@/store/auth/hooks";
@@ -63,7 +63,7 @@ const MediaHomePage = () => {
           </TabsList>
 
           <TabsContent value="list">
-            <LibraryData data={allData} recentlyLoggedData={recentlyLoggedData} />
+            <MediaLibrary data={allData} recentlyLoggedData={recentlyLoggedData} />
           </TabsContent>
 
           <TabsContent value="stats" className="mt-4 space-y-6">

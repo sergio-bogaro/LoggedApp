@@ -29,19 +29,6 @@ export async function getFavorites(userId: number): Promise<MediaListItem[]> {
   return apiFetch<MediaListItem[]>(`/api/favorites/${userId}`);
 }
 
-export async function checkFavorite(
-  userId: number,
-  externalId: string,
-  mediaType: string
-): Promise<{ inList: boolean; itemId: number | null }> {
-  const params = new URLSearchParams({
-    user_id: userId.toString(),
-    external_id: externalId,
-    media_type: mediaType,
-  });
-  return apiFetch(`/api/favorites/check?${params}`);
-}
-
 export async function addToFavorites(data: MediaListItemCreatePayload): Promise<MediaListItem> {
   return apiFetch<MediaListItem>("/api/favorites/", {
     method: "POST",
@@ -70,19 +57,6 @@ export async function removeFromFavorites(itemId: number, userId: number): Promi
 
 export async function getBacklog(userId: number): Promise<MediaListItem[]> {
   return apiFetch<MediaListItem[]>(`/api/backlog/${userId}`);
-}
-
-export async function checkBacklog(
-  userId: number,
-  externalId: string,
-  mediaType: string
-): Promise<{ inList: boolean; itemId: number | null }> {
-  const params = new URLSearchParams({
-    user_id: userId.toString(),
-    external_id: externalId,
-    media_type: mediaType,
-  });
-  return apiFetch(`/api/backlog/check?${params}`);
 }
 
 export async function addToBacklog(data: MediaListItemCreatePayload): Promise<MediaListItem> {

@@ -6,9 +6,8 @@ import { MediaHistoryDialog } from "../dialogs/mediaHistoryDialog";
 
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useMediaListStatus } from "@/hooks/useMediaListStatus";
 import { cn } from "@/lib/utils";
-import { checkBacklog, checkFavorite } from "@/querries/media/listItems";
-import { useAppSelector } from "@/store/auth/hooks";
 import { MediaResponse } from "@/types/logged";
 import { MediaItem } from "@/types/media";
 import { useHandleBacklog, useHandleFavorites } from "@/utils/mediaStore";
@@ -20,29 +19,15 @@ interface MediaOptionsButtonProps {
 }
 
 export const MediaOptionsButton = ({ mediaItem, existingItem }: MediaOptionsButtonProps) => {
-  const { user } = useAppSelector((state) => state.auth);
   const { t } = useTranslation("media");
 
   const [isOpen, setIsOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
-  const [backlogStatus, setBacklogStatus] = useState<{ inList: boolean; itemId: number | null }>({ inList: false, itemId: null });
-  const [favoritesStatus, setFavoritesStatus] = useState<{ inList: boolean; itemId: number | null }>({ inList: false, itemId: null });
 
   const handleBacklog = useHandleBacklog();
   const handleFavorites = useHandleFavorites();
 
-  const handleOpenChange = async (open: boolean) => {
-    setIsOpen(open);
-    if (open && user && mediaItem.id) {
-      const [backlog, favorites] = await Promise.all([
-        checkBacklog(user.id, mediaItem.id, mediaItem.type),
-        checkFavorite(user.id, mediaItem.id, mediaItem.type),
-      ]);
-
-      setBacklogStatus(backlog);
-      setFavoritesStatus(favorites);
-    }
-  };
+  const { backlogStatus, favoritesStatus, isLoading } = useMediaListStatus(mediaItem);
 
   function handleTreeDotsClick(e: React.MouseEvent) {
     e.preventDefault();
@@ -65,23 +50,19 @@ export const MediaOptionsButton = ({ mediaItem, existingItem }: MediaOptionsButt
     setIsOpen(false);
   }
 
-  function openMediaHistoryDialog() {
-    setIsOpen(false);
-    setIsHistoryOpen(true);
-  }
-
   function onViewHistory(event: Event) {
     event.preventDefault();
     event.stopPropagation();
 
     if (!existingItem) return;
 
-    openMediaHistoryDialog();
+    setIsOpen(false);
+    setIsHistoryOpen(true);
   }
 
   return (
     <>
-      <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
+      <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
         <DropdownMenuTrigger asChild>
           <Button
             onClick={handleTreeDotsClick}
@@ -101,14 +82,14 @@ export const MediaOptionsButton = ({ mediaItem, existingItem }: MediaOptionsButt
 
         <DropdownMenuContent align="end">
           {backlogStatus.inList ? (
-            <DropdownMenuItem onSelect={onHandleBacklog}>{t("actions.removeFromBacklog")}</DropdownMenuItem>
+            <DropdownMenuItem disabled={isLoading} onSelect={onHandleBacklog}>{t("actions.removeFromBacklog")}</DropdownMenuItem>
           ) : (
-            <DropdownMenuItem onSelect={onHandleBacklog}>{t("actions.addToBacklog")}</DropdownMenuItem>
+            <DropdownMenuItem disabled={isLoading} onSelect={onHandleBacklog}>{t("actions.addToBacklog")}</DropdownMenuItem>
           )}
           {favoritesStatus.inList ? (
-            <DropdownMenuItem onSelect={onHandleFavorite}>{t("actions.removeFavorite")}</DropdownMenuItem>
+            <DropdownMenuItem disabled={isLoading} onSelect={onHandleFavorite}>{t("actions.removeFavorite")}</DropdownMenuItem>
           ) : (
-            <DropdownMenuItem onSelect={onHandleFavorite}>{t("actions.addFavorite")}</DropdownMenuItem>
+            <DropdownMenuItem disabled={isLoading} onSelect={onHandleFavorite}>{t("actions.addFavorite")}</DropdownMenuItem>
           )}
           <DropdownMenuSeparator />
           <DropdownMenuItem disabled={!existingItem} onSelect={onViewHistory}>
