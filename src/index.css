@@ -202,8 +202,12 @@
   --sidebar-ring: #7fb3a0;
 }
 
-/* ── Purple palette (accent tokens over the light/dark modes) ─────────── */
+/* ── Purple palette (planes + accent tokens over the light/dark modes) ── */
 .purple {
+  --background: #f8f5fc;
+  --card: #ffffff;
+  --popover: #ffffff;
+  --muted-foreground: #6f6976;
   --primary: #6b4fa1;
   --primary-foreground: #fbfbf9;
   --secondary: #f2eef7;
@@ -220,8 +224,12 @@
   --sidebar-ring: #6b4fa1;
 }
 
-/* ── Green palette (accent tokens over the light/dark modes) ──────────── */
+/* ── Green palette (planes + accent tokens over the light/dark modes) ─── */
 .green {
+  --background: #f6faf5;
+  --card: #ffffff;
+  --popover: #ffffff;
+  --muted-foreground: #6c756c;
   --primary: #3f7d3a;
   --primary-foreground: #fbfbf9;
   --secondary: #eef4ec;
@@ -240,6 +248,10 @@
 
 /* Dark variants override the light palette blocks above. */
 .dark.purple {
+  --background: #121017;
+  --card: #1a1622;
+  --popover: #1a1622;
+  --muted-foreground: #a49cab;
   --primary: #b79ae0;
   --primary-foreground: #0f1113;
   --secondary: #232030;
@@ -257,6 +269,10 @@
 }
 
 .dark.green {
+  --background: #101510;
+  --card: #182019;
+  --popover: #182019;
+  --muted-foreground: #9aa89e;
   --primary: #86c98a;
   --primary-foreground: #0f1113;
   --secondary: #1e2a22;
