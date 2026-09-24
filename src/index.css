@@ -69,8 +69,11 @@
   --font-serif: "Newsreader Variable", ui-serif, Georgia, "Times New Roman", serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-  /* Modular scale, ratio ~1.25 */
-  --text-step-1: 0.8125rem;
+  /* Modular scale. Step 0 carries the small print — overlays, avatar initials,
+     field hints — and step 1 the UI text that used to be `text-sm`. */
+  --text-step-0: 0.75rem;
+  --text-step-0--line-height: 1.35;
+  --text-step-1: 0.875rem;
   --text-step-1--line-height: 1.4;
   --text-step-2: 1rem;
   --text-step-2--line-height: 1.55;
@@ -237,6 +240,15 @@
 
   html {
     -webkit-text-size-adjust: 100%;
+
+    /*
+     * Standard scrollbar styling for Firefox and Chrome 121+. Setting these
+     * makes Chromium ignore ::-webkit-scrollbar, so that block below is now
+     * only the Safari fallback — Safari still has no scrollbar-color.
+     * scrollbar-color is inherited, so the theme follows on its own.
+     */
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
   }
 
   body {

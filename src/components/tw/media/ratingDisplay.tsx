@@ -17,7 +17,7 @@ export const RatingDisplay = ({ rating, discrete }: RatingDisplayProps) => {
 
   if (ratingMode === "numeric") {
     return (
-      <span className={cn("font-medium", discrete ? "text-step-1" : "text-step-2")} aria-label={ratingLabel}>
+      <span className={cn("font-medium", discrete ? "text-step-0" : "text-step-2")} aria-label={ratingLabel}>
         {ratingLabel}
       </span>
     );

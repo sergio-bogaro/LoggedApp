@@ -52,7 +52,7 @@ function MediaTrackToggles({ values, onChange }: MediaTrackTogglesProps) {
                 </p>
 
                 {!available && requiredKey && (
-                  <p className="text-step-1 text-muted-foreground">
+                  <p className="text-step-0 text-muted-foreground">
                     {t("settings.tracking.disabledHint", {
                       ns: "common",
                       key: requiredKey,

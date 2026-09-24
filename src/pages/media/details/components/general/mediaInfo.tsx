@@ -3,6 +3,7 @@ import { AniListMediaDetails } from "@/querries/externalMedia/anilist";
 import { IGDBGame } from "@/querries/externalMedia/games";
 import { TMDBMovieDetails } from "@/querries/externalMedia/movies";
 import { MediaTypeEnum } from "@/types/media";
+import { htmlToPlainText } from "@/utils/string";
 
 type MediaInfoContainerProps = {
   title?: string;
@@ -37,10 +38,9 @@ export const MediaInfoComponent = ({ title, dates, tags, tagline, overview }: Me
       <div className="mt-6 flex flex-col gap-4">
         {tagline && <p className="max-w-[70ch] font-serif text-step-3 italic">{tagline}</p>}
 
-        <p
-          className="max-w-[70ch] text-step-2 leading-relaxed"
-          dangerouslySetInnerHTML={{ __html: overview }}
-        />
+        <p className="max-w-[70ch] text-step-2 leading-relaxed whitespace-pre-line">
+          {htmlToPlainText(overview)}
+        </p>
       </div>
     </div>
   )

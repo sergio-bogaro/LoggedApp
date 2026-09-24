@@ -85,7 +85,7 @@ function VideosTab({ videos }: { videos: IgdbVideo[] }) {
               allowFullScreen
             />
           </div>
-          <span className="text-step-1 font-medium text-muted-foreground line-clamp-1">
+          <span className="text-step-0 font-medium text-muted-foreground line-clamp-1">
             {video.name}
           </span>
         </div>
@@ -118,7 +118,7 @@ function LinksGroup({
               className="flex items-center justify-between py-3 hover:text-primary transition-colors"
             >
               <span className="text-step-1 font-medium">{label}</span>
-              <span className="text-step-1 text-muted-foreground">↗</span>
+              <span className="text-step-0 text-muted-foreground">↗</span>
             </a>
           );
         })}

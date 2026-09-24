@@ -94,7 +94,7 @@ function Avatar({ name, photo }: { name: string; photo: string | null }) {
   }
 
   return (
-    <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center shrink-0 text-step-1 font-medium text-muted-foreground">
+    <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center shrink-0 text-step-0 font-medium text-muted-foreground">
       {initials}
     </div>
   );
@@ -122,7 +122,7 @@ function CastTab({ castList }: { castList: CastMember[] }) {
             <Avatar name={member.name} photo={member.photo} />
             <div className="min-w-0">
               <p className="text-step-1 font-medium leading-tight truncate">{member.name}</p>
-              <p className="text-step-1 text-muted-foreground truncate">{member.character}</p>
+              <p className="text-step-0 text-muted-foreground truncate">{member.character}</p>
             </div>
           </div>
         )
@@ -159,7 +159,7 @@ function CrewTab({ crewList }: { crewList: CrewMember[] }) {
           </span>
           <div className="text-right min-w-0">
             <p className="text-step-1 font-medium truncate">{entry.name}</p>
-            <p className="text-step-1 text-muted-foreground truncate">{entry.job}</p>
+            <p className="text-step-0 text-muted-foreground truncate">{entry.job}</p>
           </div>
         </div>
       ))}

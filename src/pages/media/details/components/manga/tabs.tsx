@@ -78,7 +78,7 @@ function CharactersTab({ characters }: { characters: CharacterNode[] }) {
             alt={char.name.full}
             className="aspect-2/3 w-full rounded"
           />
-          <span className="text-step-1 font-medium text-center line-clamp-2">{char.name.full}</span>
+          <span className="text-step-0 font-medium text-center line-clamp-2">{char.name.full}</span>
         </div>
       ))}
     </div>
@@ -105,13 +105,13 @@ function StaffTab({ staff }: { staff: StaffEdge[] }) {
               className="w-10 h-10 rounded-full shrink-0"
             />
           ) : (
-            <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center shrink-0 text-step-1 font-medium text-muted-foreground">
+            <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center shrink-0 text-step-0 font-medium text-muted-foreground">
               {edge.node.name.full.split(" ").slice(0, 2).map(n => n[0]).join("").toUpperCase()}
             </div>
           )}
           <div className="min-w-0">
             <p className="text-step-1 font-medium leading-tight truncate">{edge.node.name.full}</p>
-            <p className="text-step-1 text-muted-foreground truncate">{edge.role}</p>
+            <p className="text-step-0 text-muted-foreground truncate">{edge.role}</p>
           </div>
         </div>
       ))}
@@ -142,7 +142,7 @@ function RelationsTab({ relations }: { relations: RelationEdge[] }) {
             </span>
             <div className="text-right min-w-0">
               <p className="text-step-1 font-medium truncate">{title}</p>
-              <p className="text-step-1 text-muted-foreground truncate">{edge.node.format}</p>
+              <p className="text-step-0 text-muted-foreground truncate">{edge.node.format}</p>
             </div>
           </div>
         );
