@@ -3,9 +3,9 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
 import { addToBacklog, removeFromBacklog, addToFavorites, removeFromFavorites } from "@/querries/media/listItems";
-import { createMedia, createMediaLog, removeMediaImage, updateMedia, uploadMediaImage, uploadMediaImageFromUrl } from "@/querries/media/logged";
+import { createMedia, createMediaLog, deleteMedia, deleteMediaLog, removeMediaImage, updateMedia, updateMediaLog, uploadMediaImage, uploadMediaImageFromUrl } from "@/querries/media/logged";
 import { useAppSelector } from "@/store/auth/hooks";
-import { MediaResponse, MediaWithLogsResponse } from "@/types/logged";
+import { MediaLogUpdatePayload, MediaResponse, MediaUpdatePayload, MediaWithLogsResponse } from "@/types/logged";
 import { MediaDataDetailsType, TrackMediaPayload } from "@/types/media";
 import { MediaItem } from "@/types/media";
 
@@ -165,6 +165,8 @@ export function useTrackMedia() {
         review: trackData.review,
         startDate: trackData.startDate,
         endDate: trackData.endDate,
+        progress: trackData.progress,
+        progressTotal: trackData.progressTotal,
       });
 
       return media;
@@ -271,4 +273,97 @@ export function useChangeImage() {
     isPending: mutation.isPending,
     isSuccess: mutation.isSuccess,
   };
+}
+
+// ──────────────────────────────────────────────
+// Editar / excluir mídia e logs
+// ──────────────────────────────────────────────
+
+export function useUpdateMedia() {
+  const { t } = useTranslation("media");
+  const queryClient = useQueryClient();
+  const { user } = useAppSelector((state) => state.auth);
+
+  return useMutation({
+    mutationFn: async ({ mediaId, data }: { mediaId: number; data: MediaUpdatePayload }) => {
+      if (!user) throw new Error("User not authenticated");
+      return updateMedia(mediaId, data, user.id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["media"] });
+      queryClient.invalidateQueries({ queryKey: ["existingMedia"] });
+      toast.success(t("feedback.mediaUpdated"));
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || t("feedback.mediaUpdateFailed"));
+    },
+  });
+}
+
+export function useDeleteMedia() {
+  const { t } = useTranslation("media");
+  const queryClient = useQueryClient();
+  const { user } = useAppSelector((state) => state.auth);
+
+  return useMutation({
+    mutationFn: async ({ mediaId }: { mediaId: number }) => {
+      if (!user) throw new Error("User not authenticated");
+      return deleteMedia(mediaId, user.id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["media"] });
+      queryClient.invalidateQueries({ queryKey: ["existingMedia"] });
+      queryClient.invalidateQueries({ queryKey: ["favorites"] });
+      queryClient.invalidateQueries({ queryKey: ["backlog"] });
+      queryClient.invalidateQueries({ queryKey: ["media-logs"] });
+      toast.success(t("feedback.mediaDeleted"));
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || t("feedback.mediaDeleteFailed"));
+    },
+  });
+}
+
+export function useUpdateLog() {
+  const { t } = useTranslation("media");
+  const queryClient = useQueryClient();
+  const { user } = useAppSelector((state) => state.auth);
+
+  return useMutation({
+    mutationFn: async ({ logId, data }: { logId: number; data: MediaLogUpdatePayload }) => {
+      if (!user) throw new Error("User not authenticated");
+      return updateMediaLog(logId, data, user.id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["media"] });
+      queryClient.invalidateQueries({ queryKey: ["existingMedia"] });
+      queryClient.invalidateQueries({ queryKey: ["media-logs"] });
+      toast.success(t("feedback.logUpdated"));
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || t("feedback.logUpdateFailed"));
+    },
+  });
+}
+
+export function useDeleteLog() {
+  const { t } = useTranslation("media");
+  const queryClient = useQueryClient();
+  const { user } = useAppSelector((state) => state.auth);
+
+  return useMutation({
+    mutationFn: async ({ logId }: { logId: number }) => {
+      if (!user) throw new Error("User not authenticated");
+      return deleteMediaLog(logId, user.id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["media"] });
+      queryClient.invalidateQueries({ queryKey: ["existingMedia"] });
+      queryClient.invalidateQueries({ queryKey: ["media-logs"] });
+      toast.success(t("feedback.logDeleted"));
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || t("feedback.logDeleteFailed"));
+    },
+  });
 }

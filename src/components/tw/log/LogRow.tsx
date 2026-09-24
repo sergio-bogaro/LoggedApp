@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { mediaImageUrl } from "@/querries/media/logged";
 import type { MediaLogWithMedia } from "@/querries/media/logged";
 import { formatShortDay } from "@/utils/date";
+import { formatProgress } from "@/utils/mediaText";
 
 interface LogRowProps {
   log: MediaLogWithMedia;
@@ -27,6 +28,7 @@ export const LogRow = ({ log }: LogRowProps) => {
     ? (mediaImageUrl(media.imagePath) ?? media.coverUrl)
     : media?.coverUrl;
   const hasRating = typeof log.rating === "number" && log.rating > 0;
+  const progressLabel = formatProgress(log.progress, log.progressTotal);
 
   const rowClassName = cn(
     "group grid items-center gap-x-4 gap-y-2 rounded-control px-3 py-3",
@@ -48,7 +50,14 @@ export const LogRow = ({ log }: LogRowProps) => {
 
       <div className="min-w-0">
         <h3 className="truncate text-step-2 font-medium">{media?.title ?? "—"}</h3>
-        {media && <TypeMark type={media.type} className="mt-1" />}
+        {media && (
+          <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1">
+            <TypeMark type={media.type} />
+            {progressLabel && (
+              <span className="text-step-0 tabular-nums text-muted-foreground">{progressLabel}</span>
+            )}
+          </div>
+        )}
       </div>
 
       {/* A flex row on mobile; transparent to the grid from md up. */}

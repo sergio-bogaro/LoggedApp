@@ -17,6 +17,7 @@ export type MediaResponse = {
   updatedAt: string;
   logCount: number;
   lastLogDate?: string;
+  tags?: string[];
 };
 
 export type MediaLogResponse = {
@@ -27,6 +28,8 @@ export type MediaLogResponse = {
   status: MediaStatusEnum | null;
   rating?: number;
   review?: string;
+  progress?: number;
+  progressTotal?: number;
   createdAt: string;
   startDate?: string;
   endDate?: string;
@@ -71,6 +74,8 @@ export type MediaLogCreatePayload = {
   review?: string;
   startDate?: string;
   endDate?: string;
+  progress?: number;
+  progressTotal?: number;
 };
 
 export type MediaLogUpdatePayload = {
@@ -78,4 +83,8 @@ export type MediaLogUpdatePayload = {
   status?: MediaStatusEnum;
   rating?: number;
   review?: string;
+  progress?: number;
+  progressTotal?: number;
+  startDate?: string;
+  endDate?: string;
 };

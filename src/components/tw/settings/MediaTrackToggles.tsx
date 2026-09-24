@@ -1,4 +1,4 @@
-import { Book, BookOpen, Film, Gamepad2, Tv } from "lucide-react";
+import { Book, BookOpen, Film, Gamepad2, Music, Tv } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import { Switch } from "@/components/ui/switch";
@@ -18,6 +18,7 @@ const trackableMediaTypes: Array<{ type: MediaTypeEnum; icon: typeof Film }> = [
   { type: MediaTypeEnum.MANGA, icon: BookOpen },
   { type: MediaTypeEnum.BOOK, icon: Book },
   { type: MediaTypeEnum.GAME, icon: Gamepad2 },
+  { type: MediaTypeEnum.MUSIC, icon: Music },
 ];
 
 const requiredEnvKeys: Partial<Record<MediaTypeEnum, string>> = {

@@ -1,8 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
+import { API_BASE_URL } from "@/querries/apiBase";
 import { MediaTypeEnum } from "@/types/media";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
 export type MediaSourceAvailability = Record<MediaTypeEnum, boolean>;
 
@@ -34,6 +33,7 @@ export function useMediaSourceAvailability(): {
       [MediaTypeEnum.MANGA]: true,
       [MediaTypeEnum.GAME]: igdbConfigured ?? true,
       [MediaTypeEnum.BOOK]: true,
+      [MediaTypeEnum.MUSIC]: true,
     },
     isLoading,
   };

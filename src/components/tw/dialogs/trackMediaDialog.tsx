@@ -17,6 +17,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { StarRating } from "@/components/ui/starRating";
 import { TextArea } from "@/components/ui/textarea";
@@ -29,6 +30,7 @@ import {
 } from "@/types/media";
 import { newIsoDate } from "@/utils/date";
 import { useTrackMedia } from "@/utils/mediaStore";
+import { getProgressLabelKey, mediaSupportsProgress } from "@/utils/mediaText";
 import { statusAnimeOptions } from "@/utils/selectOptions";
 
 interface TrackMediaDialogProps {
@@ -47,7 +49,15 @@ interface FormType {
   endDate?: string;
   rating?: number;
   review?: string;
+  progress?: string | number;
+  progressTotal?: string | number;
 }
+
+const toOptionalNumber = (value?: string | number) => {
+  if (value === undefined || value === null || value === "") return undefined;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : undefined;
+};
 
 export function TrackMediaDialog({ mediaType, existingMedia, image, formatedData, trigger }: TrackMediaDialogProps) {
   const { t } = useTranslation("media");
@@ -56,6 +66,11 @@ export function TrackMediaDialog({ mediaType, existingMedia, image, formatedData
   const trackMedia = useTrackMedia();
 
   const isOneTimeConsumption = useMemo( () => mediaType === MediaTypeEnum.MOVIES, [mediaType] );
+  const supportsProgress = useMemo( () => mediaSupportsProgress(mediaType), [mediaType] );
+  const progressLabel = useMemo(() => {
+    const key = getProgressLabelKey(mediaType);
+    return t(key ?? "track.progress", { ns: "media" });
+  }, [mediaType, t]);
   const endDateLabel = useMemo( () => (isOneTimeConsumption ? "track.viewedOn" : "track.finishDate"), [isOneTimeConsumption] );
 
   // Reuse the media's previous status, unless it closed the media
@@ -106,6 +121,8 @@ export function TrackMediaDialog({ mediaType, existingMedia, image, formatedData
       status:  data.status,
       rating: data.rating,
       review: data.review,
+      progress: toOptionalNumber(data.progress),
+      progressTotal: toOptionalNumber(data.progressTotal),
     };
 
     trackMedia(formatedData, existingMedia, formData);
@@ -163,6 +180,28 @@ export function TrackMediaDialog({ mediaType, existingMedia, image, formatedData
                   control={control}
                   options={statusAnimeOptions()}
                 />
+              )}
+
+              {supportsProgress && (
+                <div className="grid grid-cols-2 gap-4">
+                  <Input
+                    type="number"
+                    min={0}
+                    step="any"
+                    name="progress"
+                    label={progressLabel}
+                    control={control}
+                  />
+
+                  <Input
+                    type="number"
+                    min={0}
+                    step="any"
+                    name="progressTotal"
+                    label={t("track.progressTotal", { ns: "media" })}
+                    control={control}
+                  />
+                </div>
               )}
 
               <div className="grid grid-cols-2 gap-4">

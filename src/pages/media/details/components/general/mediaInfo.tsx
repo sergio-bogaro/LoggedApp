@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AniListMediaDetails } from "@/querries/externalMedia/anilist";
+import { BookDetails, getBookDescription } from "@/querries/externalMedia/books";
 import { IGDBGame } from "@/querries/externalMedia/games";
 import { TMDBMovieDetails } from "@/querries/externalMedia/movies";
+import { MusicAlbumDetails } from "@/querries/externalMedia/music";
 import { MediaTypeEnum } from "@/types/media";
 import { htmlToPlainText } from "@/utils/string";
 
@@ -95,6 +97,29 @@ export const MediaInfo = ({ mediaType, data }: MediaInfoProps) => {
           dates={gameData.firstReleaseDate?.slice(0, 4) || ""}
           overview={gameData.summary ?? ""}
           tags={gameData.genres?.map((genre) => genre.name) || []}
+        />
+      }
+
+      case MediaTypeEnum.BOOK: {
+        const bookData = data as BookDetails;
+
+        return <MediaInfoComponent
+          title={bookData.title ?? ""}
+          dates={bookData.first_publish_date?.slice(0, 4) || ""}
+          overview={getBookDescription(bookData)}
+          tags={bookData.subjects?.slice(0, 12) || []}
+        />
+      }
+
+      case MediaTypeEnum.MUSIC: {
+        const albumData = data as MusicAlbumDetails;
+
+        return <MediaInfoComponent
+          title={albumData.title ?? ""}
+          dates={albumData.releaseDate?.slice(0, 4) || ""}
+          tagline={albumData.artist ?? ""}
+          overview={albumData.genre ?? ""}
+          tags={albumData.genre ? [albumData.genre] : []}
         />
       }
 

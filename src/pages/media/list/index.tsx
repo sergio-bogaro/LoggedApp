@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
 
@@ -8,9 +8,10 @@ import { DataExhibition } from "@/components/tw/generic/dataExhibition";
 import { MediaCardSkeleton } from "@/components/tw/generic/mediaCardSkeleton";
 import { PageHeader } from "@/components/tw/generic/PageHeader";
 import { MediaLibrary } from "@/components/tw/media/mediaLibrary";
+import { Select } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useMediaLogs } from "@/hooks/useMediaLogs";
-import { getMediaList } from "@/querries/media/logged";
+import { getMediaList, getTags } from "@/querries/media/logged";
 import { useAppSelector } from "@/store/auth/hooks";
 import { useAppDispatch } from "@/store/settings/hooks";
 import { setBreadcrumbs } from "@/store/settings/slice";
@@ -23,6 +24,7 @@ const MediaListPage = () => {
   const { type } = useParams<{ type: string }>();
   const { user } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
+  const [tagFilter, setTagFilter] = useState<string>("");
 
   const mediaType = pathToMediaType(type);
   const title = mediaType ? t(`typePlural.${mediaType}`) : "";
@@ -39,10 +41,11 @@ const MediaListPage = () => {
   }, [dispatch, t, mediaType]);
 
   const { data: data, isFetching, isError, error } = useQuery<MediaResponse[]>({
-    queryKey: ["media", "list", mediaType],
+    queryKey: ["media", "list", mediaType, tagFilter],
     queryFn: () =>
       getMediaList(user!.id, {
         type: mediaType,
+        tags: tagFilter ? [tagFilter] : undefined,
       }),
     staleTime: DEFAULT_STALE_TIME,
     enabled: !!user,
@@ -59,7 +62,21 @@ const MediaListPage = () => {
     enabled: !!user,
   });
 
-  /* The endpoint has no type filter, so the per-type slice is taken here. */
+  const { data: tagOptions } = useQuery<string[]>({
+    queryKey: ["media", "tags", user?.id],
+    queryFn: () => getTags(user!.id),
+    staleTime: DEFAULT_STALE_TIME,
+    enabled: !!user,
+  });
+
+  const ALL_TAGS = "__all__";
+  const tagSelectOptions = useMemo(
+    () => [
+      { value: ALL_TAGS, label: t("tags.filterAll") },
+      ...(tagOptions ?? []).map((tag) => ({ value: tag, label: tag })),
+    ],
+    [tagOptions, t]
+  );
   const { data: allLogs } = useMediaLogs({});
 
   const logs = useMemo(
@@ -78,6 +95,19 @@ const MediaListPage = () => {
   return (
     <div className="w-full h-full space-y-3">
       <PageHeader title={title || t("label")} />
+
+      {tagOptions && tagOptions.length > 0 && (
+        <div className="max-w-[220px]">
+          <Select
+            name="tagFilter"
+            label={t("tags.label")}
+            placeholder={t("tags.filterAll")}
+            options={tagSelectOptions}
+            value={tagFilter || ALL_TAGS}
+            onValueChange={(value) => setTagFilter(value === ALL_TAGS ? "" : value)}
+          />
+        </div>
+      )}
 
       <DataExhibition isLoading={isInitialLoading} isFetching={isLoading} skeleton={<MediaCardSkeleton />} isError={isErrorCombined} errorMessage={`${t("errorLoading", { ns: "common" })} ${errorMessageCombined}`}>
         <Tabs defaultValue="list" className="mt-4">

@@ -13,6 +13,7 @@ import {
 import { MediaLogResponse } from "@/types/logged";
 import { MediaTypeEnum } from "@/types/media";
 import { formatFromIsoDate } from "@/utils/date";
+import { formatProgress } from "@/utils/mediaText";
 
 interface LogDetailsDialogProps {
   log: MediaLogResponse | null;
@@ -27,6 +28,7 @@ export function LogDetailsDialog({ log, mediaType, open, onOpenChange }: LogDeta
   if (!log) return null;
 
   const isOneTimeConsumption = mediaType === MediaTypeEnum.MOVIES;
+  const progressLabel = formatProgress(log.progress, log.progressTotal);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -48,6 +50,15 @@ export function LogDetailsDialog({ log, mediaType, open, onOpenChange }: LogDeta
               {!log.status && <span className="text-step-1 text-muted-foreground">-</span>}
             </div>
           </div>
+
+          {progressLabel && (
+            <div className="space-y-2">
+              <span className="text-step-1 font-medium text-muted-foreground">
+                {t("track.progress")}
+              </span>
+              <span className="text-step-1 tabular-nums">{progressLabel}</span>
+            </div>
+          )}
 
           <div className="space-y-2">
             <span className="text-step-1 font-medium text-muted-foreground">

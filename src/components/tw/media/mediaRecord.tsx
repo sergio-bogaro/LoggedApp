@@ -5,6 +5,7 @@ import { StatusMark } from "../generic/badges";
 
 import { MediaLogResponse, MediaWithLogsResponse } from "@/types/logged";
 import { formatLongDate } from "@/utils/date";
+import { formatProgress } from "@/utils/mediaText";
 
 interface RecordRowProps {
   label: string;
@@ -40,6 +41,7 @@ export const MediaRecord = ({ media, lastLog, onOpenLogDetails, children }: Medi
   const rating = media?.rating ?? lastLog?.rating ?? null;
   const hasRating = typeof rating === "number" && rating > 0;
   const logCount = media?.logCount ?? 0;
+  const progressLabel = formatProgress(lastLog?.progress, lastLog?.progressTotal);
 
   const period = [lastLog?.startDate, lastLog?.endDate]
     .filter((value): value is string => Boolean(value))
@@ -71,6 +73,12 @@ export const MediaRecord = ({ media, lastLog, onOpenLogDetails, children }: Medi
               <span className="font-serif tabular-nums">{logCount}</span>
             </RecordRow>
 
+            {progressLabel && (
+              <RecordRow label={t("track.progress")}>
+                <span className="font-serif tabular-nums">{progressLabel}</span>
+              </RecordRow>
+            )}
+
             <RecordRow label={t("record.lastLog")}>
               {media.lastLogDate ? (
                 onOpenLogDetails ? (
@@ -92,6 +100,16 @@ export const MediaRecord = ({ media, lastLog, onOpenLogDetails, children }: Medi
             </RecordRow>
 
             {period && <RecordRow label={t("record.period")}>{period}</RecordRow>}
+
+            {media.tags && media.tags.length > 0 && (
+              <RecordRow label={t("tags.label")}>
+                <span className="flex flex-wrap justify-end gap-x-2 gap-y-1 text-muted-foreground">
+                  {media.tags.map((tag) => (
+                    <span key={tag}>#{tag}</span>
+                  ))}
+                </span>
+              </RecordRow>
+            )}
           </dl>
 
           {media.review && (

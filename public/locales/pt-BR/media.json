@@ -45,7 +45,8 @@
     "tmdb": "TMDB",
     "gameBrain": "GameBrain",
     "rawg": "RAWG",
-    "igdb": "IGDB"
+    "igdb": "IGDB",
+    "itunes": "iTunes"
   },
   "type": {
     "movie": "Filme",
@@ -53,14 +54,16 @@
     "anime": "Anime",
     "manga": "Mangá",
     "game": "Jogo",
-    "book": "Livro"
+    "book": "Livro",
+    "music": "Música"
   },
   "typePlural": {
     "movies": "Filmes",
     "anime": "Animes",
     "manga": "Mangás",
     "game": "Jogos",
-    "book": "Livros"
+    "book": "Livros",
+    "music": "Músicas"
   },
   "track": {
     "label": "Registrar",
@@ -73,6 +76,11 @@
     "progress": "Progresso",
     "progressVolumes": "Progresso (Volumes)",
     "progressEpisodes": "Progresso (Episódios)",
+    "progressChapters": "Progresso (Capítulos)",
+    "progressPages": "Progresso (Páginas)",
+    "progressHours": "Progresso (Horas)",
+    "progressTracks": "Progresso (Faixas)",
+    "progressTotal": "Total",
     "startDate": "Data de Início",
     "finishDate": "Data de Conclusão",
     "viewedOn": "Visto em",
@@ -187,6 +195,26 @@
     "officialStores": "Lojas Oficiais",
     "allOffers": "Opções de Compra"
   },
+  "bookTabs": {
+    "subjects": "Assuntos",
+    "empty": {
+      "subjects": "Nenhum assunto disponível."
+    }
+  },
+  "musicTabs": {
+    "artist": "Artista",
+    "genre": "Gênero",
+    "tracks": "Faixas",
+    "trackCount": "Qtd. de faixas",
+    "empty": {
+      "tracks": "Nenhuma faixa disponível."
+    }
+  },
+  "tags": {
+    "label": "Tags",
+    "placeholder": "Adicione uma tag e pressione Enter",
+    "filterAll": "Todas as tags"
+  },
   "searchForm": {
     "typeLabel": "Tipo",
     "typePlaceholder": "Tipo de mídia",
@@ -213,7 +241,25 @@
     "addToBacklog": "Adicionar ao backlog",
     "removeFromBacklog": "Remover do backlog",
     "addFavorite": "Adicionar aos favoritos",
-    "removeFavorite": "Remover dos favoritos"
+    "removeFavorite": "Remover dos favoritos",
+    "editMedia": "Editar",
+    "deleteMedia": "Excluir mídia",
+    "editLog": "Editar",
+    "deleteLog": "Excluir"
+  },
+  "confirm": {
+    "deleteMediaTitle": "Excluir mídia?",
+    "deleteMediaDescription": "Isso remove a mídia e todos os seus registros. Não pode ser desfeito.",
+    "deleteLogTitle": "Excluir registro?",
+    "deleteLogDescription": "Não pode ser desfeito.",
+    "delete": "Excluir"
+  },
+  "editMedia": {
+    "title": "Editar registro",
+    "description": "Atualize status, nota e avaliação."
+  },
+  "editLog": {
+    "title": "Editar registro"
   },
   "feedback": {
     "backlogAdded": "Adicionado ao backlog",
@@ -223,7 +269,18 @@
     "favoriteRemoved": "Removido dos favoritos",
     "favoriteFailed": "Falha ao atualizar favoritos",
     "trackSuccess": "Mídia registrada com sucesso",
-    "trackFailed": "Falha ao registrar mídia"
+    "trackFailed": "Falha ao registrar mídia",
+    "imageUpdateSuccess": "Capa atualizada com sucesso",
+    "imageRemoveSuccess": "Capa removida com sucesso",
+    "imageUpdateFailed": "Falha ao atualizar capa",
+    "mediaUpdated": "Mídia atualizada",
+    "mediaUpdateFailed": "Falha ao atualizar mídia",
+    "mediaDeleted": "Mídia excluída",
+    "mediaDeleteFailed": "Falha ao excluir mídia",
+    "logUpdated": "Registro atualizado",
+    "logUpdateFailed": "Falha ao atualizar registro",
+    "logDeleted": "Registro excluído",
+    "logDeleteFailed": "Falha ao excluir registro"
   },
   "home": {
     "title": "Registro",
@@ -267,7 +324,42 @@
     "loading": "Carregando...",
     "notFound": "View não encontrada.",
     "loadingMedia": "Carregando mídias...",
-    "empty": "Nenhuma mídia encontrada para esta view"
+    "empty": "Nenhuma mídia encontrada para esta view",
+    "title": "Views customizadas",
+    "manage": "Gerenciar views",
+    "newView": "Nova view",
+    "editView": "Editar view",
+    "create": "Criar view",
+    "emptyManager": "Nenhuma view customizada ainda.",
+    "deleted": "View excluída",
+    "saved": "View salva",
+    "saveFailed": "Falha ao salvar view",
+    "deleteTitle": "Excluir view?",
+    "deleteDescription": "A view será removida. As mídias não são afetadas.",
+    "moveUp": "Mover para cima",
+    "moveDown": "Mover para baixo",
+    "name": "Nome",
+    "icon": "Ícone",
+    "filters": "Filtros e exibição",
+    "mediaType": "Tipo de mídia",
+    "status": "Status",
+    "minRating": "Nota mínima",
+    "tags": "Tags",
+    "viewMode": "Modo de exibição",
+    "sortBy": "Ordenar por",
+    "sortOrder": "Ordem",
+    "any": "Qualquer",
+    "grid": "Grade",
+    "list": "Lista",
+    "asc": "Crescente",
+    "desc": "Decrescente",
+    "sort": {
+      "title": "Título",
+      "rating": "Nota",
+      "created_at": "Adicionado recentemente",
+      "release_date": "Data de lançamento",
+      "updated_at": "Atualizado recentemente"
+    }
   },
   "detailsPage": {
     "loading": "Carregando...",

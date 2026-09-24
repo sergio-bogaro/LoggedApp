@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AnimeTabs } from "../anime/tabs";
+import { BookTabs } from "../books/tabs";
 import { GameTabs } from "../game/tabs";
 import { MangaTabs } from "../manga/tabs";
 import { MovieTabs } from "../movies/tabs";
+import { MusicTabs } from "../music/tabs";
 
 import { MediaTypeEnum } from "@/types/media";
 
@@ -22,6 +24,10 @@ export const MediaTabs = ({ data, mediaType }: MediaTabsProps) => {
         return <MangaTabs data={data} />;
       case MediaTypeEnum.GAME:
         return <GameTabs data={data} />;
+      case MediaTypeEnum.BOOK:
+        return <BookTabs data={data} />;
+      case MediaTypeEnum.MUSIC:
+        return <MusicTabs data={data} />;
 
       default: return null;
     }

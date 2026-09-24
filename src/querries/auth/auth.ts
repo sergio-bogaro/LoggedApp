@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:8000";
+import { API_BASE_URL } from "@/querries/apiBase";
 
 export interface UserRegister {
   username: string;
@@ -22,6 +22,7 @@ export interface User {
   trackManga: boolean;
   trackGames: boolean;
   trackBooks: boolean;
+  trackMusic: boolean;
 }
 
 export interface LoginResponse {

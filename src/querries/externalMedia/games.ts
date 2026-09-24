@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "@/querries/apiBase";
 import { MediaItem, MediaTypeEnum } from "@/types/media";
 
 // ──────────────────────────────────────────────
@@ -66,8 +67,6 @@ const CACHE_DURATION = 10 * 60 * 1000; // 10 minutes
 
 let searchController: AbortController | null = null;
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
-
 // ──────────────────────────────────────────────
 // Search
 // ──────────────────────────────────────────────
@@ -105,7 +104,7 @@ export async function searchGames(title: string): Promise<IGDBSearchItem[]> {
   searchController = new AbortController();
 
   try {
-    const res = await fetch(`${API_BASE}/api/igdb/games/search`, {
+    const res = await fetch(`${API_BASE_URL}/api/igdb/games/search`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ query: title, limit: 20 }),
@@ -139,7 +138,7 @@ export async function searchGames(title: string): Promise<IGDBSearchItem[]> {
 // ──────────────────────────────────────────────
 
 export async function getGameDetails(id: number): Promise<IGDBGame> {
-  const res = await fetch(`${API_BASE}/api/igdb/games/${id}`);
+  const res = await fetch(`${API_BASE_URL}/api/igdb/games/${id}`);
 
   if (!res.ok) {
     const text = await res.text();

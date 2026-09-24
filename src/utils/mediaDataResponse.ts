@@ -1,6 +1,8 @@
 import { anilistDateToIso, AniListMediaDetails } from "@/querries/externalMedia/anilist";
+import { BookDetails, getBookDescription } from "@/querries/externalMedia/books";
 import { IGDBGame } from "@/querries/externalMedia/games";
 import { TMDBMovieDetails, tmdbPosterUrl } from "@/querries/externalMedia/movies";
+import { MusicAlbumDetails } from "@/querries/externalMedia/music";
 import { MediaDataDetailsType, MediaTypeEnum } from "@/types/media";
 
 export function getMediaData(mediaType: MediaTypeEnum, mediaData: unknown): MediaDataDetailsType {
@@ -64,7 +66,7 @@ export function getMediaData(mediaType: MediaTypeEnum, mediaData: unknown): Medi
       };
     }
     case MediaTypeEnum.BOOK: {
-      const bookData = mediaData as { key?: string; title?: string; covers?: number[] };
+      const bookData = mediaData as BookDetails;
       const coverId = bookData.covers?.[0];
 
       return {
@@ -72,8 +74,22 @@ export function getMediaData(mediaType: MediaTypeEnum, mediaData: unknown): Medi
         title: bookData.title ?? "",
         type: mediaType,
         coverUrl: coverId ? `https://covers.openlibrary.org/b/id/${coverId}-L.jpg` : "",
-        description: "",
-        tags: [],
+        description: getBookDescription(bookData),
+        releaseDate: bookData.first_publish_date,
+        tags: bookData.subjects?.slice(0, 12) ?? [],
+      };
+    }
+    case MediaTypeEnum.MUSIC: {
+      const albumData = mediaData as MusicAlbumDetails;
+
+      return {
+        id: String(albumData.collectionId),
+        title: albumData.title ?? "",
+        type: mediaType,
+        coverUrl: albumData.coverUrl ?? "",
+        description: [albumData.artist, albumData.genre].filter(Boolean).join(" · "),
+        releaseDate: albumData.releaseDate,
+        tags: albumData.genre ? [albumData.genre] : [],
       };
     }
     default:
@@ -97,6 +113,8 @@ export function getPosterUrl(type: MediaTypeEnum, data: any): string {
         ? `https://covers.openlibrary.org/b/id/${data.covers[0]}-L.jpg`
         : "";
     case MediaTypeEnum.GAME:
+      return data.coverUrl;
+    case MediaTypeEnum.MUSIC:
       return data.coverUrl;
     default:
       return "";

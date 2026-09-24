@@ -6,16 +6,21 @@ import { Card } from "../generic/card";
 import { RatingDisplay } from "./ratingDisplay";
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
 import { MediaLogResponse } from "@/types/logged";
 import { formatFromIsoDate } from "@/utils/date";
+import { formatProgress } from "@/utils/mediaText";
 
 interface MediaLogCardProps {
   log: MediaLogResponse;
   isOneTimeConsuption: boolean;
+  onEdit?: () => void;
+  onDelete?: () => void;
 }
 
-export const MediaLogCard = ({ log, isOneTimeConsuption }: MediaLogCardProps) => {
+export const MediaLogCard = ({ log, isOneTimeConsuption, onEdit, onDelete }: MediaLogCardProps) => {
   const { t } = useTranslation("media");
+  const progressLabel = formatProgress(log.progress, log.progressTotal);
 
   return (
     <Card className="gap-3">
@@ -34,6 +39,12 @@ export const MediaLogCard = ({ log, isOneTimeConsuption }: MediaLogCardProps) =>
         {log.status && <StatusMark status={log.status} />}
       </div>
 
+      {progressLabel && (
+        <div className="text-step-1 tabular-nums text-muted-foreground">
+          {t("track.progress")}: {progressLabel}
+        </div>
+      )}
+
       {typeof log.rating === "number" && log.rating > 0 && (
         <RatingDisplay rating={log.rating} />
       )}
@@ -49,6 +60,28 @@ export const MediaLogCard = ({ log, isOneTimeConsuption }: MediaLogCardProps) =>
             </AccordionContent>
           </AccordionItem>
         </Accordion>
+      )}
+
+      {(onEdit || onDelete) && (
+        <div className="flex justify-end gap-2">
+          {onEdit && (
+            <Button type="button" variant="ghost" size="xs" onClick={onEdit}>
+              {t("actions.editLog")}
+            </Button>
+          )}
+
+          {onDelete && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="xs"
+              onClick={onDelete}
+              className="text-destructive hover:text-destructive"
+            >
+              {t("actions.deleteLog")}
+            </Button>
+          )}
+        </div>
       )}
     </Card>
   );

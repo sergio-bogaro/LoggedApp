@@ -14,6 +14,7 @@ const typeRule: Record<MediaTypeEnum, string> = {
   [MediaTypeEnum.MANGA]: "bg-type-manga",
   [MediaTypeEnum.GAME]: "bg-type-game",
   [MediaTypeEnum.BOOK]: "bg-type-book",
+  [MediaTypeEnum.MUSIC]: "bg-type-music",
 }
 
 interface TypeMarkProps {

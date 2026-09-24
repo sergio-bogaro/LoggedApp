@@ -14,6 +14,7 @@ export enum MediaTypeEnum {
   ANIME = "anime",
   GAME = "game",
   BOOK = "book",
+  MUSIC = "music",
 }
 
 export const finishedStatusEnumValues = [MediaStatusEnum.FINISHED, MediaStatusEnum.DROPPED];
@@ -35,6 +36,8 @@ export type TrackMediaPayload = {
   status: MediaStatusEnum
   rating?: number;
   review?: string;
+  progress?: number;
+  progressTotal?: number;
 };
 
 export interface MediaDataDetailsType {

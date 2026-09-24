@@ -1,10 +1,9 @@
+import { API_BASE_URL } from "@/querries/apiBase";
 import { MediaCreatePayload, MediaLogCreatePayload, MediaLogResponse, MediaLogUpdatePayload, MediaResponse, MediaUpdatePayload, MediaWithLogsResponse } from "@/types/logged";
 import { MediaStatusEnum, MediaTypeEnum } from "@/types/media";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
-
 async function apiFetch<T>(path: string, options?: globalThis.RequestInit): Promise<T> {
-  const res = await fetch(`${API_BASE}${path}`, {
+  const res = await fetch(`${API_BASE_URL}${path}`, {
     headers: {
       "Content-Type": "application/json",
       ...options?.headers,
@@ -27,18 +26,23 @@ async function apiFetch<T>(path: string, options?: globalThis.RequestInit): Prom
 // Media — CRUD
 // ──────────────────────────────────────────────
 
-export async function getMediaList(userId: number, params?: { type?: MediaTypeEnum; status?: MediaStatusEnum; search?: string; hasLogs?: boolean; limit?: number; offset?: number }): Promise<MediaResponse[]> {
+export async function getMediaList(userId: number, params?: { type?: MediaTypeEnum; status?: MediaStatusEnum; search?: string; tags?: string[]; hasLogs?: boolean; limit?: number; offset?: number }): Promise<MediaResponse[]> {
   const url = new URLSearchParams();
   url.set("user_id", userId.toString());
   if (params?.type) url.set("type", params.type);
   if (params?.status) url.set("status", params.status);
   if (params?.search) url.set("search", params.search);
+  if (params?.tags) params.tags.forEach((tag) => url.append("tags", tag));
   if (params?.hasLogs !== undefined) url.set("has_logs", params.hasLogs.toString());
   if (params?.limit !== undefined) url.set("limit", params.limit.toString());
   if (params?.offset !== undefined) url.set("offset", params.offset.toString());
   
   const qs = url.toString();
   return apiFetch<MediaResponse[]>(`/api/media/${qs ? `?${qs}` : ""}`);
+}
+
+export async function getTags(userId: number): Promise<string[]> {
+  return apiFetch<string[]>(`/api/media/tags?user_id=${userId}`);
 }
 
 export async function getMediaById(id: number, userId: number): Promise<MediaWithLogsResponse> {
@@ -97,7 +101,7 @@ export async function uploadMediaImage(id: number, file: File, userId: number): 
   const formData = new FormData();
   formData.append("file", file);
 
-  const res = await fetch(`${API_BASE}/api/media/${id}/image?user_id=${userId}`, {
+  const res = await fetch(`${API_BASE_URL}/api/media/${id}/image?user_id=${userId}`, {
     method: "POST",
     body: formData,
   });
@@ -111,7 +115,7 @@ export async function uploadMediaImage(id: number, file: File, userId: number): 
 }
 
 export async function uploadMediaImageFromUrl(id: number, imageUrl: string, userId: number): Promise<MediaResponse> {
-  const res = await fetch(`${API_BASE}/api/media/${id}/image-url?user_id=${userId}`, {
+  const res = await fetch(`${API_BASE_URL}/api/media/${id}/image-url?user_id=${userId}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ url: imageUrl }),
@@ -126,7 +130,7 @@ export async function uploadMediaImageFromUrl(id: number, imageUrl: string, user
 }
 
 export async function removeMediaImage(id: number, userId: number): Promise<MediaResponse> {
-  const res = await fetch(`${API_BASE}/api/media/${id}/image?user_id=${userId}`, {
+  const res = await fetch(`${API_BASE_URL}/api/media/${id}/image?user_id=${userId}`, {
     method: "DELETE",
   });
 
@@ -207,5 +211,5 @@ export async function getUserMediaLogs(
 
 export function mediaImageUrl(imagePath: string | null | undefined): string | null {
   if (!imagePath) return null;
-  return `${API_BASE}/uploads/${imagePath}`;
+  return `${API_BASE_URL}/uploads/${imagePath}`;
 }

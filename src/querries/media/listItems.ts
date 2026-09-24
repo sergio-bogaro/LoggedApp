@@ -1,9 +1,8 @@
+import { API_BASE_URL } from "@/querries/apiBase";
 import { MediaListItem, MediaListItemCreatePayload } from "@/types/mediaList";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
-
 async function apiFetch<T>(path: string, options?: globalThis.RequestInit): Promise<T> {
-  const res = await fetch(`${API_BASE}${path}`, {
+  const res = await fetch(`${API_BASE_URL}${path}`, {
     headers: {
       "Content-Type": "application/json",
       ...options?.headers,

@@ -5,9 +5,8 @@ import { TypeMark } from "@/components/tw/generic/badges";
 import { EmptyState } from "@/components/tw/generic/EmptyState";
 import { ImageWithSkeleton } from "@/components/tw/generic/imageSkeleton";
 import { GridItemSkeleton } from "@/components/tw/media/gridSkeleton";
+import { API_BASE_URL } from "@/querries/apiBase";
 import { MediaListItem } from "@/types/mediaList";
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
 interface ListItemCardProps {
   item: MediaListItem;
@@ -18,7 +17,7 @@ const ListItemCard = ({ item }: ListItemCardProps) => {
   if (!media) return null;
 
   const coverUrl = media.imagePath
-    ? `${API_BASE}/uploads/${media.imagePath}`
+    ? `${API_BASE_URL}/uploads/${media.imagePath}`
     : media.coverUrl;
 
   const year = media.releaseDate?.slice(0, 4);

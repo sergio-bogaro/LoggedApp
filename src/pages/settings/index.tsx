@@ -46,6 +46,7 @@ function SettingsPage() {
         trackManga: next[MediaTypeEnum.MANGA],
         trackGames: next[MediaTypeEnum.GAME],
         trackBooks: next[MediaTypeEnum.BOOK],
+        trackMusic: next[MediaTypeEnum.MUSIC],
       });
       dispatch(updateUserSettings(updated));
     } catch (error) {

@@ -45,7 +45,8 @@
     "tmdb": "TMDB",
     "gameBrain": "GameBrain",
     "rawg": "RAWG",
-    "igdb": "IGDB"
+    "igdb": "IGDB",
+    "itunes": "iTunes"
   },
   "track": {
     "label": "Track",
@@ -58,6 +59,11 @@
     "progress": "Progress",
     "progressVolumes": "Progress (Volumes)",
     "progressEpisodes": "Progress (Episodes)",
+    "progressChapters": "Progress (Chapters)",
+    "progressPages": "Progress (Pages)",
+    "progressHours": "Progress (Hours)",
+    "progressTracks": "Progress (Tracks)",
+    "progressTotal": "Total",
     "startDate": "Start Date",
     "finishDate": "Finish Date",
     "viewedOn": "Viewed On",
@@ -85,14 +91,16 @@
     "anime": "Anime",
     "manga": "Manga",
     "game": "Game",
-    "book": "Book"
+    "book": "Book",
+    "music": "Music"
   },
   "typePlural": {
     "movies": "Movies",
     "anime": "Anime",
     "manga": "Manga",
     "game": "Games",
-    "book": "Books"
+    "book": "Books",
+    "music": "Music"
   },
   "status": {
     "in_progress": "In Progress",
@@ -187,6 +195,26 @@
     "officialStores": "Official Stores",
     "allOffers": "Buy Options"
   },
+  "bookTabs": {
+    "subjects": "Subjects",
+    "empty": {
+      "subjects": "No subjects available."
+    }
+  },
+  "musicTabs": {
+    "artist": "Artist",
+    "genre": "Genre",
+    "tracks": "Tracks",
+    "trackCount": "Track count",
+    "empty": {
+      "tracks": "No tracks available."
+    }
+  },
+  "tags": {
+    "label": "Tags",
+    "placeholder": "Add a tag and press Enter",
+    "filterAll": "All tags"
+  },
   "searchForm": {
     "typeLabel": "Type",
     "typePlaceholder": "Media type",
@@ -213,7 +241,25 @@
     "addToBacklog": "Add to backlog",
     "removeFromBacklog": "Remove from backlog",
     "addFavorite": "Add to favorites",
-    "removeFavorite": "Remove from favorites"
+    "removeFavorite": "Remove from favorites",
+    "editMedia": "Edit",
+    "deleteMedia": "Delete media",
+    "editLog": "Edit",
+    "deleteLog": "Delete"
+  },
+  "confirm": {
+    "deleteMediaTitle": "Delete media?",
+    "deleteMediaDescription": "This removes the media and all of its entries. This cannot be undone.",
+    "deleteLogTitle": "Delete entry?",
+    "deleteLogDescription": "This cannot be undone.",
+    "delete": "Delete"
+  },
+  "editMedia": {
+    "title": "Edit record",
+    "description": "Update status, rating and review."
+  },
+  "editLog": {
+    "title": "Edit entry"
   },
   "feedback": {
     "backlogAdded": "Added to backlog",
@@ -223,7 +269,18 @@
     "favoriteRemoved": "Removed from favorites",
     "favoriteFailed": "Failed to update favorites",
     "trackSuccess": "Media tracked successfully",
-    "trackFailed": "Failed to track media"
+    "trackFailed": "Failed to track media",
+    "imageUpdateSuccess": "Cover updated successfully",
+    "imageRemoveSuccess": "Cover removed successfully",
+    "imageUpdateFailed": "Failed to update cover",
+    "mediaUpdated": "Media updated",
+    "mediaUpdateFailed": "Failed to update media",
+    "mediaDeleted": "Media deleted",
+    "mediaDeleteFailed": "Failed to delete media",
+    "logUpdated": "Entry updated",
+    "logUpdateFailed": "Failed to update entry",
+    "logDeleted": "Entry deleted",
+    "logDeleteFailed": "Failed to delete entry"
   },
   "home": {
     "title": "Logbook",
@@ -267,7 +324,42 @@
     "loading": "Loading...",
     "notFound": "View not found.",
     "loadingMedia": "Loading media...",
-    "empty": "No media found for this view"
+    "empty": "No media found for this view",
+    "title": "Custom views",
+    "manage": "Manage views",
+    "newView": "New view",
+    "editView": "Edit view",
+    "create": "Create view",
+    "emptyManager": "No custom views yet.",
+    "deleted": "View deleted",
+    "saved": "View saved",
+    "saveFailed": "Failed to save view",
+    "deleteTitle": "Delete view?",
+    "deleteDescription": "The view will be removed. The media itself is not affected.",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "name": "Name",
+    "icon": "Icon",
+    "filters": "Filters and display",
+    "mediaType": "Media type",
+    "status": "Status",
+    "minRating": "Minimum rating",
+    "tags": "Tags",
+    "viewMode": "View mode",
+    "sortBy": "Sort by",
+    "sortOrder": "Order",
+    "any": "Any",
+    "grid": "Grid",
+    "list": "List",
+    "asc": "Ascending",
+    "desc": "Descending",
+    "sort": {
+      "title": "Title",
+      "rating": "Rating",
+      "created_at": "Recently added",
+      "release_date": "Release date",
+      "updated_at": "Recently updated"
+    }
   },
   "detailsPage": {
     "loading": "Loading...",

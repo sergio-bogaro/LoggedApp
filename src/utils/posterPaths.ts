@@ -1,5 +1,4 @@
 import { tmdbPosterUrl } from "@/querries/externalMedia/movies";
-import { mediaImageUrl } from "@/querries/media/logged";
 import { MediaTypeEnum } from "@/types/media";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -21,16 +20,4 @@ export function getPosterUrl(type: MediaTypeEnum, data: any) {
       return "";
   }
 
-}
-
-export function getMediaCoverUrl( coverUrl: string | undefined, imagePath: string | undefined, mediaType: MediaTypeEnum,): string | null {
-  if (imagePath) return mediaImageUrl(imagePath);
-
-  if (!coverUrl) return null;
-
-  if (mediaType === MediaTypeEnum.MOVIES && coverUrl.startsWith("/")) {
-    return tmdbPosterUrl(coverUrl) ?? null;
-  }
-
-  return coverUrl;
 }

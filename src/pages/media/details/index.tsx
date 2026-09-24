@@ -2,15 +2,17 @@ import { useQuery } from "@tanstack/react-query";
 import { MoreVertical } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 
 import { MediaInfo } from "./components/general/mediaInfo";
 import { MediaTabs } from "./components/general/mediaTabs";
 
 import { ChangeImageDialog } from "@/components/tw/dialogs/changeImageDialog";
+import { EditMediaDialog } from "@/components/tw/dialogs/editMediaDialog";
 import { LogDetailsDialog } from "@/components/tw/dialogs/logDetailsDialog";
 import { MediaHistoryDialog } from "@/components/tw/dialogs/mediaHistoryDialog";
 import { TrackMediaDialog } from "@/components/tw/dialogs/trackMediaDialog";
+import { ConfirmDialog } from "@/components/tw/generic/confirmDialog";
 import { DataExhibition } from "@/components/tw/generic/dataExhibition";
 import { ImageWithSkeleton } from "@/components/tw/generic/imageSkeleton";
 import { MediaDetailsSkeleton } from "@/components/tw/generic/mediaDetailsSkeleton";
@@ -20,19 +22,23 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useMediaListStatus } from "@/hooks/useMediaListStatus";
 import { getAniListDetails } from "@/querries/externalMedia/anilist";
 import { getBookDetails } from "@/querries/externalMedia/books";
 import { getGameDetails } from "@/querries/externalMedia/games";
 import { getMovieDetails } from "@/querries/externalMedia/movies";
+import { getAlbumDetails } from "@/querries/externalMedia/music";
 import { getMediaByExternalIdWithLogs, mediaImageUrl } from "@/querries/media/logged";
 import { useAppSelector } from "@/store/auth/hooks";
 import { useAppDispatch } from "@/store/settings/hooks";
 import { setBreadcrumbs } from "@/store/settings/slice";
-import { MediaTypeEnum } from "@/types/media";
+import { MediaItem, MediaTypeEnum } from "@/types/media";
 import { DEFAULT_STALE_TIME } from "@/utils/conts";
 import { getMediaData, getPosterUrl } from "@/utils/mediaDataResponse";
+import { useDeleteMedia, useHandleBacklog, useHandleFavorites } from "@/utils/mediaStore";
 import { mediaTypeToPath } from "@/utils/mediaText";
 
 type MediaDetailsParams = {
@@ -60,6 +66,11 @@ function MediaDetailsPage() {
   const [optionsOpen, setOptionsOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [logDetailsOpen, setLogDetailsOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+
+  const navigate = useNavigate();
+  const deleteMedia = useDeleteMedia();
 
   const { data, isLoading, isFetching, isError, error } = useQuery({
     queryKey: ["details", mediaType, id],
@@ -77,6 +88,8 @@ function MediaDetailsPage() {
           return getBookDetails(id);
         case MediaTypeEnum.GAME:
           return getGameDetails(Number(id));
+        case MediaTypeEnum.MUSIC:
+          return getAlbumDetails(id);
         default:
           throw new Error("Unknown source");
       }
@@ -86,6 +99,22 @@ function MediaDetailsPage() {
   });
 
   const formatedData = useMemo(() => (data ? getMediaData(mediaType, data) : undefined), [data, mediaType]);
+
+  const mediaItem: MediaItem = useMemo(
+    () => ({
+      id: formatedData?.id ?? id ?? "",
+      title: formatedData?.title ?? "",
+      type: formatedData?.type ?? mediaType,
+      coverUrl: formatedData?.coverUrl ?? "",
+      description: formatedData?.description,
+      releaseDate: formatedData?.releaseDate,
+    }),
+    [formatedData, id, mediaType]
+  );
+
+  const { favoritesStatus, backlogStatus, isLoading: listStatusLoading } = useMediaListStatus(mediaItem);
+  const handleBacklog = useHandleBacklog();
+  const handleFavorites = useHandleFavorites();
 
   const { data: existingMedia } = useQuery({
     queryKey: ["existingMedia", id, mediaType],
@@ -99,6 +128,19 @@ function MediaDetailsPage() {
     : null
   ,[existingMedia]
   )
+
+  const handleDelete = () => {
+    if (!existingMedia) return;
+    deleteMedia.mutate(
+      { mediaId: existingMedia.id },
+      {
+        onSuccess: () => {
+          setConfirmDeleteOpen(false);
+          navigate("/media/home");
+        },
+      }
+    );
+  };
 
   const mediaImage = useMemo(() => existingMedia?.imagePath
     ? (mediaImageUrl(existingMedia.imagePath) ?? undefined)
@@ -170,6 +212,22 @@ function MediaDetailsPage() {
 
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem
+                        disabled={listStatusLoading || !formatedData}
+                        onSelect={() => handleBacklog(mediaItem, backlogStatus.inList, backlogStatus.itemId)}
+                      >
+                        {backlogStatus.inList ? t("actions.removeFromBacklog") : t("actions.addToBacklog")}
+                      </DropdownMenuItem>
+
+                      <DropdownMenuItem
+                        disabled={listStatusLoading || !formatedData}
+                        onSelect={() => handleFavorites(mediaItem, favoritesStatus.inList, favoritesStatus.itemId)}
+                      >
+                        {favoritesStatus.inList ? t("actions.removeFavorite") : t("actions.addFavorite")}
+                      </DropdownMenuItem>
+
+                      <DropdownMenuSeparator />
+
+                      <DropdownMenuItem
                         disabled={!existingMedia}
                         onSelect={() => {
                           setOptionsOpen(false);
@@ -177,6 +235,29 @@ function MediaDetailsPage() {
                         }}
                       >
                         {t("actions.viewHistory")}
+                      </DropdownMenuItem>
+
+                      <DropdownMenuItem
+                        disabled={!existingMedia}
+                        onSelect={() => {
+                          setOptionsOpen(false);
+                          setEditOpen(true);
+                        }}
+                      >
+                        {t("actions.editMedia")}
+                      </DropdownMenuItem>
+
+                      <DropdownMenuSeparator />
+
+                      <DropdownMenuItem
+                        variant="destructive"
+                        disabled={!existingMedia}
+                        onSelect={() => {
+                          setOptionsOpen(false);
+                          setConfirmDeleteOpen(true);
+                        }}
+                      >
+                        {t("actions.deleteMedia")}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -201,6 +282,24 @@ function MediaDetailsPage() {
               mediaType={mediaType}
               open={logDetailsOpen}
               onOpenChange={setLogDetailsOpen}
+            />
+
+            {existingMedia && (
+              <EditMediaDialog
+                media={existingMedia}
+                mediaType={mediaType}
+                open={editOpen}
+                onOpenChange={setEditOpen}
+              />
+            )}
+
+            <ConfirmDialog
+              open={confirmDeleteOpen}
+              onOpenChange={setConfirmDeleteOpen}
+              title={t("confirm.deleteMediaTitle")}
+              description={t("confirm.deleteMediaDescription")}
+              onConfirm={handleDelete}
+              isPending={deleteMedia.isPending}
             />
           </div>
         )}

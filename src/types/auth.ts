@@ -10,6 +10,7 @@ export interface User {
   trackManga: boolean;
   trackGames: boolean;
   trackBooks: boolean;
+  trackMusic: boolean;
 }
 
 export interface UserCreate {

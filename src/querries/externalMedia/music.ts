@@ -1,12 +1,32 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Use iTunes Search API for album search (no API key required).
 // This is a simpler, more reliable API for quick album lookups.
+import { MediaItem, MediaTypeEnum } from "@/types/media";
+
 export type MusicAlbum = {
   id: string; // use iTunes collectionId as id
   title: string;
   "artist-credit"?: Array<{ name: string }>;
   date?: string;
   coverUrl?: string;
+};
+
+export type MusicTrack = {
+  id: number;
+  title: string;
+  trackNumber?: number;
+  durationMs?: number;
+};
+
+export type MusicAlbumDetails = {
+  collectionId: number;
+  title: string;
+  artist?: string;
+  genre?: string;
+  releaseDate?: string;
+  coverUrl?: string;
+  trackCount?: number;
+  tracks: MusicTrack[];
 };
 
 const ITUNES_SEARCH = "https://itunes.apple.com/search";
@@ -56,13 +76,53 @@ export async function searchAlbums(title: string): Promise<MusicAlbum[]> {
 }
 
 export async function getAlbumDetails(id: string) {
-  // iTunes lookup by collectionId
+  // iTunes lookup by collectionId; entity=song also returns the album tracks.
   const params = new URLSearchParams();
   params.set("id", id);
-  params.set("entity", "album");
+  params.set("entity", "song");
 
   const res = await fetch(`${ITUNES_LOOKUP}?${params.toString()}`);
   if (!res.ok) throw new Error("iTunes lookup error");
   const data = await res.json();
-  return data;
+
+  const results: any[] = data.results || [];
+  const album = results.find((r) => r.wrapperType === "collection") ?? results[0] ?? {};
+
+  const tracks: MusicTrack[] = results
+    .filter((r) => r.wrapperType === "track")
+    .map((r) => ({
+      id: r.trackId,
+      title: r.trackName,
+      trackNumber: r.trackNumber,
+      durationMs: r.trackTimeMillis,
+    }));
+
+  const details: MusicAlbumDetails = {
+    collectionId: album.collectionId,
+    title: album.collectionName ?? "",
+    artist: album.artistName,
+    genre: album.primaryGenreName,
+    releaseDate: album.releaseDate ? album.releaseDate.split("T")[0] : undefined,
+    coverUrl: album.artworkUrl100 ? album.artworkUrl100.replace("100x100", "300x300") : undefined,
+    trackCount: album.trackCount,
+    tracks,
+  };
+
+  return details;
+}
+
+export async function searchMusicNormalized(title: string): Promise<MediaItem[]> {
+  const albums = await searchAlbums(title);
+
+  return albums.map((album) => ({
+    id: album.id,
+    title: album.title,
+    coverUrl: album.coverUrl ?? "",
+    year: album.date ? Number(album.date.slice(0, 4)) : undefined,
+    releaseDate: album.date,
+    type: MediaTypeEnum.MUSIC,
+    description: album["artist-credit"]?.[0]?.name ?? "",
+    provider: "itunes",
+    raw: album,
+  }));
 }

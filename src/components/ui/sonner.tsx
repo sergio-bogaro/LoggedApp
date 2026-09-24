@@ -5,12 +5,13 @@ import {
   OctagonXIcon,
   TriangleAlertIcon,
 } from "lucide-react"
-import { useTheme } from "next-themes"
 import React from "react"
 import { Toaster as Sonner, type ToasterProps } from "sonner"
 
+import { useAppSelector } from "@/store/settings/hooks"
+
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme = "system" } = useTheme()
+  const theme = useAppSelector((state) => state.ui.theme)
 
   return (
     <Sonner

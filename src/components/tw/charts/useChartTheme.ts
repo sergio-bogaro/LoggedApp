@@ -8,7 +8,7 @@ export interface ChartTheme {
   grid: string;
 }
 
-const FALLBACK_SERIES = ["#3e6fa8", "#7c5ba6", "#a8516e", "#2f7a73", "#8f6a24"];
+const FALLBACK_SERIES = ["#3e6fa8", "#7c5ba6", "#a8516e", "#2f7a73", "#8f6a24", "#b5651d"];
 
 /* The categorical ramp is the single source of data color: one hue per media
  * type, shared by charts and type marks. */
@@ -18,6 +18,7 @@ const CATEGORICAL_VARS = [
   "--type-manga",
   "--type-game",
   "--type-book",
+  "--type-music",
 ] as const;
 
 const readVar = (name: string, fallback: string) => {

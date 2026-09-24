@@ -11,6 +11,16 @@ export type BookItem = {
   coverUrl?: string;
 };
 
+export type BookDetails = {
+  key?: string;
+  title?: string;
+  description?: string | { value?: string };
+  subjects?: string[];
+  covers?: number[];
+  first_publish_date?: string;
+  first_publish_year?: number;
+};
+
 const OPENLIB_BASE = "https://openlibrary.org";
 
 export async function searchBooks(title: string): Promise<BookItem[]> {
@@ -66,12 +76,20 @@ export async function searchBooksNormalized(title: string): Promise<MediaItem[]>
 }
 
 
-export async function getBookDetails(key: string) {
+export async function getBookDetails(key: string): Promise<BookDetails> {
   // key typically looks like '/works/OL12345W' or '/books/OL...'
   const path = key.startsWith("/") ? key : `/works/${key}`;
   const res = await fetch(`https://openlibrary.org${path}.json`);
   if (!res.ok) throw new Error("OpenLibrary details error");
   return res.json();
+}
+
+/** OpenLibrary descreve o livro como string ou como `{ value }`. */
+export function getBookDescription(data: BookDetails): string {
+  const description = data.description;
+  if (!description) return "";
+  if (typeof description === "string") return description;
+  return description.value ?? "";
 }
 
 

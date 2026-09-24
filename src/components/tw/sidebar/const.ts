@@ -1,4 +1,4 @@
-import { Film, Tv, BookOpen, BookText, Gamepad2, Home, Settings, Search, Star, Bookmark } from "lucide-react";
+import { Film, Tv, BookOpen, BookText, Gamepad2, Home, Settings, Search, Star, Bookmark, Music } from "lucide-react";
 
 import { MediaTypeEnum } from "@/types/media";
 import { mediaTypeToPath } from "@/utils/mediaText";
@@ -28,6 +28,11 @@ export const mediaTypes = [
     icon: Gamepad2,
     type: MediaTypeEnum.GAME,
     path: `/media/list/${mediaTypeToPath(MediaTypeEnum.GAME)}`,
+  },
+  {
+    icon: Music,
+    type: MediaTypeEnum.MUSIC,
+    path: `/media/list/${mediaTypeToPath(MediaTypeEnum.MUSIC)}`,
   },
 ];
 

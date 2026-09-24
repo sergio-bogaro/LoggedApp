@@ -45,6 +45,7 @@
   --color-type-manga: var(--type-manga);
   --color-type-game: var(--type-game);
   --color-type-book: var(--type-book);
+  --color-type-music: var(--type-music);
 
   /* Charts reuse the categorical ramp so data color means "media type". */
   --color-chart-1: var(--type-film);
@@ -139,6 +140,7 @@
   --type-manga: #a8516e;
   --type-game: #2f7a73;
   --type-book: #8f6a24;
+  --type-music: #b5651d;
 
   --sidebar: #f6f6f2;
   --sidebar-foreground: #6e7276;
@@ -188,6 +190,7 @@
   --type-manga: #d68fa8;
   --type-game: #7fc0b8;
   --type-book: #d4b36f;
+  --type-music: #e9a06a;
 
   --sidebar: #16191c;
   --sidebar-foreground: #9aa0a6;
