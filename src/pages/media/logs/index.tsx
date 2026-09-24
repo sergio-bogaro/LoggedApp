@@ -146,7 +146,7 @@ const MediaLogsPage = () => {
           )}
 
           {!hasNextPage && allItems.length > 0 && (
-            <div className="text-center py-6 text-sm text-muted-foreground">
+            <div className="text-center py-6 text-step-1 text-muted-foreground">
               {t("logs.allLoaded")}
             </div>
           )}

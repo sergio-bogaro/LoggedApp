@@ -40,9 +40,9 @@ const ListItem = ({ item, existingItem }: ListItemProps) => {
               {item.title}
             </h3>
 
-            <p className="text-sm text-foreground/80">{item.year ?? "-"}</p>
+            <p className="text-step-1 text-muted-foreground">{item.year ?? "-"}</p>
 
-            <span className="text-sm text-foreground/50 mt-2 block">
+            <span className="mt-2 block text-step-1 text-muted-foreground">
               {item.description ? item.description.length > 300 ? item.description.slice(0, 250) + " ..." : item.description : t("list.noDescription")}
             </span>
           </div>

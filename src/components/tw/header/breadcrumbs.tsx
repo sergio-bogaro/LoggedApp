@@ -12,7 +12,7 @@ function Breadcrumbs() {
 
   return (
     <nav aria-label={t("a11y.breadcrumb")} className="min-w-0">
-      <ol className="flex items-center gap-0.5 text-xs text-muted-foreground flex-nowrap overflow-hidden">
+      <ol className="flex items-center gap-0.5 text-step-1 text-muted-foreground flex-nowrap overflow-hidden">
         {breadcrumbs.map((crumb, index) => {
           const isCurrent = index === lastIndex;
 

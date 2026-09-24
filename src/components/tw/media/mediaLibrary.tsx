@@ -66,7 +66,7 @@ export const MediaLibrary = ({ data, recentlyLoggedData, mediaType }: MediaLibra
         <div key={section.key}>
           <Carousel>
             <div className="flex items-center justify-between mb-2">
-              <h2 className="text-lg font-semibold px-1">
+              <h2 className="px-1 font-serif text-step-4 font-medium">
                 {t(section.titleKey)}
               </h2>
               {section.viewAllLink && section.items.length > 0 && (
@@ -84,7 +84,7 @@ export const MediaLibrary = ({ data, recentlyLoggedData, mediaType }: MediaLibra
               )}
             </div>
 
-            <span className="px-1 text-sm text-muted-foreground">
+            <span className="px-1 text-step-1 text-muted-foreground">
               {t(section.description)}
             </span>
 
@@ -117,7 +117,7 @@ export const MediaLibrary = ({ data, recentlyLoggedData, mediaType }: MediaLibra
               <EmptyState
                 title={t("sections.noData")}
                 className="mt-4 min-h-72 px-1"
-                titleClassName="text-sm"
+                titleClassName="text-step-1"
               />
             )}
           </Carousel>

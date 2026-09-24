@@ -21,11 +21,11 @@ export const MediaLogCard = ({ log, isOneTimeConsuption }: MediaLogCardProps) =>
     <Card className="gap-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         {(log.startDate || log.endDate) && isOneTimeConsuption ? (
-          <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
+          <div className="flex flex-wrap gap-x-4 gap-y-1 text-step-1 text-muted-foreground">
             {log.endDate && <span>{t("history.viewedOn")} {formatFromIsoDate(log.endDate)}</span>}
           </div>
         ) : (
-          <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
+          <div className="flex flex-wrap gap-x-4 gap-y-1 text-step-1 text-muted-foreground">
             {log.startDate && <span>{t("history.startedOn")} {formatFromIsoDate(log.startDate)}</span>}
             {log.endDate && <span>{t("history.endedOn")} {formatFromIsoDate(log.endDate)}</span>}
           </div>
@@ -43,7 +43,7 @@ export const MediaLogCard = ({ log, isOneTimeConsuption }: MediaLogCardProps) =>
           <AccordionItem value={`review-${log.id}`}>
             <AccordionTrigger>{t("history.viewReview")}</AccordionTrigger>
             <AccordionContent>
-              <p className="whitespace-pre-wrap text-sm text-muted-foreground">
+              <p className="whitespace-pre-wrap text-step-1 text-muted-foreground">
                 {log.review}
               </p>
             </AccordionContent>

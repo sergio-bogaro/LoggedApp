@@ -49,7 +49,9 @@
     "loading": "Loading...",
     "breadcrumb": "Breadcrumb",
     "rating": "Rating",
-    "selectDate": "Select date"
+    "selectDate": "Select date",
+    "previousSlide": "Previous slide",
+    "nextSlide": "Next slide"
   },
   "form": {
     "selectPlaceholder": "Select...",

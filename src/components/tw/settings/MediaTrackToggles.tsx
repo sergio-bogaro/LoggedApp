@@ -47,12 +47,12 @@ function MediaTrackToggles({ values, onChange }: MediaTrackTogglesProps) {
             <div className="flex items-center gap-3 min-w-0">
               <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
               <div className="min-w-0">
-                <p className="font-medium text-sm">
+                <p className="font-medium text-step-1">
                   {t(`typePlural.${type}`, { ns: "media" })}
                 </p>
 
                 {!available && requiredKey && (
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-step-1 text-muted-foreground">
                     {t("settings.tracking.disabledHint", {
                       ns: "common",
                       key: requiredKey,

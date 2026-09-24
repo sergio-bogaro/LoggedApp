@@ -159,7 +159,7 @@ export function ChangeImageDialog({ existingMedia, mediaData, mediaType, formate
             {isProcessing && (
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 rounded-md gap-2">
                 <Loader2 className="h-8 w-8 text-white animate-spin" />
-                <span className="text-white text-sm font-medium">
+                <span className="text-white text-step-1 font-medium">
                   {t("track.savingImage", { ns: "media" })}
                 </span>
               </div>
@@ -214,12 +214,12 @@ export function ChangeImageDialog({ existingMedia, mediaData, mediaType, formate
                 {isLoadingAlternatives ? (
                   <div className="flex flex-col items-center gap-2 py-6 text-muted-foreground">
                     <Loader2 className="h-6 w-6 animate-spin" />
-                    <span className="text-sm">
+                    <span className="text-step-1">
                       {t("track.loadingAlternatives", { ns: "media" })}
                     </span>
                   </div>
                 ) : alternatives.length === 0 ? (
-                  <p className="text-sm text-muted-foreground text-center py-6">
+                  <p className="text-step-1 text-muted-foreground text-center py-6">
                     {t("track.noAlternativesFound", { ns: "media" })}
                   </p>
                 ) : (

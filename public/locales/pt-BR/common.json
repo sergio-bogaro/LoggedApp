@@ -49,7 +49,9 @@
     "loading": "Carregando...",
     "breadcrumb": "Trilha de navegação",
     "rating": "Avaliação",
-    "selectDate": "Selecionar data"
+    "selectDate": "Selecionar data",
+    "previousSlide": "Slide anterior",
+    "nextSlide": "Próximo slide"
   },
   "form": {
     "selectPlaceholder": "Selecione...",

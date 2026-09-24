@@ -41,9 +41,9 @@ export const GridItem = ({ item, existingItem, showMediaType = false }: GridItem
         <div className="absolute rounded-md bottom-0 left-0 right-0 bg-linear-to-t from-black/90 via-black/50 to-transparent p-3">
           <div className="flex items-end justify-between gap-2">
             <div className="flex flex-col-reverse min-w-0">
-              <p className="text-white/60 text-xs">{item.year ?? "-"}</p>
+              <p className="text-white/60 text-step-1">{item.year ?? "-"}</p>
 
-              <h3 className="text-white font-semibold text-sm line-clamp-2">
+              <h3 className="text-white font-semibold text-step-1 line-clamp-2">
                 {item.title}
               </h3>
             </div>

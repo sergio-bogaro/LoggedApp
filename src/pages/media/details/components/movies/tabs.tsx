@@ -94,7 +94,7 @@ function Avatar({ name, photo }: { name: string; photo: string | null }) {
   }
 
   return (
-    <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center shrink-0 text-xs font-medium text-muted-foreground">
+    <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center shrink-0 text-step-1 font-medium text-muted-foreground">
       {initials}
     </div>
   );
@@ -111,7 +111,7 @@ function CastTab({ castList }: { castList: CastMember[] }) {
   const cast = extractCast(castList, fullCast ? castList.length : 5);
 
   if (!cast.length) {
-    return <p className="text-sm text-muted-foreground py-4">{t("moviesTabs.empty.cast")}</p>;
+    return <p className="text-step-1 text-muted-foreground py-4">{t("moviesTabs.empty.cast")}</p>;
   }
 
   return (
@@ -121,8 +121,8 @@ function CastTab({ castList }: { castList: CastMember[] }) {
           <div key={i} className="flex items-center gap-3 py-3">
             <Avatar name={member.name} photo={member.photo} />
             <div className="min-w-0">
-              <p className="text-sm font-medium leading-tight truncate">{member.name}</p>
-              <p className="text-xs text-muted-foreground truncate">{member.character}</p>
+              <p className="text-step-1 font-medium leading-tight truncate">{member.name}</p>
+              <p className="text-step-1 text-muted-foreground truncate">{member.character}</p>
             </div>
           </div>
         )
@@ -147,19 +147,19 @@ function CrewTab({ crewList }: { crewList: CrewMember[] }) {
   }));
 
   if (!entries.length) {
-    return <p className="text-sm text-muted-foreground py-4">{t("moviesTabs.empty.crew")}</p>;
+    return <p className="text-step-1 text-muted-foreground py-4">{t("moviesTabs.empty.crew")}</p>;
   }
 
   return (
     <div className="divide-y divide-border">
       {entries.map((entry, i) => (
         <div key={i} className="flex items-center justify-between py-3 gap-4">
-          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide w-32 shrink-0">
+          <span className="w-32 shrink-0 text-step-1 text-muted-foreground">
             {entry.label}
           </span>
           <div className="text-right min-w-0">
-            <p className="text-sm font-medium truncate">{entry.name}</p>
-            <p className="text-xs text-muted-foreground truncate">{entry.job}</p>
+            <p className="text-step-1 font-medium truncate">{entry.name}</p>
+            <p className="text-step-1 text-muted-foreground truncate">{entry.job}</p>
           </div>
         </div>
       ))}
@@ -175,7 +175,7 @@ function TrailersTab({ videos }: { videos: TMDBVideo[] }) {
   );
 
   if (!youtubeVideos.length) {
-    return <p className="text-sm text-muted-foreground py-4">{t("moviesTabs.empty.trailers")}</p>;
+    return <p className="text-step-1 text-muted-foreground py-4">{t("moviesTabs.empty.trailers")}</p>;
   }
 
   return (
@@ -202,7 +202,7 @@ function TrailersTab({ videos }: { videos: TMDBVideo[] }) {
               </div>
             </div>
           </div>
-          <p className="text-sm font-medium line-clamp-1 transition-colors group-hover:text-primary">{video.name}</p>
+          <p className="text-step-1 font-medium line-clamp-1 transition-colors group-hover:text-primary">{video.name}</p>
         </a>
       ))}
     </div>
@@ -213,7 +213,7 @@ function SimilarTab({ similarList }: { similarList: MovieSummary[] }) {
   const { t } = useTranslation("media");
 
   if (!similarList?.length) {
-    return <p className="text-sm text-muted-foreground py-4">{t("moviesTabs.empty.similar")}</p>;
+    return <p className="text-step-1 text-muted-foreground py-4">{t("moviesTabs.empty.similar")}</p>;
   }
 
   return (

@@ -35,7 +35,7 @@ function SimilarTab({ similarList }: { similarList: MangaRecommendation[] }) {
     .filter((item): item is NonNullable<MangaRecommendation["mediaRecommendation"]> => Boolean(item));
 
   if (!recommendations.length) {
-    return <p className="py-4 text-sm text-muted-foreground">{t("mangaTabs.empty.similar")}</p>;
+    return <p className="py-4 text-step-1 text-muted-foreground">{t("mangaTabs.empty.similar")}</p>;
   }
 
   return (
@@ -51,7 +51,7 @@ function SimilarTab({ similarList }: { similarList: MangaRecommendation[] }) {
             alt={manga.title?.english || manga.title?.romaji || ""}
             className="aspect-2/3 w-full rounded transition-transform duration-300 ease-out group-hover:scale-[1.03]"
           />
-          <span className="line-clamp-2 text-sm font-medium text-foreground/90 transition-colors group-hover:text-primary">
+          <span className="line-clamp-2 text-step-1 font-medium transition-colors group-hover:text-primary">
             {manga.title?.english || manga.title?.romaji}
           </span>
         </Link>
@@ -66,7 +66,7 @@ function CharactersTab({ characters }: { characters: CharacterNode[] }) {
   const { t } = useTranslation("media");
 
   if (!characters.length) {
-    return <p className="py-4 text-sm text-muted-foreground">{t("mangaTabs.empty.characters")}</p>;
+    return <p className="py-4 text-step-1 text-muted-foreground">{t("mangaTabs.empty.characters")}</p>;
   }
 
   return (
@@ -78,7 +78,7 @@ function CharactersTab({ characters }: { characters: CharacterNode[] }) {
             alt={char.name.full}
             className="aspect-2/3 w-full rounded"
           />
-          <span className="text-xs font-medium text-center line-clamp-2">{char.name.full}</span>
+          <span className="text-step-1 font-medium text-center line-clamp-2">{char.name.full}</span>
         </div>
       ))}
     </div>
@@ -91,7 +91,7 @@ function StaffTab({ staff }: { staff: StaffEdge[] }) {
   const { t } = useTranslation("media");
 
   if (!staff.length) {
-    return <p className="py-4 text-sm text-muted-foreground">{t("mangaTabs.empty.staff")}</p>;
+    return <p className="py-4 text-step-1 text-muted-foreground">{t("mangaTabs.empty.staff")}</p>;
   }
 
   return (
@@ -105,13 +105,13 @@ function StaffTab({ staff }: { staff: StaffEdge[] }) {
               className="w-10 h-10 rounded-full shrink-0"
             />
           ) : (
-            <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center shrink-0 text-xs font-medium text-muted-foreground">
+            <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center shrink-0 text-step-1 font-medium text-muted-foreground">
               {edge.node.name.full.split(" ").slice(0, 2).map(n => n[0]).join("").toUpperCase()}
             </div>
           )}
           <div className="min-w-0">
-            <p className="text-sm font-medium leading-tight truncate">{edge.node.name.full}</p>
-            <p className="text-xs text-muted-foreground truncate">{edge.role}</p>
+            <p className="text-step-1 font-medium leading-tight truncate">{edge.node.name.full}</p>
+            <p className="text-step-1 text-muted-foreground truncate">{edge.role}</p>
           </div>
         </div>
       ))}
@@ -127,7 +127,7 @@ function RelationsTab({ relations }: { relations: RelationEdge[] }) {
   const filtered = relations.filter((e) => INTERESTING_RELATIONS.includes(e.relationType));
 
   if (!filtered.length) {
-    return <p className="py-4 text-sm text-muted-foreground">{t("mangaTabs.empty.relations")}</p>;
+    return <p className="py-4 text-step-1 text-muted-foreground">{t("mangaTabs.empty.relations")}</p>;
   }
 
   return (
@@ -137,12 +137,12 @@ function RelationsTab({ relations }: { relations: RelationEdge[] }) {
         const title = edge.node.title.english || edge.node.title.romaji || "";
         const inner = (
           <div className="flex items-center justify-between py-3 gap-4">
-            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide w-28 shrink-0">
+            <span className="w-28 shrink-0 text-step-1 text-muted-foreground">
               {t(`animeTabs.relationTypes.${edge.relationType}`, { defaultValue: edge.relationType })}
             </span>
             <div className="text-right min-w-0">
-              <p className="text-sm font-medium truncate">{title}</p>
-              <p className="text-xs text-muted-foreground truncate">{edge.node.format}</p>
+              <p className="text-step-1 font-medium truncate">{title}</p>
+              <p className="text-step-1 text-muted-foreground truncate">{edge.node.format}</p>
             </div>
           </div>
         );

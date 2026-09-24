@@ -24,8 +24,8 @@ export const EmptyState = ({
         className
       )}
     >
-      <p className={cn("text-lg", titleClassName)}>{title}</p>
-      {description && <p className="mt-1 text-sm">{description}</p>}
+      <p className={cn("text-step-3", titleClassName)}>{title}</p>
+      {description && <p className="mt-1 text-step-1">{description}</p>}
       {children}
     </div>
   );

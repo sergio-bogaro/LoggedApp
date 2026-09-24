@@ -219,6 +219,22 @@
     @apply border-border;
   }
 
+  /*
+   * One place to honour the system preference. Enter/exit animations come from
+   * Radix and spinners from lucide, so a per-element `motion-reduce:` class
+   * would never have covered them all.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
   html {
     -webkit-text-size-adjust: 100%;
   }

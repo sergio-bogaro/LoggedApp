@@ -33,7 +33,7 @@ function ScreenshotsTab({ screenshots }: { screenshots: string[] }) {
   const { t } = useTranslation("media");
 
   if (!screenshots.length) {
-    return <p className="text-sm text-muted-foreground py-4">{t("gameTabs.empty.screenshots")}</p>;
+    return <p className="text-step-1 text-muted-foreground py-4">{t("gameTabs.empty.screenshots")}</p>;
   }
 
   return (
@@ -55,11 +55,11 @@ function StoryTab({ storyline }: { storyline?: string | null }) {
   const { t } = useTranslation("media");
 
   if (!storyline) {
-    return <p className="text-sm text-muted-foreground py-4">{t("gameTabs.empty.story")}</p>;
+    return <p className="text-step-1 text-muted-foreground py-4">{t("gameTabs.empty.story")}</p>;
   }
 
   return (
-    <p className="text-sm leading-relaxed text-foreground/90 py-4 whitespace-pre-line">
+    <p className="py-4 text-step-1 leading-relaxed whitespace-pre-line">
       {storyline}
     </p>
   );
@@ -69,7 +69,7 @@ function VideosTab({ videos }: { videos: IgdbVideo[] }) {
   const { t } = useTranslation("media");
 
   if (!videos.length) {
-    return <p className="text-sm text-muted-foreground py-4">{t("gameTabs.empty.videos")}</p>;
+    return <p className="text-step-1 text-muted-foreground py-4">{t("gameTabs.empty.videos")}</p>;
   }
 
   return (
@@ -85,7 +85,7 @@ function VideosTab({ videos }: { videos: IgdbVideo[] }) {
               allowFullScreen
             />
           </div>
-          <span className="text-xs font-medium text-muted-foreground line-clamp-1">
+          <span className="text-step-1 font-medium text-muted-foreground line-clamp-1">
             {video.name}
           </span>
         </div>
@@ -103,7 +103,7 @@ function LinksGroup({
 }) {
   return (
     <div>
-      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
+      <p className="mb-2 text-step-1 text-muted-foreground">
         {title}
       </p>
       <div className="divide-y divide-border">
@@ -117,8 +117,8 @@ function LinksGroup({
               rel="noopener noreferrer"
               className="flex items-center justify-between py-3 hover:text-primary transition-colors"
             >
-              <span className="text-sm font-medium">{label}</span>
-              <span className="text-xs text-muted-foreground">↗</span>
+              <span className="text-step-1 font-medium">{label}</span>
+              <span className="text-step-1 text-muted-foreground">↗</span>
             </a>
           );
         })}
@@ -131,7 +131,7 @@ function LinksTab({ websites }: { websites: { type: number; url: string }[] }) {
   const { t } = useTranslation("media");
 
   if (!websites.length) {
-    return <p className="text-sm text-muted-foreground py-4">{t("gameTabs.empty.links")}</p>;
+    return <p className="text-step-1 text-muted-foreground py-4">{t("gameTabs.empty.links")}</p>;
   }
 
   const stores = websites.filter((w) => STORE_TYPES.includes(w.type));
@@ -139,7 +139,7 @@ function LinksTab({ websites }: { websites: { type: number; url: string }[] }) {
   const hasAny = stores.length > 0 || community.length > 0;
 
   if (!hasAny) {
-    return <p className="text-sm text-muted-foreground py-4">{t("gameTabs.empty.links")}</p>;
+    return <p className="text-step-1 text-muted-foreground py-4">{t("gameTabs.empty.links")}</p>;
   }
 
   return (

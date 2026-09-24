@@ -77,7 +77,7 @@ export const MediaRecord = ({ media, lastLog, onOpenLogDetails, children }: Medi
                   <button
                     type="button"
                     onClick={onOpenLogDetails}
-                    className="tabular-nums underline-offset-4 hover:underline"
+                    className="rounded-control tabular-nums underline-offset-4 outline-none hover:underline focus-visible:ring-[3px] focus-visible:ring-ring/25"
                   >
                     {formatLongDate(media.lastLogDate, i18n.language)}
                   </button>

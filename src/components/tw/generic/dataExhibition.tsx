@@ -17,7 +17,7 @@ interface DataExhibitionProps {
 export const DataExhibition = ({ children, isLoading, isFetching, isError, errorMessage, skeleton, className }: DataExhibitionProps) => {
   return (
     <div className={cn("relative min-w-0", className)}>
-      {isError && <p className="text-sm text-destructive">{errorMessage}</p>}
+      {isError && <p className="text-step-1 text-destructive">{errorMessage}</p>}
       {isLoading && skeleton ? skeleton : !isError && children}
       {isFetching && !isLoading && <Loading isLoading />}
     </div>

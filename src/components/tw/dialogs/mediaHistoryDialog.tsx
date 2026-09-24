@@ -52,7 +52,7 @@ export function MediaHistoryDialog({ media, open, onOpenChange }: MediaHistoryDi
             errorMessage={`${t("history.errorPrefix")} ${error?.message ?? ""}`}
           >
             {logs?.length === 0 && (
-              <p className="text-sm text-muted-foreground">
+              <p className="text-step-1 text-muted-foreground">
                 {t("history.empty")}
               </p>
             )}
