@@ -2,9 +2,9 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import { LogRow } from "./LogRow";
-import { MonthDivider } from "./MonthDivider";
 
 import { EmptyState } from "@/components/tw/generic/EmptyState";
+import { SectionHeading } from "@/components/tw/generic/SectionHeading";
 import type { MediaLogWithMedia } from "@/querries/media/logged";
 import { formatMonthLabel, monthKey } from "@/utils/date";
 
@@ -48,7 +48,7 @@ export const LogStream = ({ logs, filtered = false }: LogStreamProps) => {
     <div className="space-y-8">
       {groups.map(([key, group]) => (
         <section key={key}>
-          <MonthDivider label={formatMonthLabel(group[0].date, i18n.language)} />
+          <SectionHeading>{formatMonthLabel(group[0].date, i18n.language)}</SectionHeading>
 
           <ul className="mt-2">
             {group.map((log) => (

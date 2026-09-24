@@ -6,6 +6,7 @@ import LanguageSwitcher from "@/components/LanguageSwitcher";
 import RatingSwitcher from "@/components/RatingSwitcher";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 import { PageHeader } from "@/components/tw/generic/PageHeader";
+import { SectionHeading } from "@/components/tw/generic/SectionHeading";
 import MediaTrackToggles from "@/components/tw/settings/MediaTrackToggles";
 import { authApi } from "@/querries/auth/auth";
 import { useAppDispatch, useAppSelector } from "@/store/auth/hooks";
@@ -56,30 +57,35 @@ function SettingsPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="w-full space-y-8">
       <PageHeader title={t("settings.title")} />
 
-      <div className="space-y-2">
-        <LanguageSwitcher />
+      <section className="space-y-4">
+        <SectionHeading>{t("settings.appearance.title")}</SectionHeading>
 
-        <ThemeSwitcher />
-
-        <RatingSwitcher />
-      </div>
-
-      <div className="space-y-2">
-        <div>
-          <h2 className="text-lg font-semibold mb-1">{t("settings.tracking.title")}</h2>
-          <p className="text-sm text-muted-foreground mb-2">{t("settings.tracking.description")}</p>
+        <div className="grid max-w-md gap-4">
+          <LanguageSwitcher />
+          <ThemeSwitcher />
+          <RatingSwitcher />
         </div>
+      </section>
+
+      <section className="space-y-4">
+        <SectionHeading>{t("settings.tracking.title")}</SectionHeading>
+
+        <p className="text-step-1 text-muted-foreground">
+          {t("settings.tracking.description")}
+        </p>
 
         <MediaTrackToggles
           values={values}
           onChange={handleChange}
         />
 
-        {savingType && ( <p className="text-xs text-muted-foreground">{t("settings.tracking.saving")} </p> )}
-      </div>
+        {savingType && (
+          <p className="text-step-1 text-muted-foreground">{t("settings.tracking.saving")}</p>
+        )}
+      </section>
     </div>
   )
 }

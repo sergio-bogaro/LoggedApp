@@ -31,6 +31,9 @@
     "loggedInAs": "Logged in as",
     "account": "Account",
     "logoutSuccess": "Logged out successfully",
+    "appearance": {
+      "title": "Appearance and language"
+    },
     "tracking": {
       "title": "Media Tracking",
       "description": "Choose which media types you want to log",

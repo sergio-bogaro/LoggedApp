@@ -6,6 +6,7 @@ import { ChartBlock } from "./ChartBlock";
 import { StatIndexItem, StatsHeadline } from "./StatsHeadline";
 import { useMediaStats } from "./useMediaStats";
 
+import { SectionHeading } from "@/components/tw/generic/SectionHeading";
 import { MediaLogWithMedia } from "@/querries/media/logged";
 import { MediaStatusEnum } from "@/types/media";
 
@@ -25,7 +26,7 @@ const STATUS_ORDER = [
 const StatsSection = ({ title, children }: { title: string; children: ReactNode }) => {
   return (
     <section className="space-y-5">
-      <h2 className="border-b border-border pb-2 font-serif text-step-4 font-medium">{title}</h2>
+      <SectionHeading>{title}</SectionHeading>
 
       <div className="grid gap-x-10 gap-y-8 md:grid-cols-2">{children}</div>
     </section>

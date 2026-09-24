@@ -2,6 +2,7 @@
   "title": "Bem-vindo ao {{appName}}",
   "subtitle": "Vamos configurar sua conta",
   "step1Title": "O que é o Logged?",
+  "progressLabel": "Progresso da introdução",
   "features": [
     "Registre filmes, animes, mangás, jogos e livros em um só lugar",
     "Registre progresso, avaliações e reviews de cada título",

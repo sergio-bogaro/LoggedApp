@@ -2,6 +2,7 @@
   "title": "Welcome to {{appName}}",
   "subtitle": "Let's set up your account",
   "step1Title": "What is Logged?",
+  "progressLabel": "Onboarding progress",
   "features": [
     "Track movies, anime, manga, games and books in one place",
     "Log progress, ratings and reviews for each title",

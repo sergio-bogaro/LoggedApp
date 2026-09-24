@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
 import { z } from "zod";
 
-import { Card } from "@/components/tw/generic/card";
+import { EntryCard } from "@/components/tw/generic/EntryCard";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -66,62 +66,59 @@ export default function Register() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md p-8">
-        <h1 className="mb-6 text-center text-3xl font-bold">{t("register.title")}</h1>
+    <EntryCard
+      title={t("register.title")}
+      footer={
+        <>
+          {t("register.hasAccount")}{" "}
+          <Button asChild variant="link" className="h-auto p-0">
+            <Link to="/login">{t("register.loginLink")}</Link>
+          </Button>
+        </>
+      }
+    >
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(handleRegister)} className="space-y-4" noValidate>
+          <Input
+            control={form.control}
+            label={t("register.username")}
+            name="username"
+            type="text"
+            autoComplete="username"
+            autoFocus
+            required
+            disabled={isLoading}
+          />
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleRegister)} className="space-y-4" noValidate>
-            <Input
-              control={form.control}
-              label={t("register.username")}
-              name="username"
-              type="text"
-              autoComplete="username"
-              autoFocus
-              required
-              disabled={isLoading}
-            />
+          <Input
+            control={form.control}
+            label={t("register.password")}
+            name="password"
+            type="password"
+            autoComplete="new-password"
+            required
+            disabled={isLoading}
+          />
 
-            <Input
-              control={form.control}
-              label={t("register.password")}
-              name="password"
-              type="password"
-              autoComplete="new-password"
-              required
-              disabled={isLoading}
-            />
+          <Input
+            control={form.control}
+            label={t("register.confirmPassword")}
+            name="confirmPassword"
+            type="password"
+            autoComplete="new-password"
+            required
+            disabled={isLoading}
+          />
 
-            <Input
-              control={form.control}
-              label={t("register.confirmPassword")}
-              name="confirmPassword"
-              type="password"
-              autoComplete="new-password"
-              required
-              disabled={isLoading}
-            />
+          {rootError && (
+            <p role="alert" className="text-step-1 text-destructive">{rootError}</p>
+          )}
 
-            {rootError && (
-              <p role="alert" className="text-sm text-destructive">{rootError}</p>
-            )}
-
-            <Button type="submit" className="w-full" disabled={isLoading} aria-busy={isLoading}>
-              {isLoading ? t("register.submitting") : t("register.submit")}
-            </Button>
-          </form>
-        </Form>
-
-        <div className="mt-4 text-center">
-          <p className="text-sm text-muted-foreground">
-            {t("register.hasAccount")}{" "}
-            <Button asChild variant="link" className="h-auto p-1">
-              <Link to="/login">{t("register.loginLink")}</Link>
-            </Button>
-          </p>
-        </div>
-      </Card>
-    </div>
+          <Button type="submit" className="w-full" disabled={isLoading} aria-busy={isLoading}>
+            {isLoading ? t("register.submitting") : t("register.submit")}
+          </Button>
+        </form>
+      </Form>
+    </EntryCard>
   );
 }

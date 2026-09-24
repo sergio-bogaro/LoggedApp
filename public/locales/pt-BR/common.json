@@ -31,6 +31,9 @@
     "loggedInAs": "Conectado como",
     "account": "Conta",
     "logoutSuccess": "Sessão encerrada com sucesso",
+    "appearance": {
+      "title": "Aparência e idioma"
+    },
     "tracking": {
       "title": "Mídias a Registrar",
       "description": "Escolha quais tipos de mídia deseja logar",
