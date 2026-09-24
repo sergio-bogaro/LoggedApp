@@ -18,7 +18,7 @@ const MediaHomePage = () => {
   const { i18n, t } = useTranslation("media");
   const dispatch = useAppDispatch();
 
-  const [period, setPeriod] = useState<PeriodKey>("all");
+  const [period, setPeriod] = useState<PeriodKey>("year");
   const [custom, setCustom] = useState<PeriodRange>({});
 
   useEffect(() => {

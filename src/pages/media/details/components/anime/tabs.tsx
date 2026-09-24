@@ -102,10 +102,10 @@ function StaffTab({ staff }: { staff: StaffEdge[] }) {
             <ImageWithSkeleton
               src={edge.node.image.large}
               alt={edge.node.name.full}
-              className="w-10 h-10 rounded-full shrink-0"
+              className="w-12 h-12 rounded-full shrink-0"
             />
           ) : (
-            <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center shrink-0 text-step-0 font-medium text-muted-foreground">
+            <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center shrink-0 text-step-0 font-medium text-muted-foreground">
               {edge.node.name.full.split(" ").slice(0, 2).map(n => n[0]).join("").toUpperCase()}
             </div>
           )}

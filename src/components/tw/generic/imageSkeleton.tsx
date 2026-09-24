@@ -39,8 +39,8 @@ export function ImageWithSkeleton({ src, alt, className, width, height, imgClass
       className={cn("relative overflow-hidden rounded-md bg-muted", className)}
       aria-busy={!isLoaded}
       style={{
-        width: width ? `${width}px` : "100%",
-        height: height ? `${height}px` : "auto",
+        ...(width !== undefined ? { width: `${width}px` } : {}),
+        ...(height !== undefined ? { height: `${height}px` } : {}),
       }}
     >
       {!isGone && !showPlaceholder && (

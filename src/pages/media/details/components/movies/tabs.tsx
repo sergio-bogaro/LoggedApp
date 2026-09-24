@@ -88,13 +88,13 @@ function Avatar({ name, photo }: { name: string; photo: string | null }) {
       <ImageWithSkeleton
         src={photo}
         alt={name}
-        className="w-10 h-10 rounded-full shrink-0"
+        className="w-12 h-12 rounded-full shrink-0"
       />
     );
   }
 
   return (
-    <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center shrink-0 text-step-0 font-medium text-muted-foreground">
+    <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center shrink-0 text-step-0 font-medium text-muted-foreground">
       {initials}
     </div>
   );

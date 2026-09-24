@@ -58,27 +58,46 @@ export function TrackMediaDialog({ mediaType, existingMedia, image, formatedData
   const isOneTimeConsumption = useMemo( () => mediaType === MediaTypeEnum.MOVIES, [mediaType] );
   const endDateLabel = useMemo( () => (isOneTimeConsumption ? "track.viewedOn" : "track.finishDate"), [isOneTimeConsumption] );
 
-  const form = useForm<FormType>({
-    defaultValues: {
-      status: isOneTimeConsumption ? MediaStatusEnum.FINISHED : MediaStatusEnum.IN_PROGRESS,
-      startDate: isOneTimeConsumption ? undefined : newIsoDate(),
-      endDate: isOneTimeConsumption ? newIsoDate() : undefined,
-    },
+  // Reuse the media's previous status, unless it closed the media
+  // (finished/dropped) — then start a fresh in-progress log.
+  const defaultStatus = useMemo(() => {
+    if (isOneTimeConsumption) return MediaStatusEnum.FINISHED;
+    const previous = existingMedia?.status;
+    if (previous && !finishedStatusEnumValues.includes(previous)) return previous;
+    return MediaStatusEnum.IN_PROGRESS;
+  }, [isOneTimeConsumption, existingMedia]);
+
+  const buildDefaults = (): FormType => ({
+    status: defaultStatus,
+    startDate: isOneTimeConsumption ? undefined : newIsoDate(),
+    endDate: isOneTimeConsumption ? newIsoDate() : undefined,
   });
+
+  const form = useForm<FormType>({ defaultValues: buildDefaults() });
 
   const { control, handleSubmit } = form;
   const watchStatus = useWatch({ control, name: "status" });
   const isFinished = useMemo(() => finishedStatusEnumValues.includes(watchStatus), [watchStatus] );
 
+  // When finalizing a media that already has an in-progress log, keep the
+  // original start date instead of resetting it.
+  const inProgressStartDate = useMemo(
+    () =>
+      existingMedia?.logs
+        ?.filter((log) => log.status === MediaStatusEnum.IN_PROGRESS)
+        .pop()?.startDate?.slice(0, 10) ?? "",
+    [existingMedia]
+  );
+
   useEffect(() => {
     if (isFinished && !isOneTimeConsumption) {
       form.setValue("endDate", newIsoDate());
-      form.setValue("startDate", "");
+      form.setValue("startDate", inProgressStartDate);
     } else {
       form.setValue("startDate", newIsoDate());
       form.setValue("endDate", undefined);
     }
-  }, [isFinished]);
+  }, [isFinished, inProgressStartDate]);
 
   const onSubmit = (data: FormType) => {
     const formData = {
@@ -93,8 +112,13 @@ export function TrackMediaDialog({ mediaType, existingMedia, image, formatedData
     setOpen(false);
   };
 
+  const handleOpenChange = (next: boolean) => {
+    setOpen(next);
+    if (next) form.reset(buildDefaults());
+  };
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         {trigger ?? (
           <Button

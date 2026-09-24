@@ -64,8 +64,11 @@ function toIsoDateString(date: Date | undefined) {
 
 function parseIsoDateString(value?: string) {
   if (!value) return undefined
-  const [year, month, day] = value.split("-").map(Number)
-  if (!year || !month || !day) return undefined
+  // Accepts a plain ISO day (yyyy-MM-dd) as well as a datetime from the API
+  // (yyyy-MM-ddThh:mm:ss); only the date part matters here.
+  const match = value.match(/^(\d{4})-(\d{2})-(\d{2})/)
+  if (!match) return undefined
+  const [, year, month, day] = match.map(Number)
   const date = new Date(year, month - 1, day)
   return isValidDate(date) ? date : undefined
 }
