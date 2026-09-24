@@ -1,6 +1,12 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-export type Theme = "light" | "dark";
+export type Theme =
+  | "light"
+  | "dark"
+  | "purple-light"
+  | "purple-dark"
+  | "green-light"
+  | "green-dark";
 export type ViewMode = "list" | "grid";
 export type RatingMode = "numeric" | "stars5" | "stars10";
 export type Crumb = {
@@ -8,23 +14,60 @@ export type Crumb = {
   to?: string;
 };
 
-export const THEME_CLASSES = ["light", "dark"] as const;
+export const ALL_THEMES: Theme[] = [
+  "light",
+  "dark",
+  "purple-light",
+  "purple-dark",
+  "green-light",
+  "green-dark",
+];
+
+/* Classes applied to <html>: one mode class (light/dark) plus an optional
+   palette class (purple/green) that overrides only the accent tokens. */
+export const THEME_CLASSES = ["light", "dark", "purple", "green"] as const;
+
+const THEME_MODE: Record<Theme, "light" | "dark"> = {
+  light: "light",
+  dark: "dark",
+  "purple-light": "light",
+  "purple-dark": "dark",
+  "green-light": "light",
+  "green-dark": "dark",
+};
+
+const THEME_PALETTE: Record<Theme, "purple" | "green" | null> = {
+  light: null,
+  dark: null,
+  "purple-light": "purple",
+  "purple-dark": "purple",
+  "green-light": "green",
+  "green-dark": "green",
+};
+
+export function applyThemeClasses(theme: Theme) {
+  const root = document.documentElement.classList;
+  root.remove(...THEME_CLASSES);
+  root.add(THEME_MODE[theme]);
+
+  const palette = THEME_PALETTE[theme];
+  if (palette) root.add(palette);
+}
 
 /*
- * Themes dropped in the redesign. A stored value under an old name is mapped
- * onto its closest surviving counterpart so existing users keep a sane theme.
+ * Themes dropped in earlier redesigns. A stored value under an old name is
+ * mapped onto its closest surviving counterpart so existing users keep a
+ * usable theme.
  */
 const LEGACY_THEME_MAP: Record<string, Theme> = {
   "rose-pine": "dark",
-  "green-dark": "dark",
   "rose-pine-dawn": "light",
-  "green-light": "light",
 };
 
 function resolveStoredTheme(): Theme {
   const stored = localStorage.getItem("theme");
   if (!stored) return "light";
-  if ((THEME_CLASSES as readonly string[]).includes(stored)) return stored as Theme;
+  if ((ALL_THEMES as string[]).includes(stored)) return stored as Theme;
   return LEGACY_THEME_MAP[stored] ?? "light";
 }
 
@@ -42,8 +85,7 @@ const savedViewMode = (localStorage.getItem("viewMode") as ViewMode) || "list";
 const savedRatingMode = (localStorage.getItem("ratingMode") as RatingMode) || "stars5";
 const savedLastSearchType = localStorage.getItem("lastSearchType") || "movies";
 
-document.documentElement.classList.remove(...THEME_CLASSES);
-document.documentElement.classList.add(savedTheme);
+applyThemeClasses(savedTheme);
 
 const initialState: UIState = {
   theme: savedTheme,
@@ -61,8 +103,7 @@ export const uiSlice = createSlice({
       state.theme = action.payload;
       localStorage.setItem("theme", action.payload);
 
-      document.documentElement.classList.remove(...THEME_CLASSES);
-      document.documentElement.classList.add(action.payload);
+      applyThemeClasses(action.payload);
     },
 
     setViewMode: (state, action: PayloadAction<ViewMode>) => {

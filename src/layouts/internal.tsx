@@ -10,9 +10,9 @@ function InternalLayout() {
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <header className="sticky top-0 z-10 flex h-12 shrink-0 items-center gap-2 border-b bg-background px-3">
+        <header className="sticky top-0 z-10 flex h-10 shrink-0 items-center gap-1.5 border-b bg-background px-2">
           <SidebarTrigger />
-          <Separator orientation="vertical" className="h-4" />
+          <Separator orientation="vertical" className="h-3.5" />
           <Header />
         </header>
 

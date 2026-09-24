@@ -202,6 +202,77 @@
   --sidebar-ring: #7fb3a0;
 }
 
+/* ── Purple palette (accent tokens over the light/dark modes) ─────────── */
+.purple {
+  --primary: #6b4fa1;
+  --primary-foreground: #fbfbf9;
+  --secondary: #f2eef7;
+  --muted: #f2eef7;
+  --accent: #f2eef7;
+  --ring: #6b4fa1;
+  --border: #ded8e8;
+  --input: #e9e4f0;
+  --sidebar: #f7f4fb;
+  --sidebar-primary: #6b4fa1;
+  --sidebar-primary-foreground: #fbfbf9;
+  --sidebar-accent: #eee8f6;
+  --sidebar-border: #ded8e8;
+  --sidebar-ring: #6b4fa1;
+}
+
+/* ── Green palette (accent tokens over the light/dark modes) ──────────── */
+.green {
+  --primary: #3f7d3a;
+  --primary-foreground: #fbfbf9;
+  --secondary: #eef4ec;
+  --muted: #eef4ec;
+  --accent: #eef4ec;
+  --ring: #3f7d3a;
+  --border: #d7e2d4;
+  --input: #e4ece1;
+  --sidebar: #f4f8f2;
+  --sidebar-primary: #3f7d3a;
+  --sidebar-primary-foreground: #fbfbf9;
+  --sidebar-accent: #e9f1e6;
+  --sidebar-border: #d7e2d4;
+  --sidebar-ring: #3f7d3a;
+}
+
+/* Dark variants override the light palette blocks above. */
+.dark.purple {
+  --primary: #b79ae0;
+  --primary-foreground: #0f1113;
+  --secondary: #232030;
+  --muted: #232030;
+  --accent: #232030;
+  --ring: #b79ae0;
+  --border: #302b3d;
+  --input: #272331;
+  --sidebar: #171420;
+  --sidebar-primary: #b79ae0;
+  --sidebar-primary-foreground: #0f1113;
+  --sidebar-accent: #232030;
+  --sidebar-border: #302b3d;
+  --sidebar-ring: #b79ae0;
+}
+
+.dark.green {
+  --primary: #86c98a;
+  --primary-foreground: #0f1113;
+  --secondary: #1e2a22;
+  --muted: #1e2a22;
+  --accent: #1e2a22;
+  --ring: #86c98a;
+  --border: #26332a;
+  --input: #1f2a22;
+  --sidebar: #141a16;
+  --sidebar-primary: #86c98a;
+  --sidebar-primary-foreground: #0f1113;
+  --sidebar-accent: #1e2a22;
+  --sidebar-border: #26332a;
+  --sidebar-ring: #86c98a;
+}
+
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;

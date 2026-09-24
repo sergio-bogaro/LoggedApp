@@ -109,22 +109,28 @@ const MediaListPage = () => {
         </div>
       )}
 
-      <DataExhibition isLoading={isInitialLoading} isFetching={isLoading} skeleton={<MediaCardSkeleton />} isError={isErrorCombined} errorMessage={`${t("errorLoading", { ns: "common" })} ${errorMessageCombined}`}>
-        <Tabs defaultValue="list" className="mt-4">
-          <TabsList>
-            <TabsTrigger value="list">{t("home.tabs.list")}</TabsTrigger>
-            <TabsTrigger value="stats">{t("home.tabs.stats")}</TabsTrigger>
-          </TabsList>
+      <Tabs defaultValue="list" className="mt-4">
+        <TabsList>
+          <TabsTrigger value="list">{t("home.tabs.list")}</TabsTrigger>
+          <TabsTrigger value="stats">{t("home.tabs.stats")}</TabsTrigger>
+        </TabsList>
 
-          <TabsContent value="list">
+        <TabsContent value="list">
+          <DataExhibition
+            isLoading={isInitialLoading}
+            isFetching={isLoading}
+            skeleton={<MediaCardSkeleton />}
+            isError={isErrorCombined}
+            errorMessage={`${t("errorLoading", { ns: "common" })} ${errorMessageCombined}`}
+          >
             <MediaLibrary data={data} recentlyLoggedData={recentlyLoggedData} mediaType={mediaType} />
-          </TabsContent>
+          </DataExhibition>
+        </TabsContent>
 
-          <TabsContent value="stats" className="mt-4 space-y-6">
-            <MediaStats logs={logs} />
-          </TabsContent>
-        </Tabs>
-      </DataExhibition>
+        <TabsContent value="stats" className="mt-4 space-y-6">
+          <MediaStats logs={logs} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

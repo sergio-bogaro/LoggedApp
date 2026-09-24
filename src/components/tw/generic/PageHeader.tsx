@@ -18,7 +18,7 @@ export const PageHeader = ({
   className,
 }: PageHeaderProps) => {
   return (
-    <header className={cn("mb-4", className)}>
+    <header className={cn("mb-3", className)}>
       <div className="flex items-center gap-3">
         {leading}
         <h1 className="min-w-0 truncate font-serif text-step-4 font-medium">{title}</h1>

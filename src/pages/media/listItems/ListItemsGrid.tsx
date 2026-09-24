@@ -83,7 +83,7 @@ export const ListItemsGrid = ({ items, emptyMessage }: ListItemsGridProps) => {
   }
 
   return (
-    <div className="md:px-12 mt-4">
+    <div className="md:px-12 mt-4 min-h-72">
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
         {items.map((item) => (
           <div key={item.id} className="relative group">

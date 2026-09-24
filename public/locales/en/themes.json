@@ -1,4 +1,8 @@
 {
   "light": "Light",
-  "dark": "Dark"
+  "dark": "Dark",
+  "purple-light": "Purple · Light",
+  "purple-dark": "Purple · Dark",
+  "green-light": "Green · Light",
+  "green-dark": "Green · Dark"
 }

@@ -1,4 +1,8 @@
 {
   "light": "Claro",
-  "dark": "Escuro"
+  "dark": "Escuro",
+  "purple-light": "Roxo · Claro",
+  "purple-dark": "Roxo · Escuro",
+  "green-light": "Verde · Claro",
+  "green-dark": "Verde · Escuro"
 }

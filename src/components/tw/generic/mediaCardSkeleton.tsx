@@ -11,13 +11,7 @@ export const MediaCardSkeleton = () => {
 
   return (
     <div className="w-full mt-4" role="status" aria-busy="true" aria-label={t("a11y.loading")}>
-      {/* Tabs skeleton */}
-      <div className="flex gap-2 mb-4" aria-hidden="true">
-        <Skeleton className="h-9 w-24 rounded-md" />
-        <Skeleton className="h-9 w-24 rounded-md" />
-      </div>
-
-      {/* Sections skeleton */}
+      {/* Sections skeleton (the tab bar stays mounted, so it is not faked here) */}
       <div className="md:px-12 space-y-8" aria-hidden="true">
         {Array.from({ length: SECTION_COUNT }).map((_, sectionIdx) => (
           <div key={sectionIdx}>

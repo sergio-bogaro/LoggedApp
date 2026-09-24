@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next"
 
 import { useAppDispatch, useAppSelector } from "../store/settings/hooks"
-import { setTheme } from "../store/settings/slice"
+import { ALL_THEMES, setTheme } from "../store/settings/slice"
 import type { Theme } from "../store/settings/slice"
 
 import { Select } from "./ui/select"
@@ -11,10 +11,10 @@ function ThemeSwitcher() {
   const { theme } = useAppSelector(state => state.ui)
   const dispatch = useAppDispatch()
 
-  const themeOptions = [
-    { value: "light", label: t("light", { ns: "themes" }) },
-    { value: "dark", label: t("dark", { ns: "themes" }) },
-  ]
+  const themeOptions = ALL_THEMES.map((value) => ({
+    value,
+    label: t(value, { ns: "themes" }),
+  }))
 
   const handleThemeChange = (newTheme: Theme) => {
     dispatch(setTheme(newTheme))
