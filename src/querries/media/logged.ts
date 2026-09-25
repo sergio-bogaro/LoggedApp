@@ -41,8 +41,12 @@ export async function getMediaList(userId: number, params?: { type?: MediaTypeEn
   return apiFetch<MediaResponse[]>(`/api/media/${qs ? `?${qs}` : ""}`);
 }
 
-export async function getTags(userId: number): Promise<string[]> {
-  return apiFetch<string[]>(`/api/media/tags?user_id=${userId}`);
+export async function getTags(userId: number, type?: MediaTypeEnum): Promise<string[]> {
+  const url = new URLSearchParams();
+  url.set("user_id", userId.toString());
+  if (type) url.set("type", type);
+
+  return apiFetch<string[]>(`/api/media/tags?${url.toString()}`);
 }
 
 export async function getMediaById(id: number, userId: number): Promise<MediaWithLogsResponse> {

@@ -1,69 +1,44 @@
 import { useTranslation } from "react-i18next";
 
 import { StatusMark } from "../generic/badges";
-import { Card } from "../generic/card";
+import { LogFields } from "../log/LogFields";
 
-import { RatingDisplay } from "./ratingDisplay";
-
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { MediaLogResponse } from "@/types/logged";
+import { MediaTypeEnum } from "@/types/media";
 import { formatFromIsoDate } from "@/utils/date";
-import { formatProgress } from "@/utils/mediaText";
 
 interface MediaLogCardProps {
   log: MediaLogResponse;
-  isOneTimeConsuption: boolean;
+  mediaType?: MediaTypeEnum;
   onEdit?: () => void;
   onDelete?: () => void;
 }
 
-export const MediaLogCard = ({ log, isOneTimeConsuption, onEdit, onDelete }: MediaLogCardProps) => {
+/*
+ * One entry in the log history. The date is the entry's identity, so it leads
+ * in the display face; the rest of the log reads as the same definition list
+ * used everywhere else. Plain sections divided by hairlines — no cards inside
+ * the dialog plane.
+ */
+export const MediaLogCard = ({ log, mediaType, onEdit, onDelete }: MediaLogCardProps) => {
   const { t } = useTranslation("media");
-  const progressLabel = formatProgress(log.progress, log.progressTotal);
+
+  const date = log.date ? formatFromIsoDate(log.date) : null;
 
   return (
-    <Card className="gap-3">
+    <section className="py-4 first:pt-0 last:pb-0">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        {(log.startDate || log.endDate) && isOneTimeConsuption ? (
-          <div className="flex flex-wrap gap-x-4 gap-y-1 text-step-1 text-muted-foreground">
-            {log.endDate && <span>{t("history.viewedOn")} {formatFromIsoDate(log.endDate)}</span>}
-          </div>
-        ) : (
-          <div className="flex flex-wrap gap-x-4 gap-y-1 text-step-1 text-muted-foreground">
-            {log.startDate && <span>{t("history.startedOn")} {formatFromIsoDate(log.startDate)}</span>}
-            {log.endDate && <span>{t("history.endedOn")} {formatFromIsoDate(log.endDate)}</span>}
-          </div>
-        )}
-
+        <h3 className="font-serif text-step-3 font-medium tabular-nums">{date ?? "—"}</h3>
         {log.status && <StatusMark status={log.status} />}
       </div>
 
-      {progressLabel && (
-        <div className="text-step-1 tabular-nums text-muted-foreground">
-          {t("track.progress")}: {progressLabel}
-        </div>
-      )}
-
-      {typeof log.rating === "number" && log.rating > 0 && (
-        <RatingDisplay rating={log.rating} />
-      )}
-
-      {log.review && (
-        <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value={`review-${log.id}`}>
-            <AccordionTrigger>{t("history.viewReview")}</AccordionTrigger>
-            <AccordionContent>
-              <p className="whitespace-pre-wrap text-step-1 text-muted-foreground">
-                {log.review}
-              </p>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      )}
+      <div className="mt-3">
+        <LogFields log={log} mediaType={mediaType} showDate={false} showStatus={false} showEmptyReview={false} />
+      </div>
 
       {(onEdit || onDelete) && (
-        <div className="flex justify-end gap-2">
+        <div className="mt-3 flex justify-end gap-2">
           {onEdit && (
             <Button type="button" variant="ghost" size="xs" onClick={onEdit}>
               {t("actions.editLog")}
@@ -83,6 +58,6 @@ export const MediaLogCard = ({ log, isOneTimeConsuption, onEdit, onDelete }: Med
           )}
         </div>
       )}
-    </Card>
+    </section>
   );
-}
+};

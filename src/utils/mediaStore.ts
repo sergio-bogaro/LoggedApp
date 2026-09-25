@@ -165,8 +165,6 @@ export function useTrackMedia() {
         review: trackData.review,
         startDate: trackData.startDate,
         endDate: trackData.endDate,
-        progress: trackData.progress,
-        progressTotal: trackData.progressTotal,
       });
 
       return media;

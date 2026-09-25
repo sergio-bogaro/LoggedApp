@@ -36,8 +36,6 @@ export type TrackMediaPayload = {
   status: MediaStatusEnum
   rating?: number;
   review?: string;
-  progress?: number;
-  progressTotal?: number;
 };
 
 export interface MediaDataDetailsType {

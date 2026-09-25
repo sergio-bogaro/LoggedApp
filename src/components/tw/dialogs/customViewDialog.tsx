@@ -1,10 +1,10 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
-import { TagInput } from "@/components/tw/generic/tagInput";
+import { TagMultiSelect } from "@/components/tw/generic/tagMultiSelect";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -18,8 +18,11 @@ import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { createCustomView, updateCustomView } from "@/querries/customViews";
+import { getTags } from "@/querries/media/logged";
 import { useAppSelector } from "@/store/auth/hooks";
 import { CustomView, CustomViewDisplaySettings, CustomViewFilters } from "@/types/customView";
+import { MediaTypeEnum } from "@/types/media";
+import { DEFAULT_STALE_TIME } from "@/utils/conts";
 import { getMediaTypesOptions } from "@/utils/mediaText";
 import { statusAnimeOptions } from "@/utils/selectOptions";
 
@@ -82,6 +85,31 @@ export function CustomViewDialog({ open, onOpenChange, view }: CustomViewDialogP
     () => [{ value: ANY, label: t("customView.any") }, ...statusAnimeOptions()],
     [t]
   );
+
+  /* Tags offered as filters are scoped to the chosen media type: a view can
+     only reference tags that actually exist there. With "any" type, all tags. */
+  const selectedMediaType = useWatch({ control, name: "mediaType" });
+  const tagMediaType =
+    selectedMediaType && selectedMediaType !== ANY
+      ? (selectedMediaType as MediaTypeEnum)
+      : undefined;
+
+  const { data: tagOptions } = useQuery<string[]>({
+    queryKey: ["media", "tags", user?.id, tagMediaType],
+    queryFn: () => getTags(user!.id, tagMediaType),
+    staleTime: DEFAULT_STALE_TIME,
+    enabled: open && !!user,
+  });
+
+  /* Switching type drops tags that no longer exist in it, so the saved filter
+     cannot reference a tag the type does not have. Re-checked on open. */
+  useEffect(() => {
+    if (!open || !tagOptions) return;
+
+    const current = form.getValues("tags") ?? [];
+    const pruned = current.filter((tag) => tagOptions.includes(tag));
+    if (pruned.length !== current.length) form.setValue("tags", pruned);
+  }, [open, tagOptions, form]);
 
   const saveMutation = useMutation({
     mutationFn: async (data: FormType) => {
@@ -177,11 +205,13 @@ export function CustomViewDialog({ open, onOpenChange, view }: CustomViewDialogP
                 control={control}
                 name="tags"
                 render={({ field }) => (
-                  <TagInput
+                  <TagMultiSelect
                     label={t("customView.tags")}
                     value={field.value ?? []}
                     onChange={field.onChange}
-                    placeholder={t("tags.placeholder")}
+                    options={tagOptions ?? []}
+                    placeholder={t("tags.select")}
+                    emptyLabel={t("tags.noneForType")}
                   />
                 )}
               />

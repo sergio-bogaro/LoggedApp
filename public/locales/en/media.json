@@ -56,14 +56,6 @@
     "selectFile": "Select a File",
     "status": "Status",
     "score": "Score",
-    "progress": "Progress",
-    "progressVolumes": "Progress (Volumes)",
-    "progressEpisodes": "Progress (Episodes)",
-    "progressChapters": "Progress (Chapters)",
-    "progressPages": "Progress (Pages)",
-    "progressHours": "Progress (Hours)",
-    "progressTracks": "Progress (Tracks)",
-    "progressTotal": "Total",
     "startDate": "Start Date",
     "finishDate": "Finish Date",
     "viewedOn": "Viewed On",
@@ -213,6 +205,8 @@
   "tags": {
     "label": "Tags",
     "placeholder": "Add a tag and press Enter",
+    "select": "Select tags",
+    "noneForType": "No tags in this type",
     "filterAll": "All tags"
   },
   "searchForm": {
@@ -391,11 +385,13 @@
     "title": "Your record",
     "logs": "Logs",
     "lastLog": "Last log",
-    "period": "Period",
+    "start": "Start",
+    "end": "End",
     "empty": "Not logged yet",
     "emptyHint": "Log this title to start its history.",
     "logAgain": "Log again",
-    "review": "Your review"
+    "review": "Your review",
+    "viewLogDetails": "View log details"
   },
   "stats": {
     "headline": "Logs",

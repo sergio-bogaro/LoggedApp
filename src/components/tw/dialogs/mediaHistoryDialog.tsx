@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { MediaLogCard } from "../media/historyCard";
@@ -17,7 +17,6 @@ import {
 import { getMediaLogs } from "@/querries/media/logged";
 import { useAppSelector } from "@/store/auth/hooks";
 import { MediaLogResponse, MediaResponse } from "@/types/logged";
-import { MediaTypeEnum } from "@/types/media";
 import { useDeleteLog } from "@/utils/mediaStore";
 
 interface MediaHistoryDialogProps {
@@ -35,8 +34,6 @@ export function MediaHistoryDialog({ media, open, onOpenChange }: MediaHistoryDi
 
   const deleteLog = useDeleteLog();
 
-  const isOneTimeConsumption = useMemo(() => media?.type === MediaTypeEnum.MOVIES, [media]);
-
   const { data: logs, isLoading, isError, error } = useQuery({
     queryKey: ["media-logs", media?.id],
     queryFn: () => getMediaLogs(media!.id, user!.id),
@@ -44,6 +41,8 @@ export function MediaHistoryDialog({ media, open, onOpenChange }: MediaHistoryDi
   });
 
   if (!media) return null;
+
+  const mediaType = media.type;
 
   const handleDelete = () => {
     if (!deletingLog) return;
@@ -61,27 +60,29 @@ export function MediaHistoryDialog({ media, open, onOpenChange }: MediaHistoryDi
           <DialogDescription>{media.title}</DialogDescription>
         </DialogHeader>
 
-        <div className="max-h-[70vh] space-y-3 overflow-y-auto pr-2">
+        <div className="max-h-[70vh] overflow-y-auto pr-2">
           <DataExhibition
             isFetching={isLoading}
             isError={isError}
             errorMessage={`${t("history.errorPrefix")} ${error?.message ?? ""}`}
           >
-            {logs?.length === 0 && (
-              <p className="text-step-1 text-muted-foreground">
-                {t("history.empty")}
-              </p>
-            )}
+            <div className="divide-y divide-border">
+              {logs?.length === 0 && (
+                <p className="text-step-1 text-muted-foreground">
+                  {t("history.empty")}
+                </p>
+              )}
 
-            {logs?.map((log) => (
-              <MediaLogCard
-                key={log.id}
-                log={log}
-                isOneTimeConsuption={isOneTimeConsumption}
-                onEdit={() => setEditingLog(log)}
-                onDelete={() => setDeletingLog(log)}
-              />
-            ))}
+              {logs?.map((log) => (
+                <MediaLogCard
+                  key={log.id}
+                  log={log}
+                  mediaType={mediaType}
+                  onEdit={() => setEditingLog(log)}
+                  onDelete={() => setDeletingLog(log)}
+                />
+              ))}
+            </div>
           </DataExhibition>
         </div>
 

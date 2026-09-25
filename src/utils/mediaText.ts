@@ -32,34 +32,4 @@ export function getMediaTypesOptions(t: TFunction) {
   ]
 }
 
-/** Chave i18n do rótulo de progresso por tipo de mídia (unidade implícita). */
-export const PROGRESS_LABEL_KEYS: Partial<Record<MediaTypeEnum, string>> = {
-  [MediaTypeEnum.ANIME]: "track.progressEpisodes",
-  [MediaTypeEnum.MANGA]: "track.progressChapters",
-  [MediaTypeEnum.BOOK]: "track.progressPages",
-  [MediaTypeEnum.GAME]: "track.progressHours",
-  [MediaTypeEnum.MUSIC]: "track.progressTracks",
-};
 
-export function getProgressLabelKey(type: MediaTypeEnum): string | undefined {
-  return PROGRESS_LABEL_KEYS[type];
-}
-
-/** Progresso é registrável para tudo que não seja consumo único (filmes). */
-export function mediaSupportsProgress(type: MediaTypeEnum): boolean {
-  return type !== MediaTypeEnum.MOVIES;
-}
-
-/** Formata "12 / 24" a partir dos valores de progresso. */
-export function formatProgress(
-  progress?: number | null,
-  progressTotal?: number | null
-): string | null {
-  if (progress === null || progress === undefined) return null;
-
-  const base = Number.isInteger(progress) ? String(progress) : progress.toFixed(1);
-  if (progressTotal === null || progressTotal === undefined) return base;
-
-  const total = Number.isInteger(progressTotal) ? String(progressTotal) : progressTotal.toFixed(1);
-  return `${base} / ${total}`;
-}

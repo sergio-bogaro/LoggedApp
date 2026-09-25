@@ -73,14 +73,6 @@
     "selectFile": "Selecionar Arquivo",
     "status": "Status",
     "score": "Nota",
-    "progress": "Progresso",
-    "progressVolumes": "Progresso (Volumes)",
-    "progressEpisodes": "Progresso (Episódios)",
-    "progressChapters": "Progresso (Capítulos)",
-    "progressPages": "Progresso (Páginas)",
-    "progressHours": "Progresso (Horas)",
-    "progressTracks": "Progresso (Faixas)",
-    "progressTotal": "Total",
     "startDate": "Data de Início",
     "finishDate": "Data de Conclusão",
     "viewedOn": "Visto em",
@@ -213,6 +205,8 @@
   "tags": {
     "label": "Tags",
     "placeholder": "Adicione uma tag e pressione Enter",
+    "select": "Selecione tags",
+    "noneForType": "Nenhuma tag neste tipo",
     "filterAll": "Todas as tags"
   },
   "searchForm": {
@@ -391,11 +385,13 @@
     "title": "Seu registro",
     "logs": "Registros",
     "lastLog": "Último registro",
-    "period": "Período",
+    "start": "Início",
+    "end": "Fim",
     "empty": "Ainda não registrado",
     "emptyHint": "Registre este título para começar o histórico.",
     "logAgain": "Registrar de novo",
-    "review": "Sua avaliação"
+    "review": "Sua avaliação",
+    "viewLogDetails": "Ver detalhes do log"
   },
   "stats": {
     "headline": "Registros",

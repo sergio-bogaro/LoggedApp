@@ -1,11 +1,15 @@
+import { FileText } from "lucide-react";
 import { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
 import { StatusMark } from "../generic/badges";
 
+import { RatingDisplay } from "./ratingDisplay";
+
+import { Button } from "@/components/ui/button";
 import { MediaLogResponse, MediaWithLogsResponse } from "@/types/logged";
+import { MediaTypeEnum } from "@/types/media";
 import { formatLongDate } from "@/utils/date";
-import { formatProgress } from "@/utils/mediaText";
 
 interface RecordRowProps {
   label: string;
@@ -41,12 +45,14 @@ export const MediaRecord = ({ media, lastLog, onOpenLogDetails, children }: Medi
   const rating = media?.rating ?? lastLog?.rating ?? null;
   const hasRating = typeof rating === "number" && rating > 0;
   const logCount = media?.logCount ?? 0;
-  const progressLabel = formatProgress(lastLog?.progress, lastLog?.progressTotal);
+  const isOneTimeConsumption = media?.type === MediaTypeEnum.MOVIES;
 
-  const period = [lastLog?.startDate, lastLog?.endDate]
-    .filter((value): value is string => Boolean(value))
-    .map((value) => formatLongDate(value, i18n.language))
-    .join(" → ");
+  const startDate = lastLog?.startDate
+    ? formatLongDate(lastLog.startDate, i18n.language)
+    : null;
+  const endDate = lastLog?.endDate
+    ? formatLongDate(lastLog.endDate, i18n.language)
+    : null;
 
   const dash = <span className="text-muted-foreground">—</span>;
 
@@ -62,55 +68,44 @@ export const MediaRecord = ({ media, lastLog, onOpenLogDetails, children }: Medi
             </RecordRow>
 
             <RecordRow label={t("track.rating")}>
-              {hasRating ? (
-                <span className="font-serif tabular-nums text-step-4">{rating!.toFixed(1)}</span>
-              ) : (
-                dash
-              )}
+              {hasRating ? <RatingDisplay rating={rating!} singleStar /> : dash}
             </RecordRow>
 
             <RecordRow label={t("record.logs")}>
               <span className="font-serif tabular-nums">{logCount}</span>
             </RecordRow>
 
-            {progressLabel && (
-              <RecordRow label={t("track.progress")}>
-                <span className="font-serif tabular-nums">{progressLabel}</span>
-              </RecordRow>
-            )}
-
             <RecordRow label={t("record.lastLog")}>
               {media.lastLogDate ? (
-                onOpenLogDetails ? (
-                  <button
-                    type="button"
-                    onClick={onOpenLogDetails}
-                    className="rounded-control tabular-nums underline-offset-4 outline-none hover:underline focus-visible:ring-[3px] focus-visible:ring-ring/25"
-                  >
-                    {formatLongDate(media.lastLogDate, i18n.language)}
-                  </button>
-                ) : (
-                  <span className="tabular-nums">
-                    {formatLongDate(media.lastLogDate, i18n.language)}
-                  </span>
-                )
+                <span className="tabular-nums">
+                  {formatLongDate(media.lastLogDate, i18n.language)}
+                </span>
               ) : (
                 dash
               )}
             </RecordRow>
 
-            {period && <RecordRow label={t("record.period")}>{period}</RecordRow>}
+            {startDate && <RecordRow label={t("record.start")}>{startDate}</RecordRow>}
 
-            {media.tags && media.tags.length > 0 && (
-              <RecordRow label={t("tags.label")}>
-                <span className="flex flex-wrap justify-end gap-x-2 gap-y-1 text-muted-foreground">
-                  {media.tags.map((tag) => (
-                    <span key={tag}>#{tag}</span>
-                  ))}
-                </span>
+            {endDate && (
+              <RecordRow label={isOneTimeConsumption ? t("track.viewedOn") : t("record.end")}>
+                {endDate}
               </RecordRow>
             )}
           </dl>
+
+          {onOpenLogDetails && media.lastLogDate && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={onOpenLogDetails}
+              className="w-full justify-start"
+            >
+              <FileText aria-hidden="true" />
+              {t("record.viewLogDetails")}
+            </Button>
+          )}
 
           {media.review && (
             <div className="border-t border-border pt-3">

@@ -40,6 +40,12 @@ const MediaListPage = () => {
     );
   }, [dispatch, t, mediaType]);
 
+  /* The route reuses this component across types, so a tag chosen for the
+     previous type would linger and filter the new one down to nothing. */
+  useEffect(() => {
+    setTagFilter("");
+  }, [mediaType]);
+
   const { data: data, isFetching, isError, error } = useQuery<MediaResponse[]>({
     queryKey: ["media", "list", mediaType, tagFilter],
     queryFn: () =>
@@ -52,19 +58,20 @@ const MediaListPage = () => {
   });
 
   const { data: recentlyLoggedData, isFetching: isFetchingRecent, isError: isErrorRecent, error: errorRecent } = useQuery<MediaResponse[]>({
-    queryKey: ["media", "list", mediaType, "recentlyLogged"],
+    queryKey: ["media", "list", mediaType, "recentlyLogged", tagFilter],
     queryFn: () =>
       getMediaList(user!.id, {
         type: mediaType,
         hasLogs: true,
+        tags: tagFilter ? [tagFilter] : undefined,
       }),
     staleTime: DEFAULT_STALE_TIME,
     enabled: !!user,
   });
 
   const { data: tagOptions } = useQuery<string[]>({
-    queryKey: ["media", "tags", user?.id],
-    queryFn: () => getTags(user!.id),
+    queryKey: ["media", "tags", user?.id, mediaType],
+    queryFn: () => getTags(user!.id, mediaType),
     staleTime: DEFAULT_STALE_TIME,
     enabled: !!user,
   });

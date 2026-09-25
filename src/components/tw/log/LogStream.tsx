@@ -1,8 +1,9 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { LogRow } from "./LogRow";
 
+import { LogDetailsDialog } from "@/components/tw/dialogs/logDetailsDialog";
 import { EmptyState } from "@/components/tw/generic/EmptyState";
 import { SectionHeading } from "@/components/tw/generic/SectionHeading";
 import type { MediaLogWithMedia } from "@/querries/media/logged";
@@ -21,6 +22,8 @@ interface LogStreamProps {
  */
 export const LogStream = ({ logs, filtered = false }: LogStreamProps) => {
   const { i18n, t } = useTranslation("media");
+
+  const [selectedLog, setSelectedLog] = useState<MediaLogWithMedia | null>(null);
 
   const groups = useMemo(() => {
     const ordered = [...logs].sort((a, b) => b.date.localeCompare(a.date));
@@ -45,20 +48,31 @@ export const LogStream = ({ logs, filtered = false }: LogStreamProps) => {
   }
 
   return (
-    <div className="space-y-8">
-      {groups.map(([key, group]) => (
-        <section key={key}>
-          <SectionHeading>{formatMonthLabel(group[0].date, i18n.language)}</SectionHeading>
+    <>
+      <div className="space-y-8">
+        {groups.map(([key, group]) => (
+          <section key={key}>
+            <SectionHeading>{formatMonthLabel(group[0].date, i18n.language)}</SectionHeading>
 
-          <ul className="mt-2">
-            {group.map((log) => (
-              <li key={log.id}>
-                <LogRow log={log} />
-              </li>
-            ))}
-          </ul>
-        </section>
-      ))}
-    </div>
+            <ul className="mt-2">
+              {group.map((log) => (
+                <li key={log.id}>
+                  <LogRow log={log} onOpenDetails={() => setSelectedLog(log)} />
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </div>
+
+      <LogDetailsDialog
+        log={selectedLog}
+        mediaType={selectedLog?.media?.type}
+        open={!!selectedLog}
+        onOpenChange={(next) => {
+          if (!next) setSelectedLog(null);
+        }}
+      />
+    </>
   );
 };

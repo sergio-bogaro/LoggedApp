@@ -7,9 +7,11 @@ import { useAppSelector } from "@/store/settings/hooks";
 interface RatingDisplayProps {
   rating: number;
   discrete?: boolean;
+  /** In stars mode, show the value with a single star instead of the full row. */
+  singleStar?: boolean;
 }
 
-export const RatingDisplay = ({ rating, discrete }: RatingDisplayProps) => {
+export const RatingDisplay = ({ rating, discrete, singleStar }: RatingDisplayProps) => {
   const { t } = useTranslation("media");
   const { ratingMode } = useAppSelector((state) => state.ui);
 
@@ -19,6 +21,17 @@ export const RatingDisplay = ({ rating, discrete }: RatingDisplayProps) => {
     return (
       <span className={cn("font-medium", discrete ? "text-step-0" : "text-step-2")} aria-label={ratingLabel}>
         {ratingLabel}
+      </span>
+    );
+  }
+
+  if (singleStar) {
+    const value = rating % 1 === 0 ? rating.toFixed(0) : rating.toFixed(1);
+
+    return (
+      <span className="inline-flex items-center gap-1 tabular-nums" aria-label={ratingLabel}>
+        {value}
+        <Star className="size-4 text-foreground" fill="currentColor" aria-hidden="true" />
       </span>
     );
   }
