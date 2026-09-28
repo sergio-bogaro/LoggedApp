@@ -314,47 +314,6 @@
       "avgRating": "Average Rating"
     }
   },
-  "customView": {
-    "loading": "Loading...",
-    "notFound": "View not found.",
-    "loadingMedia": "Loading media...",
-    "empty": "No media found for this view",
-    "title": "Custom views",
-    "manage": "Manage views",
-    "newView": "New view",
-    "editView": "Edit view",
-    "create": "Create view",
-    "emptyManager": "No custom views yet.",
-    "deleted": "View deleted",
-    "saved": "View saved",
-    "saveFailed": "Failed to save view",
-    "deleteTitle": "Delete view?",
-    "deleteDescription": "The view will be removed. The media itself is not affected.",
-    "moveUp": "Move up",
-    "moveDown": "Move down",
-    "name": "Name",
-    "icon": "Icon",
-    "filters": "Filters and display",
-    "mediaType": "Media type",
-    "status": "Status",
-    "minRating": "Minimum rating",
-    "tags": "Tags",
-    "viewMode": "View mode",
-    "sortBy": "Sort by",
-    "sortOrder": "Order",
-    "any": "Any",
-    "grid": "Grid",
-    "list": "List",
-    "asc": "Ascending",
-    "desc": "Descending",
-    "sort": {
-      "title": "Title",
-      "rating": "Rating",
-      "created_at": "Recently added",
-      "release_date": "Release date",
-      "updated_at": "Recently updated"
-    }
-  },
   "detailsPage": {
     "loading": "Loading...",
     "errorPrefix": "Error:"

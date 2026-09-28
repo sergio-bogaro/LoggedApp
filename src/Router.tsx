@@ -5,8 +5,6 @@ import InternalLayout from "./layouts/internal";
 import LoginPage from "./pages/auth/login";
 import RegisterPage from "./pages/auth/register";
 import BacklogPage from "./pages/media/backlog/BacklogPage";
-import CustomViewsPage from "./pages/media/customViews";
-import CustomViewDetailPage from "./pages/media/customViews/detail";
 import MediaDetailsPage from "./pages/media/details";
 import FavoritesPage from "./pages/media/favorites/FavoritesPage";
 import MediaHomePage from "./pages/media/home";
@@ -50,8 +48,6 @@ export function Router() {
         <Route path="backlog" element={<BacklogPage />} />
         <Route path="logs" element={<MediaLogsPage />} />
         <Route path="logs/:type" element={<MediaLogsPage />} />
-        <Route path="views" element={<CustomViewsPage />} />
-        <Route path="views/:viewId" element={<CustomViewDetailPage />} />
 
         <Route path=":mediaType">
           <Route path="details/:id" element={<MediaDetailsPage />} />

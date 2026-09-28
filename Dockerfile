@@ -11,7 +11,7 @@ RUN npm ci
 COPY . .
 
 # VITE_API_BASE_URL vazio = URLs relativas (mesma origem). O Nginx do container
-# faz proxy de /api, /auth, /uploads e /custom-views para o serviço `api`.
+# faz proxy de /api, /auth e /uploads para o serviço `api`.
 # Nenhuma chave de API é embutida: TMDB/IGDB são por usuário e ficam no backend.
 ARG VITE_API_BASE_URL=
 ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
