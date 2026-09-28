@@ -61,6 +61,7 @@
         "clientSecretPlaceholder": "Client Secret",
         "hint": "Client ID e Client Secret vêm do mesmo aplicativo na Twitch."
       },
+      "edit": "Editar",
       "clear": "Limpar",
       "saved": "Chaves atualizadas",
       "requireBothIgdb": "Preencha o Client ID e o Secret do IGDB, ou deixe os dois vazios.",
