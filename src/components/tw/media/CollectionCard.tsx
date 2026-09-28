@@ -1,7 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
-import { Card } from "@/components/tw/generic/card";
 import { ImageWithSkeleton } from "@/components/tw/generic/imageSkeleton";
 import { cn } from "@/lib/utils";
 import { mediaImageUrl } from "@/querries/media/logged";
@@ -16,21 +15,30 @@ interface CollectionCardProps {
 
 const MAX_PREVIEWS = 4;
 
+/*
+ * No card chrome: the collection reads as a heading plus a strip of posters,
+ * the same editorial treatment the rest of the app uses for sections.
+ */
 const CollectionCard = ({ title, count, previews, to }: CollectionCardProps) => {
   const { t } = useTranslation("media");
   const isEmpty = count === 0;
   const shown = previews.slice(0, MAX_PREVIEWS);
 
   const content = (
-    <Card
-      className={cn(
-        "h-full gap-4 transition-colors",
-        !isEmpty && "group-hover:border-foreground/30"
-      )}
-    >
+    <>
       <div className="flex items-baseline justify-between gap-3">
-        <h3 className="font-serif text-step-3 font-medium">{title}</h3>
-        <span className="font-serif text-step-3 tabular-nums text-muted-foreground">{count}</span>
+        <h3
+          className={cn(
+            "font-serif text-step-3 font-medium",
+            !isEmpty && "underline-offset-4 group-hover:underline"
+          )}
+        >
+          {title}
+        </h3>
+
+        <span className="font-serif text-step-3 tabular-nums text-muted-foreground">
+          {count}
+        </span>
       </div>
 
       {shown.length > 0 ? (
@@ -43,25 +51,30 @@ const CollectionCard = ({ title, count, previews, to }: CollectionCardProps) => 
               <ImageWithSkeleton
                 src={media.imagePath ? (mediaImageUrl(media.imagePath) ?? "") : (media.coverUrl ?? "")}
                 alt={media.title}
-                className="aspect-2/3 w-full object-cover"
+                className="aspect-2/3 w-full"
+                imgClassName={cn(
+                  "transition-transform duration-300 ease-out",
+                  !isEmpty && "group-hover:scale-[1.03]"
+                )}
               />
             </div>
           ))}
         </div>
       ) : (
-        <div className="flex h-20 items-center justify-center rounded border border-dashed border-border text-step-0 text-muted-foreground">
-          {t("views.empty")}
-        </div>
+        <p className="text-step-1 text-muted-foreground">{t("views.empty")}</p>
       )}
-    </Card>
+    </>
   );
 
   if (isEmpty) {
-    return <div className="opacity-50">{content}</div>;
+    return <div className="space-y-3 opacity-50">{content}</div>;
   }
 
   return (
-    <Link to={to} className="group block rounded-lg focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50">
+    <Link
+      to={to}
+      className="group block space-y-3 rounded focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+    >
       {content}
     </Link>
   );

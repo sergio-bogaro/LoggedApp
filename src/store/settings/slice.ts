@@ -1,5 +1,7 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
+import { MediaTypeEnum } from "@/types/media";
+
 export type Theme =
   | "light"
   | "dark"
@@ -77,6 +79,8 @@ interface UIState {
   ratingMode: RatingMode;
   lastSearchType: string;
   breadcrumbs: Crumb[];
+  /** `null` means "not chosen yet" (all available types). */
+  mediaTypeFilter: MediaTypeEnum[] | null;
 }
 
 const savedTheme = resolveStoredTheme();
@@ -84,6 +88,19 @@ localStorage.setItem("theme", savedTheme);
 const savedViewMode = (localStorage.getItem("viewMode") as ViewMode) || "list";
 const savedRatingMode = (localStorage.getItem("ratingMode") as RatingMode) || "stars5";
 const savedLastSearchType = localStorage.getItem("lastSearchType") || "movies";
+
+function resolveStoredMediaTypeFilter(): MediaTypeEnum[] | null {
+  try {
+    const raw = localStorage.getItem("mediaTypeFilter");
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? (parsed as MediaTypeEnum[]) : null;
+  } catch {
+    return null;
+  }
+}
+
+const savedMediaTypeFilter = resolveStoredMediaTypeFilter();
 
 applyThemeClasses(savedTheme);
 
@@ -93,6 +110,7 @@ const initialState: UIState = {
   ratingMode: savedRatingMode,
   lastSearchType: savedLastSearchType,
   breadcrumbs: [],
+  mediaTypeFilter: savedMediaTypeFilter,
 };
 
 export const uiSlice = createSlice({
@@ -124,8 +142,18 @@ export const uiSlice = createSlice({
     setBreadcrumbs: (state, action: PayloadAction<Crumb[]>) => {
       state.breadcrumbs = action.payload;
     },
+
+    setMediaTypeFilter: (state, action: PayloadAction<MediaTypeEnum[] | null>) => {
+      state.mediaTypeFilter = action.payload;
+
+      if (action.payload === null) {
+        localStorage.removeItem("mediaTypeFilter");
+      } else {
+        localStorage.setItem("mediaTypeFilter", JSON.stringify(action.payload));
+      }
+    },
   },
 });
 
-export const { setTheme, setViewMode, setRatingMode, setLastSearchType, setBreadcrumbs } = uiSlice.actions;
+export const { setTheme, setViewMode, setRatingMode, setLastSearchType, setBreadcrumbs, setMediaTypeFilter } = uiSlice.actions;
 export default uiSlice.reducer;

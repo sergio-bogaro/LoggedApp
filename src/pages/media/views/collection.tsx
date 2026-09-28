@@ -1,48 +1,29 @@
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams, useSearchParams } from "react-router";
+import { useParams } from "react-router";
 
 import { StatsHeadline } from "@/components/tw/charts/StatsHeadline";
 import { PageHeader } from "@/components/tw/generic/PageHeader";
 import MediaTypeFilter from "@/components/tw/media/MediaTypeFilter";
 import MediaView from "@/components/tw/media/view";
 import { useMediaLibrary } from "@/hooks/useMediaLibrary";
+import { useMediaTypeFilter } from "@/hooks/useMediaTypeFilter";
 import NotFoundPage from "@/pages/notFound";
-import { useAppSelector } from "@/store/auth/hooks";
 import { useAppDispatch } from "@/store/settings/hooks";
 import { setBreadcrumbs } from "@/store/settings/slice";
 import { MediaItem, MediaTypeEnum } from "@/types/media";
 import { filterByCollection, getCollection } from "@/utils/mediaCollections";
-import { getTrackFlags } from "@/utils/mediaTrack";
 
 const ALL_TYPES = Object.values(MediaTypeEnum);
-
-function parseTypes(raw: string): MediaTypeEnum[] {
-  return raw
-    .split(",")
-    .filter((value): value is MediaTypeEnum => (ALL_TYPES as string[]).includes(value));
-}
 
 const MediaCollectionPage = () => {
   const { t } = useTranslation(["media", "common"]);
   const { key } = useParams<{ key: string }>();
-  const { user } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
-  const [searchParams, setSearchParams] = useSearchParams();
 
   const collection = key ? getCollection(key) : undefined;
 
-  const trackedTypes = useMemo(
-    () => ALL_TYPES.filter((type) => getTrackFlags(user)[type]),
-    [user]
-  );
-  const availableTypes = trackedTypes.length > 0 ? trackedTypes : ALL_TYPES;
-
-  const rawTypes = searchParams.get("types");
-  const selectedTypes = useMemo(
-    () => (rawTypes === null ? availableTypes : parseTypes(rawTypes)),
-    [rawTypes, availableTypes]
-  );
+  const { selectedTypes, setSelectedTypes, availableTypes } = useMediaTypeFilter();
 
   useEffect(() => {
     if (!collection) return;
@@ -95,12 +76,6 @@ const MediaCollectionPage = () => {
     [visibleItems]
   );
 
-  const handleTypesChange = (types: MediaTypeEnum[]) => {
-    const next = new URLSearchParams(searchParams);
-    next.set("types", types.join(","));
-    setSearchParams(next, { replace: true });
-  };
-
   if (!collection) {
     return <NotFoundPage />;
   }
@@ -122,7 +97,7 @@ const MediaCollectionPage = () => {
         <p className="text-step-1 text-muted-foreground">{t("views.filterLabel")}</p>
         <MediaTypeFilter
           value={selectedTypes}
-          onChange={handleTypesChange}
+          onChange={setSelectedTypes}
           availableTypes={availableTypes}
         />
       </div>
