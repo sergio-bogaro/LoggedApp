@@ -50,7 +50,7 @@ const MediaListPage = () => {
     queryKey: ["media", "list", mediaType, tagFilter],
     queryFn: () =>
       getMediaList(user!.id, {
-        type: mediaType,
+        types: mediaType ? [mediaType] : undefined,
         tags: tagFilter ? [tagFilter] : undefined,
       }),
     staleTime: DEFAULT_STALE_TIME,
@@ -61,7 +61,7 @@ const MediaListPage = () => {
     queryKey: ["media", "list", mediaType, "recentlyLogged", tagFilter],
     queryFn: () =>
       getMediaList(user!.id, {
-        type: mediaType,
+        types: mediaType ? [mediaType] : undefined,
         hasLogs: true,
         tags: tagFilter ? [tagFilter] : undefined,
       }),

@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router";
 
-import { bottomNavigation, mainNavigation, mediaTypes } from "./const";
+import { bottomNavigation, mainNavigation, mediaStatusViews, mediaTypes } from "./const";
 
 import {
   Sidebar,
@@ -88,6 +88,33 @@ export function AppSidebar() {
                       <SidebarMenuButton asChild isActive={active} tooltip={label}>
                         <Link to={item.path} aria-current={active ? "page" : undefined}>
                           <item.icon aria-hidden="true" />
+                          <span>{label}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
+
+        {hasTrackedMedia && <SidebarSeparator />}
+
+        {hasTrackedMedia && (
+          <SidebarGroup className="overflow-y-auto">
+            <SidebarGroupLabel>{t("views.title", { ns: "media" })}</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {mediaStatusViews.map((view) => {
+                  const label = t(`status.${view.status}`, { ns: "media" });
+                  const active = isPathActive(view.path);
+
+                  return (
+                    <SidebarMenuItem key={view.status}>
+                      <SidebarMenuButton asChild isActive={active} tooltip={label}>
+                        <Link to={view.path} aria-current={active ? "page" : undefined}>
+                          <view.icon aria-hidden="true" />
                           <span>{label}</span>
                         </Link>
                       </SidebarMenuButton>

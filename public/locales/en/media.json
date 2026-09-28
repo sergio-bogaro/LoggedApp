@@ -314,6 +314,12 @@
       "avgRating": "Average Rating"
     }
   },
+  "views": {
+    "title": "Views",
+    "filterLabel": "Media types",
+    "empty": "No media with this status",
+    "emptyHint": "Log a title with this status or adjust the type filter."
+  },
   "detailsPage": {
     "loading": "Loading...",
     "errorPrefix": "Error:"

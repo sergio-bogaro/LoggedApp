@@ -55,7 +55,7 @@ const MediaLogsPage = () => {
   } = useInfiniteQuery<MediaResponse[], Error, { pages: MediaResponse[]; pageParams: number[] }, typeof queryKey, number>({
     queryKey: queryKey as ["media", "logs", ...string[]],
     queryFn: ({ pageParam = 0 }) =>
-      getMediaList(user!.id, { hasLogs: true, limit: PAGE_SIZE, offset: pageParam, type: mediaType }),
+      getMediaList(user!.id, { hasLogs: true, limit: PAGE_SIZE, offset: pageParam, types: mediaType ? [mediaType] : undefined }),
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) =>
       lastPage.length === PAGE_SIZE ? allPages.length * PAGE_SIZE : undefined,

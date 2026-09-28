@@ -26,10 +26,10 @@ async function apiFetch<T>(path: string, options?: globalThis.RequestInit): Prom
 // Media — CRUD
 // ──────────────────────────────────────────────
 
-export async function getMediaList(userId: number, params?: { type?: MediaTypeEnum; status?: MediaStatusEnum; search?: string; tags?: string[]; hasLogs?: boolean; limit?: number; offset?: number }): Promise<MediaResponse[]> {
+export async function getMediaList(userId: number, params?: { types?: MediaTypeEnum[]; status?: MediaStatusEnum; search?: string; tags?: string[]; hasLogs?: boolean; limit?: number; offset?: number }): Promise<MediaResponse[]> {
   const url = new URLSearchParams();
   url.set("user_id", userId.toString());
-  if (params?.type) url.set("type", params.type);
+  if (params?.types) params.types.forEach((type) => url.append("type", type));
   if (params?.status) url.set("status", params.status);
   if (params?.search) url.set("search", params.search);
   if (params?.tags) params.tags.forEach((tag) => url.append("tags", tag));

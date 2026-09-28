@@ -314,6 +314,12 @@
       "avgRating": "Nota Média"
     }
   },
+  "views": {
+    "title": "Views",
+    "filterLabel": "Tipos de mídia",
+    "empty": "Nenhuma mídia com este status",
+    "emptyHint": "Registre um título com este status ou ajuste o filtro de tipos."
+  },
   "detailsPage": {
     "loading": "Carregando...",
     "errorPrefix": "Erro:"

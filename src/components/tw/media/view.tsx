@@ -17,9 +17,11 @@ interface MediaViewProps {
   error: Error | null;
   mediaData?: MediaItem[];
   existingMedia?: Record<string, MediaResponse>;
+  emptyTitle?: string;
+  emptyDescription?: string;
 }
 
-const MediaView = ({ isLoading, error, mediaData, existingMedia }: MediaViewProps) => {
+const MediaView = ({ isLoading, error, mediaData, existingMedia, emptyTitle, emptyDescription }: MediaViewProps) => {
   const { t } = useTranslation(["common", "media"]);
   const { viewMode } = useAppSelector(state => state.ui)
   const [switching, setSwitching] = useState(false)
@@ -72,8 +74,8 @@ const MediaView = ({ isLoading, error, mediaData, existingMedia }: MediaViewProp
   if (mediaData.length === 0) {
     return (
       <div className="p-4 flex flex-col items-center">
-        <p className="mt-4 text-step-3 font-semibold">{t("searchView.noResultsTitle", { ns: "media" })}</p>
-        <p className="mt-2 text-step-1 text-muted-foreground max-w-prose text-center">{t("searchView.noResultsDescription", { ns: "media" })}</p>
+        <p className="mt-4 text-step-3 font-semibold">{emptyTitle ?? t("searchView.noResultsTitle", { ns: "media" })}</p>
+        <p className="mt-2 text-step-1 text-muted-foreground max-w-prose text-center">{emptyDescription ?? t("searchView.noResultsDescription", { ns: "media" })}</p>
       </div>
     )
   }

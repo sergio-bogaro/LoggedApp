@@ -1,6 +1,6 @@
-import { Film, Tv, BookOpen, BookText, Gamepad2, Home, Settings, Search, Star, Bookmark, Music } from "lucide-react";
+import { Film, Tv, BookOpen, BookText, Gamepad2, Home, Settings, Search, Star, Bookmark, Music, PlayCircle, Radio, PauseCircle, CheckCircle2, XCircle } from "lucide-react";
 
-import { MediaTypeEnum } from "@/types/media";
+import { MediaStatusEnum, MediaTypeEnum } from "@/types/media";
 import { mediaTypeToPath } from "@/utils/mediaText";
 
 export const mediaTypes = [
@@ -33,6 +33,34 @@ export const mediaTypes = [
     icon: Music,
     type: MediaTypeEnum.MUSIC,
     path: `/media/list/${mediaTypeToPath(MediaTypeEnum.MUSIC)}`,
+  },
+];
+
+export const mediaStatusViews = [
+  {
+    status: MediaStatusEnum.IN_PROGRESS,
+    icon: PlayCircle,
+    path: `/media/views/${MediaStatusEnum.IN_PROGRESS}`,
+  },
+  {
+    status: MediaStatusEnum.FOLLOWING,
+    icon: Radio,
+    path: `/media/views/${MediaStatusEnum.FOLLOWING}`,
+  },
+  {
+    status: MediaStatusEnum.ON_HOLD,
+    icon: PauseCircle,
+    path: `/media/views/${MediaStatusEnum.ON_HOLD}`,
+  },
+  {
+    status: MediaStatusEnum.FINISHED,
+    icon: CheckCircle2,
+    path: `/media/views/${MediaStatusEnum.FINISHED}`,
+  },
+  {
+    status: MediaStatusEnum.DROPPED,
+    icon: XCircle,
+    path: `/media/views/${MediaStatusEnum.DROPPED}`,
   },
 ];
 
