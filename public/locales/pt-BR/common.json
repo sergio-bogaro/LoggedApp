@@ -52,17 +52,44 @@
       },
       "tmdb": {
         "label": "Chave da API do TMDB",
-        "placeholder": "Cole sua chave do TMDB"
+        "placeholder": "Cole sua chave do TMDB",
+        "hint": "Use a API Key (v3), não o Read Access Token."
       },
       "igdb": {
         "label": "Credenciais do IGDB",
         "clientIdPlaceholder": "Client ID",
-        "clientSecretPlaceholder": "Client Secret"
+        "clientSecretPlaceholder": "Client Secret",
+        "hint": "Client ID e Client Secret vêm do mesmo aplicativo na Twitch."
       },
       "clear": "Limpar",
       "saved": "Chaves atualizadas",
       "requireBothIgdb": "Preencha o Client ID e o Secret do IGDB, ou deixe os dois vazios.",
-      "nothingToSave": "Digite uma chave para salvar."
+      "nothingToSave": "Digite uma chave para salvar.",
+      "help": {
+        "openHelp": "Como consigo essa chave?",
+        "tmdb": {
+          "title": "Como obter uma chave do TMDB",
+          "description": "A busca de filmes usa a sua própria chave do TMDB.",
+          "steps": [
+            "Crie uma conta gratuita em themoviedb.org.",
+            "Abra Account Settings → API e solicite uma API Key (uso pessoal).",
+            "Copie a API Key (não o Read Access Token — usamos autenticação api_key v3)."
+          ],
+          "linkLabel": "Abrir as configurações de API do TMDB",
+          "linkUrl": "https://www.themoviedb.org/settings/api"
+        },
+        "igdb": {
+          "title": "Como obter as credenciais do IGDB",
+          "description": "A busca de jogos usa as credenciais do seu próprio aplicativo Twitch/IGDB.",
+          "steps": [
+            "Entre com uma conta Twitch em dev.twitch.tv.",
+            "Abra o Developer Console e registre um novo aplicativo.",
+            "Copie o Client ID e gere um Client Secret (exibido uma única vez)."
+          ],
+          "linkLabel": "Abrir o console de desenvolvedor da Twitch",
+          "linkUrl": "https://dev.twitch.tv/console/apps"
+        }
+      }
     }
   },
   "a11y": {

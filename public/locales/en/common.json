@@ -52,17 +52,44 @@
       },
       "tmdb": {
         "label": "TMDB API key",
-        "placeholder": "Paste your TMDB API key"
+        "placeholder": "Paste your TMDB API key",
+        "hint": "Use the API Key (v3), not the Read Access Token."
       },
       "igdb": {
         "label": "IGDB credentials",
         "clientIdPlaceholder": "Client ID",
-        "clientSecretPlaceholder": "Client Secret"
+        "clientSecretPlaceholder": "Client Secret",
+        "hint": "Client ID and Client Secret come from the same Twitch application."
       },
       "clear": "Clear",
       "saved": "Keys updated",
       "requireBothIgdb": "Fill in both the IGDB Client ID and Secret, or leave both empty.",
-      "nothingToSave": "Type a key to save."
+      "nothingToSave": "Type a key to save.",
+      "help": {
+        "openHelp": "How do I get this key?",
+        "tmdb": {
+          "title": "How to get a TMDB API key",
+          "description": "The movie search uses your own TMDB key.",
+          "steps": [
+            "Create a free account at themoviedb.org.",
+            "Open Account Settings → API and request an API Key (personal use).",
+            "Copy the API Key (not the Read Access Token — we use the api_key v3 auth)."
+          ],
+          "linkLabel": "Open TMDB API settings",
+          "linkUrl": "https://www.themoviedb.org/settings/api"
+        },
+        "igdb": {
+          "title": "How to get IGDB credentials",
+          "description": "The game search uses your own Twitch/IGDB application credentials.",
+          "steps": [
+            "Sign in with a Twitch account at dev.twitch.tv.",
+            "Open the Developer Console and register a new application.",
+            "Copy the Client ID and generate a Client Secret (shown only once)."
+          ],
+          "linkLabel": "Open Twitch developer console",
+          "linkUrl": "https://dev.twitch.tv/console/apps"
+        }
+      }
     }
   },
   "a11y": {

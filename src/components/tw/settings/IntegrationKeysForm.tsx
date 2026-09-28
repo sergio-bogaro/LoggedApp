@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
+import IntegrationHelp from "@/components/tw/settings/IntegrationHelp";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -94,7 +95,10 @@ function IntegrationKeysForm() {
     <div className="max-w-md space-y-6">
       <div className="space-y-3">
         <div className="flex items-center justify-between gap-3">
-          <p className="font-medium text-step-1">{t("settings.integrations.tmdb.label")}</p>
+          <div className="flex items-center gap-1">
+            <p className="font-medium text-step-1">{t("settings.integrations.tmdb.label")}</p>
+            <IntegrationHelp api="tmdb" />
+          </div>
           <span className="text-step-0 text-muted-foreground">
             {statusLabel(status?.tmdb)}
           </span>
@@ -107,6 +111,9 @@ function IntegrationKeysForm() {
           value={tmdbApiKey}
           onChange={(event) => setTmdbApiKey(event.target.value)}
         />
+        <p className="text-step-0 text-muted-foreground">
+          {t("settings.integrations.tmdb.hint")}
+        </p>
         {status?.tmdb.source === "user" && (
           <Button
             type="button"
@@ -122,7 +129,10 @@ function IntegrationKeysForm() {
 
       <div className="space-y-3">
         <div className="flex items-center justify-between gap-3">
-          <p className="font-medium text-step-1">{t("settings.integrations.igdb.label")}</p>
+          <div className="flex items-center gap-1">
+            <p className="font-medium text-step-1">{t("settings.integrations.igdb.label")}</p>
+            <IntegrationHelp api="igdb" />
+          </div>
           <span className="text-step-0 text-muted-foreground">
             {statusLabel(status?.igdb)}
           </span>
@@ -142,6 +152,9 @@ function IntegrationKeysForm() {
           value={igdbClientSecret}
           onChange={(event) => setIgdbClientSecret(event.target.value)}
         />
+        <p className="text-step-0 text-muted-foreground">
+          {t("settings.integrations.igdb.hint")}
+        </p>
         {status?.igdb.source === "user" && (
           <Button
             type="button"
