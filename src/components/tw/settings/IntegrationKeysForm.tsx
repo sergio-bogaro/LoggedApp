@@ -14,6 +14,20 @@ import {
 } from "@/querries/auth/auth";
 import { useAppSelector } from "@/store/auth/hooks";
 
+// Impede o navegador/gerenciadores de senha de preencher ou sugerir valores
+// nestes campos de chave. `new-password` é o valor respeitado pelo Chrome
+// (mesmo padrão usado em register.tsx).
+const noAutofillProps = {
+  autoComplete: "new-password",
+  spellCheck: false,
+  autoCorrect: "off",
+  autoCapitalize: "off",
+  "data-1p-ignore": "true",
+  "data-lpignore": "true",
+  "data-bwignore": "true",
+  "data-form-type": "other",
+} as const;
+
 function IntegrationKeysForm() {
   const { t } = useTranslation("common");
   const { user } = useAppSelector((state) => state.auth);
@@ -104,9 +118,9 @@ function IntegrationKeysForm() {
           </span>
         </div>
         <Input
+          {...noAutofillProps}
           name="tmdbApiKey"
           type="password"
-          autoComplete="off"
           placeholder={t("settings.integrations.tmdb.placeholder")}
           value={tmdbApiKey}
           onChange={(event) => setTmdbApiKey(event.target.value)}
@@ -138,16 +152,16 @@ function IntegrationKeysForm() {
           </span>
         </div>
         <Input
+          {...noAutofillProps}
           name="igdbClientId"
-          autoComplete="off"
           placeholder={t("settings.integrations.igdb.clientIdPlaceholder")}
           value={igdbClientId}
           onChange={(event) => setIgdbClientId(event.target.value)}
         />
         <Input
+          {...noAutofillProps}
           name="igdbClientSecret"
           type="password"
-          autoComplete="off"
           placeholder={t("settings.integrations.igdb.clientSecretPlaceholder")}
           value={igdbClientSecret}
           onChange={(event) => setIgdbClientSecret(event.target.value)}
