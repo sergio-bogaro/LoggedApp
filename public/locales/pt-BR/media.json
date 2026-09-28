@@ -317,8 +317,18 @@
   "views": {
     "title": "Views",
     "filterLabel": "Tipos de mídia",
-    "empty": "Nenhuma mídia com este status",
-    "emptyHint": "Registre um título com este status ou ajuste o filtro de tipos."
+    "totalLabel": "Títulos",
+    "empty": "Nada por aqui ainda",
+    "emptyHint": "Registre um título ou ajuste o filtro de tipos.",
+    "collections": {
+      "continue": "Continuar",
+      "topRated": "Melhores avaliados"
+    },
+    "sections": {
+      "active": "Acompanhando",
+      "history": "Histórico",
+      "curated": "Curadoria"
+    }
   },
   "detailsPage": {
     "loading": "Carregando...",

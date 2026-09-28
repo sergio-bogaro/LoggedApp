@@ -1,125 +1,93 @@
-import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams, useSearchParams } from "react-router";
 
+import { DataExhibition } from "@/components/tw/generic/dataExhibition";
 import { PageHeader } from "@/components/tw/generic/PageHeader";
-import MediaTypeFilter from "@/components/tw/media/MediaTypeFilter";
-import MediaView from "@/components/tw/media/view";
-import NotFoundPage from "@/pages/notFound";
-import { getMediaList } from "@/querries/media/logged";
-import { useAppSelector } from "@/store/auth/hooks";
+import { SectionHeading } from "@/components/tw/generic/SectionHeading";
+import CollectionCard from "@/components/tw/media/CollectionCard";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useMediaLibrary } from "@/hooks/useMediaLibrary";
 import { useAppDispatch } from "@/store/settings/hooks";
 import { setBreadcrumbs } from "@/store/settings/slice";
-import { MediaResponse } from "@/types/logged";
-import { MediaItem, MediaStatusEnum, MediaTypeEnum } from "@/types/media";
-import { DEFAULT_STALE_TIME } from "@/utils/conts";
-import { getTrackFlags } from "@/utils/mediaTrack";
+import { collectionSections, filterByCollection, getCollection, MediaCollection } from "@/utils/mediaCollections";
 
-const ALL_TYPES = Object.values(MediaTypeEnum);
-const ALL_STATUSES = Object.values(MediaStatusEnum) as string[];
+const ViewsHubSkeleton = () => (
+  <div className="space-y-10">
+    {[0, 1].map((section) => (
+      <div key={section} className="space-y-5">
+        <Skeleton className="h-8 w-48" />
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {[0, 1, 2, 3].map((card) => (
+            <Skeleton key={card} className="h-32 w-full" />
+          ))}
+        </div>
+      </div>
+    ))}
+  </div>
+);
 
-function parseTypes(raw: string): MediaTypeEnum[] {
-  return raw
-    .split(",")
-    .filter((value): value is MediaTypeEnum => (ALL_TYPES as string[]).includes(value));
-}
-
-const MediaStatusViewPage = () => {
+const ViewsHubPage = () => {
   const { t } = useTranslation(["media", "common"]);
-  const { status } = useParams<{ status: string }>();
-  const { user } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  const mediaStatus = status && ALL_STATUSES.includes(status) ? (status as MediaStatusEnum) : null;
-
-  const trackedTypes = useMemo(
-    () => ALL_TYPES.filter((type) => getTrackFlags(user)[type]),
-    [user]
-  );
-  const availableTypes = trackedTypes.length > 0 ? trackedTypes : ALL_TYPES;
-
-  const rawTypes = searchParams.get("types");
-  const selectedTypes = useMemo(() => {
-    // Sem o parâmetro na URL, começa com os tipos que o usuário acompanha.
-    if (rawTypes === null) return availableTypes;
-    return parseTypes(rawTypes);
-  }, [rawTypes, availableTypes]);
+  const { data, isFetching, isError, error } = useMediaLibrary();
 
   useEffect(() => {
-    if (!mediaStatus) return;
     dispatch(
       setBreadcrumbs([
         { label: t("label"), to: "/media/home" },
-        { label: t(`status.${mediaStatus}`) },
+        { label: t("views.title") },
       ])
     );
-  }, [dispatch, t, mediaStatus]);
+  }, [dispatch, t]);
 
-  const { data, isFetching, isError, error } = useQuery<MediaResponse[]>({
-    queryKey: ["media", "statusView", mediaStatus, selectedTypes, user?.id],
-    queryFn: () => getMediaList(user!.id, { status: mediaStatus!, types: selectedTypes }),
-    staleTime: DEFAULT_STALE_TIME,
-    enabled: !!user && !!mediaStatus && selectedTypes.length > 0,
-  });
-
-  const items: MediaItem[] = useMemo(
+  const sections = useMemo(
     () =>
-      (data ?? []).map((media) => ({
-        id: media.externalId,
-        title: media.title,
-        type: media.type,
-        coverUrl: media.coverUrl ?? "",
-        year: media.releaseDate?.slice(0, 4),
-        description: media.description,
+      collectionSections.map((section) => ({
+        titleKey: section.titleKey,
+        collections: section.keys
+          .map((key) => getCollection(key))
+          .filter((collection): collection is MediaCollection => collection !== undefined)
+          .map((collection) => ({
+            collection,
+            items: filterByCollection(data ?? [], collection),
+          })),
       })),
     [data]
   );
 
-  const existingMedia = useMemo(
-    () =>
-      Object.fromEntries(
-        (data ?? []).map((media) => [`${media.externalId}:${media.type}`, media])
-      ),
-    [data]
-  );
-
-  const handleTypesChange = (types: MediaTypeEnum[]) => {
-    const next = new URLSearchParams(searchParams);
-    next.set("types", types.join(","));
-    setSearchParams(next, { replace: true });
-  };
-
-  if (!mediaStatus) {
-    return <NotFoundPage />;
-  }
-
-  const mediaData = selectedTypes.length === 0 ? [] : data ? items : undefined;
-
   return (
-    <div className="w-full h-full space-y-4">
-      <PageHeader title={t(`status.${mediaStatus}`)} />
+    <div className="w-full h-full space-y-8">
+      <PageHeader title={t("views.title")} />
 
-      <div className="space-y-2">
-        <p className="text-step-1 text-muted-foreground">{t("views.filterLabel")}</p>
-        <MediaTypeFilter
-          value={selectedTypes}
-          onChange={handleTypesChange}
-          availableTypes={availableTypes}
-        />
-      </div>
-
-      <MediaView
+      <DataExhibition
         isLoading={isFetching && !data}
-        error={isError ? (error as Error) : null}
-        mediaData={mediaData}
-        existingMedia={existingMedia}
-        emptyTitle={t("views.empty")}
-        emptyDescription={t("views.emptyHint")}
-      />
+        isFetching={isFetching}
+        isError={isError}
+        errorMessage={`${t("errorLoading", { ns: "common" })} ${error?.message ?? ""}`}
+        skeleton={<ViewsHubSkeleton />}
+      >
+        <div className="space-y-10">
+          {sections.map((section) => (
+            <section key={section.titleKey} className="space-y-5">
+              <SectionHeading>{t(section.titleKey)}</SectionHeading>
+
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {section.collections.map(({ collection, items }) => (
+                  <CollectionCard
+                    key={collection.key}
+                    title={t(collection.titleKey)}
+                    count={items.length}
+                    previews={items}
+                    to={`/media/views/${collection.key}`}
+                  />
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+      </DataExhibition>
     </div>
   );
 };
 
-export default MediaStatusViewPage;
+export default ViewsHubPage;

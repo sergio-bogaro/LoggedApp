@@ -11,7 +11,8 @@ import MediaHomePage from "./pages/media/home";
 import MediaListPage from "./pages/media/list";
 import MediaLogsPage from "./pages/media/logs";
 import MediaSearchPage from "./pages/media/search";
-import MediaStatusViewPage from "./pages/media/views";
+import ViewsHubPage from "./pages/media/views";
+import MediaCollectionPage from "./pages/media/views/collection";
 import NotFoundPage from "./pages/notFound";
 import OnboardingPage from "./pages/onboarding";
 import SettingsPage from "./pages/settings";
@@ -49,7 +50,8 @@ export function Router() {
         <Route path="backlog" element={<BacklogPage />} />
         <Route path="logs" element={<MediaLogsPage />} />
         <Route path="logs/:type" element={<MediaLogsPage />} />
-        <Route path="views/:status" element={<MediaStatusViewPage />} />
+        <Route path="views" element={<ViewsHubPage />} />
+        <Route path="views/:key" element={<MediaCollectionPage />} />
 
         <Route path=":mediaType">
           <Route path="details/:id" element={<MediaDetailsPage />} />

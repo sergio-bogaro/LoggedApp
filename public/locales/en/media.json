@@ -317,8 +317,18 @@
   "views": {
     "title": "Views",
     "filterLabel": "Media types",
-    "empty": "No media with this status",
-    "emptyHint": "Log a title with this status or adjust the type filter."
+    "totalLabel": "Titles",
+    "empty": "Nothing here yet",
+    "emptyHint": "Log a title or adjust the type filter.",
+    "collections": {
+      "continue": "Continue",
+      "topRated": "Top rated"
+    },
+    "sections": {
+      "active": "In progress",
+      "history": "History",
+      "curated": "Curated"
+    }
   },
   "detailsPage": {
     "loading": "Loading...",
