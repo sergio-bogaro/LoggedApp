@@ -320,6 +320,7 @@
     "totalLabel": "Títulos",
     "empty": "Nada por aqui ainda",
     "emptyHint": "Registre um título ou ajuste o filtro de tipos.",
+    "noRecords": "Sem registros",
     "collections": {
       "continue": "Continuar",
       "topRated": "Melhores avaliados"

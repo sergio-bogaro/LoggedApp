@@ -18,7 +18,7 @@ const ViewsHubSkeleton = () => (
     {[0, 1].map((section) => (
       <div key={section} className="space-y-5">
         <Skeleton className="h-8 w-48" />
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {[0, 1, 2, 3].map((card) => (
             <Skeleton key={card} className="h-28 w-full" />
           ))}
@@ -88,7 +88,7 @@ const ViewsHubPage = () => {
             <section key={section.titleKey} className="space-y-5">
               <SectionHeading>{t(section.titleKey)}</SectionHeading>
 
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {section.collections.map(({ collection, items }) => (
                   <CollectionCard
                     key={collection.key}

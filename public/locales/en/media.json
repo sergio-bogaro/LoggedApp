@@ -320,6 +320,7 @@
     "totalLabel": "Titles",
     "empty": "Nothing here yet",
     "emptyHint": "Log a title or adjust the type filter.",
+    "noRecords": "No records",
     "collections": {
       "continue": "Continue",
       "topRated": "Top rated"

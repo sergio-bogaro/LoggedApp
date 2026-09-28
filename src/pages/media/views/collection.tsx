@@ -3,21 +3,28 @@ import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
 
 import { StatsHeadline } from "@/components/tw/charts/StatsHeadline";
+import { DataExhibition } from "@/components/tw/generic/dataExhibition";
+import { EmptyState } from "@/components/tw/generic/EmptyState";
 import { PageHeader } from "@/components/tw/generic/PageHeader";
+import { SectionHeading } from "@/components/tw/generic/SectionHeading";
+import { LogStreamSkeleton } from "@/components/tw/log/LogStreamSkeleton";
 import MediaTypeFilter from "@/components/tw/media/MediaTypeFilter";
-import MediaView from "@/components/tw/media/view";
+import { RegisterRow } from "@/components/tw/media/RegisterRow";
 import { useMediaLibrary } from "@/hooks/useMediaLibrary";
 import { useMediaTypeFilter } from "@/hooks/useMediaTypeFilter";
 import NotFoundPage from "@/pages/notFound";
 import { useAppDispatch } from "@/store/settings/hooks";
 import { setBreadcrumbs } from "@/store/settings/slice";
-import { MediaItem, MediaTypeEnum } from "@/types/media";
+import { MediaResponse } from "@/types/logged";
+import { MediaTypeEnum } from "@/types/media";
+import { formatMonthLabel, monthKey } from "@/utils/date";
 import { filterByCollection, getCollection } from "@/utils/mediaCollections";
 
 const ALL_TYPES = Object.values(MediaTypeEnum);
+const NO_DATE_KEY = "__none__";
 
 const MediaCollectionPage = () => {
-  const { t } = useTranslation(["media", "common"]);
+  const { i18n, t } = useTranslation(["media", "common"]);
   const { key } = useParams<{ key: string }>();
   const dispatch = useAppDispatch();
 
@@ -55,26 +62,32 @@ const MediaCollectionPage = () => {
     [collectionItems, selectedTypes]
   );
 
-  const items: MediaItem[] = useMemo(
-    () =>
-      visibleItems.map((media) => ({
-        id: media.externalId,
-        title: media.title,
-        type: media.type,
-        coverUrl: media.coverUrl ?? "",
-        year: media.releaseDate?.slice(0, 4),
-        description: media.description,
-      })),
-    [visibleItems]
-  );
+  /* Grouped by month like the home register, using the latest log date. Titles
+     with no log yet fall into a trailing "no records" group. */
+  const groups = useMemo(() => {
+    const ordered = [...visibleItems].sort((a, b) =>
+      (b.lastLogDate ?? "").localeCompare(a.lastLogDate ?? "")
+    );
 
-  const existingMedia = useMemo(
-    () =>
-      Object.fromEntries(
-        visibleItems.map((media) => [`${media.externalId}:${media.type}`, media])
-      ),
-    [visibleItems]
-  );
+    const buckets = new Map<string, MediaResponse[]>();
+    const undated: MediaResponse[] = [];
+
+    for (const media of ordered) {
+      if (!media.lastLogDate) {
+        undated.push(media);
+        continue;
+      }
+
+      const groupKey = monthKey(media.lastLogDate);
+      const bucket = buckets.get(groupKey);
+      if (bucket) bucket.push(media);
+      else buckets.set(groupKey, [media]);
+    }
+
+    const entries = [...buckets.entries()];
+    if (undated.length > 0) entries.push([NO_DATE_KEY, undated]);
+    return entries;
+  }, [visibleItems]);
 
   if (!collection) {
     return <NotFoundPage />;
@@ -84,8 +97,6 @@ const MediaCollectionPage = () => {
     label: t(`typePlural.${type}`),
     value: typeCounts[type],
   }));
-
-  const mediaData = selectedTypes.length === 0 ? [] : data ? items : undefined;
 
   return (
     <div className="w-full h-full space-y-6">
@@ -102,14 +113,42 @@ const MediaCollectionPage = () => {
         />
       </div>
 
-      <MediaView
+      <DataExhibition
         isLoading={isFetching && !data}
-        error={isError ? (error as Error) : null}
-        mediaData={mediaData}
-        existingMedia={existingMedia}
-        emptyTitle={t("views.empty")}
-        emptyDescription={t("views.emptyHint")}
-      />
+        isFetching={isFetching}
+        isError={isError}
+        errorMessage={`${t("errorLoading", { ns: "common" })} ${error?.message ?? ""}`}
+        skeleton={<LogStreamSkeleton />}
+      >
+        {groups.length === 0 ? (
+          <EmptyState title={t("views.empty")} description={t("views.emptyHint")} />
+        ) : (
+          <div className="space-y-8">
+            {groups.map(([groupKey, group]) => (
+              <section key={groupKey}>
+                <SectionHeading>
+                  {groupKey === NO_DATE_KEY
+                    ? t("views.noRecords")
+                    : formatMonthLabel(group[0].lastLogDate!, i18n.language)}
+                </SectionHeading>
+
+                <ul className="mt-2">
+                  {group.map((media) => (
+                    <li key={media.id}>
+                      <RegisterRow
+                        media={media}
+                        status={media.status}
+                        date={media.lastLogDate}
+                        rating={media.rating}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ))}
+          </div>
+        )}
+      </DataExhibition>
     </div>
   );
 };
