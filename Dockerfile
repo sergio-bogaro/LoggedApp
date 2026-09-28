@@ -10,13 +10,11 @@ RUN npm ci
 
 COPY . .
 
-# Variáveis do Vite são embutidas em tempo de build.
 # VITE_API_BASE_URL vazio = URLs relativas (mesma origem). O Nginx do container
 # faz proxy de /api, /auth, /uploads e /custom-views para o serviço `api`.
+# Nenhuma chave de API é embutida: TMDB/IGDB são por usuário e ficam no backend.
 ARG VITE_API_BASE_URL=
-ARG VITE_TMDB_API_KEY
-ENV VITE_API_BASE_URL=$VITE_API_BASE_URL \
-    VITE_TMDB_API_KEY=$VITE_TMDB_API_KEY
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 
 RUN npm run build
 

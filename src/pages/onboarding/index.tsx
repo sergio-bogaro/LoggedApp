@@ -8,6 +8,7 @@ import LanguageSwitcher from "@/components/LanguageSwitcher";
 import RatingSwitcher from "@/components/RatingSwitcher";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 import { EntryCard } from "@/components/tw/generic/EntryCard";
+import IntegrationKeysForm from "@/components/tw/settings/IntegrationKeysForm";
 import MediaTrackToggles from "@/components/tw/settings/MediaTrackToggles";
 import { Button } from "@/components/ui/button";
 import { authApi } from "@/querries/auth/auth";
@@ -16,6 +17,8 @@ import { setUser } from "@/store/auth/slice";
 import type { User } from "@/types/auth";
 import { MediaTypeEnum } from "@/types/media";
 import { getTrackFlags, trackFlagByType } from "@/utils/mediaTrack";
+
+const TOTAL_STEPS = 4;
 
 function OnboardingPage() {
   const { t } = useTranslation(["common", "onboarding"]);
@@ -66,12 +69,12 @@ function OnboardingPage() {
       <div
         role="progressbar"
         aria-valuemin={1}
-        aria-valuemax={3}
+        aria-valuemax={TOTAL_STEPS}
         aria-valuenow={step}
         aria-label={t("progressLabel", { ns: "onboarding" })}
         className="flex gap-2"
       >
-        {[1, 2, 3].map((item) => (
+        {Array.from({ length: TOTAL_STEPS }, (_, index) => index + 1).map((item) => (
           <div
             key={item}
             className={`h-1.5 w-8 rounded-full ${item <= step ? "bg-primary" : "bg-muted"}`}
@@ -106,12 +109,23 @@ function OnboardingPage() {
             <RatingSwitcher />
           </div>
         </div>
-      ) : (
+      ) : step === 3 ? (
         <div className="space-y-4">
           <div>
             <h2 className="text-step-2 font-medium">{t("step3Title", { ns: "onboarding" })}</h2>
             <p className="mt-1 text-step-1 text-muted-foreground">
               {t("step3Description", { ns: "onboarding" })}
+            </p>
+          </div>
+
+          <IntegrationKeysForm />
+        </div>
+      ) : (
+        <div className="space-y-4">
+          <div>
+            <h2 className="text-step-2 font-medium">{t("step4Title", { ns: "onboarding" })}</h2>
+            <p className="mt-1 text-step-1 text-muted-foreground">
+              {t("step4Description", { ns: "onboarding" })}
             </p>
           </div>
 
@@ -125,7 +139,7 @@ function OnboardingPage() {
             {t("back", { ns: "onboarding" })}
           </Button>
         )}
-        {step < 3 ? (
+        {step < TOTAL_STEPS ? (
           <Button type="button" className="ml-auto" onClick={() => setStep((prev) => prev + 1)}>
             {t("next", { ns: "onboarding" })}
           </Button>

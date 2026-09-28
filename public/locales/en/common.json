@@ -39,7 +39,30 @@
       "title": "Media Tracking",
       "description": "Choose which media types you want to log",
       "saving": "Saving...",
-      "disabledHint": "Requires {{key}} in the .env file"
+      "requiresTmdb": "Requires a TMDB API key — set it in Integrations",
+      "requiresIgdb": "Requires IGDB credentials — set them in Integrations"
+    },
+    "integrations": {
+      "title": "Integrations",
+      "description": "Your API keys are stored on the server and never exposed to the browser. Leave a field empty to keep the current value, or use Clear to remove it.",
+      "status": {
+        "user": "Set by you",
+        "instance": "Provided by the server",
+        "none": "Not configured"
+      },
+      "tmdb": {
+        "label": "TMDB API key",
+        "placeholder": "Paste your TMDB API key"
+      },
+      "igdb": {
+        "label": "IGDB credentials",
+        "clientIdPlaceholder": "Client ID",
+        "clientSecretPlaceholder": "Client Secret"
+      },
+      "clear": "Clear",
+      "saved": "Keys updated",
+      "requireBothIgdb": "Fill in both the IGDB Client ID and Secret, or leave both empty.",
+      "nothingToSave": "Type a key to save."
     }
   },
   "a11y": {

@@ -51,9 +51,8 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           # Same-origin: base relativa ("/api/..."), servida pelo proxy do Nginx.
-          # A chave do TMDB é embutida no bundle (configure o secret no repositório).
+          # Nenhuma chave de API é embutida: TMDB/IGDB são por usuário, no backend.
           build-args: |
             VITE_API_BASE_URL=
-            VITE_TMDB_API_KEY=${{ secrets.VITE_TMDB_API_KEY }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

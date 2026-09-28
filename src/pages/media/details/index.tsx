@@ -73,13 +73,13 @@ function MediaDetailsPage() {
   const deleteMedia = useDeleteMedia();
 
   const { data, isLoading, isFetching, isError, error } = useQuery({
-    queryKey: ["details", mediaType, id],
+    queryKey: ["details", mediaType, id, user?.id],
     queryFn: async () => {
       if (!mediaType || !id) return null;
 
       switch (mediaType) {
         case MediaTypeEnum.MOVIES:
-          return getMovieDetails(Number(id));
+          return getMovieDetails(Number(id), user?.id);
         case MediaTypeEnum.MANGA:
           return getAniListDetails(Number(id), MediaTypeEnum.MANGA);
         case MediaTypeEnum.ANIME:
@@ -87,7 +87,7 @@ function MediaDetailsPage() {
         case MediaTypeEnum.BOOK:
           return getBookDetails(id);
         case MediaTypeEnum.GAME:
-          return getGameDetails(Number(id));
+          return getGameDetails(Number(id), user?.id);
         case MediaTypeEnum.MUSIC:
           return getAlbumDetails(id);
         default:

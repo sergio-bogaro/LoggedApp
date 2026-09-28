@@ -39,7 +39,30 @@
       "title": "Mídias a Registrar",
       "description": "Escolha quais tipos de mídia deseja logar",
       "saving": "Salvando...",
-      "disabledHint": "Requer {{key}} no arquivo .env"
+      "requiresTmdb": "Requer chave do TMDB — configure em Integrações",
+      "requiresIgdb": "Requer credenciais do IGDB — configure em Integrações"
+    },
+    "integrations": {
+      "title": "Integrações",
+      "description": "Suas chaves de API ficam no servidor e nunca são expostas ao navegador. Deixe um campo vazio para manter o valor atual, ou use Limpar para removê-lo.",
+      "status": {
+        "user": "Configurado por você",
+        "instance": "Fornecido pelo servidor",
+        "none": "Não configurado"
+      },
+      "tmdb": {
+        "label": "Chave da API do TMDB",
+        "placeholder": "Cole sua chave do TMDB"
+      },
+      "igdb": {
+        "label": "Credenciais do IGDB",
+        "clientIdPlaceholder": "Client ID",
+        "clientSecretPlaceholder": "Client Secret"
+      },
+      "clear": "Limpar",
+      "saved": "Chaves atualizadas",
+      "requireBothIgdb": "Preencha o Client ID e o Secret do IGDB, ou deixe os dois vazios.",
+      "nothingToSave": "Digite uma chave para salvar."
     }
   },
   "a11y": {

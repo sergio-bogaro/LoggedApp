@@ -7,6 +7,7 @@ import RatingSwitcher from "@/components/RatingSwitcher";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 import { PageHeader } from "@/components/tw/generic/PageHeader";
 import { SectionHeading } from "@/components/tw/generic/SectionHeading";
+import IntegrationKeysForm from "@/components/tw/settings/IntegrationKeysForm";
 import MediaTrackToggles from "@/components/tw/settings/MediaTrackToggles";
 import { authApi } from "@/querries/auth/auth";
 import { useAppDispatch, useAppSelector } from "@/store/auth/hooks";
@@ -86,6 +87,16 @@ function SettingsPage() {
         {savingType && (
           <p className="text-step-1 text-muted-foreground">{t("settings.tracking.saving")}</p>
         )}
+      </section>
+
+      <section className="space-y-4">
+        <SectionHeading>{t("settings.integrations.title")}</SectionHeading>
+
+        <p className="text-step-1 text-muted-foreground">
+          {t("settings.integrations.description")}
+        </p>
+
+        <IntegrationKeysForm />
       </section>
     </div>
   )

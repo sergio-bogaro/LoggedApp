@@ -30,6 +30,25 @@ export interface LoginResponse {
   message: string;
 }
 
+/** Chaves write-only, nunca retornadas pela API. Campo vazio ("") limpa a chave. */
+export interface UserSecrets {
+  tmdbApiKey?: string;
+  igdbClientId?: string;
+  igdbClientSecret?: string;
+}
+
+export type IntegrationSource = "user" | "instance" | "none";
+
+export interface IntegrationEntry {
+  configured: boolean;
+  source: IntegrationSource;
+}
+
+export interface IntegrationStatus {
+  tmdb: IntegrationEntry;
+  igdb: IntegrationEntry;
+}
+
 export const authApi = {
   async register(data: UserRegister): Promise<User> {
     const response = await fetch(`${API_BASE_URL}/auth/register`, {
@@ -76,7 +95,7 @@ export const authApi = {
     return response.json();
   },
 
-  async updateUser(userId: number, data: Partial<User>): Promise<User> {
+  async updateUser(userId: number, data: Partial<User> | UserSecrets): Promise<User> {
     const response = await fetch(`${API_BASE_URL}/auth/users/${userId}`, {
       method: "PUT",
       headers: {
@@ -91,5 +110,22 @@ export const authApi = {
     }
 
     return response.json();
+  },
+};
+
+const EMPTY_INTEGRATION: IntegrationEntry = { configured: false, source: "none" };
+
+export const integrationsApi = {
+  async getStatus(userId: number): Promise<IntegrationStatus> {
+    const [tmdb, igdb] = await Promise.all([
+      fetch(`${API_BASE_URL}/api/tmdb/config?user_id=${userId}`)
+        .then((r) => (r.ok ? r.json() : EMPTY_INTEGRATION))
+        .catch(() => EMPTY_INTEGRATION),
+      fetch(`${API_BASE_URL}/api/igdb/config?user_id=${userId}`)
+        .then((r) => (r.ok ? r.json() : EMPTY_INTEGRATION))
+        .catch(() => EMPTY_INTEGRATION),
+    ]);
+
+    return { tmdb, igdb };
   },
 };

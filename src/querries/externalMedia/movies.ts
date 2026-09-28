@@ -1,7 +1,8 @@
+import { API_BASE_URL } from "@/querries/apiBase";
 import { MediaItem, MediaTypeEnum } from "@/types/media";
 
-export async function searchMoviesNormalized(query: string): Promise<MediaItem[]> {
-  const movies = await searchMovies(query);
+export async function searchMoviesNormalized(query: string, userId?: number): Promise<MediaItem[]> {
+  const movies = await searchMovies(query, userId);
 
   return movies.map((m) => ({
     id: String(m.id),
@@ -132,17 +133,13 @@ export type TMDBMovieDetails = {
   [key: string]: any;
 };
 
-const TMDB_BASE = "https://api.themoviedb.org/3";
-const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY;
+const API = API_BASE_URL;
 
-export async function searchMovies(query: string): Promise<Movie[]> {
-  const url = new URL(`${TMDB_BASE}/search/movie`);
-  url.searchParams.set("api_key", TMDB_API_KEY);
-  url.searchParams.set("query", query);
-  url.searchParams.set("language", "en-US");
-  url.searchParams.set("page", "1");
+export async function searchMovies(query: string, userId?: number): Promise<Movie[]> {
+  const params = new URLSearchParams({ query });
+  if (userId !== undefined) params.set("user_id", String(userId));
 
-  const res = await fetch(url.toString());
+  const res = await fetch(`${API}/api/tmdb/search?${params.toString()}`);
   if (!res.ok) {
     const text = await res.text();
     throw new Error(`TMDB API error: ${res.status} ${text}`);
@@ -156,8 +153,9 @@ export function tmdbPosterUrl(path: string | null | undefined, size = "w200") {
   return `https://image.tmdb.org/t/p/${size}${path}`;
 }
 
-export async function getMovieDetails(id: number): Promise<TMDBMovieDetails> {
-  const res = await fetch(`${TMDB_BASE}/movie/${id}?api_key=${TMDB_API_KEY}&language=en-US&append_to_response=credits,videos,images,recommendations`);
+export async function getMovieDetails(id: number, userId?: number): Promise<TMDBMovieDetails> {
+  const params = userId !== undefined ? `?user_id=${userId}` : "";
+  const res = await fetch(`${API}/api/tmdb/movie/${id}${params}`);
   if (!res.ok) throw new Error("TMDB details error");
   const data = (await res.json()) as TMDBMovieDetails;
   return data;

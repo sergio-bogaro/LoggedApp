@@ -74,24 +74,24 @@ function MediaSearchPage() {
   function getSearchFuntion(mediaType: MediaTypeEnum) {
     switch (mediaType) {
       case MediaTypeEnum.MOVIES:
-        return searchMoviesNormalized;
+        return (query: string) => searchMoviesNormalized(query, user?.id);
       case MediaTypeEnum.MANGA:
-        return searchMangaAnilistNormalized;
+        return (query: string) => searchMangaAnilistNormalized(query);
       case MediaTypeEnum.ANIME:
-        return searchAnimeAnilistNormalized;
+        return (query: string) => searchAnimeAnilistNormalized(query);
       case MediaTypeEnum.GAME:
-        return searchGamesNormalized;
+        return (query: string) => searchGamesNormalized(query, user?.id);
       case MediaTypeEnum.BOOK:
-        return searchBooksNormalized;
+        return (query: string) => searchBooksNormalized(query);
       case MediaTypeEnum.MUSIC:
-        return searchMusicNormalized;
+        return (query: string) => searchMusicNormalized(query);
       default:
-        return searchMoviesNormalized;
+        return (query: string) => searchMoviesNormalized(query, user?.id);
     }
   }
 
   const { data, error, isFetching } = useQuery<MediaItem[]>({
-    queryKey: ["media", watchedMediaType, searchName],
+    queryKey: ["media", watchedMediaType, searchName, user?.id],
     queryFn: () => getSearchFuntion(watchedMediaType)(searchName),
     enabled: searchName.trim().length > 0,
     staleTime: 1000 * 60 * 5,

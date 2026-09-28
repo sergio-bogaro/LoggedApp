@@ -71,8 +71,8 @@ let searchController: AbortController | null = null;
 // Search
 // ──────────────────────────────────────────────
 
-export async function searchGamesNormalized(title: string): Promise<MediaItem[]> {
-  const games = await searchGames(title);
+export async function searchGamesNormalized(title: string, userId?: number): Promise<MediaItem[]> {
+  const games = await searchGames(title, userId);
 
   return games.map((g) => ({
     id: g.id.toString(),
@@ -89,10 +89,10 @@ export async function searchGamesNormalized(title: string): Promise<MediaItem[]>
   }));
 }
 
-export async function searchGames(title: string): Promise<IGDBSearchItem[]> {
+export async function searchGames(title: string, userId?: number): Promise<IGDBSearchItem[]> {
   if (!title || title.trim().length === 0) return [];
 
-  const cacheKey = title.toLowerCase().trim();
+  const cacheKey = `${userId ?? "anon"}:${title.toLowerCase().trim()}`;
   const cached = searchCache.get(cacheKey);
   if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
     return cached.data;
@@ -104,7 +104,8 @@ export async function searchGames(title: string): Promise<IGDBSearchItem[]> {
   searchController = new AbortController();
 
   try {
-    const res = await fetch(`${API_BASE_URL}/api/igdb/games/search`, {
+    const params = userId !== undefined ? `?user_id=${userId}` : "";
+    const res = await fetch(`${API_BASE_URL}/api/igdb/games/search${params}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ query: title, limit: 20 }),
@@ -137,8 +138,9 @@ export async function searchGames(title: string): Promise<IGDBSearchItem[]> {
 // Details
 // ──────────────────────────────────────────────
 
-export async function getGameDetails(id: number): Promise<IGDBGame> {
-  const res = await fetch(`${API_BASE_URL}/api/igdb/games/${id}`);
+export async function getGameDetails(id: number, userId?: number): Promise<IGDBGame> {
+  const params = userId !== undefined ? `?user_id=${userId}` : "";
+  const res = await fetch(`${API_BASE_URL}/api/igdb/games/${id}${params}`);
 
   if (!res.ok) {
     const text = await res.text();

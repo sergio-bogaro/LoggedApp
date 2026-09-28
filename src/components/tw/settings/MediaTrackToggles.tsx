@@ -21,9 +21,9 @@ const trackableMediaTypes: Array<{ type: MediaTypeEnum; icon: typeof Film }> = [
   { type: MediaTypeEnum.MUSIC, icon: Music },
 ];
 
-const requiredEnvKeys: Partial<Record<MediaTypeEnum, string>> = {
-  [MediaTypeEnum.MOVIES]: "VITE_TMDB_API_KEY",
-  [MediaTypeEnum.GAME]: "IGDB_CLIENT_ID / IGDB_CLIENT_SECRET",
+const requiredKeyKeys: Partial<Record<MediaTypeEnum, string>> = {
+  [MediaTypeEnum.MOVIES]: "settings.tracking.requiresTmdb",
+  [MediaTypeEnum.GAME]: "settings.tracking.requiresIgdb",
 };
 
 function MediaTrackToggles({ values, onChange }: MediaTrackTogglesProps) {
@@ -34,7 +34,7 @@ function MediaTrackToggles({ values, onChange }: MediaTrackTogglesProps) {
     <div className="space-y-2">
       {trackableMediaTypes.map(({ type, icon: Icon }) => {
         const available = availability[type];
-        const requiredKey = requiredEnvKeys[type];
+        const requiredKeyKey = requiredKeyKeys[type];
 
         return (
           <div
@@ -52,12 +52,9 @@ function MediaTrackToggles({ values, onChange }: MediaTrackTogglesProps) {
                   {t(`typePlural.${type}`, { ns: "media" })}
                 </p>
 
-                {!available && requiredKey && (
+                {!available && requiredKeyKey && (
                   <p className="text-step-0 text-muted-foreground">
-                    {t("settings.tracking.disabledHint", {
-                      ns: "common",
-                      key: requiredKey,
-                    })}
+                    {t(requiredKeyKey, { ns: "common" })}
                   </p>
                 )}
               </div>
