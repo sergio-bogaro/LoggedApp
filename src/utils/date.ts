@@ -1,5 +1,6 @@
 import { endOfMonth, endOfWeek, endOfYear, format, startOfMonth, startOfWeek, startOfYear, type Locale } from "date-fns";
 import { enUS, ptBR } from "date-fns/locale";
+import { enUS as dayPickerEnUS, ptBR as dayPickerPtBR } from "react-day-picker/locale";
 
 export function newIsoDate(): string {
   return new Date().toISOString().split("T")[0];
@@ -39,6 +40,14 @@ export function parseIsoDate(iso?: string | null): Date | null {
 
 function resolveLocale(language?: string): Locale {
   return language?.toLowerCase().startsWith("pt") ? ptBR : enUS;
+}
+
+/**
+ * React DayPicker locale (date-fns formats plus translated a11y labels) for the
+ * calendar popover. Mirrors `resolveLocale`'s language detection.
+ */
+export function resolveDayPickerLocale(language?: string) {
+  return language?.toLowerCase().startsWith("pt") ? dayPickerPtBR : dayPickerEnUS;
 }
 
 /** Stable grouping key, e.g. "2026-09". */
