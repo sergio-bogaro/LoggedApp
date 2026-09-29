@@ -10,17 +10,27 @@ interface RatingDisplayProps {
   discrete?: boolean;
   /** In stars mode, show the value with a single star instead of the full row. */
   singleStar?: boolean;
+  /** "overlay" sits on artwork: monochrome white, for a dark scrim. */
+  tone?: "plain" | "overlay";
 }
 
-export const RatingDisplay = ({ rating, discrete, singleStar }: RatingDisplayProps) => {
+export const RatingDisplay = ({ rating, discrete, singleStar, tone = "plain" }: RatingDisplayProps) => {
   const { t } = useTranslation("media");
   const { ratingMode } = useAppSelector((state) => state.ui);
 
   const ratingLabel = t("rating.value", { rating });
+  const isOverlay = tone === "overlay";
 
   if (ratingMode === "numeric") {
     return (
-      <span className={cn("font-medium", discrete ? "text-step-0" : "text-step-2")} aria-label={ratingLabel}>
+      <span
+        className={cn(
+          "font-medium",
+          discrete ? "text-step-0" : "text-step-2",
+          isOverlay && "text-step-1 text-white"
+        )}
+        aria-label={ratingLabel}
+      >
         {ratingLabel}
       </span>
     );
@@ -30,9 +40,12 @@ export const RatingDisplay = ({ rating, discrete, singleStar }: RatingDisplayPro
     const value = rating % 1 === 0 ? rating.toFixed(0) : rating.toFixed(1);
 
     return (
-      <span className="inline-flex items-center gap-1 tabular-nums" aria-label={ratingLabel}>
+      <span
+        className={cn("inline-flex items-center gap-1 tabular-nums", isOverlay && "text-white")}
+        aria-label={ratingLabel}
+      >
         {value}
-        <Star className="size-4 text-rating" fill="currentColor" aria-hidden="true" />
+        <Star className={cn("size-4", isOverlay ? "text-white" : "text-rating")} fill="currentColor" aria-hidden="true" />
       </span>
     );
   }

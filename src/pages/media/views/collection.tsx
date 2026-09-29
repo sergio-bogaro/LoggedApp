@@ -7,26 +7,40 @@ import { DataExhibition } from "@/components/tw/generic/dataExhibition";
 import { EmptyState } from "@/components/tw/generic/EmptyState";
 import { PageHeader } from "@/components/tw/generic/PageHeader";
 import { SectionHeading } from "@/components/tw/generic/SectionHeading";
+import { ViewModeToggle } from "@/components/tw/generic/ViewModeToggle";
 import { LogStreamSkeleton } from "@/components/tw/log/LogStreamSkeleton";
+import { GridItem } from "@/components/tw/media/grid";
+import { MediaGridSkeleton } from "@/components/tw/media/gridSkeleton";
 import MediaTypeFilter from "@/components/tw/media/MediaTypeFilter";
 import { RegisterRow } from "@/components/tw/media/RegisterRow";
 import { useMediaLibrary } from "@/hooks/useMediaLibrary";
 import { useMediaTypeFilter } from "@/hooks/useMediaTypeFilter";
 import NotFoundPage from "@/pages/notFound";
-import { useAppDispatch } from "@/store/settings/hooks";
-import { setBreadcrumbs } from "@/store/settings/slice";
+import { useAppDispatch, useAppSelector } from "@/store/settings/hooks";
+import { setBreadcrumbs, setLibraryViewMode, ViewMode } from "@/store/settings/slice";
 import { MediaResponse } from "@/types/logged";
-import { MediaTypeEnum } from "@/types/media";
+import { MediaItem, MediaTypeEnum } from "@/types/media";
 import { formatMonthLabel, monthKey } from "@/utils/date";
 import { filterByCollection, getCollection } from "@/utils/mediaCollections";
 
 const ALL_TYPES = Object.values(MediaTypeEnum);
 const NO_DATE_KEY = "__none__";
 
+/** The collection rows carry the library record; the card only needs the poster identity. */
+const toMediaItem = (media: MediaResponse): MediaItem => ({
+  id: media.externalId,
+  title: media.title,
+  type: media.type,
+  coverUrl: media.coverUrl ?? "",
+  year: media.releaseDate?.slice(0, 4),
+  description: media.description,
+});
+
 const MediaCollectionPage = () => {
   const { i18n, t } = useTranslation(["media", "common"]);
   const { key } = useParams<{ key: string }>();
   const dispatch = useAppDispatch();
+  const { libraryViewMode } = useAppSelector((state) => state.ui);
 
   const collection = key ? getCollection(key) : undefined;
 
@@ -98,6 +112,8 @@ const MediaCollectionPage = () => {
     value: typeCounts[type],
   }));
 
+  const handleViewModeChange = (mode: ViewMode) => dispatch(setLibraryViewMode(mode));
+
   return (
     <div className="w-full h-full space-y-6">
       <PageHeader title={t(collection.titleKey)} />
@@ -105,7 +121,11 @@ const MediaCollectionPage = () => {
       <StatsHeadline label={t("views.totalLabel")} value={collectionItems.length} index={index} />
 
       <div className="space-y-2">
-        <p className="text-step-1 text-muted-foreground">{t("views.filterLabel")}</p>
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <p className="text-step-1 text-muted-foreground">{t("views.filterLabel")}</p>
+          <ViewModeToggle value={libraryViewMode} onChange={handleViewModeChange} />
+        </div>
+
         <MediaTypeFilter
           value={selectedTypes}
           onChange={setSelectedTypes}
@@ -118,7 +138,7 @@ const MediaCollectionPage = () => {
         isFetching={isFetching}
         isError={isError}
         errorMessage={`${t("errorLoading", { ns: "common" })} ${error?.message ?? ""}`}
-        skeleton={<LogStreamSkeleton />}
+        skeleton={libraryViewMode === "grid" ? <MediaGridSkeleton /> : <LogStreamSkeleton />}
       >
         {groups.length === 0 ? (
           <EmptyState title={t("views.empty")} description={t("views.emptyHint")} />
@@ -132,18 +152,28 @@ const MediaCollectionPage = () => {
                     : formatMonthLabel(group[0].lastLogDate!, i18n.language)}
                 </SectionHeading>
 
-                <ul className="mt-2">
-                  {group.map((media) => (
-                    <li key={media.id}>
-                      <RegisterRow
-                        media={media}
-                        status={media.status}
-                        date={media.lastLogDate}
-                        rating={media.rating}
-                      />
-                    </li>
-                  ))}
-                </ul>
+                {libraryViewMode === "grid" ? (
+                  <ul className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5">
+                    {group.map((media) => (
+                      <li key={media.id}>
+                        <GridItem item={toMediaItem(media)} existingItem={media} showMediaType />
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <ul className="mt-2">
+                    {group.map((media) => (
+                      <li key={media.id}>
+                        <RegisterRow
+                          media={media}
+                          status={media.status}
+                          date={media.lastLogDate}
+                          rating={media.rating}
+                        />
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </section>
             ))}
           </div>

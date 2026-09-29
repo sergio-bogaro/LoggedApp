@@ -218,9 +218,11 @@
     "pagePlaceholderMovies": "Type a movie name",
     "pageLabelDefault": "Search",
     "pagePlaceholderDefault": "Type to search...",
-    "submit": "Search",
-    "viewGrid": "Switch to grid view",
-    "viewList": "Switch to list view"
+    "submit": "Search"
+  },
+  "viewToggle": {
+    "grid": "Switch to grid view",
+    "list": "Switch to list view"
   },
   "searchView": {
     "startTitle": "Start your search",

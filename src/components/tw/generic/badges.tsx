@@ -54,7 +54,8 @@ export const TypeMark = ({ type, tone = "plain", className }: TypeMarkProps) => 
 /*
  * Status is encoded by a mark, not by hue: the categorical ramp already owns
  * color, so the mark only separates active / done / inactive and the label
- * carries the specific status.
+ * carries the specific status. The overlay tone recolours both for a dark
+ * scrim over artwork.
  */
 type StatusSpec = { mark: string; text: string }
 
@@ -66,13 +67,28 @@ const statusSpec: Record<MediaStatusEnum, StatusSpec> = {
   [MediaStatusEnum.DROPPED]: { mark: "border-muted-foreground bg-transparent", text: "text-muted-foreground" },
 }
 
+const statusSpecOverlay: Record<MediaStatusEnum, StatusSpec> = {
+  [MediaStatusEnum.IN_PROGRESS]: { mark: "border-white bg-white", text: "text-white" },
+  [MediaStatusEnum.FOLLOWING]: { mark: "border-white bg-white", text: "text-white" },
+  [MediaStatusEnum.FINISHED]: { mark: "border-white bg-white", text: "text-white" },
+  [MediaStatusEnum.ON_HOLD]: { mark: "border-white/70 bg-transparent", text: "text-white" },
+  [MediaStatusEnum.DROPPED]: { mark: "border-white/70 bg-transparent", text: "text-white" },
+}
+
+interface StatusMarkProps {
+  status?: MediaStatusEnum | null
+  /** "overlay" sits on artwork and paints the mark and label in white. */
+  tone?: "plain" | "overlay"
+  className?: string
+}
+
 /*
  * Status is nullable in the API — a title can be tracked without one. An
  * unknown or absent status renders nothing rather than guessing.
  */
-export const StatusMark = ({ status, className }: { status?: MediaStatusEnum | null; className?: string }) => {
+export const StatusMark = ({ status, tone = "plain", className }: StatusMarkProps) => {
   const { t } = useTranslation("media")
-  const spec = status ? statusSpec[status] : undefined
+  const spec = status ? (tone === "overlay" ? statusSpecOverlay : statusSpec)[status] : undefined
 
   if (!spec) return null
 

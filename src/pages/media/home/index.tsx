@@ -5,19 +5,23 @@ import { MediaStats } from "@/components/tw/charts/MediaStats";
 import { MediaStatsSkeleton } from "@/components/tw/charts/MediaStatsSkeleton";
 import { DataExhibition } from "@/components/tw/generic/dataExhibition";
 import { PageHeader } from "@/components/tw/generic/PageHeader";
+import { ViewModeToggle } from "@/components/tw/generic/ViewModeToggle";
 import { LogStream } from "@/components/tw/log/LogStream";
 import { LogStreamSkeleton } from "@/components/tw/log/LogStreamSkeleton";
 import { PeriodFilter } from "@/components/tw/log/PeriodFilter";
+import { MediaGridSkeleton } from "@/components/tw/media/gridSkeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useMediaLogs } from "@/hooks/useMediaLogs";
-import { useAppDispatch } from "@/store/settings/hooks";
-import { setBreadcrumbs } from "@/store/settings/slice";
+import { useAppDispatch, useAppSelector } from "@/store/settings/hooks";
+import { setBreadcrumbs, setLibraryViewMode, ViewMode } from "@/store/settings/slice";
 import { PeriodKey, PeriodRange, resolvePeriodRange } from "@/utils/date";
 
 const MediaHomePage = () => {
   const { i18n, t } = useTranslation("media");
   const dispatch = useAppDispatch();
+  const { libraryViewMode } = useAppSelector((state) => state.ui);
 
+  const [tab, setTab] = useState("log");
   const [period, setPeriod] = useState<PeriodKey>("year");
   const [custom, setCustom] = useState<PeriodRange>({});
 
@@ -57,23 +61,36 @@ const MediaHomePage = () => {
   const isLoading = isFetching && !logs;
   const errorMessage = `${t("errorLoading", { ns: "common" })} ${error?.message ?? ""}`;
 
+  const handleViewModeChange = (mode: ViewMode) => dispatch(setLibraryViewMode(mode));
+  const isGrid = libraryViewMode === "grid";
+
   return (
     <div className="w-full h-full">
       <PageHeader title={t("home.title")} />
 
-      <Tabs defaultValue="log">
+      <Tabs value={tab} onValueChange={setTab}>
         <TabsList>
           <TabsTrigger value="log">{t("home.tabs.log")}</TabsTrigger>
           <TabsTrigger value="stats">{t("home.tabs.stats")}</TabsTrigger>
         </TabsList>
 
-        <PeriodFilter
-          value={period}
-          onChange={handlePeriodChange}
-          custom={custom}
-          onCustomChange={setCustom}
-          resolvedRange={displayRange}
-        />
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <PeriodFilter
+            value={period}
+            onChange={handlePeriodChange}
+            custom={custom}
+            onCustomChange={setCustom}
+            resolvedRange={displayRange}
+          />
+
+          {tab === "log" && (
+            <ViewModeToggle
+              value={libraryViewMode}
+              onChange={handleViewModeChange}
+              className="self-end"
+            />
+          )}
+        </div>
 
         <TabsContent value="log" className="mt-6">
           <DataExhibition
@@ -81,9 +98,9 @@ const MediaHomePage = () => {
             isFetching={isFetching}
             isError={isError}
             errorMessage={errorMessage}
-            skeleton={<LogStreamSkeleton />}
+            skeleton={isGrid ? <MediaGridSkeleton /> : <LogStreamSkeleton />}
           >
-            <LogStream logs={logs ?? []} filtered={period !== "all"} />
+            <LogStream logs={logs ?? []} filtered={period !== "all"} viewMode={libraryViewMode} />
           </DataExhibition>
         </TabsContent>
 

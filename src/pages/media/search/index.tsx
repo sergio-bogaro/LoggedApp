@@ -1,12 +1,13 @@
 
 import { useQuery } from "@tanstack/react-query";
-import { Grid, List, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Navigate, useSearchParams } from "react-router";
 
 import { PageHeader } from "@/components/tw/generic/PageHeader";
+import { ViewModeToggle } from "@/components/tw/generic/ViewModeToggle";
 import MediaView from "@/components/tw/media/view";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
@@ -19,7 +20,7 @@ import { searchMoviesNormalized } from "@/querries/externalMedia/movies";
 import { searchMusicNormalized } from "@/querries/externalMedia/music";
 import { useExistingMedia } from "@/querries/media/existingMedias";
 import { useAppDispatch, useAppSelector } from "@/store/settings/hooks";
-import { setBreadcrumbs, setLastSearchType, setViewMode, ViewMode } from "@/store/settings/slice";
+import { setBreadcrumbs, setLastSearchType, setViewMode } from "@/store/settings/slice";
 import { MediaItem } from "@/types/media";
 import { MediaTypeEnum } from "@/types/media";
 import { getMediaTypesOptions } from "@/utils/mediaText";
@@ -37,7 +38,6 @@ function MediaSearchPage() {
   const [searchName, setSearchName] = useState(searchParams.get("searchFilter") || "");
   const { viewMode, lastSearchType } = useAppSelector(state => state.ui)
   const { user } = useAppSelector((state) => state.auth);
-  const isGrid = useMemo(() => viewMode === "grid", [viewMode]);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -99,10 +99,6 @@ function MediaSearchPage() {
 
   const { data: existingMedia } = useExistingMedia(data);
 
-  const handleViewModeChange = (newTheme: ViewMode) => {
-    dispatch(setViewMode(newTheme))
-  }
-
   function handleSearchParamsChange() {
     const paramsForm = form.getValues();
 
@@ -148,16 +144,11 @@ function MediaSearchPage() {
                 label={t("searchForm.typeLabel")}
                 width={140}
               />
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => handleViewModeChange(isGrid ? "list" : "grid")}
-                className="shrink-0 self-end"
-                aria-label={isGrid ? t("searchForm.viewList") : t("searchForm.viewGrid")}
-              >
-                <Grid aria-hidden="true" className={`h-[1.2rem] w-[1.2rem] scale-0 -rotate-90  transition-all ${isGrid && "scale-100 rotate-0"} `} />
-                <List aria-hidden="true" className={`absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-0 transition-all ${!isGrid && "scale-100 -rotate-90"}`} />
-              </Button>
+              <ViewModeToggle
+                value={viewMode}
+                onChange={(mode) => dispatch(setViewMode(mode))}
+                className="self-end"
+              />
             </div>
 
             <div className="flex gap-1 items-end flex-1">

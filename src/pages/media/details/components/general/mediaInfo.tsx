@@ -30,11 +30,16 @@ export const MediaInfoComponent = ({ title, dates, tags, tagline, overview }: Me
       </div>
 
       {tags.length > 0 && (
-        <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-step-1 text-muted-foreground">
+        <ul className="mt-3 flex flex-wrap gap-1.5">
           {tags.map((tag) => (
-            <span key={tag}>{tag}</span>
+            <li
+              key={tag}
+              className="inline-flex items-center rounded-control border border-border bg-secondary px-2 py-0.5 text-step-1 text-foreground"
+            >
+              {tag}
+            </li>
           ))}
-        </div>
+        </ul>
       )}
 
       <div className="mt-6 flex flex-col gap-4">

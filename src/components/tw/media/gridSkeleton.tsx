@@ -21,3 +21,16 @@ export const GridItemSkeleton = () => {
     </div>
   );
 };
+
+const GRID_SKELETON_COUNT = 10;
+
+/** A responsive poster grid standing in for whichever card view is loading. */
+export const MediaGridSkeleton = ({ count = GRID_SKELETON_COUNT }: { count?: number }) => {
+  return (
+    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+      {Array.from({ length: count }).map((_, i) => (
+        <GridItemSkeleton key={i} />
+      ))}
+    </div>
+  );
+};

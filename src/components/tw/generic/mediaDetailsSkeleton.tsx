@@ -49,9 +49,9 @@ export const MediaDetailsSkeleton = () => {
 
           <Skeleton className="h-9 w-72 max-w-full" />
 
-          <div className="mt-3 flex flex-wrap gap-4">
+          <div className="mt-3 flex flex-wrap gap-1.5">
             {Array.from({ length: TAG_COUNT }).map((_, i) => (
-              <Skeleton key={i} className="h-4 w-16" />
+              <Skeleton key={i} className="h-6 w-16 rounded-control" />
             ))}
           </div>
 

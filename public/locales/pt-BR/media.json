@@ -218,9 +218,11 @@
     "pagePlaceholderMovies": "Digite o nome de um filme",
     "pageLabelDefault": "Buscar",
     "pagePlaceholderDefault": "Digite para buscar...",
-    "submit": "Buscar",
-    "viewGrid": "Mudar para visualização em grade",
-    "viewList": "Mudar para visualização em lista"
+    "submit": "Buscar"
+  },
+  "viewToggle": {
+    "grid": "Mudar para visualização em grade",
+    "list": "Mudar para visualização em lista"
   },
   "searchView": {
     "startTitle": "Comece sua busca",

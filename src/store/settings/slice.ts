@@ -75,7 +75,10 @@ function resolveStoredTheme(): Theme {
 
 interface UIState {
   theme: Theme;
+  /** Search results — kept apart from "libraryViewMode". */
   viewMode: ViewMode;
+  /** Home log and the collection pages — kept apart from search's "viewMode". */
+  libraryViewMode: ViewMode;
   ratingMode: RatingMode;
   lastSearchType: string;
   breadcrumbs: Crumb[];
@@ -86,6 +89,7 @@ interface UIState {
 const savedTheme = resolveStoredTheme();
 localStorage.setItem("theme", savedTheme);
 const savedViewMode = (localStorage.getItem("viewMode") as ViewMode) || "list";
+const savedLibraryViewMode = (localStorage.getItem("libraryViewMode") as ViewMode) || "list";
 const savedRatingMode = (localStorage.getItem("ratingMode") as RatingMode) || "stars5";
 const savedLastSearchType = localStorage.getItem("lastSearchType") || "movies";
 
@@ -107,6 +111,7 @@ applyThemeClasses(savedTheme);
 const initialState: UIState = {
   theme: savedTheme,
   viewMode: savedViewMode,
+  libraryViewMode: savedLibraryViewMode,
   ratingMode: savedRatingMode,
   lastSearchType: savedLastSearchType,
   breadcrumbs: [],
@@ -127,6 +132,11 @@ export const uiSlice = createSlice({
     setViewMode: (state, action: PayloadAction<ViewMode>) => {
       state.viewMode = action.payload;
       localStorage.setItem("viewMode", action.payload);
+    },
+
+    setLibraryViewMode: (state, action: PayloadAction<ViewMode>) => {
+      state.libraryViewMode = action.payload;
+      localStorage.setItem("libraryViewMode", action.payload);
     },
 
     setRatingMode: (state, action: PayloadAction<RatingMode>) => {
@@ -155,5 +165,5 @@ export const uiSlice = createSlice({
   },
 });
 
-export const { setTheme, setViewMode, setRatingMode, setLastSearchType, setBreadcrumbs, setMediaTypeFilter } = uiSlice.actions;
+export const { setTheme, setViewMode, setLibraryViewMode, setRatingMode, setLastSearchType, setBreadcrumbs, setMediaTypeFilter } = uiSlice.actions;
 export default uiSlice.reducer;

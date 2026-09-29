@@ -24,17 +24,15 @@ const ListItem = ({ item, existingItem }: ListItemProps) => {
       <Link
         key={item.id}
         to={`/media/${item.type}/details/${item.id}`}
-        className="flex border rounded overflow-hidden p-2 cursor-pointer transition hover:bg-accent/50 hover:shadow-md"
+        className="flex gap-3 rounded-lg border border-border p-3 pr-12 transition-colors hover:bg-accent/50 hover:shadow-md"
       >
         <ImageWithSkeleton
           src={existingItem?.imagePath ? (mediaImageUrl(existingItem.imagePath) ?? "") : item.coverUrl}
           alt=""
-          height={220}
-          width={180}
-          className="shrink-0"
+          className="aspect-2/3 w-20 shrink-0 self-start rounded-control sm:w-24"
         />
 
-        <div className="flex w-full flex-col gap-4 px-2">
+        <div className="flex w-full min-w-0 flex-col gap-4">
           <div>
             <h3 className="font-semibold">
               {item.title}
