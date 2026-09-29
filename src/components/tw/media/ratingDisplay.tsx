@@ -1,6 +1,7 @@
 import { Star } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
+import { StarsRow } from "@/components/ui/stars";
 import { cn } from "@/lib/utils";
 import { useAppSelector } from "@/store/settings/hooks";
 
@@ -31,7 +32,7 @@ export const RatingDisplay = ({ rating, discrete, singleStar }: RatingDisplayPro
     return (
       <span className="inline-flex items-center gap-1 tabular-nums" aria-label={ratingLabel}>
         {value}
-        <Star className="size-4 text-foreground" fill="currentColor" aria-hidden="true" />
+        <Star className="size-4 text-rating" fill="currentColor" aria-hidden="true" />
       </span>
     );
   }
@@ -39,40 +40,15 @@ export const RatingDisplay = ({ rating, discrete, singleStar }: RatingDisplayPro
   const stars = ratingMode === "stars5" ? 5 : 10;
   const displayValue = ratingMode === "stars5" ? rating / 2 : rating;
 
-  const sizeClass = discrete ? "h-3 w-3" : "h-4 w-4";
-  const emptyStarColor = discrete ? "currentColor" : "var(--muted-foreground)";
-
   return (
-    <div
+    <StarsRow
       role="img"
       aria-label={ratingLabel}
-      className={cn("flex items-center", discrete ? "gap-px" : "gap-0.5")}
-    >
-      {Array.from({ length: stars }, (_, i) => {
-        const starIndex = i + 1;
-        const fillType = displayValue >= starIndex ? "full" : displayValue >= starIndex - 0.5 ? "half" : "empty";
-
-        return (
-          <div key={i} className={cn("relative", sizeClass)} aria-hidden="true">
-            <Star
-              className={cn("absolute top-0 left-0", sizeClass, discrete && "opacity-25")}
-              fill="transparent"
-              style={{ color: emptyStarColor }}
-            />
-            <div
-              className="absolute top-0 left-0 h-full overflow-hidden"
-              style={{
-                width: fillType === "full" ? "100%" : fillType === "half" ? "50%" : "0%",
-              }}
-            >
-              <Star
-                className={cn(sizeClass, "text-amber-400")}
-                fill="currentColor"
-              />
-            </div>
-          </div>
-        );
-      })}
-    </div>
+      value={displayValue}
+      max={stars}
+      size={discrete ? "size-3" : "size-4"}
+      dimEmpty={discrete}
+      className={discrete ? "gap-px" : undefined}
+    />
   );
 };

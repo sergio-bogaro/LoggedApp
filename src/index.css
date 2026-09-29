@@ -39,6 +39,10 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
+  /* Rating keeps a single semantic gold across themes (it is a value, not an
+     accent), calibrated per plane. */
+  --color-rating: var(--rating);
+
   /* ── Categorical: one hue per media type ────────────────────────────── */
   --color-type-film: var(--type-film);
   --color-type-anime: var(--type-anime);
@@ -134,6 +138,8 @@
   --input: #e8e8e2;
   --ring: #2f5d50;
 
+  --rating: #a3791f; /* desaturated gold for filled stars */
+
   /* Categorical — equal lightness and chroma, hue is the only variable. */
   --type-film: #3e6fa8;
   --type-anime: #7c5ba6;
@@ -183,6 +189,8 @@
   --border: #2a2e33;
   --input: #23272c;
   --ring: #7fb3a0;
+
+  --rating: #d8b871; /* same gold, re-calibrated for the dark plane */
 
   /* Same five hues, re-calibrated for AA contrast on the dark plane. */
   --type-film: #7fa8d4;
