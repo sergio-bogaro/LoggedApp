@@ -44,7 +44,9 @@ export function AppSidebar() {
              L
           </div>
 
-          <SidebarGroupLabel className="text-step-3 font-semibold">{t("branding.sidebarName", { ns: "common" })}</SidebarGroupLabel>
+          <SidebarGroupLabel className="font-semibold">
+            <span className="text-step-2">{t("branding.sidebarName", { ns: "common" })}</span>
+          </SidebarGroupLabel>
         </div>
       </SidebarHeader>
 
