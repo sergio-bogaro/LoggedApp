@@ -46,12 +46,7 @@ const MediaTypeFilter = ({ value, onChange, availableTypes }: MediaTypeFilterPro
             variant={selected ? "default" : "outline"}
             aria-pressed={selected}
             onClick={() => toggle(option.value)}
-            className={cn(
-              "border",
-              selected
-                ? "border-transparent shadow-xs"
-                : "hover:border-primary/40 hover:bg-primary/10 hover:text-primary dark:hover:bg-primary/15"
-            )}
+            className={cn("border", selected && "border-transparent shadow-xs")}
           >
             {option.label}
           </Button>

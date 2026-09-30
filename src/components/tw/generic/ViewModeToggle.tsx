@@ -26,10 +26,7 @@ export const ViewModeToggle = ({ value, onChange, className }: ViewModeTogglePro
       variant="outline"
       onClick={() => onChange(isGrid ? "list" : "grid")}
       aria-label={isGrid ? t("viewToggle.list") : t("viewToggle.grid")}
-      className={cn(
-        "shrink-0 bg-background hover:border-primary/40 hover:bg-primary/10 hover:text-primary dark:bg-background dark:hover:bg-primary/15",
-        className
-      )}
+      className={cn("shrink-0 bg-background dark:bg-background", className)}
     >
       <Grid
         aria-hidden="true"
