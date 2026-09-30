@@ -41,6 +41,7 @@ export function useMediaSourceAvailability(): {
     availability: {
       [MediaTypeEnum.MOVIES]: tmdbConfigured ?? false,
       [MediaTypeEnum.ANIME]: true,
+      [MediaTypeEnum.SERIES]: tmdbConfigured ?? false,
       [MediaTypeEnum.MANGA]: true,
       [MediaTypeEnum.GAME]: igdbConfigured ?? false,
       [MediaTypeEnum.BOOK]: true,

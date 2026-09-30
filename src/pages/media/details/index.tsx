@@ -31,6 +31,7 @@ import { getBookDetails } from "@/querries/externalMedia/books";
 import { getGameDetails } from "@/querries/externalMedia/games";
 import { getMovieDetails } from "@/querries/externalMedia/movies";
 import { getAlbumDetails } from "@/querries/externalMedia/music";
+import { getSeriesDetails } from "@/querries/externalMedia/series";
 import { getMediaByExternalIdWithLogs, mediaImageUrl } from "@/querries/media/logged";
 import { useAppSelector } from "@/store/auth/hooks";
 import { useAppDispatch } from "@/store/settings/hooks";
@@ -84,6 +85,8 @@ function MediaDetailsPage() {
           return getAniListDetails(Number(id), MediaTypeEnum.MANGA);
         case MediaTypeEnum.ANIME:
           return getAniListDetails(Number(id), MediaTypeEnum.ANIME);
+        case MediaTypeEnum.SERIES:
+          return getSeriesDetails(Number(id), user?.id);
         case MediaTypeEnum.BOOK:
           return getBookDetails(id);
         case MediaTypeEnum.GAME:

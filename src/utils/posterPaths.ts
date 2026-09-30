@@ -10,6 +10,8 @@ export function getPosterUrl(type: MediaTypeEnum, data: any) {
       return data.coverImage?.extraLarge || data.coverImage?.large;
     case MediaTypeEnum.ANIME:
       return data.coverImage?.extraLarge || data.coverImage?.large;
+    case MediaTypeEnum.SERIES:
+      return tmdbPosterUrl(data.poster_path, "original");
     case MediaTypeEnum.BOOK:
       return data.covers?.[0]
         ? `https://covers.openlibrary.org/b/id/${data.covers[0]}-L.jpg`

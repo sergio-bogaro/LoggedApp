@@ -48,6 +48,7 @@ function SettingsPage() {
         trackGames: next[MediaTypeEnum.GAME],
         trackBooks: next[MediaTypeEnum.BOOK],
         trackMusic: next[MediaTypeEnum.MUSIC],
+        trackSeries: next[MediaTypeEnum.SERIES],
       });
       dispatch(updateUserSettings(updated));
     } catch (error) {

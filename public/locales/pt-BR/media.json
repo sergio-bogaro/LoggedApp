@@ -26,6 +26,9 @@
     "author": "Autor",
     "artist": "Artista",
     "episodes": "Episódios",
+    "seasons": "Temporadas",
+    "creators": "Criadores",
+    "networks": "Emissoras",
     "chapters": "Capítulos",
     "volumes": "Volumes",
     "productionBy": "Produção",
@@ -52,6 +55,7 @@
     "movie": "Filme",
     "movies": "Filme",
     "anime": "Anime",
+    "series": "Série",
     "manga": "Mangá",
     "game": "Jogo",
     "book": "Livro",
@@ -60,6 +64,7 @@
   "typePlural": {
     "movies": "Filmes",
     "anime": "Animes",
+    "series": "Séries",
     "manga": "Mangás",
     "game": "Jogos",
     "book": "Livros",
@@ -168,6 +173,30 @@
       "characters": "Nenhum personagem encontrado.",
       "staff": "Nenhuma equipe encontrada.",
       "relations": "Nenhuma mídia relacionada encontrada."
+    }
+  },
+  "seriesTabs": {
+    "tabs": {
+      "seasons": "Temporadas",
+      "trailers": "Trailers",
+      "cast": "Elenco",
+      "crew": "Equipe",
+      "similar": "Similares"
+    },
+    "empty": {
+      "seasons": "Nenhuma temporada disponível.",
+      "trailers": "Nenhum trailer disponível.",
+      "cast": "Nenhum ator encontrado.",
+      "crew": "Nenhuma equipe encontrada.",
+      "similar": "Nenhuma série similar encontrada."
+    },
+    "status": {
+      "returningSeries": "Em exibição",
+      "ended": "Finalizada",
+      "canceled": "Cancelada",
+      "inProduction": "Em produção",
+      "planned": "Planejada",
+      "pilot": "Piloto"
     }
   },
   "gameTabs": {

@@ -26,6 +26,9 @@
     "author": "Author",
     "artist": "Artist",
     "episodes": "Episodes",
+    "seasons": "Seasons",
+    "creators": "Creators",
+    "networks": "Networks",
     "chapters": "Chapters",
     "volumes": "Volumes",
     "productionBy": "Production",
@@ -82,6 +85,7 @@
     "movie": "Movie",
     "movies": "Movie",
     "anime": "Anime",
+    "series": "Series",
     "manga": "Manga",
     "game": "Game",
     "book": "Book",
@@ -90,6 +94,7 @@
   "typePlural": {
     "movies": "Movies",
     "anime": "Anime",
+    "series": "Series",
     "manga": "Manga",
     "game": "Games",
     "book": "Books",
@@ -168,6 +173,30 @@
       "characters": "No characters found.",
       "staff": "No staff found.",
       "relations": "No related media found."
+    }
+  },
+  "seriesTabs": {
+    "tabs": {
+      "seasons": "Seasons",
+      "trailers": "Trailers",
+      "cast": "Cast",
+      "crew": "Crew",
+      "similar": "Similar"
+    },
+    "empty": {
+      "seasons": "No seasons available.",
+      "trailers": "No trailers available.",
+      "cast": "No cast found.",
+      "crew": "No crew found.",
+      "similar": "No similar series found."
+    },
+    "status": {
+      "returningSeries": "Returning Series",
+      "ended": "Ended",
+      "canceled": "Canceled",
+      "inProduction": "In Production",
+      "planned": "Planned",
+      "pilot": "Pilot"
     }
   },
   "gameTabs": {

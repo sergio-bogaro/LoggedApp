@@ -155,6 +155,9 @@ export async function getAlternativeImages(
     case MediaTypeEnum.MOVIES:
       return getMovieAlternatives(data);
 
+    case MediaTypeEnum.SERIES:
+      return getMovieAlternatives(data);
+
     case MediaTypeEnum.GAME:
       return getGameAlternatives(data);
 

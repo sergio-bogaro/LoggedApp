@@ -5,6 +5,7 @@ import { GameTabs } from "../game/tabs";
 import { MangaTabs } from "../manga/tabs";
 import { MovieTabs } from "../movies/tabs";
 import { MusicTabs } from "../music/tabs";
+import { SeriesTabs } from "../series/tabs";
 
 import { MediaTypeEnum } from "@/types/media";
 
@@ -20,6 +21,8 @@ export const MediaTabs = ({ data, mediaType }: MediaTabsProps) => {
         return <MovieTabs movieData={data} />;
       case MediaTypeEnum.ANIME:
         return <AnimeTabs data={data} />
+      case MediaTypeEnum.SERIES:
+        return <SeriesTabs data={data} />
       case MediaTypeEnum.MANGA:
         return <MangaTabs data={data} />;
       case MediaTypeEnum.GAME:

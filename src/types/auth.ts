@@ -11,6 +11,7 @@ export interface User {
   trackGames: boolean;
   trackBooks: boolean;
   trackMusic: boolean;
+  trackSeries: boolean;
 }
 
 export interface UserCreate {

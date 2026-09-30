@@ -3,7 +3,7 @@ import { MediaTypeEnum } from "@/types/media";
 
 export type MediaTrackValues = Record<MediaTypeEnum, boolean>;
 
-export type TrackFlagKey = "trackMovies" | "trackAnime" | "trackManga" | "trackGames" | "trackBooks" | "trackMusic";
+export type TrackFlagKey = "trackMovies" | "trackAnime" | "trackManga" | "trackGames" | "trackBooks" | "trackMusic" | "trackSeries";
 
 export const trackFlagByType: Record<MediaTypeEnum, TrackFlagKey> = {
   [MediaTypeEnum.MOVIES]: "trackMovies",
@@ -12,6 +12,7 @@ export const trackFlagByType: Record<MediaTypeEnum, TrackFlagKey> = {
   [MediaTypeEnum.GAME]: "trackGames",
   [MediaTypeEnum.BOOK]: "trackBooks",
   [MediaTypeEnum.MUSIC]: "trackMusic",
+  [MediaTypeEnum.SERIES]: "trackSeries",
 };
 
 const legacyTrackFlagByType: Record<MediaTypeEnum, string> = {
@@ -21,6 +22,7 @@ const legacyTrackFlagByType: Record<MediaTypeEnum, string> = {
   [MediaTypeEnum.GAME]: "track_games",
   [MediaTypeEnum.BOOK]: "track_books",
   [MediaTypeEnum.MUSIC]: "track_music",
+  [MediaTypeEnum.SERIES]: "track_series",
 };
 
 /** Types logged as a single event (one date, always finished) rather than a period. */

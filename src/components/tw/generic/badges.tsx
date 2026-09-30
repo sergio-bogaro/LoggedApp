@@ -11,6 +11,7 @@ import { MediaStatusEnum, MediaTypeEnum } from "@/types/media"
 const typeRule: Record<MediaTypeEnum, string> = {
   [MediaTypeEnum.MOVIES]: "bg-type-film",
   [MediaTypeEnum.ANIME]: "bg-type-anime",
+  [MediaTypeEnum.SERIES]: "bg-type-series",
   [MediaTypeEnum.MANGA]: "bg-type-manga",
   [MediaTypeEnum.GAME]: "bg-type-game",
   [MediaTypeEnum.BOOK]: "bg-type-book",

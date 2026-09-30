@@ -46,6 +46,7 @@
   /* ── Categorical: one hue per media type ────────────────────────────── */
   --color-type-film: var(--type-film);
   --color-type-anime: var(--type-anime);
+  --color-type-series: var(--type-series);
   --color-type-manga: var(--type-manga);
   --color-type-game: var(--type-game);
   --color-type-book: var(--type-book);
@@ -143,6 +144,7 @@
   /* Categorical — equal lightness and chroma, hue is the only variable. */
   --type-film: #3e6fa8;
   --type-anime: #7c5ba6;
+  --type-series: #4f8a45;
   --type-manga: #a8516e;
   --type-game: #2f7a73;
   --type-book: #8f6a24;
@@ -195,6 +197,7 @@
   /* Same five hues, re-calibrated for AA contrast on the dark plane. */
   --type-film: #7fa8d4;
   --type-anime: #b393d6;
+  --type-series: #95c98a;
   --type-manga: #d68fa8;
   --type-game: #7fc0b8;
   --type-book: #d4b36f;

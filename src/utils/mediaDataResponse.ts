@@ -3,6 +3,7 @@ import { BookDetails, getBookDescription } from "@/querries/externalMedia/books"
 import { IGDBGame } from "@/querries/externalMedia/games";
 import { TMDBMovieDetails, tmdbPosterUrl } from "@/querries/externalMedia/movies";
 import { MusicAlbumDetails } from "@/querries/externalMedia/music";
+import { TMDBTvDetails } from "@/querries/externalMedia/series";
 import { MediaDataDetailsType, MediaTypeEnum } from "@/types/media";
 
 export function getMediaData(mediaType: MediaTypeEnum, mediaData: unknown): MediaDataDetailsType {
@@ -51,6 +52,19 @@ export function getMediaData(mediaType: MediaTypeEnum, mediaData: unknown): Medi
         description: mangaData.description,
         releaseDate: mangaData.startDate ? anilistDateToIso(mangaData.startDate) : undefined,
         tags: mangaData.genres || [],
+      };
+    }
+    case MediaTypeEnum.SERIES: {
+      const seriesData = mediaData as TMDBTvDetails;
+
+      return {
+        id: String(seriesData.id),
+        title: seriesData.name ?? "",
+        type: mediaType,
+        coverUrl: tmdbPosterUrl(seriesData.poster_path, "original") || "",
+        description: seriesData.overview ?? "",
+        releaseDate: seriesData.first_air_date,
+        tags: seriesData.genres?.map((g) => g.name) || [],
       };
     }
     case MediaTypeEnum.GAME: {
@@ -108,6 +122,8 @@ export function getPosterUrl(type: MediaTypeEnum, data: any): string {
       return data.coverImage?.extraLarge || data.coverImage?.large;
     case MediaTypeEnum.ANIME:
       return data.coverImage?.extraLarge || data.coverImage?.large;
+    case MediaTypeEnum.SERIES:
+      return tmdbPosterUrl(data.poster_path, "original");
     case MediaTypeEnum.BOOK:
       return data.covers?.[0]
         ? `https://covers.openlibrary.org/b/id/${data.covers[0]}-L.jpg`

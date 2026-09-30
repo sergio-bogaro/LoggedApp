@@ -1,4 +1,4 @@
-import { Book, BookOpen, Film, Gamepad2, Music, Tv } from "lucide-react";
+import { Book, BookOpen, Clapperboard, Film, Gamepad2, Music, Tv } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import { Switch } from "@/components/ui/switch";
@@ -15,6 +15,7 @@ type MediaTrackTogglesProps = {
 const trackableMediaTypes: Array<{ type: MediaTypeEnum; icon: typeof Film }> = [
   { type: MediaTypeEnum.MOVIES, icon: Film },
   { type: MediaTypeEnum.ANIME, icon: Tv },
+  { type: MediaTypeEnum.SERIES, icon: Clapperboard },
   { type: MediaTypeEnum.MANGA, icon: BookOpen },
   { type: MediaTypeEnum.BOOK, icon: Book },
   { type: MediaTypeEnum.GAME, icon: Gamepad2 },
@@ -23,6 +24,7 @@ const trackableMediaTypes: Array<{ type: MediaTypeEnum; icon: typeof Film }> = [
 
 const requiredKeyKeys: Partial<Record<MediaTypeEnum, string>> = {
   [MediaTypeEnum.MOVIES]: "settings.tracking.requiresTmdb",
+  [MediaTypeEnum.SERIES]: "settings.tracking.requiresTmdb",
   [MediaTypeEnum.GAME]: "settings.tracking.requiresIgdb",
 };
 

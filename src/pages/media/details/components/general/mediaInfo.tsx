@@ -4,6 +4,7 @@ import { BookDetails, getBookDescription } from "@/querries/externalMedia/books"
 import { IGDBGame } from "@/querries/externalMedia/games";
 import { TMDBMovieDetails } from "@/querries/externalMedia/movies";
 import { MusicAlbumDetails } from "@/querries/externalMedia/music";
+import { TMDBTvDetails } from "@/querries/externalMedia/series";
 import { MediaTypeEnum } from "@/types/media";
 import { htmlToPlainText } from "@/utils/string";
 
@@ -78,6 +79,17 @@ export const MediaInfo = ({ mediaType, data }: MediaInfoProps) => {
           dates={animeData.startDate?.year?.toString()}
           overview={animeData.description ?? ""}
           tags={animeData.genres?.map((genre) => genre) || []}
+        />
+      }
+      case MediaTypeEnum.SERIES: {
+        const seriesData = data as TMDBTvDetails;
+
+        return <MediaInfoComponent
+          title={seriesData.name}
+          dates={seriesData.first_air_date?.slice(0, 4) || ""}
+          tagline={seriesData.tagline ?? ""}
+          overview={seriesData.overview ?? ""}
+          tags={seriesData.genres?.map((genre) => genre.name) || []}
         />
       }
       case MediaTypeEnum.MANGA: {

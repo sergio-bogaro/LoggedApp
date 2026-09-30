@@ -18,6 +18,7 @@ import { searchBooksNormalized } from "@/querries/externalMedia/books";
 import { searchGamesNormalized } from "@/querries/externalMedia/games";
 import { searchMoviesNormalized } from "@/querries/externalMedia/movies";
 import { searchMusicNormalized } from "@/querries/externalMedia/music";
+import { searchSeriesNormalized } from "@/querries/externalMedia/series";
 import { useExistingMedia } from "@/querries/media/existingMedias";
 import { useAppDispatch, useAppSelector } from "@/store/settings/hooks";
 import { setBreadcrumbs, setLastSearchType, setViewMode } from "@/store/settings/slice";
@@ -79,6 +80,8 @@ function MediaSearchPage() {
         return (query: string) => searchMangaAnilistNormalized(query);
       case MediaTypeEnum.ANIME:
         return (query: string) => searchAnimeAnilistNormalized(query);
+      case MediaTypeEnum.SERIES:
+        return (query: string) => searchSeriesNormalized(query, user?.id);
       case MediaTypeEnum.GAME:
         return (query: string) => searchGamesNormalized(query, user?.id);
       case MediaTypeEnum.BOOK:
