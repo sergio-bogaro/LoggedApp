@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const GridItemSkeleton = () => {
@@ -22,12 +24,32 @@ export const GridItemSkeleton = () => {
   );
 };
 
-const GRID_SKELETON_COUNT = 10;
+/*
+ * Poster grids. The constants are exported so the loading skeleton and the
+ * loaded grid share one class string — otherwise columns and gaps drift apart
+ * and the layout jumps when the data lands.
+ */
+export const POSTER_GRID = "grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5";
+export const POSTER_GRID_WIDE = `${POSTER_GRID} xl:grid-cols-6`;
+export const POSTER_GRID_COLLECTION = "grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5";
 
-/** A responsive poster grid standing in for whichever card view is loading. */
-export const MediaGridSkeleton = ({ count = GRID_SKELETON_COUNT }: { count?: number }) => {
+const GRID_SKELETON_COUNT = 12;
+
+/**
+ * A poster grid standing in for whichever card view is loading. Pass the same
+ * grid class the loaded content uses (one of the POSTER_GRID constants).
+ */
+export const MediaGridSkeleton = ({
+  count = GRID_SKELETON_COUNT,
+  className = POSTER_GRID,
+}: {
+  count?: number;
+  className?: string;
+}) => {
+  const { t } = useTranslation("common");
+
   return (
-    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+    <div className={className} role="status" aria-busy="true" aria-label={t("a11y.loading")}>
       {Array.from({ length: count }).map((_, i) => (
         <GridItemSkeleton key={i} />
       ))}

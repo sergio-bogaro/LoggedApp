@@ -6,6 +6,7 @@ import { LogRow } from "./LogRow";
 import { LogDetailsDialog } from "@/components/tw/dialogs/logDetailsDialog";
 import { EmptyState } from "@/components/tw/generic/EmptyState";
 import { SectionHeading } from "@/components/tw/generic/SectionHeading";
+import { POSTER_GRID } from "@/components/tw/media/gridSkeleton";
 import { LogCard } from "@/components/tw/media/LogCard";
 import type { MediaLogWithMedia } from "@/querries/media/logged";
 import type { ViewMode } from "@/store/settings/slice";
@@ -61,7 +62,7 @@ export const LogStream = ({ logs, filtered = false, viewMode = "list" }: LogStre
             <SectionHeading>{formatMonthLabel(group[0].date, i18n.language)}</SectionHeading>
 
             {isGrid ? (
-              <ul className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+              <ul className={`mt-4 ${POSTER_GRID}`}>
                 {group.map((log) => (
                   <li key={log.id}>
                     <LogCard log={log} onOpenDetails={() => setSelectedLog(log)} />

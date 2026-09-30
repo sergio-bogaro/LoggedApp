@@ -14,13 +14,15 @@ import { setBreadcrumbs } from "@/store/settings/slice";
 import { collectionSections, filterByCollection, getCollection, MediaCollection } from "@/utils/mediaCollections";
 
 const ViewsHubSkeleton = () => (
-  <div className="space-y-10">
-    {[0, 1].map((section) => (
-      <div key={section} className="space-y-5">
-        <Skeleton className="h-8 w-48" />
+  <div className="space-y-10" aria-hidden="true">
+    {collectionSections.map((section) => (
+      <div key={section.titleKey} className="space-y-5">
+        <div className="border-b border-border pb-2">
+          <Skeleton className="h-7 w-48" />
+        </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {[0, 1, 2, 3].map((card) => (
-            <Skeleton key={card} className="h-28 w-full" />
+          {section.keys.map((key) => (
+            <Skeleton key={key} className="h-40 w-full" />
           ))}
         </div>
       </div>

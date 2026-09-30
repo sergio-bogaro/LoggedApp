@@ -10,7 +10,7 @@ import { SectionHeading } from "@/components/tw/generic/SectionHeading";
 import { ViewModeToggle } from "@/components/tw/generic/ViewModeToggle";
 import { LogStreamSkeleton } from "@/components/tw/log/LogStreamSkeleton";
 import { GridItem } from "@/components/tw/media/grid";
-import { MediaGridSkeleton } from "@/components/tw/media/gridSkeleton";
+import { MediaGridSkeleton, POSTER_GRID_COLLECTION } from "@/components/tw/media/gridSkeleton";
 import MediaTypeFilter from "@/components/tw/media/MediaTypeFilter";
 import { RegisterRow } from "@/components/tw/media/RegisterRow";
 import { useMediaLibrary } from "@/hooks/useMediaLibrary";
@@ -138,7 +138,7 @@ const MediaCollectionPage = () => {
         isFetching={isFetching}
         isError={isError}
         errorMessage={`${t("errorLoading", { ns: "common" })} ${error?.message ?? ""}`}
-        skeleton={libraryViewMode === "grid" ? <MediaGridSkeleton /> : <LogStreamSkeleton />}
+        skeleton={libraryViewMode === "grid" ? <MediaGridSkeleton className={POSTER_GRID_COLLECTION} /> : <LogStreamSkeleton />}
       >
         {groups.length === 0 ? (
           <EmptyState title={t("views.empty")} description={t("views.emptyHint")} />
@@ -153,7 +153,7 @@ const MediaCollectionPage = () => {
                 </SectionHeading>
 
                 {libraryViewMode === "grid" ? (
-                  <ul className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5">
+                  <ul className={`mt-4 ${POSTER_GRID_COLLECTION}`}>
                     {group.map((media) => (
                       <li key={media.id}>
                         <GridItem item={toMediaItem(media)} existingItem={media} showMediaType />

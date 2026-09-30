@@ -18,7 +18,7 @@ function Breadcrumbs() {
 
           return (
             <Fragment key={`${crumb.label}-${index}`}>
-              {index > 0 && <ChevronRight aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />}
+              {index > 0 && <ChevronRight aria-hidden="true" className="h-3 w-3 shrink-0" />}
               <li className="flex items-center min-w-0">
                 {crumb.to ? (
                   <Link

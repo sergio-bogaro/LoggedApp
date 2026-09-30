@@ -17,7 +17,7 @@ export const MediaCardSkeleton = () => {
           <div key={sectionIdx}>
             {/* Section title + view all/buttons cluster */}
             <div className="flex items-center justify-between mb-2">
-              <Skeleton className="h-6 w-44" />
+              <Skeleton className="h-8 w-44" />
               <div className="flex flex-col items-center gap-1">
                 <Skeleton className="h-8 w-24 rounded-md" />
                 <div className="hidden md:flex gap-2">
@@ -27,7 +27,7 @@ export const MediaCardSkeleton = () => {
               </div>
             </div>
             {/* Section description */}
-            <Skeleton className="h-4 w-64 mb-4" />
+            <Skeleton className="h-5 w-64" />
 
             {/* Cards carousel */}
             <div className="flex -ml-4 overflow-hidden min-h-72">

@@ -8,7 +8,7 @@ import { EmptyState } from "@/components/tw/generic/EmptyState";
 import { Loading } from "@/components/tw/generic/loading";
 import { PageHeader } from "@/components/tw/generic/PageHeader";
 import { GridItem } from "@/components/tw/media/grid";
-import { GridItemSkeleton } from "@/components/tw/media/gridSkeleton";
+import { MediaGridSkeleton, POSTER_GRID_WIDE } from "@/components/tw/media/gridSkeleton";
 import { Button } from "@/components/ui/button";
 import { getMediaList } from "@/querries/media/logged";
 import { useAppSelector } from "@/store/auth/hooks";
@@ -20,6 +20,8 @@ import { DEFAULT_STALE_TIME } from "@/utils/conts";
 import { pathToMediaType } from "@/utils/mediaText";
 
 const PAGE_SIZE = 20;
+/* Fills a full skeleton grid on wide screens so the switch to real data
+   does not change the page height. */
 const SKELETON_COUNT = 12;
 
 const MediaLogsPage = () => {
@@ -104,18 +106,14 @@ const MediaLogsPage = () => {
       />
 
       {isLoading ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 min-h-72">
-          {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
-            <GridItemSkeleton key={i} />
-          ))}
-        </div>
+        <MediaGridSkeleton count={SKELETON_COUNT} className={`${POSTER_GRID_WIDE} min-h-72`} />
       ) : allItems.length === 0 ? (
         <EmptyState title={t("logs.empty")} description={t("logs.emptyHint")} />
       ) : (
         <>
           <div className="relative">
             <Loading isLoading={isFetching && !isFetchingNextPage} />
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+            <div className={`${POSTER_GRID_WIDE} min-h-72`}>
               {allItems.map((item) => {
                 const normalizedItem: MediaItem = {
                   id: item.externalId,
