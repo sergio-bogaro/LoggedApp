@@ -29,6 +29,7 @@ import {
 } from "@/types/media";
 import { newIsoDate } from "@/utils/date";
 import { useTrackMedia } from "@/utils/mediaStore";
+import { isOneTimeConsumption } from "@/utils/mediaTrack";
 import { statusAnimeOptions } from "@/utils/selectOptions";
 
 interface TrackMediaDialogProps {
@@ -55,23 +56,34 @@ export function TrackMediaDialog({ mediaType, existingMedia, image, formatedData
 
   const trackMedia = useTrackMedia();
 
-  const isOneTimeConsumption = useMemo( () => mediaType === MediaTypeEnum.MOVIES, [mediaType] );
-  const endDateLabel = useMemo( () => (isOneTimeConsumption ? "track.viewedOn" : "track.finishDate"), [isOneTimeConsumption] );
+  const oneTimeConsumption = useMemo( () => isOneTimeConsumption(mediaType), [mediaType] );
+  const endDateLabel = useMemo(
+    () =>
+      oneTimeConsumption
+        ? mediaType === MediaTypeEnum.MUSIC
+          ? "track.listenedOn"
+          : "track.viewedOn"
+        : "track.finishDate",
+    [oneTimeConsumption, mediaType]
+  );
 
   // Reuse the media's previous status, unless it closed the media
   // (finished/dropped) — then start a fresh in-progress log.
   const defaultStatus = useMemo(() => {
-    if (isOneTimeConsumption) return MediaStatusEnum.FINISHED;
+    if (oneTimeConsumption) return MediaStatusEnum.FINISHED;
     const previous = existingMedia?.status;
     if (previous && !finishedStatusEnumValues.includes(previous)) return previous;
     return MediaStatusEnum.IN_PROGRESS;
-  }, [isOneTimeConsumption, existingMedia]);
+  }, [oneTimeConsumption, existingMedia]);
 
-  const buildDefaults = (): FormType => ({
-    status: defaultStatus,
-    startDate: isOneTimeConsumption ? undefined : newIsoDate(),
-    endDate: isOneTimeConsumption ? newIsoDate() : undefined,
-  });
+  const buildDefaults = (): FormType => {
+    const today = newIsoDate();
+    return {
+      status: defaultStatus,
+      startDate: today,
+      endDate: oneTimeConsumption ? today : undefined,
+    };
+  };
 
   const form = useForm<FormType>({ defaultValues: buildDefaults() });
 
@@ -90,19 +102,30 @@ export function TrackMediaDialog({ mediaType, existingMedia, image, formatedData
   );
 
   useEffect(() => {
-    if (isFinished && !isOneTimeConsumption) {
+    if (oneTimeConsumption) {
+      const today = newIsoDate();
+      form.setValue("startDate", today);
+      form.setValue("endDate", today);
+      return;
+    }
+
+    if (isFinished) {
       form.setValue("endDate", newIsoDate());
       form.setValue("startDate", inProgressStartDate);
     } else {
       form.setValue("startDate", newIsoDate());
       form.setValue("endDate", undefined);
     }
-  }, [isFinished, inProgressStartDate]);
+  }, [isFinished, oneTimeConsumption, inProgressStartDate]);
 
   const onSubmit = (data: FormType) => {
     const formData = {
-      startDate: data.startDate && data.startDate.trim() !== "" ? data.startDate : undefined,
-      endDate: isOneTimeConsumption ? data.endDate : data.status === MediaStatusEnum.FINISHED ? data.endDate : undefined,
+      startDate: oneTimeConsumption
+        ? data.endDate
+        : data.startDate && data.startDate.trim() !== "" ? data.startDate : undefined,
+      endDate: oneTimeConsumption
+        ? data.endDate
+        : data.status === MediaStatusEnum.FINISHED ? data.endDate : undefined,
       status:  data.status,
       rating: data.rating,
       review: data.review,
@@ -156,7 +179,7 @@ export function TrackMediaDialog({ mediaType, existingMedia, image, formatedData
               onSubmit={handleSubmit(onSubmit)}
               className="flex flex-col gap-4 w-full lg:w-2/3"
             >
-              {!isOneTimeConsumption && (
+              {!oneTimeConsumption && (
                 <Select
                   name="status"
                   label={t("track.status", { ns: "media" })}
@@ -166,7 +189,7 @@ export function TrackMediaDialog({ mediaType, existingMedia, image, formatedData
               )}
 
               <div className="grid grid-cols-2 gap-4">
-                {!isOneTimeConsumption && (
+                {!oneTimeConsumption && (
                   <DatePicker
                     label={t("track.startDate", { ns: "media" })}
                     name="startDate"

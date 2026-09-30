@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { MediaLogResponse, MediaWithLogsResponse } from "@/types/logged";
 import { MediaTypeEnum } from "@/types/media";
 import { formatLongDate } from "@/utils/date";
+import { isOneTimeConsumption } from "@/utils/mediaTrack";
 
 interface RecordRowProps {
   label: string;
@@ -45,7 +46,9 @@ export const MediaRecord = ({ media, lastLog, onOpenLogDetails, children }: Medi
   const rating = media?.rating ?? lastLog?.rating ?? null;
   const hasRating = typeof rating === "number" && rating > 0;
   const logCount = media?.logCount ?? 0;
-  const isOneTimeConsumption = media?.type === MediaTypeEnum.MOVIES;
+  const oneTimeConsumption = isOneTimeConsumption(media?.type);
+  const consumedOn = lastLog?.endDate ?? lastLog?.startDate ?? null;
+  const consumedOnLabel = media?.type === MediaTypeEnum.MUSIC ? t("track.listenedOn") : t("track.viewedOn");
 
   const startDate = lastLog?.startDate
     ? formatLongDate(lastLog.startDate, i18n.language)
@@ -85,13 +88,17 @@ export const MediaRecord = ({ media, lastLog, onOpenLogDetails, children }: Medi
               )}
             </RecordRow>
 
-            {startDate && <RecordRow label={t("record.start")}>{startDate}</RecordRow>}
+            {!oneTimeConsumption && startDate && <RecordRow label={t("record.start")}>{startDate}</RecordRow>}
 
-            {endDate && (
-              <RecordRow label={isOneTimeConsumption ? t("track.viewedOn") : t("record.end")}>
-                {endDate}
-              </RecordRow>
-            )}
+            {oneTimeConsumption
+              ? consumedOn && (
+                <RecordRow label={consumedOnLabel}>
+                  {formatLongDate(consumedOn, i18n.language)}
+                </RecordRow>
+              )
+              : endDate && (
+                <RecordRow label={t("record.end")}>{endDate}</RecordRow>
+              )}
           </dl>
 
           {onOpenLogDetails && media.lastLogDate && (

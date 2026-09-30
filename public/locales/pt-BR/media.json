@@ -76,6 +76,7 @@
     "startDate": "Data de Início",
     "finishDate": "Data de Conclusão",
     "viewedOn": "Visto em",
+    "listenedOn": "Ouvido em",
     "completedOn": "Completado em",
     "rating": "Nota",
     "review": "Avaliação",
@@ -396,6 +397,7 @@
     "startDate": "Data de Início",
     "endDate": "Data de Conclusão",
     "noReview": "Sem avaliação",
-    "viewedOn": "Visto em"
+    "viewedOn": "Visto em",
+    "listenedOn": "Ouvido em"
   }
 }

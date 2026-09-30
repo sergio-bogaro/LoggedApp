@@ -34,34 +34,58 @@ const ITUNES_LOOKUP = "https://itunes.apple.com/lookup";
 
 export async function searchAlbums(title: string): Promise<MusicAlbum[]> {
   if (!title || title.trim().length === 0) return [];
-  const params = new URLSearchParams();
-  params.set("term", title);
-  params.set("entity", "album");
-  params.set("limit", "30");
 
-  const res = await fetch(`${ITUNES_SEARCH}?${params.toString()}`);
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`iTunes API error: ${res.status} ${text}`);
-  }
+  const fetchEntity = async (entity: "album" | "song") => {
+    const params = new URLSearchParams();
+    params.set("term", title);
+    params.set("entity", entity);
+    params.set("limit", "50");
 
-  const data = await res.json();
-  const results = data.results || [];
+    const res = await fetch(`${ITUNES_SEARCH}?${params.toString()}`);
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`iTunes API error: ${res.status} ${text}`);
+    }
 
-  const rawItems: MusicAlbum[] = results.map((r: any) => {
-    const id = String(r.collectionId);
-    const title = r.collectionName;
-    const artist = r.artistName ? [{ name: r.artistName }] : undefined;
-    const date = r.releaseDate ? r.releaseDate.split("T")[0] : undefined;
-    // Use artworkUrl100 and request a larger size by replacing 100 with 250
-    const coverUrl = r.artworkUrl100 ? r.artworkUrl100.replace("100x100", "250x250") : undefined;
-    return { id, title, "artist-credit": artist, date, coverUrl } as MusicAlbum;
-  });
+    const data = await res.json();
+    return (data.results || []) as any[];
+  };
 
-  // dedupe by normalized title + first artist + year
+  // The album index has gaps (some releases only surface through their tracks),
+  // so query both entities and merge; song rows carry the collectionId and the
+  // same album metadata.
+  const [albumResults, songResults] = await Promise.all([
+    fetchEntity("album"),
+    fetchEntity("song"),
+  ]);
+
+  const rawItems: MusicAlbum[] = [...albumResults, ...songResults]
+    // iTunes returns albums, EPs and singles alike; drop singles (one track or
+    // the "- Single" suffix) so search yields albums and EPs only.
+    .filter((r: any) => {
+      const name: string = r.collectionName ?? "";
+      return !/-\s*single$/i.test(name) && (r.trackCount ?? 0) !== 1;
+    })
+    .map((r: any) => {
+      const id = String(r.collectionId);
+      const title = r.collectionName;
+      const artistName = r.collectionArtistName ?? r.artistName;
+      const artist = artistName ? [{ name: artistName }] : undefined;
+      const date = r.releaseDate ? r.releaseDate.split("T")[0] : undefined;
+      // Use artworkUrl100 and request a larger size by replacing 100 with 250
+      const coverUrl = r.artworkUrl100 ? r.artworkUrl100.replace("100x100", "250x250") : undefined;
+      return { id, title, "artist-credit": artist, date, coverUrl } as MusicAlbum;
+    });
+
+  // dedupe by collectionId first (album + song repeat the same release), then by
+  // normalized title + first artist + year (collapses different editions)
+  const seenIds = new Set<string>();
   const seen = new Set<string>();
   const items: MusicAlbum[] = [];
   for (const it of rawItems) {
+    if (seenIds.has(it.id)) continue;
+    seenIds.add(it.id);
+
     const titleNorm = (it.title || "").trim().toLowerCase();
     const artist = it["artist-credit"]?.[0]?.name?.trim().toLowerCase() ?? "";
     const year = (it.date || "").slice(0, 4);

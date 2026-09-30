@@ -7,6 +7,7 @@ import { RatingDisplay } from "../media/ratingDisplay";
 import { MediaLogResponse } from "@/types/logged";
 import { MediaTypeEnum } from "@/types/media";
 import { formatFromIsoDate } from "@/utils/date";
+import { isOneTimeConsumption } from "@/utils/mediaTrack";
 
 interface LogFieldRowProps {
   label: string;
@@ -50,7 +51,9 @@ export const LogFields = ({
 }: LogFieldsProps) => {
   const { t } = useTranslation("media");
 
-  const isOneTimeConsumption = mediaType === MediaTypeEnum.MOVIES;
+  const oneTimeConsumption = isOneTimeConsumption(mediaType);
+  const consumedOn = log.endDate ?? log.startDate;
+  const consumedOnLabel = mediaType === MediaTypeEnum.MUSIC ? t("logCard.listenedOn") : t("logCard.viewedOn");
   const hasRating = typeof log.rating === "number" && log.rating > 0;
 
   const dash = <span className="text-muted-foreground">—</span>;
@@ -74,10 +77,10 @@ export const LogFields = ({
         {hasRating ? <RatingDisplay rating={log.rating!} /> : dash}
       </LogFieldRow>
 
-      {isOneTimeConsumption
-        ? log.endDate && (
-          <LogFieldRow label={t("logCard.viewedOn")}>
-            <span className="tabular-nums">{formatFromIsoDate(log.endDate)}</span>
+      {oneTimeConsumption
+        ? consumedOn && (
+          <LogFieldRow label={consumedOnLabel}>
+            <span className="tabular-nums">{formatFromIsoDate(consumedOn)}</span>
           </LogFieldRow>
         )
         : (log.startDate || log.endDate) && (

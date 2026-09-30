@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { MediaTypeEnum } from "@/types/media";
 import { getMediaTypesOptions } from "@/utils/mediaText";
 
@@ -45,6 +46,12 @@ const MediaTypeFilter = ({ value, onChange, availableTypes }: MediaTypeFilterPro
             variant={selected ? "default" : "outline"}
             aria-pressed={selected}
             onClick={() => toggle(option.value)}
+            className={cn(
+              "border",
+              selected
+                ? "border-transparent shadow-xs"
+                : "hover:border-primary/40 hover:bg-primary/10 hover:text-primary dark:hover:bg-primary/15"
+            )}
           >
             {option.label}
           </Button>

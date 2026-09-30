@@ -59,6 +59,7 @@
     "startDate": "Start Date",
     "finishDate": "Finish Date",
     "viewedOn": "Viewed On",
+    "listenedOn": "Listened on",
     "completedOn": "Completed On",
     "rating": "Rating",
     "review": "Review",
@@ -396,6 +397,7 @@
     "startDate": "Start Date",
     "endDate": "End Date",
     "noReview": "No review",
-    "viewedOn": "Viewed on"
+    "viewedOn": "Viewed on",
+    "listenedOn": "Listened on"
   }
 }

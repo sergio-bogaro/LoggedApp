@@ -118,7 +118,7 @@ const MediaCollectionPage = () => {
     <div className="w-full h-full space-y-6">
       <PageHeader title={t(collection.titleKey)} />
 
-      <StatsHeadline label={t("views.totalLabel")} value={collectionItems.length} index={index} />
+      <StatsHeadline label={t("views.totalLabel")} value={collectionItems.length} index={index} indexPlacement="inline" />
 
       <div className="space-y-2">
         <div className="flex flex-wrap items-end justify-between gap-3">

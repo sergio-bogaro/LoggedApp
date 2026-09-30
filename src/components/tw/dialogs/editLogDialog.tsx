@@ -19,6 +19,7 @@ import { TextArea } from "@/components/ui/textarea";
 import { MediaLogResponse } from "@/types/logged";
 import { MediaStatusEnum, MediaTypeEnum } from "@/types/media";
 import { useUpdateLog } from "@/utils/mediaStore";
+import { isOneTimeConsumption } from "@/utils/mediaTrack";
 import { statusAnimeOptions } from "@/utils/selectOptions";
 
 interface EditLogDialogProps {
@@ -36,36 +37,48 @@ interface FormType {
   review?: string;
 }
 
-const buildDefaults = (log: MediaLogResponse): FormType => ({
-  status: log.status ?? MediaStatusEnum.IN_PROGRESS,
-  startDate: log.startDate?.slice(0, 10),
-  endDate: log.endDate?.slice(0, 10),
-  rating: log.rating ?? 0,
-  review: log.review ?? "",
-});
+const buildDefaults = (log: MediaLogResponse, oneTimeConsumption: boolean): FormType => {
+  const startDate = log.startDate?.slice(0, 10);
+  const endDate = log.endDate?.slice(0, 10);
+  const consumedOn = endDate ?? startDate;
+
+  return {
+    status: log.status ?? MediaStatusEnum.IN_PROGRESS,
+    startDate: oneTimeConsumption ? consumedOn : startDate,
+    endDate: oneTimeConsumption ? consumedOn : endDate,
+    rating: log.rating ?? 0,
+    review: log.review ?? "",
+  };
+};
 
 export function EditLogDialog({ log, mediaType, open, onOpenChange }: EditLogDialogProps) {
   const { t } = useTranslation("media");
   const update = useUpdateLog();
 
-  const isOneTimeConsumption = useMemo(() => mediaType === MediaTypeEnum.MOVIES, [mediaType]);
+  const oneTimeConsumption = useMemo(() => isOneTimeConsumption(mediaType), [mediaType]);
+  const consumedOnLabel = mediaType === MediaTypeEnum.MUSIC ? t("track.listenedOn") : t("track.viewedOn");
 
-  const form = useForm<FormType>({ defaultValues: buildDefaults(log) });
+  const form = useForm<FormType>({ defaultValues: buildDefaults(log, oneTimeConsumption) });
   const { control, handleSubmit } = form;
 
   useEffect(() => {
     if (!open) return;
-    form.reset(buildDefaults(log));
-  }, [open, log]);
+    form.reset(buildDefaults(log, oneTimeConsumption));
+  }, [open, log, oneTimeConsumption]);
 
   const onSubmit = (data: FormType) => {
+    const endDate = data.endDate?.trim() ? data.endDate : undefined;
+    const startDate = oneTimeConsumption
+      ? endDate
+      : data.startDate?.trim() ? data.startDate : undefined;
+
     update.mutate(
       {
         logId: log.id,
         data: {
           status: data.status,
-          startDate: data.startDate?.trim() ? data.startDate : undefined,
-          endDate: data.endDate?.trim() ? data.endDate : undefined,
+          startDate,
+          endDate,
           rating: data.rating,
           review: data.review,
         },
@@ -84,7 +97,7 @@ export function EditLogDialog({ log, mediaType, open, onOpenChange }: EditLogDia
 
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-            {!isOneTimeConsumption && (
+            {!oneTimeConsumption && (
               <Select
                 name="status"
                 label={t("track.status")}
@@ -93,19 +106,27 @@ export function EditLogDialog({ log, mediaType, open, onOpenChange }: EditLogDia
               />
             )}
 
-            <div className="grid grid-cols-2 gap-4">
+            {oneTimeConsumption ? (
               <DatePicker
-                label={isOneTimeConsumption ? t("track.viewedOn") : t("track.startDate")}
-                name="startDate"
-                control={control}
-              />
-
-              <DatePicker
-                label={isOneTimeConsumption ? t("track.viewedOn") : t("track.finishDate")}
+                label={consumedOnLabel}
                 name="endDate"
                 control={control}
               />
-            </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-4">
+                <DatePicker
+                  label={t("track.startDate")}
+                  name="startDate"
+                  control={control}
+                />
+
+                <DatePicker
+                  label={t("track.finishDate")}
+                  name="endDate"
+                  control={control}
+                />
+              </div>
+            )}
 
             <StarRating
               label={t("track.rating")}

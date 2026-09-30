@@ -23,6 +23,16 @@ const legacyTrackFlagByType: Record<MediaTypeEnum, string> = {
   [MediaTypeEnum.MUSIC]: "track_music",
 };
 
+/** Types logged as a single event (one date, always finished) rather than a period. */
+export const oneTimeConsumptionTypes: MediaTypeEnum[] = [
+  MediaTypeEnum.MOVIES,
+  MediaTypeEnum.MUSIC,
+];
+
+export function isOneTimeConsumption(type?: MediaTypeEnum | null): boolean {
+  return type != null && oneTimeConsumptionTypes.includes(type);
+}
+
 export function getTrackFlags(user: User | null): MediaTrackValues {
   const legacyUser = user as unknown as Record<string, boolean | undefined>;
 

@@ -19,6 +19,7 @@ import { TextArea } from "@/components/ui/textarea";
 import { MediaWithLogsResponse } from "@/types/logged";
 import { MediaStatusEnum, MediaTypeEnum } from "@/types/media";
 import { useUpdateMedia } from "@/utils/mediaStore";
+import { isOneTimeConsumption } from "@/utils/mediaTrack";
 import { statusAnimeOptions } from "@/utils/selectOptions";
 
 interface EditMediaDialogProps {
@@ -39,7 +40,7 @@ export function EditMediaDialog({ media, mediaType, open, onOpenChange }: EditMe
   const { t } = useTranslation("media");
   const update = useUpdateMedia();
 
-  const isOneTimeConsumption = useMemo(() => mediaType === MediaTypeEnum.MOVIES, [mediaType]);
+  const oneTimeConsumption = useMemo(() => isOneTimeConsumption(mediaType), [mediaType]);
 
   const form = useForm<FormType>({
     defaultValues: {
@@ -89,7 +90,7 @@ export function EditMediaDialog({ media, mediaType, open, onOpenChange }: EditMe
 
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-            {!isOneTimeConsumption && (
+            {!oneTimeConsumption && (
               <Select
                 name="status"
                 label={t("track.status")}
