@@ -102,7 +102,7 @@ export const MediaLibrary = ({ data, recentlyLoggedData, mediaType }: MediaLibra
                   return (
                     <CarouselItem
                       key={item.id}
-                      className="basis-1/2 lg:basis-1/4 xl:basis-1/6"
+                      className="basis-1/2 lg:basis-1/4 xl:basis-1/6 2xl:basis-1/8"
                     >
                       <GridItem
                         item={normalizedItem}

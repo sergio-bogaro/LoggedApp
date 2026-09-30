@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { GridItem } from "./grid";
 import ListItem from "./list";
 
+import { POSTER_GRID_WIDE } from "@/components/tw/media/gridSkeleton";
 import { cn } from "@/lib/utils";
 import { getExistingMedia } from "@/querries/media/existingMedias";
 import { useAppSelector } from "@/store/settings/hooks";
@@ -84,7 +85,7 @@ const MediaView = ({ isLoading, error, mediaData, existingMedia, emptyTitle, emp
     <div className={cn(
       "gap-4 mt-2 transition-all duration-300 ease-in-out",
       switching ? "opacity-80 translate-y-0.5" : "opacity-100 translate-0",
-      viewMode === "list" ? "flex flex-col gap-4" : "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5"
+      viewMode === "list" ? "flex flex-col gap-4" : POSTER_GRID_WIDE
     )} >
       {mediaData.map((mediaItem) => {
         const existingItem = getExistingMedia(existingMedia, mediaItem.id, mediaItem.type);

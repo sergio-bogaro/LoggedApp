@@ -34,7 +34,7 @@ export const MediaCardSkeleton = () => {
               {Array.from({ length: CARD_COUNT }).map((_, i) => (
                 <div
                   key={i}
-                  className="pl-4 basis-1/2 lg:basis-1/4 xl:basis-1/6 shrink-0"
+                  className="pl-4 basis-1/2 lg:basis-1/4 xl:basis-1/6 2xl:basis-1/8 shrink-0"
                 >
                   <GridItemSkeleton />
                 </div>
