@@ -256,6 +256,12 @@ function ImportManager() {
   const [summary, setSummary] = useState<ImportCommitResponse | null>(null);
 
   const provider: ImportProviderInfo | undefined = providers?.find((item) => item.id === providerId);
+  const providerNotes = provider
+    ? (t(`providers.${provider.id}.notes`, {
+      returnObjects: true,
+      defaultValue: [],
+    }) as unknown as string[])
+    : [];
   const providerLabel = (item: ImportProviderInfo) =>
     t(`providers.${item.id}.label`, { defaultValue: item.label });
 
@@ -490,6 +496,17 @@ function ImportManager() {
           >
             {t(`providers.${provider.id}.helpLabel`, { defaultValue: "" })}
           </a>
+
+          {Array.isArray(providerNotes) && providerNotes.length > 0 && (
+            <div className="rounded-control bg-muted/50 p-2">
+              <p className="text-step-0 font-medium">{t("input.notesTitle")}</p>
+              <ul className="mt-1 list-disc space-y-0.5 pl-5 text-step-0 text-muted-foreground">
+                {providerNotes.map((note) => (
+                  <li key={note}>{note}</li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           {provider.inputType === "username" && provider.mediaTypes.length > 1 && (
             <SelectBase

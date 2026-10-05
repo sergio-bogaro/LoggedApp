@@ -13,32 +13,57 @@
       "label": "Letterboxd",
       "description": "Upload the ZIP exported by Letterboxd (Settings → Import & Export). Films are matched against TMDB.",
       "helpLabel": "How to export from Letterboxd",
-      "helpUrl": "https://letterboxd.com/settings/data/"
+      "helpUrl": "https://letterboxd.com/settings/data/",
+      "notes": [
+        "Ratings are converted from the 0.5–5 scale to Logged's 0–10.",
+        "Films are matched by title and year on TMDB; remakes or homonyms may need a manual fix.",
+        "Rewatches become separate logs for the same film."
+      ]
     },
     "anilist": {
       "label": "AniList",
       "description": "Enter your AniList username. Public lists are read directly and matched by AniList id (anime or manga).",
       "helpLabel": "Open my AniList lists",
       "helpUrl": "https://anilist.co/settings/lists",
-      "usernamePlaceholder": "your AniList username"
+      "usernamePlaceholder": "your AniList username",
+      "notes": [
+        "Only public AniList profiles can be read (no login yet).",
+        "Items are matched by the AniList id, so there is no title guessing.",
+        "Watching/reading progress (episodes, chapters) is not imported."
+      ]
     },
     "mal": {
       "label": "MyAnimeList",
       "description": "Upload the .xml.gz exported by MyAnimeList. Anime or manga are matched to AniList by the MAL id.",
       "helpLabel": "How to export from MyAnimeList",
-      "helpUrl": "https://myanimelist.net/panel.php?go=export"
+      "helpUrl": "https://myanimelist.net/panel.php?go=export",
+      "notes": [
+        "Anime/manga are matched to AniList through the MyAnimeList id.",
+        "Watched episodes / read chapters are not imported.",
+        "Plan to watch/read goes to the backlog."
+      ]
     },
     "goodreads": {
       "label": "Goodreads",
       "description": "Upload the CSV exported by Goodreads (My Books → Import and export → Export Library). Books are matched to OpenLibrary by ISBN.",
       "helpLabel": "How to export from Goodreads",
-      "helpUrl": "https://www.goodreads.com/review/import"
+      "helpUrl": "https://www.goodreads.com/review/import",
+      "notes": [
+        "Books are matched to OpenLibrary by ISBN; books without an ISBN fall back to a title search.",
+        "The author is stored in the description, since Logged has no separate author field.",
+        "To-read goes to the backlog."
+      ]
     },
     "trakt": {
       "label": "Trakt",
       "description": "Upload the ZIP exported by Trakt (Settings → Data → Export now). Movies and shows are matched to TMDB by the TMDB/IMDb ids in the file.",
       "helpLabel": "Open Trakt data settings",
-      "helpUrl": "https://trakt.tv/settings/data"
+      "helpUrl": "https://trakt.tv/settings/data",
+      "notes": [
+        "Shows are imported as \"in progress\" — the export does not say whether you finished them.",
+        "Ratings use the 1–10 scale, imported as is.",
+        "Watchlist items go to the backlog."
+      ]
     }
   },
   "input": {
@@ -47,7 +72,8 @@
     "fileLabel": "Export file",
     "usernameLabel": "Username",
     "analyze": "Analyze",
-    "analyzing": "Reading…"
+    "analyzing": "Reading…",
+    "notesTitle": "Good to know"
   },
   "counts": {
     "total": "items",

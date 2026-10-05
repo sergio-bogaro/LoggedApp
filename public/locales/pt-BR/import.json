@@ -13,32 +13,57 @@
       "label": "Letterboxd",
       "description": "Envie o ZIP exportado pelo Letterboxd (Configurações → Import & Export). Os filmes são casados com o TMDB.",
       "helpLabel": "Como exportar do Letterboxd",
-      "helpUrl": "https://letterboxd.com/settings/data/"
+      "helpUrl": "https://letterboxd.com/settings/data/",
+      "notes": [
+        "As notas são convertidas da escala 0,5–5 para a 0–10 do Logged.",
+        "Os filmes são casados por título e ano no TMDB; remakes e homônimos podem precisar de correção manual.",
+        "Rewatches viram logs separados para o mesmo filme."
+      ]
     },
     "anilist": {
       "label": "AniList",
       "description": "Informe seu username do AniList. As listas públicas são lidas direto e casadas pelo id do AniList (anime ou mangá).",
       "helpLabel": "Abrir minhas listas no AniList",
       "helpUrl": "https://anilist.co/settings/lists",
-      "usernamePlaceholder": "seu username do AniList"
+      "usernamePlaceholder": "seu username do AniList",
+      "notes": [
+        "Só perfis públicos do AniList podem ser lidos (ainda sem login).",
+        "Os itens são casados pelo id do AniList, sem adivinhação por título.",
+        "Progresso (episódios/capítulos) não é importado."
+      ]
     },
     "mal": {
       "label": "MyAnimeList",
       "description": "Envie o .xml.gz exportado pelo MyAnimeList. Anime ou mangá são casados com o AniList pelo id do MAL.",
       "helpLabel": "Como exportar do MyAnimeList",
-      "helpUrl": "https://myanimelist.net/panel.php?go=export"
+      "helpUrl": "https://myanimelist.net/panel.php?go=export",
+      "notes": [
+        "Anime/mangá são casados com o AniList pelo id do MyAnimeList.",
+        "Episódios assistidos / capítulos lidos não são importados.",
+        "Plan to watch/read vai para o backlog."
+      ]
     },
     "goodreads": {
       "label": "Goodreads",
       "description": "Envie o CSV exportado pelo Goodreads (My Books → Import and export → Export Library). Os livros são casados com a OpenLibrary pelo ISBN.",
       "helpLabel": "Como exportar do Goodreads",
-      "helpUrl": "https://www.goodreads.com/review/import"
+      "helpUrl": "https://www.goodreads.com/review/import",
+      "notes": [
+        "Os livros são casados com a OpenLibrary pelo ISBN; sem ISBN, cai na busca por título.",
+        "O autor é gravado na descrição, pois o Logged não tem campo de autor.",
+        "To-read vai para o backlog."
+      ]
     },
     "trakt": {
       "label": "Trakt",
       "description": "Envie o ZIP exportado pelo Trakt (Settings → Data → Export now). Filmes e séries são casados com o TMDB pelos ids TMDB/IMDb do arquivo.",
       "helpLabel": "Abrir configurações de dados do Trakt",
-      "helpUrl": "https://trakt.tv/settings/data"
+      "helpUrl": "https://trakt.tv/settings/data",
+      "notes": [
+        "Séries entram como \"assistindo\" — o export não diz se você terminou.",
+        "As notas usam a escala 1–10 e são importadas como estão.",
+        "Itens da watchlist vão para o backlog."
+      ]
     }
   },
   "input": {
@@ -47,7 +72,8 @@
     "fileLabel": "Arquivo do export",
     "usernameLabel": "Username",
     "analyze": "Analisar",
-    "analyzing": "Lendo…"
+    "analyzing": "Lendo…",
+    "notesTitle": "Bom saber"
   },
   "counts": {
     "total": "itens",
