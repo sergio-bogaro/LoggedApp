@@ -4,6 +4,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import InternalLayout from "./layouts/internal";
 import LoginPage from "./pages/auth/login";
 import RegisterPage from "./pages/auth/register";
+import ImportPage from "./pages/import";
 import BacklogPage from "./pages/media/backlog/BacklogPage";
 import MediaDetailsPage from "./pages/media/details";
 import FavoritesPage from "./pages/media/favorites/FavoritesPage";
@@ -67,6 +68,17 @@ export function Router() {
         }
       >
         <Route path="" element={<SettingsPage />} />
+      </Route>
+
+      <Route
+        path="/import"
+        element={
+          <ProtectedRoute>
+            <InternalLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route path="" element={<ImportPage />} />
       </Route>
 
       <Route

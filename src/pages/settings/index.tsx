@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router";
 import { toast } from "sonner";
 
 import LanguageSwitcher from "@/components/LanguageSwitcher";
@@ -9,6 +10,7 @@ import { PageHeader } from "@/components/tw/generic/PageHeader";
 import { SectionHeading } from "@/components/tw/generic/SectionHeading";
 import IntegrationKeysForm from "@/components/tw/settings/IntegrationKeysForm";
 import MediaTrackToggles from "@/components/tw/settings/MediaTrackToggles";
+import { Button } from "@/components/ui/button";
 import { authApi } from "@/querries/auth/auth";
 import { useAppDispatch, useAppSelector } from "@/store/auth/hooks";
 import { updateUserSettings } from "@/store/auth/slice";
@@ -98,6 +100,18 @@ function SettingsPage() {
         </p>
 
         <IntegrationKeysForm />
+      </section>
+
+      <section className="space-y-4">
+        <SectionHeading>{t("settings.title", { ns: "import" })}</SectionHeading>
+
+        <p className="text-step-1 text-muted-foreground">
+          {t("settings.description", { ns: "import" })}
+        </p>
+
+        <Button asChild>
+          <Link to="/import">{t("settings.open", { ns: "import" })}</Link>
+        </Button>
       </section>
     </div>
   )

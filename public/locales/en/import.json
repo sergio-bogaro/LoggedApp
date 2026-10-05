@@ -1,0 +1,105 @@
+{
+  "settings": {
+    "title": "Import",
+    "description": "Bring your library over from another service.",
+    "open": "Open importer"
+  },
+  "page": {
+    "title": "Import media",
+    "description": "Import from another platform, review the matches and add everything to Logged."
+  },
+  "providers": {
+    "letterboxd": {
+      "label": "Letterboxd",
+      "description": "Upload the ZIP exported by Letterboxd (Settings → Import & Export). Films are matched against TMDB.",
+      "helpLabel": "How to export from Letterboxd",
+      "helpUrl": "https://letterboxd.com/settings/data/"
+    },
+    "anilist": {
+      "label": "AniList",
+      "description": "Enter your AniList username. Public lists are read directly and matched by AniList id (anime or manga).",
+      "helpLabel": "Open my AniList lists",
+      "helpUrl": "https://anilist.co/settings/lists",
+      "usernamePlaceholder": "your AniList username"
+    },
+    "mal": {
+      "label": "MyAnimeList",
+      "description": "Upload the .xml.gz exported by MyAnimeList. Anime or manga are matched to AniList by the MAL id.",
+      "helpLabel": "How to export from MyAnimeList",
+      "helpUrl": "https://myanimelist.net/panel.php?go=export"
+    }
+  },
+  "input": {
+    "chooseProvider": "Choose the source",
+    "mediaTypeLabel": "Type",
+    "fileLabel": "Export file",
+    "usernameLabel": "Username",
+    "analyze": "Analyze",
+    "analyzing": "Reading…"
+  },
+  "counts": {
+    "total": "items",
+    "withLogs": "with log",
+    "rated": "rated",
+    "reviewed": "reviews",
+    "backlog": "backlog"
+  },
+  "options": {
+    "backlog": "Add planned items to the backlog"
+  },
+  "meta": "rating: {{rating}} · review: {{review}}",
+  "reviewYes": "yes",
+  "reviewNo": "no",
+  "match": {
+    "progress": "Matching with the metadata provider… {{done}}/{{total}}",
+    "choose": "Choose a match",
+    "searchPlaceholder": "Search…",
+    "search": "Search",
+    "noResults": "No results.",
+    "ignore": "Skip",
+    "ignored": "Skipped",
+    "restore": "Restore",
+    "status": {
+      "matched": "Matched",
+      "ambiguous": "Check",
+      "not_found": "Not found",
+      "already_in_library": "In library"
+    }
+  },
+  "filters": {
+    "log": "With log",
+    "backlog": "In backlog",
+    "validated": "Validated",
+    "attention": "Needs attention",
+    "errors": "With error",
+    "clear": "Clear filters",
+    "showing": "Showing {{shown}} of {{total}} items",
+    "empty": "No items match the selected filters."
+  },
+  "result": {
+    "imported": "Added",
+    "merged": "Merged",
+    "skipped": "Unchanged",
+    "failed": "Failed",
+    "reason": "{{reason}}"
+  },
+  "commit": {
+    "action": "Import {{count}} items",
+    "working": "Importing…",
+    "success": "{{count}} items imported"
+  },
+  "summary": {
+    "title": "Import finished",
+    "counts": "Added: {{imported}} · Merged: {{merged}} · Unchanged: {{skipped}} · Logs created: {{logs}} · Backlog: {{backlog}}",
+    "failures": "{{count}} failed",
+    "failureItem": "{{name}}: {{reason}}"
+  },
+  "errors": {
+    "noFile": "Choose a file.",
+    "noUsername": "Enter the username.",
+    "parse": "Could not read the data.",
+    "match": "Could not fetch the metadata.",
+    "commit": "Could not import.",
+    "nothingSelected": "Select at least one item to import."
+  }
+}
