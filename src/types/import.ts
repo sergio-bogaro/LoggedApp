@@ -22,6 +22,7 @@ export type ImportEntry = {
   mediaType: MediaTypeEnum;
   title: string;
   year?: number | null;
+  overview?: string | null;
   source: string;
   externalRefs: Record<string, string>;
   status?: MediaStatusEnum | null;
@@ -50,6 +51,7 @@ export type ImportMatchRequestItem = {
   key: string;
   title: string;
   year?: number | null;
+  overview?: string | null;
   mediaType: MediaTypeEnum;
   externalRefs: Record<string, string>;
 };

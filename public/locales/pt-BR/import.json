@@ -27,6 +27,12 @@
       "description": "Envie o .xml.gz exportado pelo MyAnimeList. Anime ou mangá são casados com o AniList pelo id do MAL.",
       "helpLabel": "Como exportar do MyAnimeList",
       "helpUrl": "https://myanimelist.net/panel.php?go=export"
+    },
+    "goodreads": {
+      "label": "Goodreads",
+      "description": "Envie o CSV exportado pelo Goodreads (My Books → Import and export → Export Library). Os livros são casados com a OpenLibrary pelo ISBN.",
+      "helpLabel": "Como exportar do Goodreads",
+      "helpUrl": "https://www.goodreads.com/review/import"
     }
   },
   "input": {

@@ -292,6 +292,7 @@ function ImportManager() {
           key: entry.key,
           title: entry.title,
           year: entry.year,
+          overview: entry.overview,
           mediaType: entry.mediaType,
           externalRefs: entry.externalRefs,
         })),

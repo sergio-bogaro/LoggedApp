@@ -27,6 +27,12 @@
       "description": "Upload the .xml.gz exported by MyAnimeList. Anime or manga are matched to AniList by the MAL id.",
       "helpLabel": "How to export from MyAnimeList",
       "helpUrl": "https://myanimelist.net/panel.php?go=export"
+    },
+    "goodreads": {
+      "label": "Goodreads",
+      "description": "Upload the CSV exported by Goodreads (My Books → Import and export → Export Library). Books are matched to OpenLibrary by ISBN.",
+      "helpLabel": "How to export from Goodreads",
+      "helpUrl": "https://www.goodreads.com/review/import"
     }
   },
   "input": {
