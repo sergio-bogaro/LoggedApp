@@ -64,6 +64,17 @@
         "As notas usam a escala 1–10 e são importadas como estão.",
         "Itens da watchlist vão para o backlog."
       ]
+    },
+    "imdb": {
+      "label": "IMDb",
+      "description": "Envie seu ratings.csv do IMDb (Your Ratings → Export) ou o watchlist.csv. Filmes e séries são casados com o TMDB pelo id do IMDb.",
+      "helpLabel": "Abrir minhas notas no IMDb",
+      "helpUrl": "https://www.imdb.com/list/ratings",
+      "notes": [
+        "Só filmes e séries são importados; episódios, jogos e outros tipos são ignorados.",
+        "O IMDb só tem a data da nota, não a data em que você assistiu — o log usa a data da nota.",
+        "Os títulos são casados com o TMDB pelo id do IMDb (sem adivinhar por título)."
+      ]
     }
   },
   "input": {

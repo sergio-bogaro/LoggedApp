@@ -64,6 +64,17 @@
         "Ratings use the 1–10 scale, imported as is.",
         "Watchlist items go to the backlog."
       ]
+    },
+    "imdb": {
+      "label": "IMDb",
+      "description": "Upload your IMDb ratings.csv (Your Ratings → Export) or watchlist.csv. Movies and shows are matched to TMDB by the IMDb id.",
+      "helpLabel": "Open my IMDb ratings",
+      "helpUrl": "https://www.imdb.com/list/ratings",
+      "notes": [
+        "Only movies and shows are imported; episodes, games and other types are skipped.",
+        "IMDb only has the rating date, not the watch date, so the log uses the rating date.",
+        "Titles are matched to TMDB by the IMDb id (no title guessing)."
+      ]
     }
   },
   "input": {
