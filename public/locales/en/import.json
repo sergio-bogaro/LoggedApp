@@ -33,6 +33,12 @@
       "description": "Upload the CSV exported by Goodreads (My Books → Import and export → Export Library). Books are matched to OpenLibrary by ISBN.",
       "helpLabel": "How to export from Goodreads",
       "helpUrl": "https://www.goodreads.com/review/import"
+    },
+    "trakt": {
+      "label": "Trakt",
+      "description": "Upload the ZIP exported by Trakt (Settings → Data → Export now). Movies and shows are matched to TMDB by the TMDB/IMDb ids in the file.",
+      "helpLabel": "Open Trakt data settings",
+      "helpUrl": "https://trakt.tv/settings/data"
     }
   },
   "input": {

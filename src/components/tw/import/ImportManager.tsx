@@ -491,7 +491,7 @@ function ImportManager() {
             {t(`providers.${provider.id}.helpLabel`, { defaultValue: "" })}
           </a>
 
-          {provider.mediaTypes.length > 1 && (
+          {provider.inputType === "username" && provider.mediaTypes.length > 1 && (
             <SelectBase
               value={mediaType ?? ""}
               onValueChange={(value) => setMediaType(value as MediaTypeEnum)}

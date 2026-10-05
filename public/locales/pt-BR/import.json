@@ -33,6 +33,12 @@
       "description": "Envie o CSV exportado pelo Goodreads (My Books → Import and export → Export Library). Os livros são casados com a OpenLibrary pelo ISBN.",
       "helpLabel": "Como exportar do Goodreads",
       "helpUrl": "https://www.goodreads.com/review/import"
+    },
+    "trakt": {
+      "label": "Trakt",
+      "description": "Envie o ZIP exportado pelo Trakt (Settings → Data → Export now). Filmes e séries são casados com o TMDB pelos ids TMDB/IMDb do arquivo.",
+      "helpLabel": "Abrir configurações de dados do Trakt",
+      "helpUrl": "https://trakt.tv/settings/data"
     }
   },
   "input": {
