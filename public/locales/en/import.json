@@ -77,14 +77,50 @@
       ]
     }
   },
+  "steps": {
+    "source": "Source",
+    "review": "Review",
+    "result": "Done",
+    "edit": "Change",
+    "summary": "{{provider}} · {{count}} items"
+  },
   "input": {
-    "chooseProvider": "Choose the source",
+    "chooseProvider": "Choose where to import from.",
     "mediaTypeLabel": "Type",
     "fileLabel": "Export file",
     "usernameLabel": "Username",
     "analyze": "Analyze",
     "analyzing": "Reading…",
-    "notesTitle": "Good to know"
+    "notesTitle": "Good to know",
+    "dropzone": {
+      "title": "Drag your export here",
+      "hint": "or click to choose a file",
+      "remove": "Remove file"
+    }
+  },
+  "metadata": {
+    "tmdb": "TMDB",
+    "anilist": "AniList",
+    "openlibrary": "Open Library"
+  },
+  "external": {
+    "newTab": "opens in a new tab"
+  },
+  "compare": {
+    "label": "Compare",
+    "source": "On {{name}}",
+    "open": "Open",
+    "details": "Compare details"
+  },
+  "dialog": {
+    "open": "Open details for {{title}}",
+    "sourceTitle": "Source",
+    "source": "View on source",
+    "candidatesTitle": "Matches found",
+    "noCandidates": "No matches found for this item.",
+    "use": "Use this",
+    "selected": "Selected",
+    "score": "{{score}}% match"
   },
   "counts": {
     "total": "items",
@@ -108,6 +144,7 @@
     "ignore": "Skip",
     "ignored": "Skipped",
     "restore": "Restore",
+    "matching": "Matching…",
     "status": {
       "matched": "Matched",
       "ambiguous": "Check",
@@ -116,6 +153,8 @@
     }
   },
   "filters": {
+    "label": "Filter",
+    "all": "All items",
     "log": "With log",
     "backlog": "In backlog",
     "validated": "Validated",
@@ -123,6 +162,8 @@
     "errors": "With error",
     "clear": "Clear filters",
     "showing": "Showing {{shown}} of {{total}} items",
+    "showMore": "Show more ({{count}} left)",
+    "backToTop": "Back to top",
     "empty": "No items match the selected filters."
   },
   "result": {
@@ -134,18 +175,25 @@
   },
   "commit": {
     "action": "Import {{count}} items",
+    "selected": "{{count}} selected",
     "working": "Importing…",
     "success": "{{count}} items imported"
   },
   "summary": {
     "title": "Import finished",
-    "counts": "Added: {{imported}} · Merged: {{merged}} · Unchanged: {{skipped}} · Logs created: {{logs}} · Backlog: {{backlog}}",
+    "imported": "Added",
+    "merged": "Merged",
+    "logs": "Logs created",
+    "backlog": "In backlog",
+    "skippedCount": "{{count}} unchanged",
     "failures": "{{count}} failed",
-    "failureItem": "{{name}}: {{reason}}"
+    "failureItem": "{{name}}: {{reason}}",
+    "restart": "Import another"
   },
   "errors": {
     "noFile": "Choose a file.",
     "noUsername": "Enter the username.",
+    "empty": "No items found in this export.",
     "parse": "Could not read the data.",
     "match": "Could not fetch the metadata.",
     "commit": "Could not import.",

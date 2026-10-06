@@ -77,14 +77,50 @@
       ]
     }
   },
+  "steps": {
+    "source": "Origem",
+    "review": "Revisão",
+    "result": "Concluído",
+    "edit": "Trocar",
+    "summary": "{{provider}} · {{count}} itens"
+  },
   "input": {
-    "chooseProvider": "Escolha a origem",
+    "chooseProvider": "Escolha de onde importar.",
     "mediaTypeLabel": "Tipo",
     "fileLabel": "Arquivo do export",
     "usernameLabel": "Username",
     "analyze": "Analisar",
     "analyzing": "Lendo…",
-    "notesTitle": "Bom saber"
+    "notesTitle": "Bom saber",
+    "dropzone": {
+      "title": "Arraste seu export aqui",
+      "hint": "ou clique para escolher um arquivo",
+      "remove": "Remover arquivo"
+    }
+  },
+  "metadata": {
+    "tmdb": "TMDB",
+    "anilist": "AniList",
+    "openlibrary": "Open Library"
+  },
+  "external": {
+    "newTab": "abre em nova aba"
+  },
+  "compare": {
+    "label": "Comparar",
+    "source": "No {{name}}",
+    "open": "Abrir",
+    "details": "Comparar detalhes"
+  },
+  "dialog": {
+    "open": "Ver detalhes de {{title}}",
+    "sourceTitle": "Origem",
+    "source": "Ver na origem",
+    "candidatesTitle": "Mídias encontradas",
+    "noCandidates": "Nenhuma mídia encontrada para este item.",
+    "use": "Usar esta",
+    "selected": "Selecionada",
+    "score": "{{score}}% de semelhança"
   },
   "counts": {
     "total": "itens",
@@ -108,6 +144,7 @@
     "ignore": "Ignorar",
     "ignored": "Ignorado",
     "restore": "Restaurar",
+    "matching": "Casando…",
     "status": {
       "matched": "Casado",
       "ambiguous": "Conferir",
@@ -116,6 +153,8 @@
     }
   },
   "filters": {
+    "label": "Filtro",
+    "all": "Todos os itens",
     "log": "Com log",
     "backlog": "No backlog",
     "validated": "Validados",
@@ -123,6 +162,8 @@
     "errors": "Com erro",
     "clear": "Limpar filtros",
     "showing": "Mostrando {{shown}} de {{total}} itens",
+    "showMore": "Mostrar mais ({{count}} restantes)",
+    "backToTop": "Voltar ao topo",
     "empty": "Nenhum item corresponde aos filtros selecionados."
   },
   "result": {
@@ -134,18 +175,25 @@
   },
   "commit": {
     "action": "Importar {{count}} itens",
+    "selected": "{{count}} selecionados",
     "working": "Importando…",
     "success": "{{count}} itens importados"
   },
   "summary": {
     "title": "Importação concluída",
-    "counts": "Adicionados: {{imported}} · Mesclados: {{merged}} · Sem alterações: {{skipped}} · Logs criados: {{logs}} · Backlog: {{backlog}}",
+    "imported": "Adicionados",
+    "merged": "Mesclados",
+    "logs": "Logs criados",
+    "backlog": "No backlog",
+    "skippedCount": "{{count}} sem alterações",
     "failures": "{{count}} falharam",
-    "failureItem": "{{name}}: {{reason}}"
+    "failureItem": "{{name}}: {{reason}}",
+    "restart": "Importar outro"
   },
   "errors": {
     "noFile": "Escolha um arquivo.",
     "noUsername": "Informe o username.",
+    "empty": "Nenhum item encontrado nesse export.",
     "parse": "Não foi possível ler os dados.",
     "match": "Não foi possível buscar a metadata.",
     "commit": "Não foi possível importar.",

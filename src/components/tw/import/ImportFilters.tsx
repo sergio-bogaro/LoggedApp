@@ -1,7 +1,12 @@
 import { useTranslation } from "react-i18next";
 
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import {
+  SelectBase,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export type ImportFilterKey =
   | "log"
@@ -9,6 +14,8 @@ export type ImportFilterKey =
   | "validated"
   | "attention"
   | "errors";
+
+export type ImportFilterValue = ImportFilterKey | "all";
 
 const FILTERS: { key: ImportFilterKey; labelKey: string }[] = [
   { key: "log", labelKey: "filters.log" },
@@ -19,40 +26,33 @@ const FILTERS: { key: ImportFilterKey; labelKey: string }[] = [
 ];
 
 interface ImportFiltersProps {
+  value: ImportFilterValue;
   counts: Record<ImportFilterKey, number>;
-  active: ImportFilterKey[];
-  onToggle: (key: ImportFilterKey) => void;
-  onClear: () => void;
+  onChange: (value: ImportFilterValue) => void;
 }
 
-export function ImportFilters({ counts, active, onToggle, onClear }: ImportFiltersProps) {
+export function ImportFilters({ value, counts, onChange }: ImportFiltersProps) {
   const { t } = useTranslation("import");
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      {FILTERS.map(({ key, labelKey }) => {
-        const isActive = active.includes(key);
-        return (
-          <Button
-            key={key}
-            type="button"
-            size="xs"
-            variant={isActive ? "default" : "outline"}
-            onClick={() => onToggle(key)}
-          >
-            {t(labelKey)}
-            <span className={cn("tabular-nums", isActive ? "opacity-80" : "text-muted-foreground")}>
-              {counts[key]}
-            </span>
-          </Button>
-        );
-      })}
-
-      {active.length > 0 && (
-        <Button type="button" size="xs" variant="ghost" onClick={onClear}>
-          {t("filters.clear")}
-        </Button>
-      )}
+    <div className="flex flex-col gap-1">
+      <label className="text-step-0 text-muted-foreground" htmlFor="import-filter">
+        {t("filters.label")}
+      </label>
+      <SelectBase value={value} onValueChange={(next) => onChange(next as ImportFilterValue)}>
+        <SelectTrigger size="sm" id="import-filter" className="w-full sm:w-64">
+          <SelectValue placeholder={t("filters.all")} />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">{t("filters.all")}</SelectItem>
+          {FILTERS.map(({ key, labelKey }) => (
+            <SelectItem key={key} value={key}>
+              {t(labelKey)}
+              <span className="ml-1 tabular-nums text-muted-foreground">({counts[key]})</span>
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </SelectBase>
     </div>
   );
 }

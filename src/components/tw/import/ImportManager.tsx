@@ -1,10 +1,17 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Loader2, Search, SkipForward, Undo2, Upload } from "lucide-react";
-import { useMemo, useState } from "react";
+import { ArrowUp, Check, ImageOff, Loader2, Search, SkipForward, Undo2, Upload } from "lucide-react";
+import { Fragment, memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
-import { ImportFilters, type ImportFilterKey } from "@/components/tw/import/ImportFilters";
+import { TypeMark } from "@/components/tw/generic/badges";
+import { Card } from "@/components/tw/generic/card";
+import { ImportCompareDialog } from "@/components/tw/import/ImportCompareDialog";
+import { ImportDropzone } from "@/components/tw/import/ImportDropzone";
+import { ImportExternalLink } from "@/components/tw/import/ImportExternalLink";
+import { ImportFilters, type ImportFilterKey, type ImportFilterValue } from "@/components/tw/import/ImportFilters";
+import { ImportProviderCard } from "@/components/tw/import/ImportProviderCard";
+import { ImportMatchMark, ImportOutcomeMark } from "@/components/tw/import/ImportStatusMark";
 import { Button } from "@/components/ui/button";
 import { BaseInput } from "@/components/ui/input";
 import {
@@ -14,6 +21,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import {
   commitImport,
@@ -33,39 +42,118 @@ import type {
   ImportProviderInfo,
 } from "@/types/import";
 import type { MediaTypeEnum } from "@/types/media";
+import { metadataProviderKey, metadataUrl, sourceUrl } from "@/utils/importLinks";
 
 // A metadata é buscada em lotes para caber no timeout e mostrar progresso.
 const MATCH_CHUNK = 50;
+// A lista é paginada: renderizar milhares de linhas com Select/Dialog trava a UI.
+const PAGE_SIZE = 50;
+const EMPTY_CANDIDATES: ImportCandidate[] = [];
 
-const STATUS_STYLES: Record<string, string> = {
-  matched: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400",
-  ambiguous: "bg-amber-500/15 text-amber-700 dark:text-amber-400",
-  not_found: "bg-destructive/15 text-destructive",
-  already_in_library: "bg-sky-500/15 text-sky-700 dark:text-sky-400",
-};
+type ImportStep = 1 | 2 | 3;
 
-const OUTCOME_STYLES: Record<string, string> = {
-  imported: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400",
-  merged: "bg-sky-500/15 text-sky-700 dark:text-sky-400",
-  skipped: "bg-muted text-muted-foreground",
-  failed: "bg-destructive/15 text-destructive",
-};
+function StepRail({
+  step,
+  canReview,
+  canResult,
+  onSelect,
+}: {
+  step: ImportStep;
+  canReview: boolean;
+  canResult: boolean;
+  onSelect: (step: ImportStep) => void;
+}) {
+  const { t } = useTranslation("import");
 
-function CountBadge({ label, value }: { label: string; value: number }) {
+  const steps: { id: ImportStep; label: string }[] = [
+    { id: 1, label: t("steps.source") },
+    { id: 2, label: t("steps.review") },
+    { id: 3, label: t("steps.result") },
+  ];
+
+  const reachable = (id: ImportStep) =>
+    id === 1 || (id === 2 && canReview) || (id === 3 && canResult);
+
   return (
-    <div className="rounded-control border border-border px-3 py-1.5">
-      <span className="font-serif text-step-2 tabular-nums">{value}</span>
-      <span className="ml-1 text-step-0 text-muted-foreground">{label}</span>
+    <ol className="flex items-center gap-2 sm:gap-3">
+      {steps.map((item, index) => {
+        const state = item.id < step ? "done" : item.id === step ? "current" : "upcoming";
+        const enabled = reachable(item.id);
+
+        return (
+          <Fragment key={item.id}>
+            <li className="flex min-w-0 items-center">
+              <button
+                type="button"
+                disabled={!enabled}
+                onClick={() => onSelect(item.id)}
+                aria-current={state === "current" ? "step" : undefined}
+                className={cn(
+                  "flex min-w-0 items-center gap-2 rounded-control text-left",
+                  "focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50",
+                  enabled ? "cursor-pointer" : "cursor-default"
+                )}
+              >
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    "flex size-6 shrink-0 items-center justify-center rounded-full border text-step-0 tabular-nums transition-colors",
+                    state === "current" && "border-primary bg-primary text-primary-foreground",
+                    state === "done" && "border-primary bg-primary/10 text-primary",
+                    state === "upcoming" && "border-border text-muted-foreground"
+                  )}
+                >
+                  {state === "done" ? <Check className="size-3" /> : item.id}
+                </span>
+                <span
+                  className={cn(
+                    "truncate text-step-1",
+                    state === "upcoming" ? "text-muted-foreground" : "text-foreground"
+                  )}
+                >
+                  {item.label}
+                </span>
+              </button>
+            </li>
+            {index < steps.length - 1 && (
+              <li aria-hidden="true" className="h-px flex-1 bg-border" />
+            )}
+          </Fragment>
+        );
+      })}
+    </ol>
+  );
+}
+
+function StepHeading({
+  title,
+  collapsed = false,
+  onEdit,
+  editLabel,
+}: {
+  title: string;
+  collapsed?: boolean;
+  onEdit?: () => void;
+  editLabel?: string;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-3 border-b border-border pb-3">
+      <h2 className="min-w-0 truncate font-serif text-step-3 font-medium">{title}</h2>
+      {collapsed && onEdit && (
+        <Button type="button" variant="ghost" size="sm" onClick={onEdit} className="shrink-0">
+          {editLabel}
+        </Button>
+      )}
     </div>
   );
 }
 
-function CategoryTag({ label, value }: { label: string; value?: number }) {
+function StatCell({ label, value }: { label: string; value: number }) {
   return (
-    <span className="rounded-control border border-border px-1.5 py-0.5">
-      {label}
-      {value !== undefined && <span className="ml-1 tabular-nums text-foreground">{value}</span>}
-    </span>
+    <div className="rounded-control border border-border px-3 py-2">
+      <p className="font-serif text-step-3 tabular-nums">{value}</p>
+      <p className="text-step-0 text-muted-foreground">{label}</p>
+    </div>
   );
 }
 
@@ -76,49 +164,46 @@ interface EntryRowProps {
   selected: ImportCandidate | null;
   ignored: boolean;
   willBacklog: boolean;
-  onSelect: (candidate: ImportCandidate) => void;
-  onToggleIgnored: () => void;
-  onSearch: (query: string) => Promise<ImportCandidate[]>;
+  pending: boolean;
+  candidates: ImportCandidate[];
+  onSelect: (key: string, candidate: ImportCandidate) => void;
+  onToggleIgnored: (key: string) => void;
+  onSearch: (entry: ImportEntry, query: string) => Promise<ImportCandidate[]>;
+  onOpenDetails: (key: string) => void;
 }
 
-function EntryRow({
+const EntryRow = memo(function EntryRow({
   entry,
   match,
   result,
   selected,
   ignored,
   willBacklog,
+  pending,
+  candidates,
   onSelect,
   onToggleIgnored,
   onSearch,
+  onOpenDetails,
 }: EntryRowProps) {
   const { t } = useTranslation("import");
   const [query, setQuery] = useState("");
   const [searching, setSearching] = useState(false);
-  const [extra, setExtra] = useState<ImportCandidate[]>([]);
-
-  const candidates = useMemo(() => {
-    const seen = new Set<string>();
-    const merged: ImportCandidate[] = [];
-    for (const candidate of [...(match?.candidates ?? []), ...extra]) {
-      if (!seen.has(candidate.externalId)) {
-        seen.add(candidate.externalId);
-        merged.push(candidate);
-      }
-    }
-    return merged;
-  }, [match, extra]);
 
   const status = match?.status ?? "not_found";
   const hasLog = entry.logs.length > 0;
   const poster = selected?.coverUrl ?? match?.match?.coverUrl ?? null;
+  const sourceHref = sourceUrl(entry);
+  const sourceLabel = t(`providers.${entry.source}.label`, { defaultValue: entry.source });
+  const selectedHref = selected ? metadataUrl(selected) : null;
+  const needsCompare =
+    !pending && (status === "ambiguous" || status === "not_found" || result?.outcome === "failed");
 
   const handleSearch = async () => {
     if (!query.trim()) return;
     setSearching(true);
     try {
-      const results = await onSearch(query.trim());
-      setExtra(results);
+      const results = await onSearch(entry, query.trim());
       if (results.length === 0) toast.message(t("match.noResults"));
     } catch (error) {
       toast.error(error instanceof Error ? error.message : t("errors.match"));
@@ -128,35 +213,63 @@ function EntryRow({
   };
 
   return (
-    <div className="flex items-start gap-3 border-b border-border py-3 last:border-b-0">
-      <div className="h-20 w-14 shrink-0 overflow-hidden rounded-control bg-muted">
-        {poster && (
-          <img src={poster} alt="" className="h-full w-full object-cover" loading="lazy" />
-        )}
-      </div>
-
-      <div className="min-w-0 flex-1 space-y-1.5">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="truncate text-step-2">{entry.title}</span>
-          {entry.year && <span className="text-step-0 text-muted-foreground">{entry.year}</span>}
-          <span className={`rounded-control px-1.5 py-0.5 text-step-0 ${STATUS_STYLES[status]}`}>
-            {t(`match.status.${status}`)}
-          </span>
-          {ignored && (
-            <span className="rounded-control bg-muted px-1.5 py-0.5 text-step-0 text-muted-foreground">
-              {t("match.ignored")}
+    <div
+      className={cn(
+        "flex items-start gap-3 border-b border-border py-3 transition-colors last:border-b-0",
+        "hover:bg-accent/40",
+        ignored && "opacity-60"
+      )}
+    >
+      {pending ? (
+        <Skeleton className="h-24 w-16 shrink-0 rounded-control" />
+      ) : (
+        <button
+          type="button"
+          onClick={() => onOpenDetails(entry.key)}
+          aria-label={t("dialog.open", { title: entry.title })}
+          className={cn(
+            "h-24 w-16 shrink-0 overflow-hidden rounded-control bg-muted transition-opacity hover:opacity-90",
+            "focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+          )}
+        >
+          {poster ? (
+            <img src={poster} alt="" className="h-full w-full object-cover" loading="lazy" />
+          ) : (
+            <span className="flex h-full w-full items-center justify-center text-muted-foreground">
+              <ImageOff className="size-4" aria-hidden="true" />
             </span>
           )}
-          {result && (
-            <span className={`rounded-control px-1.5 py-0.5 text-step-0 ${OUTCOME_STYLES[result.outcome]}`}>
-              {t(`result.${result.outcome}`)}
+        </button>
+      )}
+
+      <div className="min-w-0 flex-1 space-y-2">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+          <span className="truncate text-step-2 font-medium">{entry.title}</span>
+          {entry.year && (
+            <span className="text-step-0 tabular-nums text-muted-foreground">{entry.year}</span>
+          )}
+          <TypeMark type={entry.mediaType} />
+          {pending ? (
+            <span className="inline-flex items-center gap-1.5" role="status" aria-live="polite">
+              <Skeleton className="h-3 w-16" />
+              <span className="sr-only">{t("match.matching")}</span>
             </span>
+          ) : (
+            <ImportMatchMark status={status} />
+          )}
+          {result && <ImportOutcomeMark outcome={result.outcome} />}
+          {ignored && (
+            <span className="text-step-0 text-muted-foreground">{t("match.ignored")}</span>
           )}
         </div>
 
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-step-0 text-muted-foreground">
-          {hasLog && <CategoryTag label={t("filters.log")} value={entry.logs.length} />}
-          {willBacklog && <CategoryTag label={t("filters.backlog")} />}
+          {hasLog && (
+            <span className="tabular-nums">
+              {t("filters.log")}: {entry.logs.length}
+            </span>
+          )}
+          {willBacklog && <span>{t("filters.backlog")}</span>}
           <span>
             {t("meta", {
               rating: entry.rating ?? "—",
@@ -168,13 +281,39 @@ function EntryRow({
           )}
         </div>
 
+        {needsCompare && (
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-step-0">
+            <span className="text-muted-foreground">{t("compare.label")}</span>
+            {sourceHref ? (
+              <ImportExternalLink href={sourceHref}>
+                {t("compare.source", { name: sourceLabel })}
+              </ImportExternalLink>
+            ) : null}
+            {selectedHref && selected ? (
+              <ImportExternalLink href={selectedHref}>
+                {t(metadataProviderKey(selected.provider), { defaultValue: selected.provider })}
+              </ImportExternalLink>
+            ) : null}
+            <button
+              type="button"
+              onClick={() => onOpenDetails(entry.key)}
+              className={cn(
+                "rounded-control text-primary underline-offset-4 transition-colors hover:underline",
+                "focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+              )}
+            >
+              {t("compare.details")}
+            </button>
+          </div>
+        )}
+
         <div className="flex flex-wrap items-center gap-2">
           {candidates.length > 0 && (
             <SelectBase
               value={selected ? selected.externalId : ""}
               onValueChange={(value) => {
                 const candidate = candidates.find((item) => item.externalId === value);
-                if (candidate) onSelect(candidate);
+                if (candidate) onSelect(entry.key, candidate);
               }}
             >
               <SelectTrigger size="sm" className="max-w-72">
@@ -218,15 +357,16 @@ function EntryRow({
         type="button"
         size="xs"
         variant="ghost"
-        onClick={onToggleIgnored}
-        className="text-muted-foreground"
+        onClick={() => onToggleIgnored(entry.key)}
+        className="shrink-0 text-muted-foreground"
+        aria-label={ignored ? t("match.restore") : t("match.ignore")}
       >
         {ignored ? <Undo2 /> : <SkipForward />}
-        {ignored ? t("match.restore") : t("match.ignore")}
+        <span className="hidden sm:inline">{ignored ? t("match.restore") : t("match.ignore")}</span>
       </Button>
     </div>
   );
-}
+});
 
 function ImportManager() {
   const { t } = useTranslation("import");
@@ -239,6 +379,7 @@ function ImportManager() {
     staleTime: Infinity,
   });
 
+  const [step, setStep] = useState<ImportStep>(1);
   const [providerId, setProviderId] = useState<string | null>(null);
   const [mediaType, setMediaType] = useState<MediaTypeEnum | null>(null);
   const [file, setFile] = useState<File | null>(null);
@@ -250,10 +391,19 @@ function ImportManager() {
   const [selections, setSelections] = useState<Record<string, ImportCandidate | null>>({});
   const [ignored, setIgnored] = useState<Record<string, boolean>>({});
   const [addBacklog, setAddBacklog] = useState(true);
-  const [filter, setFilter] = useState<ImportFilterKey[]>([]);
+  const [filter, setFilter] = useState<ImportFilterValue>("all");
   const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
   const [busy, setBusy] = useState(false);
   const [summary, setSummary] = useState<ImportCommitResponse | null>(null);
+  const [extraCandidates, setExtraCandidates] = useState<Record<string, ImportCandidate[]>>({});
+  const [detailKey, setDetailKey] = useState<string | null>(null);
+  const [limit, setLimit] = useState(PAGE_SIZE);
+  const listTopRef = useRef<HTMLDivElement>(null);
+
+  // Um novo filtro (ou import) volta a lista para a primeira página.
+  useEffect(() => {
+    setLimit(PAGE_SIZE);
+  }, [filter, entries]);
 
   const provider: ImportProviderInfo | undefined = providers?.find((item) => item.id === providerId);
   const providerNotes = provider
@@ -271,12 +421,16 @@ function ImportManager() {
     setMatches({});
     setSelections({});
     setIgnored({});
-    setFilter([]);
+    setFilter("all");
     setSummary(null);
     setProgress(null);
+    setExtraCandidates({});
+    setDetailKey(null);
+    setLimit(PAGE_SIZE);
   };
 
   const handleSelectProvider = (item: ImportProviderInfo) => {
+    setStep(1);
     setProviderId(item.id);
     setMediaType(item.mediaTypes[0] ?? null);
     setFile(null);
@@ -347,6 +501,14 @@ function ImportManager() {
       return;
     }
 
+    if (previewEntries.length === 0) {
+      toast.error(t("errors.empty"));
+      setBusy(false);
+      return;
+    }
+
+    setStep(2);
+
     try {
       await runMatch(previewEntries);
     } catch (error) {
@@ -356,10 +518,27 @@ function ImportManager() {
     }
   };
 
-  const handleSearch = async (entry: ImportEntry, query: string): Promise<ImportCandidate[]> => {
-    if (!user) return [];
-    return searchImportCandidates(query, entry.mediaType, user.id);
-  };
+  const handleSearch = useCallback(
+    async (entry: ImportEntry, query: string): Promise<ImportCandidate[]> => {
+      if (!user) return [];
+      const results = await searchImportCandidates(query, entry.mediaType, user.id);
+      setExtraCandidates((prev) => ({ ...prev, [entry.key]: results }));
+      return results;
+    },
+    [user]
+  );
+
+  const handleSelectCandidate = useCallback((key: string, candidate: ImportCandidate) => {
+    setSelections((prev) => ({ ...prev, [key]: candidate }));
+  }, []);
+
+  const handleToggleIgnored = useCallback((key: string) => {
+    setIgnored((prev) => ({ ...prev, [key]: !prev[key] }));
+  }, []);
+
+  const handleOpenDetails = useCallback((key: string) => {
+    setDetailKey(key);
+  }, []);
 
   const resultByKey = useMemo(
     () => new Map((summary?.items ?? []).map((item) => [item.key, item])),
@@ -405,36 +584,61 @@ function ImportManager() {
       const result = resultByKey.get(entry.key);
       if (entry.logs.length > 0) next.log += 1;
       if (addBacklog && entry.inBacklog) next.backlog += 1;
-      if (match?.status === "matched" || match?.status === "already_in_library") next.validated += 1;
-      if (match?.status === "ambiguous") next.attention += 1;
-      if (match?.status === "not_found" || result?.outcome === "failed") next.errors += 1;
+      // Itens ainda não casados não entram na contagem de status.
+      if (match) {
+        if (match.status === "matched" || match.status === "already_in_library") next.validated += 1;
+        if (match.status === "ambiguous") next.attention += 1;
+        if (match.status === "not_found") next.errors += 1;
+      }
+      if (result?.outcome === "failed") next.errors += 1;
     }
     return next;
   }, [entries, matches, addBacklog, resultByKey]);
 
   const visibleEntries = useMemo(() => {
-    if (filter.length === 0) return entries;
+    const activeFilter = filter;
+    if (activeFilter === "all") return entries;
     return entries.filter((entry) => {
       const match = matches[entry.key];
       const result = resultByKey.get(entry.key);
-      return filter.every((key) => {
-        switch (key) {
-          case "log":
-            return entry.logs.length > 0;
-          case "backlog":
-            return addBacklog && entry.inBacklog;
-          case "validated":
-            return match?.status === "matched" || match?.status === "already_in_library";
-          case "attention":
-            return match?.status === "ambiguous";
-          case "errors":
-            return match?.status === "not_found" || result?.outcome === "failed";
-          default:
-            return true;
-        }
-      });
+      switch (activeFilter) {
+        case "log":
+          return entry.logs.length > 0;
+        case "backlog":
+          return addBacklog && entry.inBacklog;
+        case "validated":
+          return match?.status === "matched" || match?.status === "already_in_library";
+        case "attention":
+          return match?.status === "ambiguous";
+        case "errors":
+          return match?.status === "not_found" || result?.outcome === "failed";
+        default:
+          return true;
+      }
     });
   }, [entries, matches, filter, addBacklog, resultByKey]);
+
+  // Candidatos do match + resultados da busca manual, por item.
+  const candidatesByKey = useMemo(() => {
+    const map = new Map<string, ImportCandidate[]>();
+    for (const entry of entries) {
+      const seen = new Set<string>();
+      const merged: ImportCandidate[] = [];
+      for (const candidate of [
+        ...(matches[entry.key]?.candidates ?? []),
+        ...(extraCandidates[entry.key] ?? []),
+      ]) {
+        if (!seen.has(candidate.externalId)) {
+          seen.add(candidate.externalId);
+          merged.push(candidate);
+        }
+      }
+      map.set(entry.key, merged);
+    }
+    return map;
+  }, [entries, matches, extraCandidates]);
+
+  const shownEntries = useMemo(() => visibleEntries.slice(0, limit), [visibleEntries, limit]);
 
   const handleCommit = async () => {
     if (!user || commitEntries.length === 0) {
@@ -445,6 +649,7 @@ function ImportManager() {
     try {
       const result = await commitImport(commitEntries, user.id);
       setSummary(result);
+      setStep(3);
       toast.success(t("commit.success", { count: result.imported + result.merged }));
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ["media"] }),
@@ -461,221 +666,338 @@ function ImportManager() {
 
   const percent = progress && progress.total > 0 ? Math.round((progress.done / progress.total) * 100) : 0;
 
+  const detailEntry = detailKey ? entries.find((entry) => entry.key === detailKey) : undefined;
+  const detailCandidates = detailKey
+    ? candidatesByKey.get(detailKey) ?? EMPTY_CANDIDATES
+    : EMPTY_CANDIDATES;
+  const detailSourceHref = detailEntry ? sourceUrl(detailEntry) : null;
+  const detailSourceLabel = detailEntry
+    ? t(`providers.${detailEntry.source}.label`, { defaultValue: detailEntry.source })
+    : "";
+
   return (
-    <div className="space-y-5">
-      <div className="space-y-2">
-        <p className="text-step-1">{t("input.chooseProvider")}</p>
-        <div className="flex flex-wrap gap-2">
-          {(providers ?? []).map((item) => (
-            <Button
-              key={item.id}
-              type="button"
-              size="sm"
-              variant={item.id === providerId ? "default" : "outline"}
-              onClick={() => handleSelectProvider(item)}
-            >
-              {providerLabel(item)}
-            </Button>
-          ))}
-        </div>
-      </div>
+    <div className="w-full space-y-5">
+      <Card>
+        <StepRail
+          step={step}
+          canReview={entries.length > 0}
+          canResult={summary !== null}
+          onSelect={setStep}
+        />
+      </Card>
 
-      {provider && (
-        <div className="space-y-2 rounded-control border border-border p-3">
-          <p className="text-step-1 text-muted-foreground">
-            {t(`providers.${provider.id}.description`, { defaultValue: "" })}
-          </p>
-          <a
-            href={t(`providers.${provider.id}.helpUrl`, { defaultValue: "" })}
-            target="_blank"
-            rel="noreferrer"
-            className={cn(
-              "text-step-1 text-primary underline-offset-4 hover:underline",
-              !t(`providers.${provider.id}.helpLabel`, { defaultValue: "" }) && "hidden"
+      <Card>
+        <StepHeading
+          title={t(step === 1 ? "steps.source" : step === 2 ? "steps.review" : "steps.result")}
+        />
+
+        {step === 1 && (
+          <>
+            <p className="text-step-1 text-muted-foreground">{t("input.chooseProvider")}</p>
+
+            {providers ? (
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {providers.map((item) => (
+                  <ImportProviderCard
+                    key={item.id}
+                    provider={item}
+                    label={providerLabel(item)}
+                    selected={item.id === providerId}
+                    onSelect={() => handleSelectProvider(item)}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {[0, 1, 2].map((index) => (
+                  <Skeleton key={index} className="h-20" />
+                ))}
+              </div>
             )}
-          >
-            {t(`providers.${provider.id}.helpLabel`, { defaultValue: "" })}
-          </a>
 
-          {Array.isArray(providerNotes) && providerNotes.length > 0 && (
-            <div className="rounded-control bg-muted/50 p-2">
-              <p className="text-step-0 font-medium">{t("input.notesTitle")}</p>
-              <ul className="mt-1 list-disc space-y-0.5 pl-5 text-step-0 text-muted-foreground">
-                {providerNotes.map((note) => (
-                  <li key={note}>{note}</li>
-                ))}
-              </ul>
-            </div>
-          )}
+            {provider && (
+              <div className="space-y-3 rounded-control bg-muted/40 p-3">
+                <p className="text-step-1 text-muted-foreground">
+                  {t(`providers.${provider.id}.description`, { defaultValue: "" })}
+                </p>
+                <a
+                  href={t(`providers.${provider.id}.helpUrl`, { defaultValue: "" })}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={cn(
+                    "inline-block text-step-1 text-primary underline-offset-4 hover:underline",
+                    !t(`providers.${provider.id}.helpLabel`, { defaultValue: "" }) && "hidden"
+                  )}
+                >
+                  {t(`providers.${provider.id}.helpLabel`, { defaultValue: "" })}
+                </a>
 
-          {provider.inputType === "username" && provider.mediaTypes.length > 1 && (
-            <SelectBase
-              value={mediaType ?? ""}
-              onValueChange={(value) => setMediaType(value as MediaTypeEnum)}
-            >
-              <SelectTrigger size="sm" className="max-w-52">
-                <SelectValue placeholder={t("input.mediaTypeLabel")} />
-              </SelectTrigger>
-              <SelectContent>
-                {provider.mediaTypes.map((type) => (
-                  <SelectItem key={type} value={type}>
-                    {t(`type.${type}`, { ns: "media" })}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </SelectBase>
-          )}
+                {Array.isArray(providerNotes) && providerNotes.length > 0 && (
+                  <div className="rounded-control border border-border p-3">
+                    <p className="text-step-0 font-medium">{t("input.notesTitle")}</p>
+                    <ul className="mt-1 list-disc space-y-0.5 pl-5 text-step-0 text-muted-foreground">
+                      {providerNotes.map((note) => (
+                        <li key={note}>{note}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
 
-          {provider.inputType === "file" ? (
-            <div className="space-y-2">
-              <label className="text-step-1" htmlFor="import-file">
-                {t("input.fileLabel")}
+                {provider.inputType === "username" && provider.mediaTypes.length > 1 && (
+                  <SelectBase
+                    value={mediaType ?? ""}
+                    onValueChange={(value) => setMediaType(value as MediaTypeEnum)}
+                  >
+                    <SelectTrigger size="sm" className="max-w-52">
+                      <SelectValue placeholder={t("input.mediaTypeLabel")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {provider.mediaTypes.map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {t(`type.${type}`, { ns: "media" })}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </SelectBase>
+                )}
+
+                {provider.inputType === "file" ? (
+                  <div className="space-y-1.5">
+                    <label className="text-step-1" htmlFor="import-file">
+                      {t("input.fileLabel")}
+                    </label>
+                    <ImportDropzone
+                      id="import-file"
+                      accept={provider.accepts ?? undefined}
+                      file={file}
+                      onFileChange={setFile}
+                    />
+                  </div>
+                ) : (
+                  <div className="space-y-1.5">
+                    <label className="text-step-1" htmlFor="import-username">
+                      {t("input.usernameLabel")}
+                    </label>
+                    <BaseInput
+                      id="import-username"
+                      name="import-username"
+                      value={username}
+                      placeholder={t(`providers.${provider.id}.usernamePlaceholder`, {
+                        defaultValue: "",
+                      })}
+                      onChange={(event) => setUsername(event.target.value)}
+                    />
+                  </div>
+                )}
+
+                <Button
+                  type="button"
+                  onClick={handleAnalyze}
+                  disabled={busy}
+                  className="w-full sm:w-auto"
+                >
+                  {busy && !progress ? <Loader2 className="animate-spin" /> : <Upload />}
+                  {busy && !progress ? t("input.analyzing") : t("input.analyze")}
+                </Button>
+              </div>
+            )}
+          </>
+        )}
+
+        {step === 2 && (
+          <>
+            {provider && entries.length > 0 && (
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-control border border-border px-3 py-2">
+                <p className="min-w-0 truncate text-step-1 text-muted-foreground">
+                  {t("steps.summary", { provider: providerLabel(provider), count: entries.length })}
+                </p>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setStep(1)}
+                  className="shrink-0"
+                >
+                  {t("steps.edit")}
+                </Button>
+              </div>
+            )}
+
+            {progress && (
+              <div className="space-y-1.5" role="status" aria-live="polite">
+                <div className="flex items-baseline justify-between gap-3">
+                  <p className="text-step-1 text-muted-foreground">
+                    {t("match.progress", { done: progress.done, total: progress.total })}
+                  </p>
+                  <span className="font-serif text-step-2 tabular-nums">{percent}%</span>
+                </div>
+                <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+                  <div
+                    className="h-full rounded-full bg-primary transition-all"
+                    style={{ width: `${percent}%` }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {counts && (
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+                <StatCell label={t("counts.total")} value={counts.total} />
+                <StatCell label={t("counts.withLogs")} value={counts.withLogs} />
+                <StatCell label={t("counts.rated")} value={counts.rated} />
+                <StatCell label={t("counts.reviewed")} value={counts.reviewed} />
+                <StatCell label={t("counts.backlog")} value={counts.backlog} />
+              </div>
+            )}
+
+            <div className="flex flex-wrap items-end gap-x-4 gap-y-3">
+              <ImportFilters value={filter} counts={filterCounts} onChange={setFilter} />
+              <label className="flex items-center gap-2 pb-1.5">
+                <Switch
+                  checked={addBacklog}
+                  onCheckedChange={setAddBacklog}
+                  aria-label={t("options.backlog")}
+                />
+                <span className="text-step-1">{t("options.backlog")}</span>
               </label>
-              <BaseInput
-                id="import-file"
-                name="import-file"
-                type="file"
-                accept={provider.accepts ?? undefined}
-                onChange={(event) => setFile(event.target.files?.[0] ?? null)}
-              />
             </div>
-          ) : (
-            <div className="space-y-2">
-              <label className="text-step-1" htmlFor="import-username">
-                {t("input.usernameLabel")}
-              </label>
-              <BaseInput
-                id="import-username"
-                name="import-username"
-                value={username}
-                placeholder={t(`providers.${provider.id}.usernamePlaceholder`, { defaultValue: "" })}
-                onChange={(event) => setUsername(event.target.value)}
-              />
-            </div>
-          )}
 
-          <Button type="button" onClick={handleAnalyze} disabled={busy}>
-            {busy && !progress ? <Loader2 className="animate-spin" /> : <Upload />}
-            {busy && !progress ? t("input.analyzing") : t("input.analyze")}
-          </Button>
-        </div>
-      )}
-
-      {progress && (
-        <div className="space-y-1">
-          <p className="text-step-1 text-muted-foreground">
-            {t("match.progress", { done: progress.done, total: progress.total })}
-          </p>
-          <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
-            <div className="h-full bg-primary transition-all" style={{ width: `${percent}%` }} />
-          </div>
-        </div>
-      )}
-
-      {counts && (
-        <div className="flex flex-wrap gap-2">
-          <CountBadge label={t("counts.total")} value={counts.total} />
-          <CountBadge label={t("counts.withLogs")} value={counts.withLogs} />
-          <CountBadge label={t("counts.rated")} value={counts.rated} />
-          <CountBadge label={t("counts.reviewed")} value={counts.reviewed} />
-          <CountBadge label={t("counts.backlog")} value={counts.backlog} />
-        </div>
-      )}
-
-      {entries.length > 0 && (
-        <>
-          <label className="flex items-center gap-2 text-step-1">
-            <input
-              type="checkbox"
-              checked={addBacklog}
-              onChange={(event) => setAddBacklog(event.target.checked)}
-              className="size-4 accent-primary"
-            />
-            {t("options.backlog")}
-          </label>
-
-          <div className="space-y-2">
-            <ImportFilters
-              counts={filterCounts}
-              active={filter}
-              onToggle={(key) =>
-                setFilter((prev) =>
-                  prev.includes(key) ? prev.filter((item) => item !== key) : [...prev, key]
-                )
-              }
-              onClear={() => setFilter([])}
-            />
             <p className="text-step-0 text-muted-foreground">
               {t("filters.showing", { shown: visibleEntries.length, total: entries.length })}
             </p>
-          </div>
 
-          {visibleEntries.length > 0 ? (
-            <div className={cn("max-h-[36rem] overflow-y-auto rounded-control border border-border px-3")}>
-              {visibleEntries.map((entry) => (
-                <EntryRow
-                  key={entry.key}
-                  entry={entry}
-                  match={matches[entry.key]}
-                  result={resultByKey.get(entry.key)}
-                  selected={selections[entry.key] ?? null}
-                  ignored={ignored[entry.key] ?? false}
-                  willBacklog={addBacklog && entry.inBacklog}
-                  onSelect={(candidate) =>
-                    setSelections((prev) => ({ ...prev, [entry.key]: candidate }))
-                  }
-                  onToggleIgnored={() =>
-                    setIgnored((prev) => ({ ...prev, [entry.key]: !prev[entry.key] }))
-                  }
-                  onSearch={(query) => handleSearch(entry, query)}
-                />
-              ))}
+            {visibleEntries.length > 0 ? (
+              <div className="space-y-2">
+                <div
+                  ref={listTopRef}
+                  className="scroll-mt-16 rounded-control border border-border px-3"
+                >
+                  {shownEntries.map((entry) => (
+                    <EntryRow
+                      key={entry.key}
+                      entry={entry}
+                      match={matches[entry.key]}
+                      result={resultByKey.get(entry.key)}
+                      selected={selections[entry.key] ?? null}
+                      ignored={ignored[entry.key] ?? false}
+                      willBacklog={addBacklog && entry.inBacklog}
+                      pending={busy && !matches[entry.key]}
+                      candidates={candidatesByKey.get(entry.key) ?? EMPTY_CANDIDATES}
+                      onSelect={handleSelectCandidate}
+                      onToggleIgnored={handleToggleIgnored}
+                      onSearch={handleSearch}
+                      onOpenDetails={handleOpenDetails}
+                    />
+                  ))}
+                </div>
+
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  {visibleEntries.length > limit ? (
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setLimit((prev) => prev + PAGE_SIZE)}
+                    >
+                      {t("filters.showMore", { count: visibleEntries.length - limit })}
+                    </Button>
+                  ) : (
+                    <span />
+                  )}
+
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="ghost"
+                    onClick={() =>
+                      listTopRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
+                    }
+                  >
+                    <ArrowUp aria-hidden="true" />
+                    {t("filters.backToTop")}
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <p className="rounded-control border border-border p-3 text-step-1 text-muted-foreground">
+                {t("filters.empty")}
+              </p>
+            )}
+
+            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-3">
+              <span className="text-step-1 text-muted-foreground">
+                {t("commit.selected", { count: commitEntries.length })}
+              </span>
+              <Button
+                type="button"
+                onClick={handleCommit}
+                disabled={busy || commitEntries.length === 0}
+              >
+                {busy ? <Loader2 className="animate-spin" /> : <Upload />}
+                {busy ? t("commit.working") : t("commit.action", { count: commitEntries.length })}
+              </Button>
             </div>
-          ) : (
-            <p className="rounded-control border border-border p-3 text-step-1 text-muted-foreground">
-              {t("filters.empty")}
-            </p>
-          )}
+          </>
+        )}
 
-          <Button type="button" onClick={handleCommit} disabled={busy || commitEntries.length === 0}>
-            {busy ? <Loader2 className="animate-spin" /> : <Upload />}
-            {busy
-              ? t("commit.working")
-              : t("commit.action", { count: commitEntries.length })}
-          </Button>
-        </>
-      )}
+        {step === 3 && summary && (
+          <>
+            <p className="font-serif text-step-4 font-medium">{t("summary.title")}</p>
 
-      {summary && (
-        <div className="space-y-1 rounded-control border border-border p-3">
-          <p className="font-serif text-step-3">{t("summary.title")}</p>
-          <p className="text-step-1 text-muted-foreground">
-            {t("summary.counts", {
-              imported: summary.imported,
-              merged: summary.merged,
-              skipped: summary.skipped,
-              logs: summary.logsCreated,
-              backlog: summary.backlogAdded,
-            })}
-          </p>
-          {summary.failures.length > 0 && (
-            <details className="text-step-1">
-              <summary className="cursor-pointer text-destructive">
-                {t("summary.failures", { count: summary.failures.length })}
-              </summary>
-              <ul className="mt-1 list-disc pl-5 text-muted-foreground">
-                {summary.failures.map((failure) => (
-                  <li key={failure.name}>
-                    {t("summary.failureItem", {
-                      name: failure.name,
-                      reason: failure.reason,
-                    })}
-                  </li>
-                ))}
-              </ul>
-            </details>
-          )}
-        </div>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <StatCell label={t("summary.imported")} value={summary.imported} />
+              <StatCell label={t("summary.merged")} value={summary.merged} />
+              <StatCell label={t("summary.logs")} value={summary.logsCreated} />
+              <StatCell label={t("summary.backlog")} value={summary.backlogAdded} />
+            </div>
+
+            {summary.skipped > 0 && (
+              <p className="text-step-1 text-muted-foreground">
+                {t("summary.skippedCount", { count: summary.skipped })}
+              </p>
+            )}
+
+            {summary.failures.length > 0 && (
+              <details className="rounded-control border border-border p-3">
+                <summary className="cursor-pointer text-step-1 text-destructive">
+                  {t("summary.failures", { count: summary.failures.length })}
+                </summary>
+                <ul className="mt-2 list-disc space-y-0.5 pl-5 text-step-1 text-muted-foreground">
+                  {summary.failures.map((failure) => (
+                    <li key={failure.name}>
+                      {t("summary.failureItem", {
+                        name: failure.name,
+                        reason: failure.reason,
+                      })}
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            )}
+
+            <div className="flex flex-wrap gap-2">
+              <Button type="button" variant="outline" onClick={() => setStep(1)}>
+                {t("summary.restart")}
+              </Button>
+            </div>
+          </>
+        )}
+      </Card>
+
+      {detailEntry && (
+        <ImportCompareDialog
+          open={detailKey !== null}
+          onOpenChange={(next) => {
+            if (!next) setDetailKey(null);
+          }}
+          entry={detailEntry}
+          match={detailKey ? matches[detailKey] : undefined}
+          selected={detailKey ? selections[detailKey] ?? null : null}
+          candidates={detailCandidates}
+          sourceHref={detailSourceHref}
+          sourceLabel={detailSourceLabel}
+          onSelect={(candidate) => handleSelectCandidate(detailEntry.key, candidate)}
+        />
       )}
     </div>
   );
