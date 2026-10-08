@@ -37,6 +37,8 @@ export function metadataUrl(candidate: ImportCandidate): string | null {
       return anilistUrl(candidate.mediaType, candidate.externalId);
     case "openlibrary":
       return `https://openlibrary.org/works/${candidate.externalId}`;
+    case "igdb":
+      return `https://www.igdb.com/search?q=${encodeURIComponent(candidate.title)}`;
     default:
       return null;
   }
@@ -80,6 +82,8 @@ export function sourceUrl(entry: ImportEntry): string | null {
     }
     case "letterboxd":
       return refs.letterboxdUri ?? `https://letterboxd.com/search/${title}/`;
+    case "grouvee":
+      return refs.grouveeUrl ?? `https://www.grouvee.com/search/?q=${title}`;
     default:
       return null;
   }

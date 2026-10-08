@@ -124,7 +124,8 @@
   "metadata": {
     "tmdb": "TMDB",
     "anilist": "AniList",
-    "openlibrary": "Open Library"
+    "openlibrary": "Open Library",
+    "igdb": "IGDB"
   },
   "external": {
     "newTab": "opens in a new tab"
