@@ -11,5 +11,5 @@ export const fieldSurface = [
   "rounded-control border border-input bg-background",
   "outline-none transition-colors",
   "disabled:cursor-not-allowed disabled:opacity-50",
-  "focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/25",
+  "focus-visible:border-ring",
 ].join(" ");

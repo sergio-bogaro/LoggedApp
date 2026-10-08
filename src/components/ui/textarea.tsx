@@ -22,7 +22,7 @@ const BaseTextArea = React.forwardRef<HTMLTextAreaElement, BaseTextAreaProps>(
           "outline-none transition-colors",
           "placeholder:text-muted-foreground",
           "disabled:cursor-not-allowed disabled:opacity-50",
-          "focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/25",
+          "focus-visible:border-ring",
           "aria-invalid:border-destructive aria-invalid:ring-destructive/25",
           className
         )}
