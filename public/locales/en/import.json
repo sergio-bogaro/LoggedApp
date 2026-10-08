@@ -75,6 +75,29 @@
         "IMDb only has the rating date, not the watch date, so the log uses the rating date.",
         "Titles are matched to TMDB by the IMDb id (no title guessing)."
       ]
+    },
+    "grouvee": {
+      "label": "Grouvee",
+      "description": "Upload the CSV exported by Grouvee (Settings → \"Export your collection to a CSV file\"; the link arrives by email). Games are matched to IGDB by title and year.",
+      "helpLabel": "Open the Grouvee export page",
+      "helpUrl": "https://www.grouvee.com/export/",
+      "notes": [
+        "The export link is emailed to you by Grouvee — download the CSV and upload it here.",
+        "Ratings are converted from the 1–5 scale to Logged's 0–10.",
+        "Shelves: Played → finished, Playing → in progress, Backlog/Wishlist → backlog.",
+        "Games are matched to IGDB by title and year; review the matches."
+      ]
+    },
+    "infinitebacklog": {
+      "label": "Infinite Backlog",
+      "description": "Upload the CSV exported by Infinite Backlog (Settings → export your collection). Games are matched to IGDB by title.",
+      "helpLabel": "Open Infinite Backlog",
+      "helpUrl": "https://infinitebacklog.net/",
+      "notes": [
+        "The CSV layout is not documented, so columns are detected by their header names.",
+        "The rating scale (0–5 or 0–10) is inferred from the highest value in the file.",
+        "Games are matched to IGDB by title; review the matches."
+      ]
     }
   },
   "steps": {

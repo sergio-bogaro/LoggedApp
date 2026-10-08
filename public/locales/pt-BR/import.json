@@ -75,6 +75,29 @@
         "O IMDb só tem a data da nota, não a data em que você assistiu — o log usa a data da nota.",
         "Os títulos são casados com o TMDB pelo id do IMDb (sem adivinhar por título)."
       ]
+    },
+    "grouvee": {
+      "label": "Grouvee",
+      "description": "Envie o CSV exportado pelo Grouvee (Settings → \"Export your collection to a CSV file\"; o link chega por e-mail). Os jogos são casados com o IGDB por título e ano.",
+      "helpLabel": "Abrir a página de export do Grouvee",
+      "helpUrl": "https://www.grouvee.com/export/",
+      "notes": [
+        "O Grouvee manda o link do export por e-mail — baixe o CSV e envie aqui.",
+        "As notas são convertidas da escala 1–5 para a 0–10 do Logged.",
+        "Shelves: Played → finalizado, Playing → em andamento, Backlog/Wishlist → backlog.",
+        "Os jogos são casados com o IGDB por título e ano; revise os matches."
+      ]
+    },
+    "infinitebacklog": {
+      "label": "Infinite Backlog",
+      "description": "Envie o CSV exportado pelo Infinite Backlog (Settings → exportar a coleção). Os jogos são casados com o IGDB por título.",
+      "helpLabel": "Abrir o Infinite Backlog",
+      "helpUrl": "https://infinitebacklog.net/",
+      "notes": [
+        "O layout do CSV não é documentado, então as colunas são detectadas pelo cabeçalho.",
+        "A escala da nota (0–5 ou 0–10) é detectada pelo maior valor do arquivo.",
+        "Os jogos são casados com o IGDB por título; revise os matches."
+      ]
     }
   },
   "steps": {
