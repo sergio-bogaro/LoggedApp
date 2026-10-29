@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router";
 
 import { bottomNavigation, mainNavigation, mediaTypes } from "./const";
 
+import { BrandMark } from "@/components/tw/generic/BrandMark";
 import {
   Sidebar,
   SidebarContent,
@@ -39,14 +40,8 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader>
-        <div className="flex items-center gap-2 py-2">
-          <div className="flex items-center justify-center w-8 h-8 shrink-0 rounded-lg bg-primary text-primary-foreground font-bold">
-             L
-          </div>
-
-          <SidebarGroupLabel className="font-semibold">
-            <span className="text-step-2">{t("branding.sidebarName", { ns: "common" })}</span>
-          </SidebarGroupLabel>
+        <div className="flex items-center py-2">
+          <BrandMark size="sm" />
         </div>
       </SidebarHeader>
 
@@ -77,8 +72,10 @@ export function AppSidebar() {
 
         {hasTrackedMedia && (
           <SidebarGroup className="overflow-y-auto">
-            <SidebarGroupLabel> {t("label", { ns: "media" })} </SidebarGroupLabel>
-            <SidebarGroupContent >
+            <SidebarGroupLabel className="text-step-0 font-medium text-muted-foreground">
+              {t("label", { ns: "media" })}
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
               <SidebarMenu >
                 {visibleMediaTypes.map((item) => {
                   const label = t(`type.${item.type}`, { ns: "media" });

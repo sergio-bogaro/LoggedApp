@@ -18,8 +18,8 @@ export const LogStreamSkeleton = () => {
 
           <div className="mt-2">
             {Array.from({ length: ROWS_PER_GROUP }).map((_, row) => (
-              <div key={row} className="flex items-center gap-4 py-3 pl-3 pr-12 sm:pr-28">
-                <Skeleton className="h-[72px] w-12 shrink-0 rounded-control" />
+              <div key={row} className="flex items-center gap-4 border-b border-border/60 py-3 pl-2 pr-12">
+                <Skeleton className="h-[84px] w-14 shrink-0 rounded-control" />
 
                 <div className="min-w-0 flex-1 space-y-2">
                   <Skeleton className="h-4 w-1/3" />

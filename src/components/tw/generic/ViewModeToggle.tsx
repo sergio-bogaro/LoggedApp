@@ -19,26 +19,29 @@ interface ViewModeToggleProps {
 export const ViewModeToggle = ({ value, onChange, className }: ViewModeToggleProps) => {
   const { t } = useTranslation("media");
   const isGrid = value === "grid";
+  const label = isGrid ? t("viewToggle.list") : t("viewToggle.grid");
 
   return (
     <Button
       type="button"
       variant="outline"
+      size="icon"
       onClick={() => onChange(isGrid ? "list" : "grid")}
-      aria-label={isGrid ? t("viewToggle.list") : t("viewToggle.grid")}
-      className={cn("shrink-0 bg-background dark:bg-background", className)}
+      aria-label={label}
+      tooltip={label}
+      className={cn("relative shrink-0 bg-background dark:bg-background", className)}
     >
       <Grid
         aria-hidden="true"
         className={cn(
-          "h-[1.2rem] w-[1.2rem] -rotate-90 scale-0 transition-all",
+          "size-[1.1rem] -rotate-90 scale-0 transition-all duration-200",
           isGrid && "rotate-0 scale-100"
         )}
       />
       <List
         aria-hidden="true"
         className={cn(
-          "absolute h-[1.2rem] w-[1.2rem] rotate-0 scale-0 transition-all",
+          "absolute size-[1.1rem] rotate-0 scale-0 transition-all duration-200",
           !isGrid && "scale-100"
         )}
       />

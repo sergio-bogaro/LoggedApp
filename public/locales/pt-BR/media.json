@@ -240,8 +240,10 @@
     "filterAll": "Todas as tags"
   },
   "searchForm": {
+    "description": "Busque por título e registre o que encontrar.",
     "typeLabel": "Tipo",
     "typePlaceholder": "Tipo de mídia",
+    "searchFieldLabel": "Título",
     "searchLabel": "Buscar",
     "searchPlaceholder": "Busque por título",
     "pageLabelMovies": "Buscar filmes (TMDB)",
@@ -310,6 +312,7 @@
   },
   "home": {
     "title": "Registro",
+    "description": "Tudo o que você registrou, do mais recente ao mais antigo.",
     "tabs": {
       "log": "Registros",
       "list": "Biblioteca",
@@ -335,19 +338,25 @@
   },
   "list": {
     "loading": "Carregando...",
+    "description": "Sua biblioteca, organizada por tipo e por tags.",
     "empty": "Nenhuma mídia encontrada",
     "emptyWithType": "Comece adicionando {{mediaType}} à sua biblioteca",
     "noDescription": "Nenhuma descrição disponível.",
-    "favorites" : "Favoritos",
-    "addFavorites": "Adicione itens aos seus favoritos",
+    "favorites": "Favoritos",
+    "favoritesDescription": "Títulos que você marcou para rever e recomendar.",
+    "addFavorites": "Nenhum favorito ainda",
+    "addFavoritesHint": "Use o menu de uma mídia para salvá-la aqui.",
     "backlog": "Backlog",
-    "addBacklog": "Adicione itens ao seu backlog",
+    "backlogDescription": "O que você quer começar quando houver tempo.",
+    "addBacklog": "Seu backlog está vazio",
+    "addBacklogHint": "Guarde títulos na busca para começar depois.",
     "chart": {
       "avgRating": "Nota Média"
     }
   },
   "views": {
     "title": "Views",
+    "description": "Cortes da sua biblioteca por momento e por afinidade.",
     "filterLabel": "Tipos de mídia",
     "totalLabel": "Títulos",
     "empty": "Nada por aqui ainda",
@@ -371,23 +380,31 @@
     "recentlyAdded": "Adicionados recentemente",
     "recentlyAddedDesc": "Mídias registradas recentemente na sua biblioteca",
     "favorites": "Favoritos",
-    "favoritesDesc": "Ultimas medias com nota 8 ou maior",
-    "viewAll": "Ver Todos",
+    "favoritesDesc": "Últimas mídias com nota 8 ou maior",
+    "viewAll": "Ver todos",
     "noData": "Nenhum dado disponível ainda"
   },
   "logs": {
-    "title": "Todos os Logs",
-    "titleFiltered": "Todos os Logs — {{type}}",
-    "description": "Todos os seus logs de mídia ordenados por mais recentes",
-    "empty": "Nenhum log ainda",
-    "emptyHint": "Comece a registrar suas mídias para ver os logs aqui",
-    "allLoaded": "Todos os logs carregados"
+    "title": "Todos os registros",
+    "titleFiltered": "Registros: {{type}}",
+    "description": "Todos os seus registros, do mais recente ao mais antigo.",
+    "empty": "Nenhum registro ainda",
+    "emptyHint": "Registre uma mídia para ver os registros aqui.",
+    "allLoaded": "Todos os registros carregados"
   },
   "log": {
     "empty": "Nada registrado ainda",
     "emptyHint": "Registre um título e ele aparece aqui, do mais recente ao mais antigo.",
     "emptyPeriod": "Nenhum registro neste período",
     "emptyPeriodHint": "Tente um período maior ou volte para Tudo."
+  },
+  "register": {
+    "columns": {
+      "title": "Título",
+      "status": "Status",
+      "date": "Data",
+      "rating": "Nota"
+    }
   },
   "record": {
     "title": "Seu registro",
@@ -404,6 +421,11 @@
   "stats": {
     "headline": "Registros",
     "headlineCaption": "em {{count}} títulos",
+    "titles": "títulos",
+    "empty": {
+      "title": "Ainda não há o que medir",
+      "description": "Registre um título no período selecionado para ver os gráficos."
+    },
     "finishedHint": "{{percent}}% do total",
     "period": {
       "label": "Período",

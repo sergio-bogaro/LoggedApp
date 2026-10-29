@@ -1,12 +1,17 @@
 {
-  "message": "Hello, welcome to our application!",
-  "intro": "This is a sample application to demonstrate internationalization.",
+  "message": "Everything you watch, read, play and listen to.",
+  "intro": "A personal register for what you finished, what is in progress, and what you want to start next.",
   "language_select": "Select your preferred language:",
   "theme_select": "Select your preferred theme:",
-  "authenticatedGreeting": "Welcome back, {{username}}!",
+  "access": {
+    "title": "Your register",
+    "description": "Sign in to continue, or create an account to start.",
+    "descriptionAuthenticated": "Pick up where you left off."
+  },
+  "authenticatedGreeting": "Welcome back, {{username}}.",
   "actions": {
-    "goToApp": "Go to App",
-    "login": "Login",
-    "register": "Register"
+    "goToApp": "Continue",
+    "login": "Sign in",
+    "register": "Create account"
   }
 }

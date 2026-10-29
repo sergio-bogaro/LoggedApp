@@ -467,13 +467,14 @@ function SidebarMenuItem({ className, ...props }: React.ComponentProps<"li">) {
 }
 
 const sidebarMenuButtonVariants = cva( [
-  "peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm",
-  "outline-hidden ring-sidebar-ring transition-[width,height,padding]",
+  "peer/menu-button relative flex w-full items-center gap-2 overflow-hidden rounded-control p-2 text-left text-step-1",
+  "outline-hidden ring-sidebar-ring transition-[width,height,padding,background-color,color] duration-150",
   "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
   "focus-visible:ring-2",
   "active:bg-sidebar-accent active:text-sidebar-accent-foreground",
   "disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50",
   "data-[active=true]:bg-sidebar-primary/10 data-[active=true]:font-medium data-[active=true]:text-sidebar-primary",
+  "data-[active=true]:before:absolute data-[active=true]:before:left-0 data-[active=true]:before:top-1/2 data-[active=true]:before:h-4 data-[active=true]:before:w-[2px] data-[active=true]:before:-translate-y-1/2 data-[active=true]:before:rounded-full data-[active=true]:before:bg-sidebar-primary data-[active=true]:before:content-['']",
   "data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground",
   "group-has-data-[sidebar=menu-action]/menu-item:pr-8",
   "group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2!",
@@ -486,9 +487,9 @@ const sidebarMenuButtonVariants = cva( [
           "bg-background shadow-[0_0_0_1px_hsl(var(--sidebar-border))] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:shadow-[0_0_0_1px_hsl(var(--sidebar-accent))]",
     },
     size: {
-      default: "h-8 text-sm",
-      sm: "h-7 text-xs",
-      lg: "h-12 text-sm group-data-[collapsible=icon]:p-0!",
+      default: "h-9 text-step-1 pointer-coarse:h-11",
+      sm: "h-8 text-step-0 pointer-coarse:h-11",
+      lg: "h-12 text-step-1 group-data-[collapsible=icon]:p-0!",
     },
   },
   defaultVariants: {

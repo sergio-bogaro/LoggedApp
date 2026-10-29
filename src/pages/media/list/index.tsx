@@ -100,23 +100,10 @@ const MediaListPage = () => {
   const errorMessageCombined = error?.message || errorRecent?.message || "";
 
   return (
-    <div className="w-full h-full space-y-3">
-      <PageHeader title={title || t("label")} />
+    <div className="flex w-full flex-col gap-6">
+      <PageHeader title={title || t("label")} description={t("list.description")} />
 
-      {tagOptions && tagOptions.length > 0 && (
-        <div className="max-w-[220px]">
-          <Select
-            name="tagFilter"
-            label={t("tags.label")}
-            placeholder={t("tags.filterAll")}
-            options={tagSelectOptions}
-            value={tagFilter || ALL_TAGS}
-            onValueChange={(value) => setTagFilter(value === ALL_TAGS ? "" : value)}
-          />
-        </div>
-      )}
-
-      <Tabs defaultValue="list" className="mt-4">
+      <Tabs defaultValue="list" className="gap-5">
         <TabsList>
           <TabsTrigger value="list">{t("home.tabs.list")}</TabsTrigger>
           <TabsTrigger value="stats">{t("home.tabs.stats")}</TabsTrigger>
@@ -130,11 +117,26 @@ const MediaListPage = () => {
             isError={isErrorCombined}
             errorMessage={`${t("errorLoading", { ns: "common" })} ${errorMessageCombined}`}
           >
-            <MediaLibrary data={data} recentlyLoggedData={recentlyLoggedData} mediaType={mediaType} />
+            <div className="flex flex-col gap-5">
+              {tagOptions && tagOptions.length > 0 && (
+                <div className="max-w-[220px]">
+                  <Select
+                    name="tagFilter"
+                    label={t("tags.label")}
+                    placeholder={t("tags.filterAll")}
+                    options={tagSelectOptions}
+                    value={tagFilter || ALL_TAGS}
+                    onValueChange={(value) => setTagFilter(value === ALL_TAGS ? "" : value)}
+                  />
+                </div>
+              )}
+
+              <MediaLibrary data={data} recentlyLoggedData={recentlyLoggedData} mediaType={mediaType} />
+            </div>
           </DataExhibition>
         </TabsContent>
 
-        <TabsContent value="stats" className="mt-4 space-y-6">
+        <TabsContent value="stats">
           <MediaStats logs={logs} />
         </TabsContent>
       </Tabs>

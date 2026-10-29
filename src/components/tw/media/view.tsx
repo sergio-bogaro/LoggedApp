@@ -1,11 +1,12 @@
 
-import { Loader2Icon } from "lucide-react";
+import { AlertTriangle, Loader2Icon, Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { GridItem } from "./grid";
 import ListItem from "./list";
 
+import { EmptyState } from "@/components/tw/generic/EmptyState";
 import { POSTER_GRID_WIDE } from "@/components/tw/media/gridSkeleton";
 import { cn } from "@/lib/utils";
 import { getExistingMedia } from "@/querries/media/existingMedias";
@@ -56,28 +57,34 @@ const MediaView = ({ isLoading, error, mediaData, existingMedia, emptyTitle, emp
 
   if (error) {
     return (
-      <div className="p-4">
-        <p className="font-semibold">{t("searchView.errorTitle", { ns: "media" })}</p>
-        <p className="mt-1 text-step-1">{error.message}</p>
-      </div>
+      <EmptyState
+        icon={<AlertTriangle aria-hidden="true" className="size-4" />}
+        title={t("searchView.errorTitle", { ns: "media" })}
+        description={error.message}
+        className="mt-2"
+      />
     )
   }
 
   if (mediaData === undefined) {
     return (
-      <div className="p-4">
-        <p className="text-step-3 font-semibold">{t("searchView.startTitle", { ns: "media" })}</p>
-        <p className="mt-1 text-step-1">{t("searchView.startDescription", { ns: "media" })}</p>
-      </div>
+      <EmptyState
+        icon={<Search aria-hidden="true" className="size-4" />}
+        title={t("searchView.startTitle", { ns: "media" })}
+        description={t("searchView.startDescription", { ns: "media" })}
+        className="mt-2"
+      />
     )
   }
 
   if (mediaData.length === 0) {
     return (
-      <div className="p-4 flex flex-col items-center">
-        <p className="mt-4 text-step-3 font-semibold">{emptyTitle ?? t("searchView.noResultsTitle", { ns: "media" })}</p>
-        <p className="mt-2 text-step-1 text-muted-foreground max-w-prose text-center">{emptyDescription ?? t("searchView.noResultsDescription", { ns: "media" })}</p>
-      </div>
+      <EmptyState
+        icon={<Search aria-hidden="true" className="size-4" />}
+        title={emptyTitle ?? t("searchView.noResultsTitle", { ns: "media" })}
+        description={emptyDescription ?? t("searchView.noResultsDescription", { ns: "media" })}
+        className="mt-2"
+      />
     )
   }
 

@@ -1,8 +1,8 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { ArrowLeft, Loader2Icon } from "lucide-react";
+import { ArrowLeft, Loader2Icon, Search } from "lucide-react";
 import { useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useParams } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
 
 import { EmptyState } from "@/components/tw/generic/EmptyState";
 import { Loading } from "@/components/tw/generic/loading";
@@ -88,7 +88,7 @@ const MediaLogsPage = () => {
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return (
-    <div className="w-full h-full">
+    <div className="flex w-full flex-col gap-4">
       <PageHeader
         title={title}
         description={t("logs.description")}
@@ -108,7 +108,16 @@ const MediaLogsPage = () => {
       {isLoading ? (
         <MediaGridSkeleton count={SKELETON_COUNT} className={`${POSTER_GRID_WIDE} min-h-72`} />
       ) : allItems.length === 0 ? (
-        <EmptyState title={t("logs.empty")} description={t("logs.emptyHint")} />
+        <EmptyState
+          icon={<Search aria-hidden="true" className="size-4" />}
+          title={t("logs.empty")}
+          description={t("logs.emptyHint")}
+          action={
+            <Button asChild size="sm">
+              <Link to="/search">{t("navigation.search", { ns: "common" })}</Link>
+            </Button>
+          }
+        />
       ) : (
         <>
           <div className="relative">

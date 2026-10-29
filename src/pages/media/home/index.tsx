@@ -65,23 +65,25 @@ const MediaHomePage = () => {
   const isGrid = libraryViewMode === "grid";
 
   return (
-    <div className="w-full h-full">
-      <PageHeader title={t("home.title")} />
+    <div className="flex w-full flex-col gap-6">
+      <PageHeader title={t("home.title")} description={t("home.description")} />
 
-      <Tabs value={tab} onValueChange={setTab}>
+      <Tabs value={tab} onValueChange={setTab} className="gap-5">
         <TabsList>
           <TabsTrigger value="log">{t("home.tabs.log")}</TabsTrigger>
           <TabsTrigger value="stats">{t("home.tabs.stats")}</TabsTrigger>
         </TabsList>
 
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <PeriodFilter
-            value={period}
-            onChange={handlePeriodChange}
-            custom={custom}
-            onCustomChange={setCustom}
-            resolvedRange={displayRange}
-          />
+        <div className="flex items-end gap-3">
+          <div className="min-w-0 flex-1">
+            <PeriodFilter
+              value={period}
+              onChange={handlePeriodChange}
+              custom={custom}
+              onCustomChange={setCustom}
+              resolvedRange={displayRange}
+            />
+          </div>
 
           {tab === "log" && (
             <ViewModeToggle
@@ -92,7 +94,7 @@ const MediaHomePage = () => {
           )}
         </div>
 
-        <TabsContent value="log" className="mt-6">
+        <TabsContent value="log">
           <DataExhibition
             isLoading={isLoading}
             isFetching={isFetching}
@@ -104,7 +106,7 @@ const MediaHomePage = () => {
           </DataExhibition>
         </TabsContent>
 
-        <TabsContent value="stats" className="mt-6">
+        <TabsContent value="stats">
           <DataExhibition
             isLoading={isLoading}
             isFetching={isFetching}

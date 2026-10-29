@@ -53,7 +53,7 @@ function TabsTrigger({ className, ...props }: React.ComponentProps<typeof TabsPr
         "disabled:pointer-events-none disabled:opacity-50",
         "data-[state=active]:text-foreground",
         "after:pointer-events-none after:absolute after:inset-x-0 after:-bottom-px after:h-[2px] after:rounded-full after:bg-transparent",
-        "data-[state=active]:after:bg-foreground",
+        "data-[state=active]:after:bg-primary",
         "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className
       )}

@@ -125,7 +125,7 @@ function IntegrationKeysForm() {
   };
 
   return (
-    <div className="max-w-md space-y-6">
+    <div className="max-w-2xl space-y-6">
       {/* TMDB */}
       <div className="space-y-3">
         <div className="flex items-center justify-between gap-3">
@@ -133,7 +133,7 @@ function IntegrationKeysForm() {
             <p className="font-medium text-step-1">{t("settings.integrations.tmdb.label")}</p>
             <IntegrationHelp api="tmdb" />
           </div>
-          <span className="text-step-0 text-muted-foreground">
+          <span className="rounded-control bg-secondary px-2 py-0.5 text-step-0 text-muted-foreground">
             {statusLabel(status?.tmdb)}
           </span>
         </div>
@@ -213,7 +213,7 @@ function IntegrationKeysForm() {
             <p className="font-medium text-step-1">{t("settings.integrations.igdb.label")}</p>
             <IntegrationHelp api="igdb" />
           </div>
-          <span className="text-step-0 text-muted-foreground">
+          <span className="rounded-control bg-secondary px-2 py-0.5 text-step-0 text-muted-foreground">
             {statusLabel(status?.igdb)}
           </span>
         </div>

@@ -66,10 +66,10 @@ const ViewsHubPage = () => {
   );
 
   return (
-    <div className="w-full h-full space-y-8">
-      <PageHeader title={t("views.title")} />
+    <div className="flex w-full flex-col gap-8">
+      <PageHeader title={t("views.title")} description={t("views.description")} />
 
-      <div className="space-y-2">
+      <div className="flex flex-col gap-2">
         <p className="text-step-1 text-muted-foreground">{t("views.filterLabel")}</p>
         <MediaTypeFilter
           value={selectedTypes}

@@ -30,6 +30,7 @@
   },
   "settings": {
     "title": "Configurações",
+    "description": "Preferências, tipos de mídia e integrações.",
     "loggedInAs": "Conectado como",
     "account": "Conta",
     "logoutSuccess": "Sessão encerrada com sucesso",
@@ -37,15 +38,15 @@
       "title": "Aparência e idioma"
     },
     "tracking": {
-      "title": "Mídias a Registrar",
-      "description": "Escolha quais tipos de mídia deseja logar",
+      "title": "Tipos de mídia",
+      "description": "Escolha o que você quer registrar.",
       "saving": "Salvando...",
-      "requiresTmdb": "Requer chave do TMDB — configure em Integrações",
-      "requiresIgdb": "Requer credenciais do IGDB — configure em Integrações"
+      "requiresTmdb": "Requer chave do TMDB. Configure em Integrações.",
+      "requiresIgdb": "Requer credenciais do IGDB. Configure em Integrações."
     },
     "integrations": {
       "title": "Integrações",
-      "description": "Suas chaves de API ficam no servidor e nunca são expostas ao navegador. Deixe um campo vazio para manter o valor atual, ou use Limpar para removê-lo.",
+      "description": "Suas chaves ficam no servidor e nunca chegam ao navegador. Deixe o campo vazio para manter o valor atual.",
       "status": {
         "user": "Configurado por você",
         "instance": "Fornecido pelo servidor",
@@ -95,6 +96,7 @@
     }
   },
   "a11y": {
+    "skipToContent": "Pular para o conteúdo",
     "close": "Fechar",
     "toggleSidebar": "Alternar barra lateral",
     "sidebarTitle": "Barra lateral",

@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils"
 export const buttonVariants = cva( [
   "inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap",
   "rounded-control text-sm font-medium",
-  "outline-none transition-all",
+  "outline-none transition-all active:translate-y-px",
   "disabled:pointer-events-none disabled:opacity-50",
   "focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
   "aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40",

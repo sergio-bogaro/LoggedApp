@@ -4,17 +4,17 @@
   "step1Title": "What is Logged?",
   "progressLabel": "Onboarding progress",
   "features": [
-    "Track movies, anime, manga, games and books in one place",
-    "Log progress, ratings and reviews for each title",
-    "View statistics and charts about your library",
-    "Organize everything with favorites, backlog and custom views"
+    "Movies, series, anime, manga, books, games and music in one place",
+    "Progress, ratings and reviews for every title",
+    "Statistics for your library by period and media type",
+    "Favorites, backlog and views for what comes next"
   ],
   "step2Title": "Customize your experience",
   "step2Description": "Choose your language, theme and rating mode",
   "step3Title": "Integrations",
   "step3Description": "Add your own API keys: movies use TMDB and games use IGDB. They are stored on the server only. You can skip this and configure later in Settings.",
   "step4Title": "What do you want to track?",
-  "step4Description": "Select the media types you want to log. Types without a configured source stay disabled.",
+  "step4Description": "Select the media types you want to track. Types without a configured source stay disabled.",
   "back": "Back",
   "next": "Next",
   "finish": "Finish",

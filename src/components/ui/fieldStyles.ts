@@ -9,7 +9,7 @@
  */
 export const fieldSurface = [
   "rounded-control border border-input bg-background",
-  "outline-none transition-colors",
+  "outline-none transition-[border-color,box-shadow] duration-150",
   "disabled:cursor-not-allowed disabled:opacity-50",
-  "focus-visible:border-ring",
+  "focus-visible:border-ring focus-visible:ring-[2px] focus-visible:ring-ring/25 focus-visible:ring-offset-1 focus-visible:ring-offset-background",
 ].join(" ");

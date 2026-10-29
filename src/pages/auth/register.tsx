@@ -68,6 +68,7 @@ export default function Register() {
   return (
     <EntryCard
       title={t("register.title")}
+      subtitle={t("register.subtitle")}
       footer={
         <>
           {t("register.hasAccount")}{" "}

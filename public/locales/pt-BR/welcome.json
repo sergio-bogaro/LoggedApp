@@ -1,12 +1,17 @@
 {
-  "message": "Olá, bem-vindo à nossa aplicação!",
-  "intro": "Esta é uma aplicação de exemplo para demonstrar internacionalização.",
+  "message": "Tudo o que você assiste, lê, joga e ouve.",
+  "intro": "Um registro pessoal para lembrar do que você terminou, acompanhar o que está em curso e guardar o que ainda quer começar.",
   "language_select": "Selecione seu idioma preferido:",
   "theme_select": "Selecione seu tema preferido:",
-  "authenticatedGreeting": "Bem-vindo de volta, {{username}}!",
+  "access": {
+    "title": "Seu registro",
+    "description": "Entre para continuar ou crie uma conta para começar.",
+    "descriptionAuthenticated": "Continue de onde parou."
+  },
+  "authenticatedGreeting": "Bem-vindo de volta, {{username}}.",
   "actions": {
-    "goToApp": "Ir para o app",
+    "goToApp": "Continuar",
     "login": "Entrar",
-    "register": "Registrar"
+    "register": "Criar conta"
   }
 }

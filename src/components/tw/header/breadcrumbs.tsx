@@ -31,7 +31,7 @@ function Breadcrumbs() {
                 ) : (
                   <span
                     aria-current={isCurrent ? "page" : undefined}
-                    className="text-foreground font-semibold whitespace-nowrap truncate"
+                    className="text-foreground font-medium whitespace-nowrap truncate"
                   >
                     {crumb.label}
                   </span>

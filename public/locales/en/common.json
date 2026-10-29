@@ -30,6 +30,7 @@
   },
   "settings": {
     "title": "Settings",
+    "description": "Preferences, media types and integrations.",
     "loggedInAs": "Logged in as",
     "account": "Account",
     "logoutSuccess": "Logged out successfully",
@@ -37,15 +38,15 @@
       "title": "Appearance and language"
     },
     "tracking": {
-      "title": "Media Tracking",
-      "description": "Choose which media types you want to log",
+      "title": "Media types",
+      "description": "Choose what you want to track.",
       "saving": "Saving...",
-      "requiresTmdb": "Requires a TMDB API key — set it in Integrations",
-      "requiresIgdb": "Requires IGDB credentials — set them in Integrations"
+      "requiresTmdb": "Requires a TMDB API key. Set it in Integrations.",
+      "requiresIgdb": "Requires IGDB credentials. Set them in Integrations."
     },
     "integrations": {
       "title": "Integrations",
-      "description": "Your API keys are stored on the server and never exposed to the browser. Leave a field empty to keep the current value, or use Clear to remove it.",
+      "description": "Your keys stay on the server and never reach the browser. Leave the field empty to keep the current value.",
       "status": {
         "user": "Set by you",
         "instance": "Provided by the server",
@@ -95,6 +96,7 @@
     }
   },
   "a11y": {
+    "skipToContent": "Skip to content",
     "close": "Close",
     "toggleSidebar": "Toggle sidebar",
     "sidebarTitle": "Sidebar",

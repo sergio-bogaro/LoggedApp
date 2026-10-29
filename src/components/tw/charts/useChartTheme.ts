@@ -6,6 +6,7 @@ export interface ChartTheme {
   series: string[];
   text: string;
   grid: string;
+  ink: string;
 }
 
 const FALLBACK_SERIES = ["#3e6fa8", "#7c5ba6", "#4f8a45", "#a8516e", "#2f7a73", "#8f6a24", "#b5651d"];
@@ -44,6 +45,7 @@ export function useChartTheme(): ChartTheme {
       series: CATEGORICAL_VARS.map((name, index) => readVar(name, FALLBACK_SERIES[index])),
       text: readVar("--muted-foreground", "#6e7276"),
       grid: readVar("--border", "#dcdcd6"),
+      ink: readVar("--foreground", "#14171a"),
     };
   }, [theme]);
 }

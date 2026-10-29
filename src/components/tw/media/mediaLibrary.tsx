@@ -1,3 +1,4 @@
+import { ArrowUpRight } from "lucide-react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
@@ -56,40 +57,51 @@ export const MediaLibrary = ({ data, recentlyLoggedData, mediaType }: MediaLibra
       titleKey: "sections.favorites",
       description: "sections.favoritesDesc",
       items: favorites,
-      viewAllLink: "/media/list",
+      viewAllLink: "/media/favorites",
     },
   ];
 
   return (
-    <div className="md:px-12 mt-4 space-y-8">
+    <div className="mt-5 space-y-10">
       {sections.map((section) => (
         <div key={section.key}>
           <Carousel>
-            <div className="flex items-center justify-between mb-2">
-              <h2 className="px-1 font-serif text-step-4 font-medium">
-                {t(section.titleKey)}
-              </h2>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div className="min-w-0">
+                <h2 className="flex items-baseline gap-2 px-0.5 font-serif text-step-4 font-medium">
+                  {t(section.titleKey)}
+                  <span className="font-sans text-step-1 tabular-nums text-muted-foreground">
+                    {section.items.length}
+                  </span>
+                </h2>
+
+                <p className="mt-1 px-0.5 text-step-1 text-muted-foreground">
+                  {t(section.description)}
+                </p>
+              </div>
+
               {section.viewAllLink && section.items.length > 0 && (
-                <div className="flex flex-col items-center gap-1">
-                  <Button variant="ghost" size="sm" asChild>
+                <div className="flex items-center gap-2 max-sm:ml-auto">
+                  <Button variant="ghost" size="sm" asChild className="group/link text-muted-foreground">
                     <Link to={section.viewAllLink}>
                       {t("sections.viewAll")}
+                      <ArrowUpRight
+                        aria-hidden="true"
+                        className="transition-transform duration-200 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5"
+                      />
                     </Link>
                   </Button>
-                  <div className="hidden md:flex gap-2">
-                    <CarouselPrevious />
-                    <CarouselNext />
+
+                  <div className="hidden items-center gap-1 md:flex">
+                    <CarouselPrevious className="rounded-control" />
+                    <CarouselNext className="rounded-control" />
                   </div>
                 </div>
               )}
             </div>
 
-            <span className="px-1 text-step-1 text-muted-foreground">
-              {t(section.description)}
-            </span>
-
             {section.items.length > 0 ? (
-              <CarouselContent>
+              <CarouselContent className="mt-4">
                 {section.items.map((item) => {
                   const normalizedItem: MediaItem = {
                     id: item.externalId,
@@ -116,7 +128,7 @@ export const MediaLibrary = ({ data, recentlyLoggedData, mediaType }: MediaLibra
             ) : (
               <EmptyState
                 title={t("sections.noData")}
-                className="mt-4 min-h-72 px-1"
+                className="mt-4 min-h-48 px-1"
                 titleClassName="text-step-1"
               />
             )}
@@ -124,5 +136,5 @@ export const MediaLibrary = ({ data, recentlyLoggedData, mediaType }: MediaLibra
         </div>
       ))}
     </div>
-  )
+  );
 };

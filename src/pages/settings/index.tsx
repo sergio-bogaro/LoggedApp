@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { toast } from "sonner";
@@ -7,7 +7,6 @@ import LanguageSwitcher from "@/components/LanguageSwitcher";
 import RatingSwitcher from "@/components/RatingSwitcher";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 import { PageHeader } from "@/components/tw/generic/PageHeader";
-import { SectionHeading } from "@/components/tw/generic/SectionHeading";
 import IntegrationKeysForm from "@/components/tw/settings/IntegrationKeysForm";
 import MediaTrackToggles from "@/components/tw/settings/MediaTrackToggles";
 import { Button } from "@/components/ui/button";
@@ -17,6 +16,27 @@ import { updateUserSettings } from "@/store/auth/slice";
 import { setBreadcrumbs } from "@/store/settings/slice";
 import { MediaTypeEnum } from "@/types/media";
 import { getTrackFlags } from "@/utils/mediaTrack";
+
+const SettingsSection = ({
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description?: string;
+  children: ReactNode;
+}) => (
+  <section className="grid gap-5 border-t border-border pt-8 md:grid-cols-[220px_minmax(0,1fr)] md:gap-10">
+    <div className="space-y-1.5">
+      <h2 className="font-serif text-step-4 font-medium">{title}</h2>
+      {description && (
+        <p className="max-w-[30ch] text-step-1 text-muted-foreground">{description}</p>
+      )}
+    </div>
+
+    <div>{children}</div>
+  </section>
+);
 
 function SettingsPage() {
   const { t } = useTranslation("common");
@@ -62,59 +82,47 @@ function SettingsPage() {
   };
 
   return (
-    <div className="w-full space-y-8">
-      <PageHeader title={t("settings.title")} />
+    <div className="w-full max-w-[1040px]">
+      <PageHeader title={t("settings.title")} description={t("settings.description")} />
 
-      <section className="space-y-4">
-        <SectionHeading>{t("settings.appearance.title")}</SectionHeading>
+      <div className="mt-8 space-y-10">
+        <SettingsSection title={t("settings.appearance.title")}>
+          <div className="grid gap-4 sm:grid-cols-3">
+            <LanguageSwitcher />
+            <ThemeSwitcher />
+            <RatingSwitcher />
+          </div>
+        </SettingsSection>
 
-        <div className="grid max-w-md gap-4">
-          <LanguageSwitcher />
-          <ThemeSwitcher />
-          <RatingSwitcher />
-        </div>
-      </section>
+        <SettingsSection
+          title={t("settings.tracking.title")}
+          description={t("settings.tracking.description")}
+        >
+          <MediaTrackToggles values={values} onChange={handleChange} />
 
-      <section className="space-y-4">
-        <SectionHeading>{t("settings.tracking.title")}</SectionHeading>
+          {savingType && (
+            <p className="mt-3 text-step-1 text-muted-foreground">{t("settings.tracking.saving")}</p>
+          )}
+        </SettingsSection>
 
-        <p className="text-step-1 text-muted-foreground">
-          {t("settings.tracking.description")}
-        </p>
+        <SettingsSection
+          title={t("settings.integrations.title")}
+          description={t("settings.integrations.description")}
+        >
+          <IntegrationKeysForm />
+        </SettingsSection>
 
-        <MediaTrackToggles
-          values={values}
-          onChange={handleChange}
-        />
-
-        {savingType && (
-          <p className="text-step-1 text-muted-foreground">{t("settings.tracking.saving")}</p>
-        )}
-      </section>
-
-      <section className="space-y-4">
-        <SectionHeading>{t("settings.integrations.title")}</SectionHeading>
-
-        <p className="text-step-1 text-muted-foreground">
-          {t("settings.integrations.description")}
-        </p>
-
-        <IntegrationKeysForm />
-      </section>
-
-      <section className="space-y-4">
-        <SectionHeading>{t("settings.title", { ns: "import" })}</SectionHeading>
-
-        <p className="text-step-1 text-muted-foreground">
-          {t("settings.description", { ns: "import" })}
-        </p>
-
-        <Button asChild>
-          <Link to="/import">{t("settings.open", { ns: "import" })}</Link>
-        </Button>
-      </section>
+        <SettingsSection
+          title={t("settings.title", { ns: "import" })}
+          description={t("settings.description", { ns: "import" })}
+        >
+          <Button asChild>
+            <Link to="/import">{t("settings.open", { ns: "import" })}</Link>
+          </Button>
+        </SettingsSection>
+      </div>
     </div>
-  )
+  );
 }
 
 export default SettingsPage;

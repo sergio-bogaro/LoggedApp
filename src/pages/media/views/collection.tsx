@@ -104,7 +104,7 @@ const MediaCollectionPage = () => {
   }, [visibleItems]);
 
   if (!collection) {
-    return <NotFoundPage />;
+    return <NotFoundPage embedded />;
   }
 
   const index = ALL_TYPES.filter((type) => typeCounts[type] > 0).map((type) => ({
@@ -146,7 +146,7 @@ const MediaCollectionPage = () => {
           <div className="space-y-8">
             {groups.map(([groupKey, group]) => (
               <section key={groupKey}>
-                <SectionHeading>
+                <SectionHeading className="sticky top-12 z-10 -mx-1 bg-background/95 px-1 pt-2 backdrop-blur-sm">
                   {groupKey === NO_DATE_KEY
                     ? t("views.noRecords")
                     : formatMonthLabel(group[0].lastLogDate!, i18n.language)}
@@ -161,7 +161,7 @@ const MediaCollectionPage = () => {
                     ))}
                   </ul>
                 ) : (
-                  <ul className="mt-2">
+                  <ul className="mt-2 divide-y divide-border/60">
                     {group.map((media) => (
                       <li key={media.id}>
                         <RegisterRow

@@ -15,12 +15,12 @@ export const MediaDetailsSkeleton = () => {
       role="status"
       aria-busy="true"
       aria-label={t("a11y.loading")}
-      className="mx-auto max-w-[1100px] p-4 sm:p-8"
+      className="mx-auto max-w-[1100px]"
     >
       <div className="flex flex-col gap-6 md:flex-row md:gap-10" aria-hidden="true">
         {/* Poster + record */}
         <div className="w-full shrink-0 space-y-4 sm:mx-auto sm:max-w-[360px] md:mx-0 md:max-w-none md:w-72 lg:w-80">
-          <Skeleton className="aspect-2/3 w-full rounded-lg" />
+          <Skeleton className="aspect-2/3 w-full rounded-md" />
 
           <div className="space-y-3">
             <Skeleton className="h-6 w-36" />

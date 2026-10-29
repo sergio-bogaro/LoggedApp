@@ -1,4 +1,4 @@
-import { Sparkles } from "lucide-react";
+import { Check } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
@@ -60,11 +60,6 @@ function OnboardingPage() {
     <EntryCard
       title={t("title", { ns: "onboarding", appName: t("branding.sidebarName", { ns: "common" }) })}
       subtitle={t("subtitle", { ns: "onboarding" })}
-      icon={
-        <div className="flex size-10 items-center justify-center rounded-control bg-primary text-primary-foreground">
-          <Sparkles className="size-5" aria-hidden="true" />
-        </div>
-      }
     >
       <div
         role="progressbar"
@@ -88,7 +83,7 @@ function OnboardingPage() {
           <ul className="space-y-2">
             {featureList.map((feature) => (
               <li key={feature} className="flex items-start gap-2 text-step-1 text-muted-foreground">
-                <Sparkles className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
+                <Check className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
                 {feature}
               </li>
             ))}

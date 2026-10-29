@@ -28,7 +28,7 @@ const emptyTypeCount = (): Record<MediaTypeEnum, number> =>
  */
 export function useMediaStats(logs?: MediaLogWithMedia[]) {
   const { t } = useTranslation("media");
-  const { series, text, grid } = useChartTheme();
+  const { series, text, grid, ink } = useChartTheme();
 
   const entries = useMemo(() => logs ?? [], [logs]);
   const totalLogs = entries.length;
@@ -38,12 +38,23 @@ export function useMediaStats(logs?: MediaLogWithMedia[]) {
     [entries]
   );
 
+  /* The ring answers "what is on the shelf", so it counts a title once even
+     when it has several logs. */
   const groupedByType = useMemo(() => {
     const counts = emptyTypeCount();
+    const seen = new Set<string>();
+
     for (const log of entries) {
       const type = log.media?.type;
-      if (type && type in counts) counts[type]++;
+      if (!type || !(type in counts)) continue;
+
+      const key = `${type}:${log.mediaId}`;
+      if (seen.has(key)) continue;
+
+      seen.add(key);
+      counts[type]++;
     }
+
     return counts;
   }, [entries]);
 
@@ -129,21 +140,35 @@ export function useMediaStats(logs?: MediaLogWithMedia[]) {
     return Math.round((finished / totalLogs) * 100);
   }, [groupedByStatus, totalLogs]);
 
+  /* Only types with at least one log belong in the ring and its legend;
+     zero slices add noise without adding information. */
+  const typeBreakdown = useMemo(
+    () =>
+      Object.values(MediaTypeEnum)
+        .map((type, index) => ({
+          type,
+          label: t(`type.${type}`),
+          count: groupedByType[type] ?? 0,
+          color: series[index % series.length],
+        }))
+        .filter((entry) => entry.count > 0)
+        .sort((a, b) => b.count - a.count),
+    [groupedByType, series, t]
+  );
+
   const typeChartData = useMemo(
     () => ({
-      labels: Object.keys(groupedByType).map((type) => t(`type.${type}`)),
+      labels: typeBreakdown.map((entry) => entry.label),
       datasets: [
         {
-          data: Object.values(groupedByType),
-          backgroundColor: Object.keys(groupedByType).map(
-            (_, i) => series[i % series.length]
-          ),
-          borderWidth: 2,
-          borderColor: "transparent",
+          data: typeBreakdown.map((entry) => entry.count),
+          backgroundColor: typeBreakdown.map((entry) => entry.color),
+          borderWidth: 0,
+          spacing: 2,
         },
       ],
     }),
-    [groupedByType, series, t]
+    [typeBreakdown]
   );
 
   const decadeChartData = useMemo(
@@ -153,13 +178,14 @@ export function useMediaStats(logs?: MediaLogWithMedia[]) {
         {
           label: t("home.chart.byDecade"),
           data: Object.values(groupedByDecade),
-          backgroundColor: series[1],
+          backgroundColor: ink,
           borderRadius: 4,
           borderWidth: 0,
+          maxBarThickness: 56,
         },
       ],
     }),
-    [groupedByDecade, series, t]
+    [groupedByDecade, ink, t]
   );
 
   const weekDayChartData = useMemo(
@@ -169,15 +195,14 @@ export function useMediaStats(logs?: MediaLogWithMedia[]) {
         {
           label: t("home.chart.byWeekDay"),
           data: groupedByWeekDay,
-          backgroundColor: groupedByWeekDay.map((_, i) =>
-            i === 0 || i === 6 ? series[4] : series[1]
-          ),
+          backgroundColor: ink,
           borderRadius: 4,
           borderWidth: 0,
+          maxBarThickness: 56,
         },
       ],
     }),
-    [groupedByWeekDay, series, t]
+    [groupedByWeekDay, ink, t]
   );
 
   const ratingChartData = useMemo(
@@ -187,36 +212,14 @@ export function useMediaStats(logs?: MediaLogWithMedia[]) {
         {
           label: t("home.chart.byRating"),
           data: ratingDistribution.map((r) => r.count),
-          backgroundColor: ratingDistribution.map((_, i) => {
-            if (i === 9) return series[4];
-            if (i >= 6) return series[0];
-            if (i >= 3) return series[2];
-            return series[3];
-          }),
+          backgroundColor: ink,
           borderRadius: 4,
           borderWidth: 0,
+          maxBarThickness: 56,
         },
       ],
     }),
-    [ratingDistribution, series, t]
-  );
-
-  const topLoggedChartData = useMemo(
-    () => ({
-      labels: topLogged.map((item) =>
-        item.title.length > 20 ? `${item.title.slice(0, 18)}…` : item.title
-      ),
-      datasets: [
-        {
-          label: t("home.chart.topLogged"),
-          data: topLogged.map((item) => item.count),
-          backgroundColor: series[3],
-          borderRadius: 4,
-          borderWidth: 0,
-        },
-      ],
-    }),
-    [topLogged, series, t]
+    [ratingDistribution, ink, t]
   );
 
   const monthChartData = useMemo(
@@ -229,57 +232,51 @@ export function useMediaStats(logs?: MediaLogWithMedia[]) {
         {
           label: t("home.chart.byMonth"),
           data: Object.values(groupedByMonth),
-          backgroundColor: series[1],
+          backgroundColor: ink,
           borderRadius: 4,
           borderWidth: 0,
+          maxBarThickness: 56,
         },
       ],
     }),
-    [groupedByMonth, series, t]
+    [groupedByMonth, ink, t]
   );
 
   const doughnutOptions = useMemo<ChartOptions<"doughnut">>(
     () => ({
       responsive: true,
       maintainAspectRatio: false,
+      cutout: "68%",
+      animation: false,
       plugins: {
-        legend: {
-          display: true,
-          position: "bottom",
-          labels: { color: text },
-        },
+        legend: { display: false },
+        tooltip: { enabled: true },
       },
     }),
-    [text]
+    []
   );
 
   const barOptions = useMemo<ChartOptions<"bar">>(
     () => ({
       responsive: true,
       maintainAspectRatio: false,
+      animation: false,
       plugins: { legend: { display: false } },
       scales: {
-        x: { ticks: { color: text }, grid: { color: grid } },
+        x: {
+          border: { display: false },
+          ticks: { color: text, maxRotation: 0 },
+          grid: { display: false },
+        },
         y: {
           beginAtZero: true,
-          ticks: { stepSize: 1, color: text },
+          border: { display: false },
+          ticks: { stepSize: 1, color: text, padding: 6 },
           grid: { color: grid },
         },
       },
     }),
     [text, grid]
-  );
-
-  const horizontalBarOptions = useMemo<ChartOptions<"bar">>(
-    () => ({
-      ...barOptions,
-      indexAxis: "y",
-      scales: {
-        x: { beginAtZero: true, ticks: { stepSize: 1, color: text }, grid: { color: grid } },
-        y: { ticks: { color: text }, grid: { display: false } },
-      },
-    }),
-    [barOptions, text, grid]
   );
 
   return {
@@ -289,14 +286,13 @@ export function useMediaStats(logs?: MediaLogWithMedia[]) {
     completionRate,
     groupedByStatus,
     topLogged,
+    typeBreakdown,
     typeChartData,
     decadeChartData,
     weekDayChartData,
     monthChartData,
     ratingChartData,
-    topLoggedChartData,
     doughnutOptions,
     barOptions,
-    horizontalBarOptions,
   };
 }

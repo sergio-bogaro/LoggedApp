@@ -3,6 +3,7 @@ import { Link } from "react-router";
 
 import { Card } from "@/components/tw/generic/card";
 import { ImageWithSkeleton } from "@/components/tw/generic/imageSkeleton";
+import { PosterFallback } from "@/components/tw/generic/PosterFallback";
 import { cn } from "@/lib/utils";
 import { mediaImageUrl } from "@/querries/media/logged";
 import { MediaResponse } from "@/types/logged";
@@ -24,8 +25,8 @@ const CollectionCard = ({ title, count, previews, to }: CollectionCardProps) => 
   const content = (
     <Card
       className={cn(
-        "h-full gap-4 transition-colors",
-        !isEmpty && "group-hover:border-foreground/30"
+        "h-full gap-4 transition-[border-color,transform] duration-200",
+        !isEmpty && "group-hover:-translate-y-0.5 group-hover:border-foreground/25"
       )}
     >
       <div className="flex items-baseline justify-between gap-3">
@@ -38,18 +39,19 @@ const CollectionCard = ({ title, count, previews, to }: CollectionCardProps) => 
           {shown.map((media) => (
             <div
               key={`${media.externalId}:${media.type}`}
-              className="w-14 shrink-0 overflow-hidden rounded"
+              className="w-14 shrink-0 overflow-hidden rounded-md ring-1 ring-border/70"
             >
               <ImageWithSkeleton
                 src={media.imagePath ? (mediaImageUrl(media.imagePath) ?? "") : (media.coverUrl ?? "")}
-                alt={media.title}
-                className="aspect-2/3 w-full object-cover"
+                alt=""
+                className="aspect-2/3 w-full"
+                fallback={<PosterFallback title={media.title} type={media.type} compact />}
               />
             </div>
           ))}
         </div>
       ) : (
-        <div className="flex h-20 items-center justify-center rounded border border-dashed border-border text-step-0 text-muted-foreground">
+        <div className="flex h-20 items-center justify-center rounded-control border border-dashed border-border text-step-0 text-muted-foreground">
           {t("views.empty")}
         </div>
       )}
@@ -57,11 +59,11 @@ const CollectionCard = ({ title, count, previews, to }: CollectionCardProps) => 
   );
 
   if (isEmpty) {
-    return <div className="opacity-50">{content}</div>;
+    return <div className="opacity-55">{content}</div>;
   }
 
   return (
-    <Link to={to} className="group block rounded-lg focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50">
+    <Link to={to} className="group block rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background">
       {content}
     </Link>
   );

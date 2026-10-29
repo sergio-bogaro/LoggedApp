@@ -5,6 +5,7 @@ import { Link } from "react-router";
 import { StatusMark, TypeMark } from "../generic/badges";
 
 import { ImageWithSkeleton } from "@/components/tw/generic/imageSkeleton";
+import { PosterFallback } from "@/components/tw/generic/PosterFallback";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { mediaImageUrl } from "@/querries/media/logged";
@@ -42,19 +43,20 @@ export const RegisterRow = ({ media, status, date, rating, onOpenDetails }: Regi
   const hasRating = typeof rating === "number" && rating > 0;
 
   const rowClassName = cn(
-    "grid items-center gap-x-4 gap-y-2 rounded-control py-3 pl-3 pr-12 sm:pr-28",
-    "grid-cols-[48px_minmax(0,1fr)]",
-    "md:grid-cols-[48px_minmax(0,1fr)_150px_110px_72px] md:gap-y-0"
+    "grid items-center gap-x-4 gap-y-2 py-3 pl-2 pr-12",
+    "grid-cols-[56px_minmax(0,1fr)]",
+    "md:grid-cols-[56px_minmax(0,1fr)_150px_110px_72px] md:gap-y-0"
   );
 
   const content = (
     <>
       {/* Poster as an identity seal, not a hero image. */}
-      <div className="row-span-2 w-12 md:row-span-1">
+      <div className="row-span-2 w-14 md:row-span-1">
         <ImageWithSkeleton
           src={cover ?? undefined}
           alt=""
-          className="aspect-2/3 w-full rounded-control"
+          className="aspect-2/3 w-full rounded-control ring-1 ring-border/70"
+          fallback={<PosterFallback title={media?.title ?? ""} type={media?.type} compact />}
         />
       </div>
 
@@ -62,7 +64,10 @@ export const RegisterRow = ({ media, status, date, rating, onOpenDetails }: Regi
         <h3 className="truncate text-step-2 font-medium">{media?.title ?? "—"}</h3>
         {media && (
           <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1">
-            <TypeMark type={media.type} />
+            <TypeMark
+              type={media.type}
+              className="group-hover:[&>span:first-child]:w-7"
+            />
           </div>
         )}
       </div>
@@ -81,7 +86,7 @@ export const RegisterRow = ({ media, status, date, rating, onOpenDetails }: Regi
           {date ? formatShortDay(date, i18n.language) : "—"}
         </div>
 
-        <div className="text-step-2 tabular-nums md:col-start-5 md:row-start-1 md:text-right">
+        <div className="font-serif text-step-3 tabular-nums md:col-start-5 md:row-start-1 md:text-right">
           {hasRating ? rating!.toFixed(1) : "—"}
         </div>
       </div>
@@ -89,9 +94,15 @@ export const RegisterRow = ({ media, status, date, rating, onOpenDetails }: Regi
   );
 
   return (
-    <div className={cn("relative rounded-control", media && "transition-colors hover:bg-accent/50")}>
+    <div className={cn("group relative rounded-control", media && "transition-colors hover:bg-accent/45")}>
       {media ? (
-        <Link to={`/media/${media.type}/details/${media.externalId}`} className={rowClassName}>
+        <Link
+          to={`/media/${media.type}/details/${media.externalId}`}
+          className={cn(
+            rowClassName,
+            "rounded-control focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background"
+          )}
+        >
           {content}
         </Link>
       ) : (
@@ -102,13 +113,13 @@ export const RegisterRow = ({ media, status, date, rating, onOpenDetails }: Regi
         <Button
           type="button"
           variant="ghost"
-          size="sm"
+          size="icon"
           onClick={onOpenDetails}
           aria-label={t("record.viewLogDetails")}
-          className="absolute top-1/2 right-1 -translate-y-1/2 text-muted-foreground"
+          tooltip={t("record.viewLogDetails")}
+          className="absolute top-1/2 right-1 -translate-y-1/2 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100 pointer-coarse:opacity-100 max-md:opacity-100"
         >
           <Info aria-hidden="true" />
-          <span className="hidden sm:inline">{t("details.label")}</span>
         </Button>
       )}
     </div>

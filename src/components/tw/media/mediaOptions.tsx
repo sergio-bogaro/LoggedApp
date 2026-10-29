@@ -70,10 +70,10 @@ export const MediaOptionsButton = ({ mediaItem, existingItem }: MediaOptionsButt
             size="xs"
             aria-label={t("actions.more")}
             className={cn(
-              "bg-popover/70 p-2 transition-all relative",
+              "relative bg-popover/80 p-2 ring-1 ring-border/70 transition-all",
               isOpen
                 ? "opacity-100 bg-popover"
-                : "opacity-0 group-hover:opacity-100 focus-visible:opacity-100 data-[state=open]:opacity-100 pointer-coarse:opacity-100"
+                : "opacity-0 group-hover:opacity-100 focus-visible:opacity-100 data-[state=open]:opacity-100 pointer-coarse:opacity-100 max-md:opacity-100"
             )}
           >
             <MoreVertical className="size-5" aria-hidden="true" />

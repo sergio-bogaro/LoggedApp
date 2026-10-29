@@ -132,16 +132,16 @@ function MediaSearchPage() {
   }
 
   return (
-    <div className="p-4">
-      <PageHeader title={t("navigation.search", { ns: "common" })} />
+    <div className="flex w-full flex-col gap-6">
+      <PageHeader title={t("navigation.search", { ns: "common" })} description={t("searchForm.description")} />
 
-      <div className="backdrop-blur-sm border-b mb-4">
+      <div className="w-full max-w-[900px] rounded-lg border border-border bg-card/60 p-3 sm:p-4">
         <Form {...form}>
-          <form className='w-full flex flex-col gap-2 pb-3 sm:flex-row sm:items-end sm:gap-1' onSubmit={handleSubmit(onSubmit)}>
-            <div className="flex gap-1 items-end">
+          <form className="flex w-full flex-col gap-2 sm:flex-row sm:items-end sm:gap-2" onSubmit={handleSubmit(onSubmit)}>
+            <div className="flex items-end gap-2">
               <Select
                 options={trackedOptions}
-                name='mediaType'
+                name="mediaType"
                 control={control}
                 placeholder={t("searchForm.typePlaceholder")}
                 label={t("searchForm.typeLabel")}
@@ -154,15 +154,19 @@ function MediaSearchPage() {
               />
             </div>
 
-            <div className="flex gap-1 items-end flex-1">
+            <div className="flex flex-1 items-end gap-2">
               <Input
-                name='searchFilter'
+                name="searchFilter"
                 control={control}
-                label={t("searchForm.searchLabel")}
+                label={t("searchForm.searchFieldLabel")}
                 placeholder={t("searchForm.searchPlaceholder")}
               />
-              <Button className="shrink-0 self-end">
-                <Search />
+              <Button
+                className="shrink-0 self-end"
+                aria-label={t("searchForm.searchLabel")}
+                tooltip={t("searchForm.searchLabel")}
+              >
+                <Search aria-hidden="true" />
               </Button>
             </div>
           </form>
@@ -170,7 +174,7 @@ function MediaSearchPage() {
       </div>
 
       <MediaView error={error} isLoading={isFetching} mediaData={data} existingMedia={existingMedia} />
-    </div >
+    </div>
   );
 }
 

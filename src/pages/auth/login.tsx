@@ -55,6 +55,7 @@ export default function Login() {
   return (
     <EntryCard
       title={t("login.title")}
+      subtitle={t("login.subtitle")}
       footer={
         <>
           {t("login.noAccount")}{" "}

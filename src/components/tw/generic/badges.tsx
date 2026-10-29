@@ -33,8 +33,8 @@ export const TypeMark = ({ type, tone = "plain", className }: TypeMarkProps) => 
     return (
       <span
         className={cn(
-          "inline-flex items-center gap-1.5 rounded-control bg-black/70 px-2 py-0.5",
-          "text-step-1 font-medium text-white backdrop-blur-sm",
+          "inline-flex items-center gap-1.5 rounded-control bg-black/60 px-1.5 py-0.5",
+          "text-step-0 font-medium text-white",
           className
         )}
       >
@@ -46,7 +46,10 @@ export const TypeMark = ({ type, tone = "plain", className }: TypeMarkProps) => 
 
   return (
     <span className={cn("inline-flex items-center gap-2 text-step-1 text-muted-foreground", className)}>
-      <span aria-hidden="true" className={cn("h-0.5 w-5 rounded-full", typeRule[type])} />
+      <span
+        aria-hidden="true"
+        className={cn("h-0.5 w-5 rounded-full transition-[width] duration-200", typeRule[type])}
+      />
       {label}
     </span>
   )

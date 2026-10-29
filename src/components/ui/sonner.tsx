@@ -12,10 +12,11 @@ import { useAppSelector } from "@/store/settings/hooks"
 
 const Toaster = ({ ...props }: ToasterProps) => {
   const theme = useAppSelector((state) => state.ui.theme)
+  const mode = theme.includes("dark") ? "dark" : "light"
 
   return (
     <Sonner
-      theme={theme as ToasterProps["theme"]}
+      theme={mode as ToasterProps["theme"]}
       className="toaster group"
       icons={{
         success: <CircleCheckIcon className="size-5" />,

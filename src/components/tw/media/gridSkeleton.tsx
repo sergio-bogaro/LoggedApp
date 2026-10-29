@@ -4,9 +4,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export const GridItemSkeleton = () => {
   return (
-    <div className="relative rounded overflow-hidden shadow-md">
+    <div className="relative overflow-hidden rounded-md ring-1 ring-border/80">
       {/* Imagem */}
-      <Skeleton className="w-full aspect-2/3" />
+      <Skeleton className="aspect-2/3 w-full" />
 
       {/* Badge topo esquerdo */}
       <div className="absolute top-2 left-2">
@@ -14,7 +14,7 @@ export const GridItemSkeleton = () => {
       </div>
 
       {/* Rodapé com gradiente */}
-      <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/90 via-black/50 to-transparent p-3">
+      <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/85 via-black/35 to-transparent p-3 pt-10">
         <div className="flex flex-col-reverse gap-1">
           <Skeleton className="h-3 w-6 bg-white/20" />
           <Skeleton className="h-4 w-3/4 bg-white/20" />
@@ -31,7 +31,7 @@ export const GridItemSkeleton = () => {
  */
 export const POSTER_GRID = "grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8";
 export const POSTER_GRID_WIDE = POSTER_GRID;
-export const POSTER_GRID_COLLECTION = POSTER_GRID;
+export const POSTER_GRID_COLLECTION = "grid gap-5 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5";
 
 const GRID_SKELETON_COUNT = 12;
 

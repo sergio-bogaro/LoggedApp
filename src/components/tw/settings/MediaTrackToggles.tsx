@@ -33,7 +33,7 @@ function MediaTrackToggles({ values, onChange }: MediaTrackTogglesProps) {
   const { availability } = useMediaSourceAvailability();
 
   return (
-    <div className="space-y-2">
+    <div className="grid gap-2 sm:grid-cols-2">
       {trackableMediaTypes.map(({ type, icon: Icon }) => {
         const available = availability[type];
         const requiredKeyKey = requiredKeyKeys[type];
@@ -43,8 +43,10 @@ function MediaTrackToggles({ values, onChange }: MediaTrackTogglesProps) {
             key={type}
             onClick={() => available && onChange(type, !values[type])}
             className={cn(
-              "flex items-center justify-between gap-3 rounded-md border px-3 py-2",
-              available ? "cursor-pointer" : "cursor-not-allowed opacity-60"
+              "flex items-center justify-between gap-3 rounded-control border px-3 py-2.5 transition-colors",
+              available
+                ? "cursor-pointer hover:bg-accent/45"
+                : "cursor-not-allowed opacity-60"
             )}
           >
             <div className="flex items-center gap-3 min-w-0">

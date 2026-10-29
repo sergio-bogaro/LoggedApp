@@ -240,8 +240,10 @@
     "filterAll": "All tags"
   },
   "searchForm": {
+    "description": "Search by title and log what you find.",
     "typeLabel": "Type",
     "typePlaceholder": "Media type",
+    "searchFieldLabel": "Title",
     "searchLabel": "Search",
     "searchPlaceholder": "Search by title",
     "pageLabelMovies": "Search Movies (TMDB)",
@@ -310,6 +312,7 @@
   },
   "home": {
     "title": "Logbook",
+    "description": "Everything you have logged, newest first.",
     "tabs": {
       "log": "Entries",
       "list": "Library",
@@ -335,19 +338,25 @@
   },
   "list": {
     "loading": "Loading...",
+    "description": "Your library, organized by type and tag.",
     "empty": "No media found",
     "emptyWithType": "Start by adding {{mediaType}} to your library",
     "noDescription": "No description available.",
     "favorites": "Favorites",
-    "addFavorites": "Add items to your favorites",
+    "favoritesDescription": "Titles you marked to revisit and recommend.",
+    "addFavorites": "No favorites yet",
+    "addFavoritesHint": "Use a title's menu to save it here.",
     "backlog": "Backlog",
-    "addBacklog": "Add items to your backlog",
+    "backlogDescription": "What you want to start when there is time.",
+    "addBacklog": "Your backlog is empty",
+    "addBacklogHint": "Save titles from search to start them later.",
     "chart": {
       "avgRating": "Average Rating"
     }
   },
   "views": {
     "title": "Views",
+    "description": "Slices of your library by moment and affinity.",
     "filterLabel": "Media types",
     "totalLabel": "Titles",
     "empty": "Nothing here yet",
@@ -372,22 +381,30 @@
     "recentlyAddedDesc": "Media recently logged in your library",
     "favorites": "Favorites",
     "favoritesDesc": "Latest media rated 8 or higher",
-    "viewAll": "View All",
+    "viewAll": "View all",
     "noData": "No data available yet"
   },
   "logs": {
-    "title": "All Logs",
-    "titleFiltered": "All Logs — {{type}}",
-    "description": "All your media logs ordered by most recent",
-    "empty": "No logs yet",
-    "emptyHint": "Start tracking your media to see logs here",
-    "allLoaded": "All logs loaded"
+    "title": "All entries",
+    "titleFiltered": "Entries: {{type}}",
+    "description": "All your entries, newest first.",
+    "empty": "No entries yet",
+    "emptyHint": "Log a title to see entries here.",
+    "allLoaded": "All entries loaded"
   },
   "log": {
     "empty": "Nothing logged yet",
     "emptyHint": "Track a title and it will appear here, newest first.",
     "emptyPeriod": "Nothing logged in this period",
     "emptyPeriodHint": "Try a wider period or switch to All time."
+  },
+  "register": {
+    "columns": {
+      "title": "Title",
+      "status": "Status",
+      "date": "Date",
+      "rating": "Rating"
+    }
   },
   "record": {
     "title": "Your record",
@@ -404,6 +421,11 @@
   "stats": {
     "headline": "Logs",
     "headlineCaption": "across {{count}} titles",
+    "titles": "titles",
+    "empty": {
+      "title": "Nothing to measure yet",
+      "description": "Log a title in the selected period to see the charts."
+    },
     "finishedHint": "{{percent}}% of total",
     "period": {
       "label": "Period",

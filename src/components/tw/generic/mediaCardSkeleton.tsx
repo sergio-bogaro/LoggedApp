@@ -12,22 +12,24 @@ export const MediaCardSkeleton = () => {
   return (
     <div className="w-full mt-4" role="status" aria-busy="true" aria-label={t("a11y.loading")}>
       {/* Sections skeleton (the tab bar stays mounted, so it is not faked here) */}
-      <div className="md:px-12 space-y-8" aria-hidden="true">
+      <div className="space-y-8" aria-hidden="true">
         {Array.from({ length: SECTION_COUNT }).map((_, sectionIdx) => (
           <div key={sectionIdx}>
             {/* Section title + view all/buttons cluster */}
-            <div className="flex items-center justify-between mb-2">
-              <Skeleton className="h-8 w-44" />
-              <div className="flex flex-col items-center gap-1">
+            <div className="flex items-start justify-between gap-3">
+              <div className="space-y-2">
+                <Skeleton className="h-8 w-44" />
+                <Skeleton className="h-4 w-64" />
+              </div>
+
+              <div className="flex items-center gap-2">
                 <Skeleton className="h-8 w-24 rounded-md" />
-                <div className="hidden md:flex gap-2">
+                <div className="hidden gap-1 md:flex">
                   <Skeleton className="size-8 rounded-full" />
                   <Skeleton className="size-8 rounded-full" />
                 </div>
               </div>
             </div>
-            {/* Section description */}
-            <Skeleton className="h-5 w-64" />
 
             {/* Cards carousel */}
             <div className="flex -ml-4 overflow-hidden min-h-72">

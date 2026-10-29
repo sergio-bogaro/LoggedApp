@@ -16,6 +16,7 @@ import { ConfirmDialog } from "@/components/tw/generic/confirmDialog";
 import { DataExhibition } from "@/components/tw/generic/dataExhibition";
 import { ImageWithSkeleton } from "@/components/tw/generic/imageSkeleton";
 import { MediaDetailsSkeleton } from "@/components/tw/generic/mediaDetailsSkeleton";
+import { PosterFallback } from "@/components/tw/generic/PosterFallback";
 import { MediaRecord } from "@/components/tw/media/mediaRecord";
 import { Button } from "@/components/ui/button";
 import {
@@ -161,15 +162,18 @@ function MediaDetailsPage() {
         skeleton={<MediaDetailsSkeleton />}
       >
         {data && formatedData && (
-          <div className="mx-auto max-w-[1100px] p-4 sm:p-8">
+          <div className="mx-auto max-w-[1100px]">
             <div className="flex flex-col gap-6 md:flex-row md:gap-10">
               {/* Poster and the app's own record share the left column. */}
               <div className="w-full shrink-0 space-y-4 sm:mx-auto sm:max-w-[360px] md:mx-0 md:max-w-none md:w-72 lg:w-80">
                 <ImageWithSkeleton
                   alt={formatedData.title}
-                  className="aspect-2/3 w-full rounded-lg"
+                  className="aspect-2/3 w-full rounded-md ring-1 ring-border/80"
                   src={mediaImage}
                   priority
+                  fallback={
+                    <PosterFallback title={formatedData.title} type={mediaType} large />
+                  }
                 />
 
                 <MediaRecord

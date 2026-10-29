@@ -5,17 +5,16 @@ const SECTION_COUNT = 3;
 
 export const MediaStatsSkeleton = () => {
   return (
-    <div className="space-y-10">
+    <div className="space-y-12">
       {/* Headline + typographic index */}
-      <div className="border-t border-border pt-5">
+      <div className="border-t border-border pt-6">
         <Skeleton className="h-4 w-20" />
-        <Skeleton className="mt-3 h-10 w-32" />
-        <Skeleton className="mt-3 h-4 w-40" />
+        <Skeleton className="mt-2 h-16 w-28" />
 
-        <div className="mt-6 grid grid-cols-2 gap-x-8 gap-y-5 sm:grid-cols-3 lg:grid-cols-6">
+        <div className="mt-5 flex flex-wrap gap-x-8 gap-y-4">
           {Array.from({ length: INDEX_COUNT }).map((_, i) => (
-            <div key={i} className="space-y-2">
-              <Skeleton className="h-4 w-20" />
+            <div key={i} className="w-20 space-y-2">
+              <Skeleton className="h-4 w-16" />
               <Skeleton className="h-6 w-12" />
             </div>
           ))}
@@ -33,7 +32,7 @@ export const MediaStatsSkeleton = () => {
             {Array.from({ length: section === 0 ? 1 : 2 }).map((_, chart) => (
               <div key={chart} className="space-y-3">
                 <Skeleton className="h-5 w-40" />
-                <Skeleton className="h-56 w-full" />
+                <Skeleton className="h-64 w-full" />
               </div>
             ))}
           </div>
