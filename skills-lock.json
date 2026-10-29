@@ -1,6 +1,12 @@
 {
   "version": 1,
   "skills": {
+    "awwwards": {
+      "source": "juliobsz/skills",
+      "sourceType": "github",
+      "skillPath": "awwwards/SKILL.md",
+      "computedHash": "ac00f493e426dd45f6ed84aea42b0cd598849a70734c652aec046fc369107a37"
+    },
     "frontend-design": {
       "source": "anthropics/skills",
       "sourceType": "github",
