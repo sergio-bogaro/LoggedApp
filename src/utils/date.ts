@@ -3,7 +3,44 @@ import { enUS, ptBR } from "date-fns/locale";
 import { enUS as dayPickerEnUS, ptBR as dayPickerPtBR } from "react-day-picker/locale";
 
 export function newIsoDate(): string {
-  return new Date().toISOString().split("T")[0];
+  const now = new Date();
+  return [
+    now.getFullYear(),
+    String(now.getMonth() + 1).padStart(2, "0"),
+    String(now.getDate()).padStart(2, "0"),
+  ].join("-");
+}
+
+/**
+ * Normaliza uma data externa para `yyyy-MM-dd`, cortando horas e completando
+ * mês/dia ausentes. Retorna undefined quando não há um ano reconhecível.
+ */
+export function toIsoDate(value?: string | null): string | undefined {
+  if (!value) return undefined;
+
+  const match = String(value).match(
+    /^(\d{4})(?:-(\d{1,2})(?:-(\d{1,2}))?)?/
+  );
+  if (!match) return undefined;
+
+  const year = Number(match[1]);
+  const month = Number(match[2] ?? 1);
+  const day = Number(match[3] ?? 1);
+  const date = new Date(year, month - 1, day);
+
+  if (
+    date.getFullYear() !== year ||
+    date.getMonth() !== month - 1 ||
+    date.getDate() !== day
+  ) {
+    return undefined;
+  }
+
+  return [
+    year,
+    String(month).padStart(2, "0"),
+    String(day).padStart(2, "0"),
+  ].join("-");
 }
 
 export function formatFromIsoDate(iso?: string, to: "dd/mm/yyyy" | "mm/dd/yyyy" = "dd/mm/yyyy"): string | null {

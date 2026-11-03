@@ -35,7 +35,7 @@ export function MediaHistoryDialog({ media, open, onOpenChange }: MediaHistoryDi
   const deleteLog = useDeleteLog();
 
   const { data: logs, isLoading, isError, error } = useQuery({
-    queryKey: ["media-logs", media?.id],
+    queryKey: ["media-logs", user?.id, media?.id],
     queryFn: () => getMediaLogs(media!.id, user!.id),
     enabled: open && !!media && !!user,
   });

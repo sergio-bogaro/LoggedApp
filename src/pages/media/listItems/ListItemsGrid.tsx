@@ -1,3 +1,4 @@
+import { Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
@@ -5,6 +6,7 @@ import { TypeMark } from "@/components/tw/generic/badges";
 import { EmptyState } from "@/components/tw/generic/EmptyState";
 import { ImageWithSkeleton } from "@/components/tw/generic/imageSkeleton";
 import { MediaGridSkeleton, POSTER_GRID_WIDE } from "@/components/tw/media/gridSkeleton";
+import { Button } from "@/components/ui/button";
 import { API_BASE_URL } from "@/querries/apiBase";
 import { MediaListItem } from "@/types/mediaList";
 
@@ -64,9 +66,18 @@ export const ListItemSkeleton = () => {
 interface ListItemsGridProps {
   items?: MediaListItem[];
   emptyMessage?: string;
+  onRemove?: (item: MediaListItem) => void;
+  removeLabel?: string;
+  isRemoving?: boolean;
 }
 
-export const ListItemsGrid = ({ items, emptyMessage }: ListItemsGridProps) => {
+export const ListItemsGrid = ({
+  items,
+  emptyMessage,
+  onRemove,
+  removeLabel,
+  isRemoving,
+}: ListItemsGridProps) => {
   const { t } = useTranslation("media");
 
   if (!items || items.length === 0) {
@@ -84,6 +95,20 @@ export const ListItemsGrid = ({ items, emptyMessage }: ListItemsGridProps) => {
         {items.map((item) => (
           <div key={item.id} className="relative group">
             <ListItemCard item={item} />
+            {onRemove && (
+              <Button
+                type="button"
+                size="icon"
+                variant="secondary"
+                disabled={isRemoving}
+                onClick={() => onRemove(item)}
+                aria-label={removeLabel}
+                title={removeLabel}
+                className="absolute top-2 right-2 z-10 opacity-90"
+              >
+                <Trash2 aria-hidden="true" />
+              </Button>
+            )}
           </div>
         ))}
       </div>

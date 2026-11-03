@@ -372,6 +372,9 @@
     "recentlyAddedDesc": "Media recently logged in your library",
     "favorites": "Favorites",
     "favoritesDesc": "Latest media rated 8 or higher",
+    "topRated": "Top rated",
+    "topRatedDesc": "Latest media rated 8 or higher",
+    "allMedia": "Full library",
     "viewAll": "View All",
     "noData": "No data available yet"
   },

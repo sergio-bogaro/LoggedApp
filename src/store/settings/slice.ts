@@ -88,17 +88,43 @@ interface UIState {
 
 const savedTheme = resolveStoredTheme();
 localStorage.setItem("theme", savedTheme);
-const savedViewMode = (localStorage.getItem("viewMode") as ViewMode) || "list";
-const savedLibraryViewMode = (localStorage.getItem("libraryViewMode") as ViewMode) || "list";
-const savedRatingMode = (localStorage.getItem("ratingMode") as RatingMode) || "stars5";
-const savedLastSearchType = localStorage.getItem("lastSearchType") || "movies";
+
+const VIEW_MODES: ViewMode[] = ["list", "grid"];
+const RATING_MODES: RatingMode[] = ["numeric", "stars5", "stars10"];
+const MEDIA_TYPES = new Set(Object.values(MediaTypeEnum));
+
+function resolveViewMode(key: string): ViewMode {
+  const value = localStorage.getItem(key);
+  return VIEW_MODES.includes(value as ViewMode) ? (value as ViewMode) : "list";
+}
+
+function resolveRatingMode(): RatingMode {
+  const value = localStorage.getItem("ratingMode");
+  return RATING_MODES.includes(value as RatingMode)
+    ? (value as RatingMode)
+    : "stars5";
+}
+
+function resolveLastSearchType(): string {
+  const value = localStorage.getItem("lastSearchType");
+  return value && MEDIA_TYPES.has(value as MediaTypeEnum) ? value : "movies";
+}
+
+const savedViewMode = resolveViewMode("viewMode");
+const savedLibraryViewMode = resolveViewMode("libraryViewMode");
+const savedRatingMode = resolveRatingMode();
+const savedLastSearchType = resolveLastSearchType();
 
 function resolveStoredMediaTypeFilter(): MediaTypeEnum[] | null {
   try {
     const raw = localStorage.getItem("mediaTypeFilter");
     if (!raw) return null;
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? (parsed as MediaTypeEnum[]) : null;
+    if (!Array.isArray(parsed)) return null;
+    const valid = parsed.filter((value): value is MediaTypeEnum =>
+      MEDIA_TYPES.has(value as MediaTypeEnum)
+    );
+    return valid.length > 0 ? valid : null;
   } catch {
     return null;
   }

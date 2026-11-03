@@ -13,6 +13,23 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ["react", "react-dom", "react-router"],
+          state: ["@reduxjs/toolkit", "react-redux", "@tanstack/react-query"],
+          i18n: [
+            "i18next",
+            "react-i18next",
+            "i18next-http-backend",
+            "i18next-browser-languagedetector",
+          ],
+          charts: ["chart.js", "react-chartjs-2"],
+        },
+      },
+    },
+  },
   server: {
     hmr: {
       host: "localhost"

@@ -5,6 +5,8 @@ import { TMDBMovieDetails, tmdbPosterUrl } from "@/querries/externalMedia/movies
 import { MusicAlbumDetails } from "@/querries/externalMedia/music";
 import { TMDBTvDetails } from "@/querries/externalMedia/series";
 import { MediaDataDetailsType, MediaTypeEnum } from "@/types/media";
+import { toIsoDate } from "@/utils/date";
+import { htmlToPlainText } from "@/utils/string";
 
 export function getMediaData(mediaType: MediaTypeEnum, mediaData: unknown): MediaDataDetailsType {
   switch (mediaType) {
@@ -15,9 +17,9 @@ export function getMediaData(mediaType: MediaTypeEnum, mediaData: unknown): Medi
         id: String(movieData.id),
         title: movieData.title ?? "",
         type: mediaType,
-        coverUrl: tmdbPosterUrl(movieData.poster_path, "original") || "",
+        coverUrl: tmdbPosterUrl(movieData.poster_path, "w500") || "",
         description: movieData.overview ?? "",
-        releaseDate: movieData.release_date,
+        releaseDate: toIsoDate(movieData.release_date),
         tags: movieData.genres?.map((g) => g.name) || [],
       };
     }
@@ -33,7 +35,7 @@ export function getMediaData(mediaType: MediaTypeEnum, mediaData: unknown): Medi
         title: formatedTitle ?? "",
         type: mediaType,
         coverUrl: animeData.coverImage.extraLarge || animeData.coverImage.large,
-        description: animeData.description,
+        description: htmlToPlainText(animeData.description),
         releaseDate: animeData.startDate ? anilistDateToIso(animeData.startDate) : undefined,
         tags: animeData.genres || [],
       };
@@ -49,7 +51,7 @@ export function getMediaData(mediaType: MediaTypeEnum, mediaData: unknown): Medi
         title: formatedTitle ?? "",
         type: mediaType,
         coverUrl: mangaData.coverImage.extraLarge || mangaData.coverImage.large,
-        description: mangaData.description,
+        description: htmlToPlainText(mangaData.description),
         releaseDate: mangaData.startDate ? anilistDateToIso(mangaData.startDate) : undefined,
         tags: mangaData.genres || [],
       };
@@ -61,9 +63,9 @@ export function getMediaData(mediaType: MediaTypeEnum, mediaData: unknown): Medi
         id: String(seriesData.id),
         title: seriesData.name ?? "",
         type: mediaType,
-        coverUrl: tmdbPosterUrl(seriesData.poster_path, "original") || "",
+        coverUrl: tmdbPosterUrl(seriesData.poster_path, "w500") || "",
         description: seriesData.overview ?? "",
-        releaseDate: seriesData.first_air_date,
+        releaseDate: toIsoDate(seriesData.first_air_date),
         tags: seriesData.genres?.map((g) => g.name) || [],
       };
     }
@@ -75,13 +77,16 @@ export function getMediaData(mediaType: MediaTypeEnum, mediaData: unknown): Medi
         type: mediaType,
         coverUrl: gameData.coverUrl ?? "",
         description: gameData.summary ?? gameData.storyline ?? "",
-        releaseDate: gameData.firstReleaseDate ?? undefined,
+        releaseDate: toIsoDate(gameData.firstReleaseDate),
         tags: gameData.genres?.map((genre) => genre.name) || [],
       };
     }
     case MediaTypeEnum.BOOK: {
       const bookData = mediaData as BookDetails;
       const coverId = bookData.covers?.[0];
+      const publishedYear =
+        bookData.first_publish_year ??
+        Number(bookData.first_publish_date?.match(/\d{4}/)?.[0]);
 
       return {
         id: bookData.key?.split("/").pop() ?? "",
@@ -89,7 +94,9 @@ export function getMediaData(mediaType: MediaTypeEnum, mediaData: unknown): Medi
         type: mediaType,
         coverUrl: coverId ? `https://covers.openlibrary.org/b/id/${coverId}-L.jpg` : "",
         description: getBookDescription(bookData),
-        releaseDate: bookData.first_publish_date,
+        releaseDate:
+          toIsoDate(bookData.first_publish_date) ??
+          (Number.isFinite(publishedYear) ? `${publishedYear}-01-01` : undefined),
         tags: bookData.subjects?.slice(0, 12) ?? [],
       };
     }
@@ -102,7 +109,7 @@ export function getMediaData(mediaType: MediaTypeEnum, mediaData: unknown): Medi
         type: mediaType,
         coverUrl: albumData.coverUrl ?? "",
         description: [albumData.artist, albumData.genre].filter(Boolean).join(" · "),
-        releaseDate: albumData.releaseDate,
+        releaseDate: toIsoDate(albumData.releaseDate),
         tags: albumData.genre ? [albumData.genre] : [],
       };
     }
@@ -117,13 +124,13 @@ export function getPosterUrl(type: MediaTypeEnum, data: any): string {
 
   switch (type) {
     case MediaTypeEnum.MOVIES:
-      return tmdbPosterUrl(data.poster_path, "original");
+      return tmdbPosterUrl(data.poster_path, "w500");
     case MediaTypeEnum.MANGA:
       return data.coverImage?.extraLarge || data.coverImage?.large;
     case MediaTypeEnum.ANIME:
       return data.coverImage?.extraLarge || data.coverImage?.large;
     case MediaTypeEnum.SERIES:
-      return tmdbPosterUrl(data.poster_path, "original");
+      return tmdbPosterUrl(data.poster_path, "w500");
     case MediaTypeEnum.BOOK:
       return data.covers?.[0]
         ? `https://covers.openlibrary.org/b/id/${data.covers[0]}-L.jpg`

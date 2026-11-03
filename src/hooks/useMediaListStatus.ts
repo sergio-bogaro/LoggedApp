@@ -32,14 +32,14 @@ export function useMediaListStatus(mediaItem: MediaItem) {
   const { user } = useAppSelector((state) => state.auth);
 
   const { data: favorites, isLoading: isLoadingFavorites } = useQuery({
-    queryKey: ["favorites"],
+    queryKey: ["favorites", user?.id],
     queryFn: () => getFavorites(user!.id),
     staleTime: DEFAULT_STALE_TIME,
     enabled: !!user,
   });
 
   const { data: backlog, isLoading: isLoadingBacklog } = useQuery({
-    queryKey: ["backlog"],
+    queryKey: ["backlog", user?.id],
     queryFn: () => getBacklog(user!.id),
     staleTime: DEFAULT_STALE_TIME,
     enabled: !!user,

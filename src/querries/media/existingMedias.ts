@@ -15,7 +15,7 @@ export function useExistingMedia(items: MediaItem[] | undefined) {
   })) || [];
 
   return useQuery<Record<string, MediaResponse>>({
-    queryKey: ["media", checkItems],
+    queryKey: ["media", "existing", user?.id, checkItems],
     queryFn: () => batchCheckExisting(checkItems, user!.id),
     enabled: checkItems.length > 0 && !!user,
     staleTime: 1000 * 60 * 5, // 5 minutos

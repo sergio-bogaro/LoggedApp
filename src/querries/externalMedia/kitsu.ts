@@ -1,3 +1,7 @@
+import { fetchWithTimeout } from "@/lib/fetchWithTimeout";
+import { MediaItem } from "@/types/media";
+import { MediaTypeEnum } from "@/types/media";
+
 export type KitsuManga = {
   id: string;
   type: string;
@@ -9,9 +13,6 @@ export type KitsuManga = {
   };
 };
 
-import { MediaItem } from "@/types/media";
-import { MediaTypeEnum } from "@/types/media";
-
 const KITSU_BASE = "https://kitsu.io/api/edge";
 
 export async function searchKitsuManga(title: string): Promise<KitsuManga[]> {
@@ -20,7 +21,7 @@ export async function searchKitsuManga(title: string): Promise<KitsuManga[]> {
   params.set("filter[text]", title);
   params.set("page[limit]", "20");
 
-  const res = await fetch(`${KITSU_BASE}/manga?${params.toString()}`, {
+  const res = await fetchWithTimeout(`${KITSU_BASE}/manga?${params.toString()}`, {
     method: "GET",
     headers: {
       "Accept": "application/vnd.api+json",
@@ -44,7 +45,7 @@ export async function searchKitsuAnime(title: string): Promise<KitsuAnime[]> {
   params.set("filter[text]", title);
   params.set("page[limit]", "20");
 
-  const res = await fetch(`${KITSU_BASE}/anime?${params.toString()}`, {
+  const res = await fetchWithTimeout(`${KITSU_BASE}/anime?${params.toString()}`, {
     method: "GET",
     headers: {
       "Accept": "application/vnd.api+json",
@@ -94,7 +95,7 @@ export async function searchKitsuAnimeNormalized(title: string): Promise<MediaIt
 export async function getKitsuDetails(id: string, type: "anime" | "manga") {
   if (!id || id.trim().length === 0) throw new Error("ID is required");
 
-  const res = await fetch(`${KITSU_BASE}/${type}/${id}`, {
+  const res = await fetchWithTimeout(`${KITSU_BASE}/${type}/${id}`, {
     method: "GET",
     headers: {
       "Accept": "application/vnd.api+json",
@@ -125,7 +126,7 @@ export async function searchKitsuPosters(title: string, type: "anime" | "manga")
   params.set("page[limit]", "10");
   params.set("fields[type]", "canonicalTitle,posterImage");
 
-  const res = await fetch(`${KITSU_BASE}/${type}?${params.toString()}`, {
+  const res = await fetchWithTimeout(`${KITSU_BASE}/${type}?${params.toString()}`, {
     headers: { "Accept": "application/vnd.api+json" },
   });
 

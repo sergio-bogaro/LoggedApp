@@ -8,6 +8,7 @@ import { ImageWithSkeleton } from "@/components/tw/generic/imageSkeleton";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { mediaImageUrl } from "@/querries/media/logged";
+import { useAppSelector } from "@/store/settings/hooks";
 import { MediaStatusEnum, MediaTypeEnum } from "@/types/media";
 import { formatShortDay } from "@/utils/date";
 
@@ -35,11 +36,13 @@ interface RegisterRowProps {
  */
 export const RegisterRow = ({ media, status, date, rating, onOpenDetails }: RegisterRowProps) => {
   const { i18n, t } = useTranslation("media");
+  const { ratingMode } = useAppSelector((state) => state.ui);
 
   const cover = media?.imagePath
     ? (mediaImageUrl(media.imagePath) ?? media.coverUrl)
     : media?.coverUrl;
   const hasRating = typeof rating === "number" && rating > 0;
+  const displayRating = ratingMode === "stars5" && rating ? rating / 2 : rating;
 
   const rowClassName = cn(
     "grid items-center gap-x-4 gap-y-2 rounded-control py-3 pl-3 pr-12 sm:pr-28",
@@ -82,7 +85,7 @@ export const RegisterRow = ({ media, status, date, rating, onOpenDetails }: Regi
         </div>
 
         <div className="text-step-2 tabular-nums md:col-start-5 md:row-start-1 md:text-right">
-          {hasRating ? rating!.toFixed(1) : "—"}
+          {hasRating ? displayRating!.toFixed(1) : "—"}
         </div>
       </div>
     </>

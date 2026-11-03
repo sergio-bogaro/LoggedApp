@@ -4,6 +4,7 @@ import { Link } from "react-router";
 
 import { EmptyState } from "@/components/tw/generic/EmptyState";
 import { GridItem } from "@/components/tw/media/grid";
+import { POSTER_GRID_WIDE } from "@/components/tw/media/gridSkeleton";
 import { Button } from "@/components/ui/button";
 import {
   Carousel,
@@ -52,9 +53,9 @@ export const MediaLibrary = ({ data, recentlyLoggedData, mediaType }: MediaLibra
       viewAllLink: mediaType ? `/media/logs/${mediaTypeToPath(mediaType)}` : "/media/logs",
     },
     {
-      key: "favorites",
-      titleKey: "sections.favorites",
-      description: "sections.favoritesDesc",
+      key: "top_rated",
+      titleKey: "sections.topRated",
+      description: "sections.topRatedDesc",
       items: favorites,
       viewAllLink: "/media/list",
     },
@@ -123,6 +124,46 @@ export const MediaLibrary = ({ data, recentlyLoggedData, mediaType }: MediaLibra
           </Carousel>
         </div>
       ))}
+
+      <section>
+        <div className="mb-2 flex items-baseline justify-between gap-2 px-1">
+          <h2 className="font-serif text-step-4 font-medium">
+            {t("sections.allMedia")}
+          </h2>
+          <span className="text-step-1 text-muted-foreground tabular-nums">
+            {data?.length ?? 0}
+          </span>
+        </div>
+
+        {(data?.length ?? 0) > 0 ? (
+          <div className={POSTER_GRID_WIDE}>
+            {data!.map((item) => {
+              const normalizedItem: MediaItem = {
+                id: item.externalId,
+                title: item.title,
+                type: item.type,
+                coverUrl: item.coverUrl ?? "",
+                year: item.releaseDate?.slice(0, 4),
+                description: item.description,
+              };
+              return (
+                <GridItem
+                  key={item.id}
+                  item={normalizedItem}
+                  existingItem={item}
+                  showMediaType
+                />
+              );
+            })}
+          </div>
+        ) : (
+          <EmptyState
+            title={t("sections.noData")}
+            className="mt-4 min-h-72 px-1"
+            titleClassName="text-step-1"
+          />
+        )}
+      </section>
     </div>
   )
 };

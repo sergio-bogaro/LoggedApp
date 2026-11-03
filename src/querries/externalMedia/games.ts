@@ -1,5 +1,7 @@
+import { fetchWithTimeout } from "@/lib/fetchWithTimeout";
 import { API_BASE_URL } from "@/querries/apiBase";
 import { MediaItem, MediaTypeEnum } from "@/types/media";
+import { toIsoDate } from "@/utils/date";
 
 // ──────────────────────────────────────────────
 // Types
@@ -78,10 +80,10 @@ export async function searchGamesNormalized(title: string, userId?: number): Pro
     id: g.id.toString(),
     title: g.name,
     coverUrl: g.coverUrl || "",
-    year: g.firstReleaseDate
-      ? new Date(g.firstReleaseDate).getFullYear()
+    year: toIsoDate(g.firstReleaseDate)?.slice(0, 4)
+      ? Number(toIsoDate(g.firstReleaseDate)!.slice(0, 4))
       : undefined,
-    releaseDate: g.firstReleaseDate || undefined,
+    releaseDate: toIsoDate(g.firstReleaseDate),
     type: MediaTypeEnum.GAME,
     description: g.summary || "",
     provider: "igdb",
@@ -105,7 +107,7 @@ export async function searchGames(title: string, userId?: number): Promise<IGDBS
 
   try {
     const params = userId !== undefined ? `?user_id=${userId}` : "";
-    const res = await fetch(`${API_BASE_URL}/api/igdb/games/search${params}`, {
+    const res = await fetchWithTimeout(`${API_BASE_URL}/api/igdb/games/search${params}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ query: title, limit: 20 }),
@@ -140,7 +142,7 @@ export async function searchGames(title: string, userId?: number): Promise<IGDBS
 
 export async function getGameDetails(id: number, userId?: number): Promise<IGDBGame> {
   const params = userId !== undefined ? `?user_id=${userId}` : "";
-  const res = await fetch(`${API_BASE_URL}/api/igdb/games/${id}${params}`);
+  const res = await fetchWithTimeout(`${API_BASE_URL}/api/igdb/games/${id}${params}`);
 
   if (!res.ok) {
     const text = await res.text();

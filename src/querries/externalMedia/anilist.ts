@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { fetchWithTimeout } from "@/lib/fetchWithTimeout";
 import { MediaItem, MediaTypeEnum } from "@/types/media";
 import { capitalizeFirstLetter } from "@/utils/string";
 
@@ -14,7 +15,7 @@ export async function searchMangaAnilistNormalized(title: string): Promise<Media
     title: m.title.english || m.title.romaji || m.title.native || "",
     coverUrl: m.coverImage.large || m.coverImage.medium,
     year: m.seasonYear || m.startDate?.year,
-    releaseDate: m.startDate ? `${m.startDate.year}-${String(m.startDate.month).padStart(2, "0")}-${String(m.startDate.day).padStart(2, "0")}` : undefined,
+    releaseDate: anilistDateToIso(m.startDate),
     type: MediaTypeEnum.MANGA,
     description: m.description || "",
     provider: "anilist",
@@ -30,7 +31,7 @@ export async function searchAnimeAnilistNormalized(title: string): Promise<Media
     title: a.title.english || a.title.romaji || a.title.native || "",
     coverUrl: a.coverImage.large || a.coverImage.medium,
     year: a.seasonYear || a.startDate?.year,
-    releaseDate: a.startDate ? `${a.startDate.year}-${String(a.startDate.month).padStart(2, "0")}-${String(a.startDate.day).padStart(2, "0")}` : undefined,
+    releaseDate: anilistDateToIso(a.startDate),
     type: MediaTypeEnum.ANIME,
     description: a.description || "",
     provider: "anilist",
@@ -250,7 +251,7 @@ export async function searchAniList(
   };
 
   try {
-    const res = await fetch(BASE, {
+    const res = await fetchWithTimeout(BASE, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -429,7 +430,7 @@ export async function getAniListDetails(id: number, MediaType: MediaTypeEnum) {
     type: type,
   };
 
-  const res = await fetch(BASE, {
+  const res = await fetchWithTimeout(BASE, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -483,7 +484,7 @@ export async function getTrendingAniList(type: "ANIME" | "MANGA" = "ANIME") {
 
   const variables = { type };
 
-  const res = await fetch(BASE, {
+  const res = await fetchWithTimeout(BASE, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -532,7 +533,7 @@ export async function getSeasonalAnime(
 
   const variables = { season, year };
 
-  const res = await fetch(BASE, {
+  const res = await fetchWithTimeout(BASE, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

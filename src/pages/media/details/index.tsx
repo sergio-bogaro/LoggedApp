@@ -120,17 +120,18 @@ function MediaDetailsPage() {
   const handleFavorites = useHandleFavorites();
 
   const { data: existingMedia } = useQuery({
-    queryKey: ["existingMedia", id, mediaType],
+    queryKey: ["existingMedia", user?.id, id, mediaType],
     queryFn: () => getMediaByExternalIdWithLogs(id!, mediaType, user!.id),
     enabled: !!id && !!mediaType && !!user,
     staleTime: DEFAULT_STALE_TIME,
   });
 
-  const lastLog = useMemo(() => existingMedia?.logs && existingMedia.logs.length > 0
-    ? existingMedia.logs[existingMedia.logs.length - 1]
-    : null
-  ,[existingMedia]
-  )
+  const lastLog = useMemo(() => {
+    if (!existingMedia?.logs?.length) return null;
+    return [...existingMedia.logs].sort(
+      (a, b) => b.date.localeCompare(a.date) || b.id - a.id
+    )[0];
+  }, [existingMedia]);
 
   const handleDelete = () => {
     if (!existingMedia) return;

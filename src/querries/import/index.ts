@@ -1,3 +1,5 @@
+import { parseApiError } from "@/lib/apiError";
+import { fetchWithTimeout } from "@/lib/fetchWithTimeout";
 import { API_BASE_URL } from "@/querries/apiBase";
 import type {
   ImportCandidate,
@@ -10,27 +12,17 @@ import type {
 } from "@/types/import";
 import type { MediaTypeEnum } from "@/types/media";
 
-async function readError(res: Response): Promise<string> {
-  const body = await res.text();
-  try {
-    const parsed = JSON.parse(body) as { detail?: unknown };
-    if (typeof parsed.detail === "string") return parsed.detail;
-  } catch {
-    // corpo não é JSON; usa o texto cru abaixo
-  }
-  return `API error ${res.status}: ${body}`;
-}
-
 async function apiFetch<T>(path: string, options?: globalThis.RequestInit): Promise<T> {
-  const res = await fetch(`${API_BASE_URL}${path}`, {
+  const { headers, ...rest } = options ?? {};
+  const res = await fetchWithTimeout(`${API_BASE_URL}${path}`, {
+    ...rest,
     headers: {
       "Content-Type": "application/json",
-      ...options?.headers,
+      ...headers,
     },
-    ...options,
   });
 
-  if (!res.ok) throw new Error(await readError(res));
+  if (!res.ok) throw await parseApiError(res);
   if (res.status === 204) return undefined as T;
   return (await res.json()) as T;
 }
@@ -58,12 +50,12 @@ export async function parseImport(
   if (input.username) form.append("username", input.username);
   if (input.file) form.append("file", input.file);
 
-  const res = await fetch(`${API_BASE_URL}/api/import/${providerId}/parse`, {
+  const res = await fetchWithTimeout(`${API_BASE_URL}/api/import/${providerId}/parse`, {
     method: "POST",
     body: form,
   });
 
-  if (!res.ok) throw new Error(await readError(res));
+  if (!res.ok) throw await parseApiError(res);
   return (await res.json()) as ImportPreviewResponse;
 }
 

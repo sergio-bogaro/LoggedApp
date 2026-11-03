@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { fetchWithTimeout } from "@/lib/fetchWithTimeout";
 import { MediaItem } from "@/types/media";
 import { MediaTypeEnum } from "@/types/media";
 
@@ -29,7 +30,7 @@ export async function searchBooks(title: string): Promise<BookItem[]> {
   params.set("title", title);
   params.set("limit", "20");
 
-  const res = await fetch(`${OPENLIB_BASE}/search.json?${params.toString()}`);
+  const res = await fetchWithTimeout(`${OPENLIB_BASE}/search.json?${params.toString()}`);
   if (!res.ok) {
     const text = await res.text();
     throw new Error(`OpenLibrary API error: ${res.status} ${text}`);
@@ -79,7 +80,7 @@ export async function searchBooksNormalized(title: string): Promise<MediaItem[]>
 export async function getBookDetails(key: string): Promise<BookDetails> {
   // key typically looks like '/works/OL12345W' or '/books/OL...'
   const path = key.startsWith("/") ? key : `/works/${key}`;
-  const res = await fetch(`https://openlibrary.org${path}.json`);
+  const res = await fetchWithTimeout(`https://openlibrary.org${path}.json`);
   if (!res.ok) throw new Error("OpenLibrary details error");
   return res.json();
 }

@@ -11,10 +11,19 @@
     <script>
       (function () {
         try {
-          var themes = ["light", "dark"];
+          var themes = {
+            "light": "light",
+            "dark": "dark",
+            "purple-light": "light purple",
+            "purple-dark": "dark purple",
+            "green-light": "light green",
+            "green-dark": "dark green"
+          };
           var stored = localStorage.getItem("theme");
-          var theme = themes.indexOf(stored) !== -1 ? stored : "light";
-          document.documentElement.classList.add(theme);
+          var classes = themes[stored] || "light";
+          classes.split(" ").forEach(function (value) {
+            document.documentElement.classList.add(value);
+          });
         } catch (e) {
           document.documentElement.classList.add("light");
         }

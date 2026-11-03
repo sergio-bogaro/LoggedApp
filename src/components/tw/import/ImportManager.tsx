@@ -279,6 +279,9 @@ const EntryRow = memo(function EntryRow({
           {result?.outcome === "failed" && result.reason && (
             <span className="text-destructive">{t("result.reason", { reason: result.reason })}</span>
           )}
+          {match?.error && (
+            <span className="text-destructive">{match.error}</span>
+          )}
         </div>
 
         {needsCompare && (
@@ -445,29 +448,37 @@ function ImportManager() {
     const nextMatches: Record<string, ImportMatchResult> = {};
     const nextSelections: Record<string, ImportCandidate | null> = {};
 
-    for (let index = 0; index < list.length; index += MATCH_CHUNK) {
-      const chunk = list.slice(index, index + MATCH_CHUNK);
-      const results = await matchImport(
-        chunk.map((entry) => ({
-          key: entry.key,
-          title: entry.title,
-          year: entry.year,
-          overview: entry.overview,
-          mediaType: entry.mediaType,
-          externalRefs: entry.externalRefs,
-        })),
-        user.id
-      );
-      for (const result of results) {
-        nextMatches[result.key] = result;
-        nextSelections[result.key] = result.match ?? null;
+    try {
+      for (let index = 0; index < list.length; index += MATCH_CHUNK) {
+        const chunk = list.slice(index, index + MATCH_CHUNK);
+        try {
+          const results = await matchImport(
+            chunk.map((entry) => ({
+              key: entry.key,
+              title: entry.title,
+              year: entry.year,
+              overview: entry.overview,
+              mediaType: entry.mediaType,
+              externalRefs: entry.externalRefs,
+            })),
+            user.id
+          );
+          for (const result of results) {
+            nextMatches[result.key] = result;
+            nextSelections[result.key] = result.match ?? null;
+          }
+          setMatches({ ...nextMatches });
+          setSelections({ ...nextSelections });
+        } catch (error) {
+          toast.error(
+            error instanceof Error ? error.message : t("errors.match")
+          );
+        }
+        setProgress({ done: Math.min(index + chunk.length, list.length), total: list.length });
       }
-      setMatches({ ...nextMatches });
-      setSelections({ ...nextSelections });
-      setProgress({ done: Math.min(index + chunk.length, list.length), total: list.length });
+    } finally {
+      setProgress(null);
     }
-
-    setProgress(null);
   };
 
   const handleAnalyze = async () => {

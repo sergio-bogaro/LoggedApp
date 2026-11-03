@@ -111,6 +111,11 @@
     "datePlaceholder": "mm/dd/yyyy"
   },
   "errorLoading": "Error loading data:",
+  "errorBoundary": {
+    "title": "Something went wrong",
+    "description": "An unexpected error occurred. Reload the page to continue.",
+    "reload": "Reload"
+  },
   "notFound": {
     "title": "Page not found",
     "description": "The page you are looking for doesn't exist or has been moved.",

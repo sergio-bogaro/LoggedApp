@@ -77,8 +77,7 @@ function parseTypedInput(value: string, locale: string): Date | undefined {
   const trimmed = value.trim()
 
   if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
-    const isoAttempt = new Date(trimmed)
-    return isValidDate(isoAttempt) ? isoAttempt : undefined
+    return parseIsoDateString(trimmed)
   }
 
   const match = trimmed.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/)
@@ -133,11 +132,16 @@ export function DateField({
         disabled={disabled}
         className="pr-9"
         onChange={(e) => {
-          setInputValue(e.target.value)
-          const parsedDate = parseTypedInput(e.target.value, locale)
+          const next = e.target.value;
+          setInputValue(next);
+          if (!next.trim()) {
+            onChange("");
+            return;
+          }
+          const parsedDate = parseTypedInput(next, locale);
           if (parsedDate) {
-            onChange(toIsoDateString(parsedDate))
-            setMonth(parsedDate)
+            onChange(toIsoDateString(parsedDate));
+            setMonth(parsedDate);
           }
         }}
         onKeyDown={(e) => {
