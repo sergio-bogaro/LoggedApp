@@ -875,6 +875,7 @@ function ImportManager() {
   };
 
   const handleNewImport = () => {
+    if (job && !providerId) setProviderId(job.provider);
     lastJobId.current = null;
     openJob(null);
     setSummary(null);
