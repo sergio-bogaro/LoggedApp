@@ -1,18 +1,20 @@
+import { parseApiError } from "@/lib/apiError";
+import { fetchWithTimeout } from "@/lib/fetchWithTimeout";
 import { API_BASE_URL } from "@/querries/apiBase";
 import { MediaListItem, MediaListItemCreatePayload } from "@/types/mediaList";
 
 async function apiFetch<T>(path: string, options?: globalThis.RequestInit): Promise<T> {
-  const res = await fetch(`${API_BASE_URL}${path}`, {
+  const { headers, ...rest } = options ?? {};
+  const res = await fetchWithTimeout(`${API_BASE_URL}${path}`, {
+    ...rest,
     headers: {
       "Content-Type": "application/json",
-      ...options?.headers,
+      ...headers,
     },
-    ...options,
   });
 
   if (!res.ok) {
-    const body = await res.text();
-    throw new Error(`API error ${res.status}: ${body}`);
+    throw await parseApiError(res);
   }
 
   if (res.status === 204) return undefined as T;

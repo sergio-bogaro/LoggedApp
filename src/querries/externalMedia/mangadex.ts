@@ -1,3 +1,4 @@
+import { fetchWithTimeout } from "@/lib/fetchWithTimeout";
 import { MediaItem } from "@/types/media";
 import { MediaTypeEnum } from "@/types/media";
 
@@ -51,7 +52,7 @@ export async function searchManga(title: string): Promise<MangaDexManga[]> {
   // request cover relationships explicitly
   params.set("includes[]", "cover_art");
 
-  const res = await fetch(`${url}?${params.toString()}`, {
+  const res = await fetchWithTimeout(`${url}?${params.toString()}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -146,7 +147,7 @@ export async function getMangaCovers(mangaId: string): Promise<MangaCoverArt[]> 
   params.set("limit", "20");
   params.set("order[volume]", "asc");
 
-  const res = await fetch(`${BASE}/cover?${params.toString()}`);
+  const res = await fetchWithTimeout(`${BASE}/cover?${params.toString()}`);
   if (!res.ok) {
     const text = await res.text();
     throw new Error(`MangaDex cover API error: ${res.status} ${text}`);
@@ -184,7 +185,7 @@ export async function searchMangaCovers(title: string): Promise<Array<{ url: str
   searchParams.set("limit", "1");
   searchParams.set("includes[]", "cover_art");
 
-  const searchRes = await fetch(`${BASE}/manga?${searchParams.toString()}`);
+  const searchRes = await fetchWithTimeout(`${BASE}/manga?${searchParams.toString()}`);
   if (!searchRes.ok) return [];
 
   const searchData = await searchRes.json();
@@ -209,7 +210,7 @@ export async function getMangaDetails(id: string) {
   const params = new URLSearchParams();
   params.set("includes[]", "cover_art");
 
-  const res = await fetch(`${BASE}/manga/${id}?${params.toString()}`);
+  const res = await fetchWithTimeout(`${BASE}/manga/${id}?${params.toString()}`);
   if (!res.ok) throw new Error("MangaDex details error");
 
   const data = await res.json();

@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
+import { fetchWithTimeout } from "@/lib/fetchWithTimeout";
 import { API_BASE_URL } from "@/querries/apiBase";
 import { useAppSelector } from "@/store/auth/hooks";
 import { MediaTypeEnum } from "@/types/media";
@@ -8,7 +9,7 @@ export type MediaSourceAvailability = Record<MediaTypeEnum, boolean>;
 
 async function fetchConfigured(path: string, userId?: number): Promise<boolean> {
   const params = userId !== undefined ? `?user_id=${userId}` : "";
-  const response = await fetch(`${API_BASE_URL}${path}${params}`);
+  const response = await fetchWithTimeout(`${API_BASE_URL}${path}${params}`);
 
   if (!response.ok) {
     return false;

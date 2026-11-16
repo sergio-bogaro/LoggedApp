@@ -5,18 +5,20 @@ import { MediaTypeEnum } from "@/types/media";
 export function getPosterUrl(type: MediaTypeEnum, data: any) {
   switch (type) {
     case MediaTypeEnum.MOVIES:
-      return tmdbPosterUrl(data.poster_path, "original");
+      return tmdbPosterUrl(data.poster_path, "w500");
     case MediaTypeEnum.MANGA:
       return data.coverImage?.extraLarge || data.coverImage?.large;
     case MediaTypeEnum.ANIME:
       return data.coverImage?.extraLarge || data.coverImage?.large;
     case MediaTypeEnum.SERIES:
-      return tmdbPosterUrl(data.poster_path, "original");
+      return tmdbPosterUrl(data.poster_path, "w500");
     case MediaTypeEnum.BOOK:
       return data.covers?.[0]
         ? `https://covers.openlibrary.org/b/id/${data.covers[0]}-L.jpg`
         : "";
     case MediaTypeEnum.GAME:
+      return data.coverUrl;
+    case MediaTypeEnum.MUSIC:
       return data.coverUrl;
     default:
       return "";

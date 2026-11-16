@@ -1,5 +1,7 @@
+import { fetchWithTimeout } from "@/lib/fetchWithTimeout";
 import { API_BASE_URL } from "@/querries/apiBase";
 import { MediaItem, MediaTypeEnum } from "@/types/media";
+import { toIsoDate } from "@/utils/date";
 
 export async function searchMoviesNormalized(query: string, userId?: number): Promise<MediaItem[]> {
   const movies = await searchMovies(query, userId);
@@ -9,7 +11,7 @@ export async function searchMoviesNormalized(query: string, userId?: number): Pr
     title: m.title,
     coverUrl: tmdbPosterUrl(m.poster_path) ?? "",
     year: m.release_date ? m.release_date.slice(0, 4) : undefined,
-    releaseDate: m.release_date,
+    releaseDate: toIsoDate(m.release_date),
     type: MediaTypeEnum.MOVIES,
     description: m.overview,
     provider: "tmdb",
@@ -139,7 +141,7 @@ export async function searchMovies(query: string, userId?: number): Promise<Movi
   const params = new URLSearchParams({ query });
   if (userId !== undefined) params.set("user_id", String(userId));
 
-  const res = await fetch(`${API}/api/tmdb/search?${params.toString()}`);
+  const res = await fetchWithTimeout(`${API}/api/tmdb/search?${params.toString()}`);
   if (!res.ok) {
     const text = await res.text();
     throw new Error(`TMDB API error: ${res.status} ${text}`);
@@ -155,7 +157,7 @@ export function tmdbPosterUrl(path: string | null | undefined, size = "w200") {
 
 export async function getMovieDetails(id: number, userId?: number): Promise<TMDBMovieDetails> {
   const params = userId !== undefined ? `?user_id=${userId}` : "";
-  const res = await fetch(`${API}/api/tmdb/movie/${id}${params}`);
+  const res = await fetchWithTimeout(`${API}/api/tmdb/movie/${id}${params}`);
   if (!res.ok) throw new Error("TMDB details error");
   const data = (await res.json()) as TMDBMovieDetails;
   return data;

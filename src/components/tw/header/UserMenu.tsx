@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { CircleUser, LogOut } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
@@ -19,10 +20,12 @@ export function UserMenu() {
   const { t } = useTranslation("common");
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const queryClient = useQueryClient();
   const { user } = useAppSelector((state) => state.auth);
 
   const handleLogout = () => {
     dispatch(logout());
+    queryClient.clear();
 
     toast.success(t("settings.logoutSuccess"));
     navigate("/");

@@ -33,7 +33,9 @@ export const LogStream = ({ logs, filtered = false, viewMode = "list" }: LogStre
   const isGrid = viewMode === "grid";
 
   const groups = useMemo(() => {
-    const ordered = [...logs].sort((a, b) => b.date.localeCompare(a.date));
+    const ordered = [...logs].sort(
+      (a, b) => b.date.localeCompare(a.date) || b.id - a.id
+    );
 
     const buckets = new Map<string, MediaLogWithMedia[]>();
     for (const log of ordered) {

@@ -37,7 +37,8 @@ export const RatingDisplay = ({ rating, discrete, singleStar, tone = "plain" }: 
   }
 
   if (singleStar) {
-    const value = rating % 1 === 0 ? rating.toFixed(0) : rating.toFixed(1);
+    const displayRating = ratingMode === "stars5" ? rating / 2 : rating;
+    const value = displayRating % 1 === 0 ? displayRating.toFixed(0) : displayRating.toFixed(1);
 
     return (
       <span

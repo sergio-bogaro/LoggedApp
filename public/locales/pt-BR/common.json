@@ -111,6 +111,11 @@
     "datePlaceholder": "dd/mm/aaaa"
   },
   "errorLoading": "Erro ao carregar dados:",
+  "errorBoundary": {
+    "title": "Algo deu errado",
+    "description": "Ocorreu um erro inesperado. Recarregue a página para continuar.",
+    "reload": "Recarregar"
+  },
   "notFound": {
     "title": "Página não encontrada",
     "description": "A página que você procura não existe ou foi movida.",

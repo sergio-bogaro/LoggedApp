@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import { useMediaSourceAvailability } from "@/hooks/useMediaSourceAvailability";
 import { searchAnimeAnilistNormalized, searchMangaAnilistNormalized } from "@/querries/externalMedia/anilist";
 import { searchBooksNormalized } from "@/querries/externalMedia/books";
 import { searchGamesNormalized } from "@/querries/externalMedia/games";
@@ -51,16 +52,24 @@ function MediaSearchPage() {
   }, [dispatch, t]);
 
   const trackFlags = getTrackFlags(user);
+  const { availability, isLoading: isLoadingAvailability } = useMediaSourceAvailability();
   const mediaTypesOptions = useMemo(() => getMediaTypesOptions(t), [t]);
   const trackedOptions = useMemo(
-    () => mediaTypesOptions.filter((option) => trackFlags[option.value as MediaTypeEnum]),
-    [mediaTypesOptions, trackFlags]
+    () =>
+      mediaTypesOptions.filter(
+        (option) =>
+          trackFlags[option.value as MediaTypeEnum] &&
+          (isLoadingAvailability || availability[option.value as MediaTypeEnum])
+      ),
+    [mediaTypesOptions, trackFlags, availability, isLoadingAvailability]
   );
 
   const defaultMediaType = (searchParams.get("mediaType") as MediaTypeEnum) || (lastSearchType as MediaTypeEnum) || MediaTypeEnum.MOVIES;
-  const resolvedMediaType = trackFlags[defaultMediaType]
-    ? defaultMediaType
-    : ((trackedOptions[0]?.value as MediaTypeEnum) ?? MediaTypeEnum.MOVIES);
+  const resolvedMediaType =
+    trackFlags[defaultMediaType] &&
+    (isLoadingAvailability || availability[defaultMediaType])
+      ? defaultMediaType
+      : ((trackedOptions[0]?.value as MediaTypeEnum) ?? MediaTypeEnum.MOVIES);
 
   const form = useForm<FormSearchProps>({
     defaultValues: {

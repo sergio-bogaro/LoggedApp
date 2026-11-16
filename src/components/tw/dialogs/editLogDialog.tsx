@@ -18,6 +18,7 @@ import { StarRating } from "@/components/ui/starRating";
 import { TextArea } from "@/components/ui/textarea";
 import { MediaLogResponse } from "@/types/logged";
 import { MediaStatusEnum, MediaTypeEnum } from "@/types/media";
+import { newIsoDate } from "@/utils/date";
 import { useUpdateLog } from "@/utils/mediaStore";
 import { isOneTimeConsumption } from "@/utils/mediaTrack";
 import { statusAnimeOptions } from "@/utils/selectOptions";
@@ -30,6 +31,7 @@ interface EditLogDialogProps {
 }
 
 interface FormType {
+  date: string;
   status: MediaStatusEnum;
   startDate?: string;
   endDate?: string;
@@ -38,11 +40,13 @@ interface FormType {
 }
 
 const buildDefaults = (log: MediaLogResponse, oneTimeConsumption: boolean): FormType => {
+  const date = log.date?.slice(0, 10) ?? newIsoDate();
   const startDate = log.startDate?.slice(0, 10);
   const endDate = log.endDate?.slice(0, 10);
   const consumedOn = endDate ?? startDate;
 
   return {
+    date,
     status: log.status ?? MediaStatusEnum.IN_PROGRESS,
     startDate: oneTimeConsumption ? consumedOn : startDate,
     endDate: oneTimeConsumption ? consumedOn : endDate,
@@ -76,6 +80,7 @@ export function EditLogDialog({ log, mediaType, open, onOpenChange }: EditLogDia
       {
         logId: log.id,
         data: {
+          date: data.date,
           status: data.status,
           startDate,
           endDate,
@@ -97,6 +102,12 @@ export function EditLogDialog({ log, mediaType, open, onOpenChange }: EditLogDia
 
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+            <DatePicker
+              label={t("logCard.date")}
+              name="date"
+              control={control}
+            />
+
             {!oneTimeConsumption && (
               <Select
                 name="status"

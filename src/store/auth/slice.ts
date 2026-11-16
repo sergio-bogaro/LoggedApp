@@ -7,9 +7,24 @@ interface AuthState {
   isAuthenticated: boolean;
 }
 
-const savedUser = localStorage.getItem("user");
+const savedUser = (() => {
+  try {
+    const raw = localStorage.getItem("user");
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Partial<User> | null;
+    if (!parsed || typeof parsed.id !== "number" || typeof parsed.username !== "string") {
+      localStorage.removeItem("user");
+      return null;
+    }
+    return parsed as User;
+  } catch {
+    localStorage.removeItem("user");
+    return null;
+  }
+})();
+
 const initialState: AuthState = {
-  user: savedUser ? JSON.parse(savedUser) : null,
+  user: savedUser,
   isAuthenticated: !!savedUser,
 };
 

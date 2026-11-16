@@ -56,7 +56,6 @@ export type MediaUpdatePayload = {
   status?: MediaStatusEnum;
   description?: string;
   coverUrl?: string;
-  imagePath?: string;
   releaseDate?: string;
   rating?: number;
   review?: string;

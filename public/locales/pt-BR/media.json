@@ -372,6 +372,9 @@
     "recentlyAddedDesc": "Mídias registradas recentemente na sua biblioteca",
     "favorites": "Favoritos",
     "favoritesDesc": "Ultimas medias com nota 8 ou maior",
+    "topRated": "Melhores avaliados",
+    "topRatedDesc": "Últimas mídias com nota 8 ou maior",
+    "allMedia": "Biblioteca completa",
     "viewAll": "Ver Todos",
     "noData": "Nenhum dado disponível ainda"
   },

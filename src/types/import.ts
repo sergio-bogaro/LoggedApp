@@ -80,6 +80,7 @@ export type ImportMatchResult = {
   match?: ImportCandidate | null;
   candidates: ImportCandidate[];
   existingMediaId?: number | null;
+  error?: string | null;
 };
 
 export type ImportCommitEntry = {

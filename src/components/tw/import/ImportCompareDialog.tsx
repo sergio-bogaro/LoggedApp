@@ -59,6 +59,9 @@ export function ImportCompareDialog({
             <TypeMark type={entry.mediaType} />
             <ImportMatchMark status={status} />
           </DialogDescription>
+          {match?.error && (
+            <p className="text-step-0 text-destructive">{match.error}</p>
+          )}
         </DialogHeader>
 
         <div className="flex flex-col gap-4 sm:flex-row">

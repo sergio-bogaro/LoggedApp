@@ -1,3 +1,5 @@
+import { parseApiError } from "@/lib/apiError";
+import { fetchWithTimeout } from "@/lib/fetchWithTimeout";
 import { API_BASE_URL } from "@/querries/apiBase";
 
 export interface UserRegister {
@@ -52,7 +54,7 @@ export interface IntegrationStatus {
 
 export const authApi = {
   async register(data: UserRegister): Promise<User> {
-    const response = await fetch(`${API_BASE_URL}/auth/register`, {
+    const response = await fetchWithTimeout(`${API_BASE_URL}/auth/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -61,15 +63,14 @@ export const authApi = {
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.detail || "Registration failed");
+      throw await parseApiError(response);
     }
 
     return response.json();
   },
 
   async login(data: UserLogin): Promise<LoginResponse> {
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+    const response = await fetchWithTimeout(`${API_BASE_URL}/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -78,26 +79,24 @@ export const authApi = {
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.detail || "Login failed");
+      throw await parseApiError(response);
     }
 
     return response.json();
   },
 
   async getUser(userId: number): Promise<User> {
-    const response = await fetch(`${API_BASE_URL}/auth/users/${userId}`);
+    const response = await fetchWithTimeout(`${API_BASE_URL}/auth/users/${userId}`);
 
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.detail || "Failed to fetch user");
+      throw await parseApiError(response);
     }
 
     return response.json();
   },
 
   async updateUser(userId: number, data: Partial<User> | UserSecrets): Promise<User> {
-    const response = await fetch(`${API_BASE_URL}/auth/users/${userId}`, {
+    const response = await fetchWithTimeout(`${API_BASE_URL}/auth/users/${userId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -106,8 +105,7 @@ export const authApi = {
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.detail || "Failed to update user");
+      throw await parseApiError(response);
     }
 
     return response.json();

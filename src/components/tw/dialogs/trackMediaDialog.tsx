@@ -54,7 +54,7 @@ export function TrackMediaDialog({ mediaType, existingMedia, image, formatedData
   const { t } = useTranslation("media");
   const [open, setOpen] = useState(false);
 
-  const trackMedia = useTrackMedia();
+  const { trackMedia, isPending } = useTrackMedia();
 
   const oneTimeConsumption = useMemo( () => isOneTimeConsumption(mediaType), [mediaType] );
   const endDateLabel = useMemo(
@@ -93,13 +93,12 @@ export function TrackMediaDialog({ mediaType, existingMedia, image, formatedData
 
   // When finalizing a media that already has an in-progress log, keep the
   // original start date instead of resetting it.
-  const inProgressStartDate = useMemo(
-    () =>
-      existingMedia?.logs
-        ?.filter((log) => log.status === MediaStatusEnum.IN_PROGRESS)
-        .pop()?.startDate?.slice(0, 10) ?? "",
-    [existingMedia]
-  );
+  const inProgressStartDate = useMemo(() => {
+    const logs = [...(existingMedia?.logs ?? [])]
+      .filter((log) => log.status === MediaStatusEnum.IN_PROGRESS)
+      .sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
+    return logs[0]?.startDate?.slice(0, 10) ?? "";
+  }, [existingMedia]);
 
   useEffect(() => {
     if (oneTimeConsumption) {
@@ -119,20 +118,27 @@ export function TrackMediaDialog({ mediaType, existingMedia, image, formatedData
   }, [isFinished, oneTimeConsumption, inProgressStartDate]);
 
   const onSubmit = (data: FormType) => {
+    if (isPending) return;
+
+    const endDate = oneTimeConsumption
+      ? data.endDate
+      : data.status === MediaStatusEnum.FINISHED ||
+        data.status === MediaStatusEnum.DROPPED
+        ? data.endDate
+        : undefined;
+
     const formData = {
+      date: endDate ?? data.startDate ?? newIsoDate(),
       startDate: oneTimeConsumption
         ? data.endDate
         : data.startDate && data.startDate.trim() !== "" ? data.startDate : undefined,
-      endDate: oneTimeConsumption
-        ? data.endDate
-        : data.status === MediaStatusEnum.FINISHED ? data.endDate : undefined,
+      endDate,
       status:  data.status,
       rating: data.rating,
       review: data.review,
     };
 
-    trackMedia(formatedData, existingMedia, formData);
-    setOpen(false);
+    trackMedia(formatedData, existingMedia, formData, () => setOpen(false));
   };
 
   const handleOpenChange = (next: boolean) => {
@@ -229,7 +235,7 @@ export function TrackMediaDialog({ mediaType, existingMedia, image, formatedData
                   </Button>
                 </DialogClose>
 
-                <Button type="submit">
+                <Button type="submit" disabled={isPending}>
                   {t("save", { ns: "common" })}
                 </Button>
               </div>

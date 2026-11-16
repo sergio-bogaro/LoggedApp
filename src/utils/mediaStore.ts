@@ -6,8 +6,9 @@ import { addToBacklog, removeFromBacklog, addToFavorites, removeFromFavorites } 
 import { createMedia, createMediaLog, deleteMedia, deleteMediaLog, removeMediaImage, updateMedia, updateMediaLog, uploadMediaImage, uploadMediaImageFromUrl } from "@/querries/media/logged";
 import { useAppSelector } from "@/store/auth/hooks";
 import { MediaLogUpdatePayload, MediaResponse, MediaUpdatePayload, MediaWithLogsResponse } from "@/types/logged";
-import { MediaDataDetailsType, TrackMediaPayload } from "@/types/media";
+import { MediaDataDetailsType, MediaStatusEnum, TrackMediaPayload } from "@/types/media";
 import { MediaItem } from "@/types/media";
+import { newIsoDate, toIsoDate } from "@/utils/date";
 
 export function useHandleBacklog() {
   const { t } = useTranslation("media");
@@ -37,7 +38,7 @@ export function useHandleBacklog() {
         title: item.title,
         description: item.description,
         coverUrl: item.coverUrl,
-        releaseDate: item.releaseDate,
+        releaseDate: toIsoDate(item.releaseDate),
       });
     },
 
@@ -91,7 +92,7 @@ export function useHandleFavorites() {
         title: item.title,
         description: item.description,
         coverUrl: item.coverUrl,
-        releaseDate: item.releaseDate,
+        releaseDate: toIsoDate(item.releaseDate),
       });
     },
 
@@ -138,7 +139,6 @@ export function useTrackMedia() {
           status: trackData.status,
           rating: trackData.rating,
           review: trackData.review,
-          tags: mediaData.tags,
         }, user.id);
       } else {
         media = await createMedia({
@@ -148,7 +148,7 @@ export function useTrackMedia() {
           externalId: mediaData.id,
           description: mediaData.description,
           coverUrl: mediaData.coverUrl,
-          releaseDate: mediaData.releaseDate,
+          releaseDate: toIsoDate(mediaData.releaseDate),
           tags: mediaData.tags,
           status: trackData.status,
           rating: trackData.rating,
@@ -156,16 +156,47 @@ export function useTrackMedia() {
         });
       }
 
-      // Create media log
-      await createMediaLog({
-        userId: user.id,
-        mediaId: media.id,
-        status: trackData.status,
-        rating: trackData.rating,
-        review: trackData.review,
-        startDate: trackData.startDate,
-        endDate: trackData.endDate,
-      });
+      const logDate =
+        trackData.date ??
+        trackData.endDate ??
+        trackData.startDate ??
+        newIsoDate();
+
+      // Um log em andamento representa a sessão atual: finalizar/alterar o
+      // status atualiza esse log em vez de criar outro sobreposto.
+      const openLog = [...(existingMedia?.logs ?? [])]
+        .filter((log) => log.status === MediaStatusEnum.IN_PROGRESS)
+        .sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id)[0];
+
+      if (openLog) {
+        await updateMediaLog(
+          openLog.id,
+          {
+            date: logDate,
+            status: trackData.status,
+            rating: trackData.rating,
+            review: trackData.review,
+            startDate: openLog.startDate?.slice(0, 10) ?? trackData.startDate,
+            endDate:
+              trackData.status === MediaStatusEnum.FINISHED ||
+              trackData.status === MediaStatusEnum.DROPPED
+                ? trackData.endDate
+                : undefined,
+          },
+          user.id
+        );
+      } else {
+        await createMediaLog({
+          userId: user.id,
+          mediaId: media.id,
+          date: logDate,
+          status: trackData.status,
+          rating: trackData.rating,
+          review: trackData.review,
+          startDate: trackData.startDate,
+          endDate: trackData.endDate,
+        });
+      }
 
       return media;
     },
@@ -181,8 +212,19 @@ export function useTrackMedia() {
     },
   });
 
-  return (mediaData: MediaDataDetailsType, existingMedia: MediaWithLogsResponse | undefined | null, trackData: TrackMediaPayload) =>
-    mutation.mutate({ mediaData, existingMedia, trackData });
+  return {
+    trackMedia: (
+      mediaData: MediaDataDetailsType,
+      existingMedia: MediaWithLogsResponse | undefined | null,
+      trackData: TrackMediaPayload,
+      onSuccess?: () => void
+    ) =>
+      mutation.mutate(
+        { mediaData, existingMedia, trackData },
+        { onSuccess }
+      ),
+    isPending: mutation.isPending,
+  };
 }
 
 // Adicionar ao useChangeImage em utils/mediaStore.ts
@@ -221,7 +263,7 @@ export function useChangeImage() {
           externalId: mediaData.id,
           description: mediaData.description,
           coverUrl: mediaData.coverUrl,
-          releaseDate: mediaData.releaseDate,
+          releaseDate: toIsoDate(mediaData.releaseDate),
           tags: mediaData.tags,
         });
         mediaId = media.id;

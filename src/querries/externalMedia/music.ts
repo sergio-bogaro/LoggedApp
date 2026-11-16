@@ -1,3 +1,4 @@
+import { fetchWithTimeout } from "@/lib/fetchWithTimeout";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Use iTunes Search API for album search (no API key required).
 // This is a simpler, more reliable API for quick album lookups.
@@ -41,7 +42,7 @@ export async function searchAlbums(title: string): Promise<MusicAlbum[]> {
     params.set("entity", entity);
     params.set("limit", "50");
 
-    const res = await fetch(`${ITUNES_SEARCH}?${params.toString()}`);
+    const res = await fetchWithTimeout(`${ITUNES_SEARCH}?${params.toString()}`);
     if (!res.ok) {
       const text = await res.text();
       throw new Error(`iTunes API error: ${res.status} ${text}`);
@@ -105,7 +106,7 @@ export async function getAlbumDetails(id: string) {
   params.set("id", id);
   params.set("entity", "song");
 
-  const res = await fetch(`${ITUNES_LOOKUP}?${params.toString()}`);
+  const res = await fetchWithTimeout(`${ITUNES_LOOKUP}?${params.toString()}`);
   if (!res.ok) throw new Error("iTunes lookup error");
   const data = await res.json();
 

@@ -47,7 +47,7 @@ const MediaListPage = () => {
   }, [mediaType]);
 
   const { data: data, isFetching, isError, error } = useQuery<MediaResponse[]>({
-    queryKey: ["media", "list", mediaType, tagFilter],
+    queryKey: ["media", "list", user?.id, mediaType, tagFilter],
     queryFn: () =>
       getMediaList(user!.id, {
         types: mediaType ? [mediaType] : undefined,
@@ -58,12 +58,13 @@ const MediaListPage = () => {
   });
 
   const { data: recentlyLoggedData, isFetching: isFetchingRecent, isError: isErrorRecent, error: errorRecent } = useQuery<MediaResponse[]>({
-    queryKey: ["media", "list", mediaType, "recentlyLogged", tagFilter],
+    queryKey: ["media", "list", user?.id, mediaType, "recentlyLogged", tagFilter],
     queryFn: () =>
       getMediaList(user!.id, {
         types: mediaType ? [mediaType] : undefined,
         hasLogs: true,
         tags: tagFilter ? [tagFilter] : undefined,
+        limit: 10,
       }),
     staleTime: DEFAULT_STALE_TIME,
     enabled: !!user,

@@ -33,7 +33,7 @@ const MediaLogsPage = () => {
 
   const mediaType = pathToMediaType(type);
   const title = mediaType ? t("logs.titleFiltered", { type: t(`typePlural.${mediaType}`) }) : t("logs.title");
-  const queryKey: (string | number | undefined)[] = ["media", "logs", mediaType];
+  const queryKey: (string | number | undefined)[] = ["media", "logs", user?.id, mediaType];
 
   useEffect(() => {
     const logsCrumb = { label: t("logs.title"), to: "/media/logs" };
@@ -54,6 +54,8 @@ const MediaLogsPage = () => {
     isFetchingNextPage,
     isLoading,
     isFetching,
+    isError,
+    error,
   } = useInfiniteQuery<MediaResponse[], Error, { pages: MediaResponse[]; pageParams: number[] }, typeof queryKey, number>({
     queryKey: queryKey as ["media", "logs", ...string[]],
     queryFn: ({ pageParam = 0 }) =>
@@ -107,6 +109,10 @@ const MediaLogsPage = () => {
 
       {isLoading ? (
         <MediaGridSkeleton count={SKELETON_COUNT} className={`${POSTER_GRID_WIDE} min-h-72`} />
+      ) : isError ? (
+        <p className="text-step-1 text-destructive">
+          {t("errorLoading", { ns: "common" })} {error?.message ?? ""}
+        </p>
       ) : allItems.length === 0 ? (
         <EmptyState title={t("logs.empty")} description={t("logs.emptyHint")} />
       ) : (

@@ -1,19 +1,21 @@
+import { ApiError, parseApiError } from "@/lib/apiError";
+import { fetchWithTimeout } from "@/lib/fetchWithTimeout";
 import { API_BASE_URL } from "@/querries/apiBase";
 import { MediaCreatePayload, MediaLogCreatePayload, MediaLogResponse, MediaLogUpdatePayload, MediaResponse, MediaUpdatePayload, MediaWithLogsResponse } from "@/types/logged";
 import { MediaStatusEnum, MediaTypeEnum } from "@/types/media";
 
 async function apiFetch<T>(path: string, options?: globalThis.RequestInit): Promise<T> {
-  const res = await fetch(`${API_BASE_URL}${path}`, {
+  const { headers, ...rest } = options ?? {};
+  const res = await fetchWithTimeout(`${API_BASE_URL}${path}`, {
+    ...rest,
     headers: {
       "Content-Type": "application/json",
-      ...options?.headers,
+      ...headers,
     },
-    ...options,
   });
 
   if (!res.ok) {
-    const body = await res.text();
-    throw new Error(`API error ${res.status}: ${body}`);
+    throw await parseApiError(res);
   }
 
   // 204 No Content
@@ -58,8 +60,9 @@ export async function getMediaByExternalId(externalId: string, type: MediaTypeEn
     return await apiFetch<MediaResponse | null>(
       `/api/media/external/${externalId}?type=${type}&user_id=${userId}`
     );
-  } catch {
-    return null;
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) return null;
+    throw error;
   }
 }
 
@@ -68,8 +71,9 @@ export async function getMediaByExternalIdWithLogs(externalId: string, type: Med
     return await apiFetch<MediaWithLogsResponse | null>(
       `/api/media/external/${externalId}/with-logs?type=${type}&user_id=${userId}`
     );
-  } catch {
-    return null;
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) return null;
+    throw error;
   }
 }
 
@@ -105,42 +109,39 @@ export async function uploadMediaImage(id: number, file: File, userId: number): 
   const formData = new FormData();
   formData.append("file", file);
 
-  const res = await fetch(`${API_BASE_URL}/api/media/${id}/image?user_id=${userId}`, {
+  const res = await fetchWithTimeout(`${API_BASE_URL}/api/media/${id}/image?user_id=${userId}`, {
     method: "POST",
     body: formData,
   });
 
   if (!res.ok) {
-    const body = await res.text();
-    throw new Error(`API error ${res.status}: ${body}`);
+    throw await parseApiError(res);
   }
 
   return (await res.json()) as MediaResponse;
 }
 
 export async function uploadMediaImageFromUrl(id: number, imageUrl: string, userId: number): Promise<MediaResponse> {
-  const res = await fetch(`${API_BASE_URL}/api/media/${id}/image-url?user_id=${userId}`, {
+  const res = await fetchWithTimeout(`${API_BASE_URL}/api/media/${id}/image-url?user_id=${userId}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ url: imageUrl }),
   });
 
   if (!res.ok) {
-    const body = await res.text();
-    throw new Error(`API error ${res.status}: ${body}`);
+    throw await parseApiError(res);
   }
 
   return (await res.json()) as MediaResponse;
 }
 
 export async function removeMediaImage(id: number, userId: number): Promise<MediaResponse> {
-  const res = await fetch(`${API_BASE_URL}/api/media/${id}/image?user_id=${userId}`, {
+  const res = await fetchWithTimeout(`${API_BASE_URL}/api/media/${id}/image?user_id=${userId}`, {
     method: "DELETE",
   });
 
   if (!res.ok) {
-    const body = await res.text();
-    throw new Error(`API error ${res.status}: ${body}`);
+    throw await parseApiError(res);
   }
 
   return (await res.json()) as MediaResponse;

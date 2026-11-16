@@ -32,6 +32,7 @@ export interface MediaItem {
 }
 
 export type TrackMediaPayload = {
+  date?: string;
   startDate?: string;
   endDate?: string;
   status: MediaStatusEnum
