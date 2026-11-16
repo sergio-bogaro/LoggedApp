@@ -12,7 +12,7 @@ i18n
     supportedLngs: ["en", "pt-BR"],
     load: "currentOnly",
     debug: false,
-    ns: ["common", "themes", "welcome", "media", "auth", "onboarding", "import"],
+    ns: ["common", "themes", "welcome", "media", "auth", "onboarding", "import", "suwayomi"],
     defaultNS: "common",
     interpolation: {
       escapeValue: false,

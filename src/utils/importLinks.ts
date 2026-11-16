@@ -84,6 +84,8 @@ export function sourceUrl(entry: ImportEntry): string | null {
       return refs.letterboxdUri ?? `https://letterboxd.com/search/${title}/`;
     case "grouvee":
       return refs.grouveeUrl ?? `https://www.grouvee.com/search/?q=${title}`;
+    case "suwayomi":
+      return refs.suwayomiUrl || null;
     default:
       return null;
   }

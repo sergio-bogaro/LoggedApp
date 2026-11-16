@@ -98,6 +98,20 @@
         "The rating scale (0–5 or 0–10) is inferred from the highest value in the file.",
         "Games are matched to IGDB by title; review the matches."
       ]
+    },
+    "suwayomi": {
+      "label": "Suwayomi",
+      "description": "Read your Suwayomi library. Only titles that are not in Logged yet are imported; each category becomes a status or a backlog item.",
+      "helpLabel": "Open Suwayomi",
+      "helpUrl": "https://github.com/Suwayomi/Suwayomi-Server",
+      "urlPlaceholder": "http://localhost:4567",
+      "urlHint": "Use the address through which Logged can reach Suwayomi.",
+      "configureFirst": "Configure the server and categories in Settings → Integrations first.",
+      "notes": [
+        "Categories define the status/backlog; chapters and reading progress are not imported.",
+        "Titles are matched to AniList; ambiguous items can be fixed in the review.",
+        "Only titles missing from Logged are listed."
+      ]
     }
   },
   "steps": {
@@ -119,7 +133,8 @@
       "title": "Drag your export here",
       "hint": "or click to choose a file",
       "remove": "Remove file"
-    }
+    },
+    "urlLabel": "Server URL"
   },
   "metadata": {
     "tmdb": "TMDB",
@@ -221,6 +236,7 @@
     "parse": "Could not read the data.",
     "match": "Could not fetch the metadata.",
     "commit": "Could not import.",
-    "nothingSelected": "Select at least one item to import."
+    "nothingSelected": "Select at least one item to import.",
+    "noUrl": "Enter the server URL."
   }
 }

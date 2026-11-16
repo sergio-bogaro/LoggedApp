@@ -4,8 +4,9 @@ export type ImportProviderInfo = {
   id: string;
   label: string;
   mediaTypes: MediaTypeEnum[];
-  inputType: "file" | "username";
+  inputType: "file" | "username" | "url";
   accepts?: string | null;
+  skipExisting?: boolean;
 };
 
 export type ImportLogEntry = {
@@ -98,6 +99,8 @@ export type ImportCommitEntry = {
   logs: ImportLogEntry[];
   addToBacklog: boolean;
   backlogDate?: string | null;
+  source: string;
+  externalRefs: Record<string, string>;
 };
 
 export type ImportCommitItem = {

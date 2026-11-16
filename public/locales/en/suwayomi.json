@@ -1,0 +1,93 @@
+{
+  "title": "Suwayomi",
+  "description": "Keep the status and backlog of your Logged mangas in sync with the categories of your Suwayomi library.",
+  "connection": {
+    "url": "Server URL",
+    "urlPlaceholder": "http://100.117.105.118:4567",
+    "test": "Test connection",
+    "testing": "Testing…",
+    "success": "Connected to {{name}} {{version}}",
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Configuration saved",
+    "enabled": "Automatic sync",
+    "timesPerDay": "Times per day",
+    "timesHint": "Between 1 and 24. An interval of about {{hours}} h.",
+    "lastSync": "Last sync",
+    "nextSync": "Next sync",
+    "never": "Never",
+    "syncNow": "Sync now",
+    "syncing": "Syncing…",
+    "syncDone": "Sync finished — {{created}} created",
+    "syncError": "Sync finished with errors",
+    "importLibrary": "Import library",
+    "importHint": "Review and import the titles that are missing from Logged.",
+    "cancel": "Cancel"
+  },
+  "auth": {
+    "label": "Authentication",
+    "configured": "Configured",
+    "notConfigured": "Not configured",
+    "hint": "Only Suwayomi's Basic auth is supported.",
+    "edit": "Set credentials",
+    "username": "Username",
+    "password": "Password",
+    "save": "Save credentials",
+    "clear": "Clear credentials",
+    "required": "Fill in both username and password."
+  },
+  "categories": {
+    "title": "Categories",
+    "description": "Choose what each Suwayomi category becomes in Logged. When a manga is in more than one mapped category, the first one in this order wins.",
+    "empty": "No categories found.",
+    "loading": "Loading categories…",
+    "save": "Save mappings",
+    "saving": "Saving…",
+    "saved": "Mappings saved",
+    "suggestion": "suggested",
+    "mangaCount_one": "{{count}} manga",
+    "mangaCount_other": "{{count}} mangas",
+    "stale": "Could not reach Suwayomi; showing the last known categories.",
+    "notMapped": "Not mapped"
+  },
+  "actions": {
+    "ignore": "Ignore",
+    "backlog": "Backlog"
+  },
+  "summary": {
+    "title": "Last result",
+    "library": "{{count}} titles in the library",
+    "created": "{{count}} created",
+    "statusUpdated": "{{count}} status changes",
+    "backlogAdded": "{{count}} added to backlog",
+    "backlogRemoved": "{{count}} removed from backlog",
+    "unmatched": "{{count}} pending matches",
+    "removed": "{{count}} removed from Suwayomi",
+    "changesTitle": "Changes",
+    "unmatchedTitle": "Pending matches",
+    "removedTitle": "No longer in the library",
+    "errorsTitle": "Errors",
+    "unmatchedHint": "Resolve these titles on the Import page.",
+    "from": "from",
+    "to": "to",
+    "stats": {
+      "created": "Created",
+      "statusUpdated": "Status changes",
+      "backlogAdded": "Added to backlog",
+      "backlogRemoved": "Removed from backlog"
+    }
+  },
+  "errors": {
+    "urlRequired": "Enter the Suwayomi URL.",
+    "invalidTimes": "Choose between 1 and 24 syncs per day.",
+    "test": "Could not connect to Suwayomi.",
+    "load": "Could not load the Suwayomi settings.",
+    "sync": "Could not sync with Suwayomi.",
+    "save": "Could not save the Suwayomi settings."
+  },
+  "syncStatus": {
+    "ok": "Completed",
+    "partial": "Completed with pending items",
+    "error": "Failed"
+  }
+}

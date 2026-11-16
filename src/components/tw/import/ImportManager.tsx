@@ -31,6 +31,7 @@ import {
   parseImport,
   searchImportCandidates,
 } from "@/querries/import";
+import { suwayomiApi } from "@/querries/suwayomi";
 import { useAppSelector } from "@/store/auth/hooks";
 import type {
   ImportCandidate,
@@ -45,7 +46,7 @@ import type { MediaTypeEnum } from "@/types/media";
 import { metadataProviderKey, metadataUrl, sourceUrl } from "@/utils/importLinks";
 
 // A metadata é buscada em lotes para caber no timeout e mostrar progresso.
-const MATCH_CHUNK = 50;
+const MATCH_CHUNK = 20;
 // A lista é paginada: renderizar milhares de linhas com Select/Dialog trava a UI.
 const PAGE_SIZE = 50;
 const EMPTY_CANDIDATES: ImportCandidate[] = [];
@@ -387,6 +388,7 @@ function ImportManager() {
   const [mediaType, setMediaType] = useState<MediaTypeEnum | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [username, setUsername] = useState("");
+  const [serverUrl, setServerUrl] = useState("");
 
   const [entries, setEntries] = useState<ImportEntry[]>([]);
   const [counts, setCounts] = useState<ImportPreviewCounts | null>(null);
@@ -415,8 +417,19 @@ function ImportManager() {
       defaultValue: [],
     }) as unknown as string[])
     : [];
+  const { data: suwayomiConfig } = useQuery({
+    queryKey: ["suwayomi", "config", user?.id],
+    queryFn: () => suwayomiApi.getConfig(user!.id),
+    enabled: !!user && providerId === "suwayomi",
+  });
   const providerLabel = (item: ImportProviderInfo) =>
     t(`providers.${item.id}.label`, { defaultValue: item.label });
+
+  useEffect(() => {
+    if (providerId === "suwayomi" && suwayomiConfig?.baseUrl) {
+      setServerUrl((current) => current || suwayomiConfig.baseUrl || "");
+    }
+  }, [providerId, suwayomiConfig]);
 
   const resetData = () => {
     setEntries([]);
@@ -438,6 +451,7 @@ function ImportManager() {
     setMediaType(item.mediaTypes[0] ?? null);
     setFile(null);
     setUsername("");
+    setServerUrl("");
     resetData();
   };
 
@@ -447,6 +461,7 @@ function ImportManager() {
 
     const nextMatches: Record<string, ImportMatchResult> = {};
     const nextSelections: Record<string, ImportCandidate | null> = {};
+    const nextIgnored: Record<string, boolean> = {};
 
     try {
       for (let index = 0; index < list.length; index += MATCH_CHUNK) {
@@ -466,9 +481,15 @@ function ImportManager() {
           for (const result of results) {
             nextMatches[result.key] = result;
             nextSelections[result.key] = result.match ?? null;
+            if (provider?.skipExisting && result.status === "already_in_library") {
+              nextIgnored[result.key] = true;
+            }
           }
           setMatches({ ...nextMatches });
           setSelections({ ...nextSelections });
+          if (Object.keys(nextIgnored).length > 0) {
+            setIgnored((prev) => ({ ...prev, ...nextIgnored }));
+          }
         } catch (error) {
           toast.error(
             error instanceof Error ? error.message : t("errors.match")
@@ -491,6 +512,10 @@ function ImportManager() {
       toast.error(t("errors.noUsername"));
       return;
     }
+    if (provider.inputType === "url" && !serverUrl.trim()) {
+      toast.error(t("errors.noUrl"));
+      return;
+    }
 
     setBusy(true);
     resetData();
@@ -501,6 +526,7 @@ function ImportManager() {
         userId: user.id,
         file: file ?? undefined,
         username: username.trim() || undefined,
+        sourceUrl: serverUrl.trim() || undefined,
         mediaType: mediaType ?? undefined,
       });
       previewEntries = preview.entries;
@@ -569,7 +595,7 @@ function ImportManager() {
             title: candidate.title,
             year: entry.year,
             coverUrl: candidate.coverUrl,
-            overview: candidate.overview,
+            overview: candidate.overview || entry.overview,
             releaseDate: candidate.releaseDate,
             status: entry.status,
             rating: entry.rating,
@@ -577,6 +603,8 @@ function ImportManager() {
             logs: entry.logs,
             addToBacklog: addBacklog && entry.inBacklog,
             backlogDate: entry.backlogDate,
+            source: entry.source,
+            externalRefs: entry.externalRefs,
           };
         }),
     [entries, ignored, selections, addBacklog]
@@ -783,6 +811,29 @@ function ImportManager() {
                       file={file}
                       onFileChange={setFile}
                     />
+                  </div>
+                ) : provider.inputType === "url" ? (
+                  <div className="space-y-1.5">
+                    <label className="text-step-1" htmlFor="import-url">
+                      {t("input.urlLabel")}
+                    </label>
+                    <BaseInput
+                      id="import-url"
+                      name="import-url"
+                      value={serverUrl}
+                      placeholder={t(`providers.${provider.id}.urlPlaceholder`, {
+                        defaultValue: "",
+                      })}
+                      onChange={(event) => setServerUrl(event.target.value)}
+                    />
+                    <p className="text-step-0 text-muted-foreground">
+                      {t(`providers.${provider.id}.urlHint`, { defaultValue: "" })}
+                    </p>
+                    {provider.id === "suwayomi" && !suwayomiConfig?.configured && (
+                      <p className="text-step-0 text-muted-foreground">
+                        {t("providers.suwayomi.configureFirst")}
+                      </p>
+                    )}
                   </div>
                 ) : (
                   <div className="space-y-1.5">

@@ -12,15 +12,23 @@ import type {
 } from "@/types/import";
 import type { MediaTypeEnum } from "@/types/media";
 
-async function apiFetch<T>(path: string, options?: globalThis.RequestInit): Promise<T> {
+async function apiFetch<T>(
+  path: string,
+  options?: globalThis.RequestInit,
+  timeoutMs?: number
+): Promise<T> {
   const { headers, ...rest } = options ?? {};
-  const res = await fetchWithTimeout(`${API_BASE_URL}${path}`, {
-    ...rest,
-    headers: {
-      "Content-Type": "application/json",
-      ...headers,
+  const res = await fetchWithTimeout(
+    `${API_BASE_URL}${path}`,
+    {
+      ...rest,
+      headers: {
+        "Content-Type": "application/json",
+        ...headers,
+      },
     },
-  });
+    timeoutMs
+  );
 
   if (!res.ok) throw await parseApiError(res);
   if (res.status === 204) return undefined as T;
@@ -31,6 +39,7 @@ export type ParseImportInput = {
   userId: number;
   file?: File;
   username?: string;
+  sourceUrl?: string;
   mediaType?: MediaTypeEnum;
 };
 
@@ -48,12 +57,13 @@ export async function parseImport(
   form.append("user_id", String(input.userId));
   if (input.mediaType) form.append("media_type", input.mediaType);
   if (input.username) form.append("username", input.username);
+  if (input.sourceUrl) form.append("source_url", input.sourceUrl);
   if (input.file) form.append("file", input.file);
 
   const res = await fetchWithTimeout(`${API_BASE_URL}/api/import/${providerId}/parse`, {
     method: "POST",
     body: form,
-  });
+  }, 60_000);
 
   if (!res.ok) throw await parseApiError(res);
   return (await res.json()) as ImportPreviewResponse;
@@ -67,7 +77,7 @@ export async function matchImport(
   const data = await apiFetch<{ results: ImportMatchResult[] }>("/api/import/match", {
     method: "POST",
     body: JSON.stringify({ userId, items }),
-  });
+  }, 120_000);
   return data.results;
 }
 
@@ -91,5 +101,5 @@ export async function commitImport(
   return apiFetch<ImportCommitResponse>("/api/import/commit", {
     method: "POST",
     body: JSON.stringify({ userId, entries }),
-  });
+  }, 120_000);
 }

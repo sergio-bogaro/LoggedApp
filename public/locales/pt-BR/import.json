@@ -98,6 +98,20 @@
         "A escala da nota (0–5 ou 0–10) é detectada pelo maior valor do arquivo.",
         "Os jogos são casados com o IGDB por título; revise os matches."
       ]
+    },
+    "suwayomi": {
+      "label": "Suwayomi",
+      "description": "Lê a biblioteca do seu Suwayomi. Só entram títulos que ainda não estão no Logged; cada categoria vira um status ou um item de backlog.",
+      "helpLabel": "Abrir o Suwayomi",
+      "helpUrl": "https://github.com/Suwayomi/Suwayomi-Server",
+      "urlPlaceholder": "http://localhost:4567",
+      "urlHint": "Use o endereço pelo qual o Logged consegue acessar o Suwayomi.",
+      "configureFirst": "Configure o servidor e as categorias em Configurações → Integrações primeiro.",
+      "notes": [
+        "As categorias definem status/backlog; capítulos e progresso de leitura não são importados.",
+        "Os títulos são casados com o AniList; itens ambíguos podem ser corrigidos na revisão.",
+        "Apenas títulos que faltam no Logged são listados."
+      ]
     }
   },
   "steps": {
@@ -119,7 +133,8 @@
       "title": "Arraste seu export aqui",
       "hint": "ou clique para escolher um arquivo",
       "remove": "Remover arquivo"
-    }
+    },
+    "urlLabel": "URL do servidor"
   },
   "metadata": {
     "tmdb": "TMDB",
@@ -221,6 +236,7 @@
     "parse": "Não foi possível ler os dados.",
     "match": "Não foi possível buscar a metadata.",
     "commit": "Não foi possível importar.",
-    "nothingSelected": "Selecione ao menos um item para importar."
+    "nothingSelected": "Selecione ao menos um item para importar.",
+    "noUrl": "Informe a URL do servidor."
   }
 }
