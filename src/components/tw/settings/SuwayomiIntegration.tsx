@@ -548,6 +548,12 @@ function SuwayomiIntegration() {
             hint={t("summary.unmatchedHint")}
           />
           <SummaryList
+            title={t("summary.pendingResolvedTitle", {
+              count: summary.pendingResolved?.length ?? 0,
+            })}
+            items={summary.pendingResolved ?? []}
+          />
+          <SummaryList
             title={t("summary.removedTitle", { count: summary.removed?.length ?? 0 })}
             items={summary.removed ?? []}
           />

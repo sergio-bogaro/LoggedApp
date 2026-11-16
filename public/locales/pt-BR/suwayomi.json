@@ -75,7 +75,8 @@
       "statusUpdated": "Status alterados",
       "backlogAdded": "Adicionados ao backlog",
       "backlogRemoved": "Removidos do backlog"
-    }
+    },
+    "pendingResolvedTitle": "Vínculos pendentes resolvidos ({{count}})"
   },
   "errors": {
     "urlRequired": "Informe a URL do Suwayomi.",

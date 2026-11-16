@@ -75,7 +75,8 @@
       "statusUpdated": "Status changes",
       "backlogAdded": "Added to backlog",
       "backlogRemoved": "Removed from backlog"
-    }
+    },
+    "pendingResolvedTitle": "Resolved pending links ({{count}})"
   },
   "errors": {
     "urlRequired": "Enter the Suwayomi URL.",
