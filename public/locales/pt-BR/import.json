@@ -238,5 +238,43 @@
     "commit": "Não foi possível importar.",
     "nothingSelected": "Selecione ao menos um item para importar.",
     "noUrl": "Informe a URL do servidor."
+  },
+  "jobs": {
+    "title": "Histórico de importações",
+    "recent": "Importações recentes",
+    "empty": "Nenhuma importação ainda.",
+    "open": "Abrir",
+    "review": "Revisar",
+    "cancel": "Cancelar",
+    "cancelTitle": "Cancelar importação?",
+    "cancelDescription": "O matching será interrompido e o job continuará no histórico.",
+    "cancelSuccess": "Importação cancelada.",
+    "delete": "Excluir",
+    "deleteTitle": "Excluir importação?",
+    "deleteDescription": "O histórico desta importação será removido.",
+    "deleteSuccess": "Importação removida.",
+    "retry": "Nova importação",
+    "status": {
+      "queued": "Na fila",
+      "parsing": "Lendo a fonte",
+      "matching": "Casando metadata",
+      "ready": "Pronta para revisão",
+      "done": "Concluída",
+      "failed": "Falhou",
+      "cancelled": "Cancelada"
+    },
+    "progress": "{{done}} de {{total}}",
+    "progressLabel": "Progresso do matching",
+    "leaveHint": "Você pode sair desta página. Avisaremos quando a revisão estiver pronta.",
+    "readyToastTitle": "Importação pronta para revisão",
+    "readyToastDescription": "{{provider}}: {{count}} itens casados aguardando revisão.",
+    "failedTitle": "A importação falhou",
+    "emptyTitle": "Nenhum item para revisar",
+    "loadMore": "Mostrar mais",
+    "cancelConfirm": "Cancelar importação",
+    "deleteConfirm": "Excluir importação",
+    "openResult": "Ver resultado",
+    "provider": "Origem",
+    "createdAt": "Criada em"
   }
 }

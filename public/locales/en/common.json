@@ -26,7 +26,8 @@
     "favorites": "Favorites",
     "backlog": "Backlog",
     "views": "Views",
-    "settings": "Settings"
+    "settings": "Settings",
+    "import": "Import"
   },
   "settings": {
     "title": "Settings",

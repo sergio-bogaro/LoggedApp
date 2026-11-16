@@ -238,5 +238,43 @@
     "commit": "Could not import.",
     "nothingSelected": "Select at least one item to import.",
     "noUrl": "Enter the server URL."
+  },
+  "jobs": {
+    "title": "Import history",
+    "recent": "Recent imports",
+    "empty": "No imports yet.",
+    "open": "Open",
+    "review": "Review",
+    "cancel": "Cancel",
+    "cancelTitle": "Cancel import?",
+    "cancelDescription": "The matching will stop and the job will stay in history.",
+    "cancelSuccess": "Import cancelled.",
+    "delete": "Delete",
+    "deleteTitle": "Delete import?",
+    "deleteDescription": "The history of this import will be removed.",
+    "deleteSuccess": "Import removed.",
+    "retry": "New import",
+    "status": {
+      "queued": "Queued",
+      "parsing": "Reading source",
+      "matching": "Matching metadata",
+      "ready": "Ready for review",
+      "done": "Completed",
+      "failed": "Failed",
+      "cancelled": "Cancelled"
+    },
+    "progress": "{{done}} of {{total}}",
+    "progressLabel": "Matching progress",
+    "leaveHint": "You can leave this page. We will notify you when the review is ready.",
+    "readyToastTitle": "Import ready for review",
+    "readyToastDescription": "{{provider}}: {{count}} items matched and waiting for review.",
+    "failedTitle": "The import failed",
+    "emptyTitle": "No items to review",
+    "loadMore": "Show more",
+    "cancelConfirm": "Cancel import",
+    "deleteConfirm": "Delete import",
+    "openResult": "View result",
+    "provider": "Source",
+    "createdAt": "Created at"
   }
 }

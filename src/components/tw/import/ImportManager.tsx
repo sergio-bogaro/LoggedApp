@@ -1,11 +1,26 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowUp, Check, ImageOff, Loader2, Search, SkipForward, Undo2, Upload } from "lucide-react";
+import { useQuery, useQueryClient, type InfiniteData } from "@tanstack/react-query";
+import {
+  ArrowUp,
+  Check,
+  ExternalLink,
+  ImageOff,
+  Loader2,
+  Plus,
+  Search,
+  SkipForward,
+  Trash2,
+  Undo2,
+  Upload,
+  X,
+} from "lucide-react";
 import { Fragment, memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useSearchParams } from "react-router";
 import { toast } from "sonner";
 
 import { TypeMark } from "@/components/tw/generic/badges";
 import { Card } from "@/components/tw/generic/card";
+import { ConfirmDialog } from "@/components/tw/generic/confirmDialog";
 import { ImportCompareDialog } from "@/components/tw/import/ImportCompareDialog";
 import { ImportDropzone } from "@/components/tw/import/ImportDropzone";
 import { ImportExternalLink } from "@/components/tw/import/ImportExternalLink";
@@ -23,12 +38,20 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
+import {
+  isActiveJobStatus,
+  useImportJob,
+  useImportJobItems,
+  useImportJobs,
+} from "@/hooks/useImportJobs";
 import { cn } from "@/lib/utils";
 import {
-  commitImport,
+  cancelImportJob,
+  commitImportJob,
+  createImportJob,
+  deleteImportJob,
   listImportProviders,
-  matchImport,
-  parseImport,
+  patchImportJobItem,
   searchImportCandidates,
 } from "@/querries/import";
 import { suwayomiApi } from "@/querries/suwayomi";
@@ -39,19 +62,23 @@ import type {
   ImportCommitResponse,
   ImportEntry,
   ImportMatchResult,
-  ImportPreviewCounts,
   ImportProviderInfo,
 } from "@/types/import";
+import type {
+  ImportJob,
+  ImportJobItem,
+  ImportJobItemsResponse,
+  ImportJobStatus,
+} from "@/types/importJob";
 import type { MediaTypeEnum } from "@/types/media";
 import { metadataProviderKey, metadataUrl, sourceUrl } from "@/utils/importLinks";
 
-// A metadata é buscada em lotes para caber no timeout e mostrar progresso.
-const MATCH_CHUNK = 20;
-// A lista é paginada: renderizar milhares de linhas com Select/Dialog trava a UI.
+// Itens são paginados no servidor; renderizar milhares de linhas trava a UI.
 const PAGE_SIZE = 50;
 const EMPTY_CANDIDATES: ImportCandidate[] = [];
 
 type ImportStep = 1 | 2 | 3;
+type ConfirmAction = { type: "cancel" | "delete"; job: ImportJob };
 
 function StepRail({
   step,
@@ -372,58 +399,245 @@ const EntryRow = memo(function EntryRow({
   );
 });
 
+function toEntry(item: ImportJobItem): ImportEntry {
+  return {
+    key: item.key,
+    mediaType: item.mediaType,
+    title: item.title,
+    year: item.year,
+    overview: item.overview,
+    source: item.source,
+    externalRefs: item.externalRefs,
+    status: item.status,
+    rating: item.rating,
+    review: item.review,
+    logs: item.logs,
+    inBacklog: item.inBacklog,
+    backlogDate: item.backlogDate,
+  };
+}
+
+function toMatch(item: ImportJobItem): ImportMatchResult {
+  return {
+    key: item.key,
+    status:
+      item.matchStatus === "error"
+        ? "not_found"
+        : item.matchStatus ?? "not_found",
+    match: item.match ?? null,
+    candidates: item.candidates,
+    existingMediaId: item.existingMediaId,
+    error: item.matchError,
+  };
+}
+
+function mergeCandidates(
+  item: ImportJobItem,
+  extra?: ImportCandidate[]
+): ImportCandidate[] {
+  const seen = new Set<string>();
+  const result: ImportCandidate[] = [];
+  for (const candidate of [...item.candidates, ...(extra ?? [])]) {
+    if (seen.has(candidate.externalId)) continue;
+    seen.add(candidate.externalId);
+    result.push(candidate);
+  }
+  return result;
+}
+
+function formatJobDate(value?: string | null): string {
+  if (!value) return "";
+  const normalized = /[zZ]|[+-]\d{2}:?\d{2}$/.test(value) ? value : `${value}Z`;
+  const date = new Date(normalized);
+  return Number.isNaN(date.getTime()) ? value : date.toLocaleString();
+}
+
+const JOB_STATUS_STYLES: Record<ImportJobStatus, string> = {
+  queued: "bg-muted text-muted-foreground",
+  parsing: "bg-muted text-muted-foreground",
+  matching: "bg-primary/10 text-primary",
+  ready: "bg-primary text-primary-foreground",
+  done: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400",
+  failed: "bg-destructive/10 text-destructive",
+  cancelled: "bg-muted text-muted-foreground",
+};
+
+function JobStatusBadge({ status }: { status: ImportJobStatus }) {
+  const { t } = useTranslation("import");
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center rounded-full px-2 py-0.5 text-step-0",
+        JOB_STATUS_STYLES[status]
+      )}
+    >
+      {t(`jobs.status.${status}`)}
+    </span>
+  );
+}
+
+function RecentJobs({
+  jobs,
+  currentJobId,
+  onOpen,
+  onCancel,
+  onDelete,
+}: {
+  jobs: ImportJob[];
+  currentJobId: number | null;
+  onOpen: (job: ImportJob) => void;
+  onCancel: (job: ImportJob) => void;
+  onDelete: (job: ImportJob) => void;
+}) {
+  const { t } = useTranslation("import");
+
+  if (jobs.length === 0) return null;
+
+  return (
+    <div className="space-y-2 border-t border-border pt-4">
+      <p className="text-step-1 font-medium">{t("jobs.recent")}</p>
+      <div className="rounded-control border border-border">
+        {jobs.map((job) => {
+          const active = isActiveJobStatus(job.status);
+          const cancellable = active || job.status === "ready";
+          const deletable =
+            job.status === "done" ||
+            job.status === "failed" ||
+            job.status === "cancelled";
+          const label = t(`providers.${job.provider}.label`, {
+            defaultValue: job.provider,
+          });
+
+          return (
+            <div
+              key={job.id}
+              className={cn(
+                "flex flex-wrap items-center gap-2 border-b border-border px-3 py-2 last:border-b-0",
+                job.id === currentJobId && "bg-accent/40"
+              )}
+            >
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-step-1 font-medium">{label}</p>
+                <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-step-0 text-muted-foreground">
+                  <JobStatusBadge status={job.status} />
+                  {job.progressTotal > 0 ? (
+                    <span className="tabular-nums">
+                      {t("jobs.progress", {
+                        done: job.progressDone,
+                        total: job.progressTotal,
+                      })}
+                    </span>
+                  ) : (
+                    <span>{formatJobDate(job.createdAt)}</span>
+                  )}
+                </p>
+              </div>
+
+              <div className="flex shrink-0 items-center gap-1">
+                <Button
+                  type="button"
+                  size="xs"
+                  variant={job.status === "ready" ? "default" : "outline"}
+                  onClick={() => onOpen(job)}
+                >
+                  <ExternalLink />
+                  {job.status === "done"
+                    ? t("jobs.openResult")
+                    : job.status === "ready"
+                      ? t("jobs.review")
+                      : t("jobs.open")}
+                </Button>
+                {cancellable && (
+                  <Button
+                    type="button"
+                    size="xs"
+                    variant="ghost"
+                    onClick={() => onCancel(job)}
+                    aria-label={t("jobs.cancel")}
+                  >
+                    <X />
+                  </Button>
+                )}
+                {deletable && (
+                  <Button
+                    type="button"
+                    size="xs"
+                    variant="ghost"
+                    onClick={() => onDelete(job)}
+                    aria-label={t("jobs.delete")}
+                  >
+                    <Trash2 />
+                  </Button>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function ImportManager() {
   const { t } = useTranslation("import");
   const { user } = useAppSelector((state) => state.auth);
   const queryClient = useQueryClient();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const jobId = Number(searchParams.get("job")) || null;
 
   const { data: providers } = useQuery({
     queryKey: ["import", "providers"],
     queryFn: listImportProviders,
     staleTime: Infinity,
   });
+  const { data: jobs } = useImportJobs(user?.id);
+  const jobQuery = useImportJob(jobId, user?.id);
+  const job = jobQuery.data;
 
-  const [step, setStep] = useState<ImportStep>(1);
+  const [step, setStep] = useState<ImportStep>(jobId ? 2 : 1);
   const [providerId, setProviderId] = useState<string | null>(null);
   const [mediaType, setMediaType] = useState<MediaTypeEnum | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [username, setUsername] = useState("");
   const [serverUrl, setServerUrl] = useState("");
-
-  const [entries, setEntries] = useState<ImportEntry[]>([]);
-  const [counts, setCounts] = useState<ImportPreviewCounts | null>(null);
-  const [matches, setMatches] = useState<Record<string, ImportMatchResult>>({});
-  const [selections, setSelections] = useState<Record<string, ImportCandidate | null>>({});
-  const [ignored, setIgnored] = useState<Record<string, boolean>>({});
-  const [addBacklog, setAddBacklog] = useState(true);
   const [filter, setFilter] = useState<ImportFilterValue>("all");
-  const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
-  const [busy, setBusy] = useState(false);
+  const [addBacklog, setAddBacklog] = useState(true);
+  const [creating, setCreating] = useState(false);
+  const [committing, setCommitting] = useState(false);
   const [summary, setSummary] = useState<ImportCommitResponse | null>(null);
   const [extraCandidates, setExtraCandidates] = useState<Record<string, ImportCandidate[]>>({});
   const [detailKey, setDetailKey] = useState<string | null>(null);
-  const [limit, setLimit] = useState(PAGE_SIZE);
+  const [confirmAction, setConfirmAction] = useState<ConfirmAction | null>(null);
+  const [actionPending, setActionPending] = useState(false);
   const listTopRef = useRef<HTMLDivElement>(null);
+  const lastJobId = useRef<number | null>(null);
 
-  // Um novo filtro (ou import) volta a lista para a primeira página.
-  useEffect(() => {
-    setLimit(PAGE_SIZE);
-  }, [filter, entries]);
+  const itemsQuery = useImportJobItems(
+    jobId,
+    user?.id,
+    filter,
+    job?.status === "ready",
+    PAGE_SIZE
+  );
 
-  const provider: ImportProviderInfo | undefined = providers?.find((item) => item.id === providerId);
+  const provider = providers?.find((item) => item.id === providerId);
   const providerNotes = provider
     ? (t(`providers.${provider.id}.notes`, {
       returnObjects: true,
       defaultValue: [],
     }) as unknown as string[])
     : [];
+  const providerLabel = (item: ImportProviderInfo) =>
+    t(`providers.${item.id}.label`, { defaultValue: item.label });
+  const providerLabelById = (id: string) =>
+    t(`providers.${id}.label`, { defaultValue: id });
+
   const { data: suwayomiConfig } = useQuery({
     queryKey: ["suwayomi", "config", user?.id],
     queryFn: () => suwayomiApi.getConfig(user!.id),
     enabled: !!user && providerId === "suwayomi",
   });
-  const providerLabel = (item: ImportProviderInfo) =>
-    t(`providers.${item.id}.label`, { defaultValue: item.label });
 
   useEffect(() => {
     if (providerId === "suwayomi" && suwayomiConfig?.baseUrl) {
@@ -431,75 +645,85 @@ function ImportManager() {
     }
   }, [providerId, suwayomiConfig]);
 
-  const resetData = () => {
-    setEntries([]);
-    setCounts(null);
-    setMatches({});
-    setSelections({});
-    setIgnored({});
+  useEffect(() => {
+    if (job?.status === "done" && job.summary && step === 2) {
+      setSummary(job.summary);
+      setStep(3);
+    }
+  }, [job?.status, job?.summary, step]);
+
+  useEffect(() => {
+    if (!job) return;
+    if (lastJobId.current === job.id) return;
+    lastJobId.current = job.id;
     setFilter("all");
-    setSummary(null);
-    setProgress(null);
     setExtraCandidates({});
     setDetailKey(null);
-    setLimit(PAGE_SIZE);
+    setSummary(job.status === "done" ? job.summary ?? null : null);
+    setStep(job.status === "done" && job.summary ? 3 : 2);
+  }, [job]);
+
+  const items = useMemo(
+    () => itemsQuery.data?.pages.flatMap((page) => page.items) ?? [],
+    [itemsQuery.data]
+  );
+  const lastPage = itemsQuery.data?.pages[itemsQuery.data.pages.length - 1];
+  const itemsTotal = lastPage?.total ?? items.length;
+  const itemCounts = lastPage?.counts ?? {};
+  const jobCounts = job?.counts ?? {};
+  const selectedCount = jobCounts.selected ?? 0;
+  const percent =
+    job && job.progressTotal > 0
+      ? Math.round((job.progressDone / job.progressTotal) * 100)
+      : 0;
+  const active = isActiveJobStatus(job?.status);
+
+  const filterCounts: Record<ImportFilterKey, number> = {
+    log: itemCounts.log ?? jobCounts.withLogs ?? 0,
+    backlog: itemCounts.backlog ?? jobCounts.backlog ?? 0,
+    validated:
+      itemCounts.validated ??
+      (jobCounts.matched ?? 0) + (jobCounts.alreadyInLibrary ?? 0),
+    attention: itemCounts.attention ?? jobCounts.ambiguous ?? 0,
+    errors:
+      itemCounts.errors ??
+      (jobCounts.notFound ?? 0) + (jobCounts.errors ?? 0),
+  };
+
+  const resultByKey = useMemo(() => {
+    const source = summary ?? job?.summary ?? null;
+    return new Map((source?.items ?? []).map((item) => [item.key, item]));
+  }, [summary, job?.summary]);
+
+  const detailItem = detailKey
+    ? items.find((item) => item.key === detailKey)
+    : undefined;
+  const detailEntry = detailItem ? toEntry(detailItem) : undefined;
+  const detailMatch = detailItem ? toMatch(detailItem) : undefined;
+  const detailCandidates = detailItem
+    ? mergeCandidates(detailItem, extraCandidates[detailItem.key])
+    : EMPTY_CANDIDATES;
+
+  const openJob = (id: number | null) => {
+    const next = new URLSearchParams(searchParams);
+    if (id === null) next.delete("job");
+    else next.set("job", String(id));
+    setSearchParams(next, { replace: true });
   };
 
   const handleSelectProvider = (item: ImportProviderInfo) => {
-    setStep(1);
     setProviderId(item.id);
     setMediaType(item.mediaTypes[0] ?? null);
     setFile(null);
     setUsername("");
     setServerUrl("");
-    resetData();
-  };
-
-  const runMatch = async (list: ImportEntry[]) => {
-    if (!user || list.length === 0) return;
-    setProgress({ done: 0, total: list.length });
-
-    const nextMatches: Record<string, ImportMatchResult> = {};
-    const nextSelections: Record<string, ImportCandidate | null> = {};
-    const nextIgnored: Record<string, boolean> = {};
-
-    try {
-      for (let index = 0; index < list.length; index += MATCH_CHUNK) {
-        const chunk = list.slice(index, index + MATCH_CHUNK);
-        try {
-          const results = await matchImport(
-            chunk.map((entry) => ({
-              key: entry.key,
-              title: entry.title,
-              year: entry.year,
-              overview: entry.overview,
-              mediaType: entry.mediaType,
-              externalRefs: entry.externalRefs,
-            })),
-            user.id
-          );
-          for (const result of results) {
-            nextMatches[result.key] = result;
-            nextSelections[result.key] = result.match ?? null;
-            if (provider?.skipExisting && result.status === "already_in_library") {
-              nextIgnored[result.key] = true;
-            }
-          }
-          setMatches({ ...nextMatches });
-          setSelections({ ...nextSelections });
-          if (Object.keys(nextIgnored).length > 0) {
-            setIgnored((prev) => ({ ...prev, ...nextIgnored }));
-          }
-        } catch (error) {
-          toast.error(
-            error instanceof Error ? error.message : t("errors.match")
-          );
-        }
-        setProgress({ done: Math.min(index + chunk.length, list.length), total: list.length });
-      }
-    } finally {
-      setProgress(null);
-    }
+    setSummary(null);
+    setStep(1);
+    lastJobId.current = null;
+    openJob(null);
+    setFilter("all");
+    setExtraCandidates({});
+    setDetailKey(null);
   };
 
   const handleAnalyze = async () => {
@@ -517,46 +741,30 @@ function ImportManager() {
       return;
     }
 
-    setBusy(true);
-    resetData();
-
-    let previewEntries: ImportEntry[] = [];
+    setCreating(true);
     try {
-      const preview = await parseImport(provider.id, {
+      const created = await createImportJob({
         userId: user.id,
+        providerId: provider.id,
         file: file ?? undefined,
         username: username.trim() || undefined,
         sourceUrl: serverUrl.trim() || undefined,
         mediaType: mediaType ?? undefined,
       });
-      previewEntries = preview.entries;
-      setEntries(preview.entries);
-      setCounts(preview.counts);
+      lastJobId.current = null;
+      openJob(created.id);
+      setStep(2);
+      setSummary(null);
+      await queryClient.invalidateQueries({ queryKey: ["import-jobs"] });
     } catch (error) {
       toast.error(error instanceof Error ? error.message : t("errors.parse"));
-      setBusy(false);
-      return;
-    }
-
-    if (previewEntries.length === 0) {
-      toast.error(t("errors.empty"));
-      setBusy(false);
-      return;
-    }
-
-    setStep(2);
-
-    try {
-      await runMatch(previewEntries);
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : t("errors.match"));
     } finally {
-      setBusy(false);
+      setCreating(false);
     }
   };
 
   const handleSearch = useCallback(
-    async (entry: ImportEntry, query: string): Promise<ImportCandidate[]> => {
+    async (entry: ImportEntry, query: string) => {
       if (!user) return [];
       const results = await searchImportCandidates(query, entry.mediaType, user.id);
       setExtraCandidates((prev) => ({ ...prev, [entry.key]: results }));
@@ -565,132 +773,88 @@ function ImportManager() {
     [user]
   );
 
-  const handleSelectCandidate = useCallback((key: string, candidate: ImportCandidate) => {
-    setSelections((prev) => ({ ...prev, [key]: candidate }));
-  }, []);
+  const updateCachedItem = useCallback(
+    (key: string, patch: Partial<ImportJobItem>) => {
+      queryClient.setQueriesData<InfiniteData<ImportJobItemsResponse>>(
+        { queryKey: ["import-job-items", jobId, user?.id] },
+        (old) =>
+          old
+            ? {
+              ...old,
+              pages: old.pages.map((page) => ({
+                ...page,
+                items: page.items.map((item) =>
+                  item.key === key ? { ...item, ...patch } : item
+                ),
+              })),
+            }
+            : old
+      );
+    },
+    [jobId, queryClient, user?.id]
+  );
 
-  const handleToggleIgnored = useCallback((key: string) => {
-    setIgnored((prev) => ({ ...prev, [key]: !prev[key] }));
-  }, []);
+  const handleSelectCandidate = useCallback(
+    async (key: string, candidate: ImportCandidate) => {
+      if (!user || !jobId) return;
+      const item = items.find((entry) => entry.key === key);
+      if (!item) return;
+
+      updateCachedItem(key, { selected: candidate, ignored: false });
+      try {
+        await patchImportJobItem(jobId, item.id, user.id, {
+          selected: candidate,
+          ignored: false,
+        });
+        queryClient.invalidateQueries({ queryKey: ["import-job", jobId, user.id] });
+      } catch (error) {
+        toast.error(error instanceof Error ? error.message : t("errors.commit"));
+        queryClient.invalidateQueries({
+          queryKey: ["import-job-items", jobId, user.id],
+        });
+      }
+    },
+    [items, jobId, queryClient, t, updateCachedItem, user]
+  );
+
+  const handleToggleIgnored = useCallback(
+    async (key: string) => {
+      if (!user || !jobId) return;
+      const item = items.find((entry) => entry.key === key);
+      if (!item) return;
+
+      const next = !item.ignored;
+      updateCachedItem(key, { ignored: next });
+      try {
+        await patchImportJobItem(jobId, item.id, user.id, { ignored: next });
+        queryClient.invalidateQueries({ queryKey: ["import-job", jobId, user.id] });
+      } catch (error) {
+        toast.error(error instanceof Error ? error.message : t("errors.commit"));
+        queryClient.invalidateQueries({
+          queryKey: ["import-job-items", jobId, user.id],
+        });
+      }
+    },
+    [items, jobId, queryClient, t, updateCachedItem, user]
+  );
 
   const handleOpenDetails = useCallback((key: string) => {
     setDetailKey(key);
   }, []);
 
-  const resultByKey = useMemo(
-    () => new Map((summary?.items ?? []).map((item) => [item.key, item])),
-    [summary]
-  );
-
-  const commitEntries = useMemo(
-    () =>
-      entries
-        .filter((entry) => !ignored[entry.key] && selections[entry.key])
-        .map((entry) => {
-          const candidate = selections[entry.key]!;
-          return {
-            key: entry.key,
-            mediaType: entry.mediaType,
-            externalId: candidate.externalId,
-            title: candidate.title,
-            year: entry.year,
-            coverUrl: candidate.coverUrl,
-            overview: candidate.overview || entry.overview,
-            releaseDate: candidate.releaseDate,
-            status: entry.status,
-            rating: entry.rating,
-            review: entry.review,
-            logs: entry.logs,
-            addToBacklog: addBacklog && entry.inBacklog,
-            backlogDate: entry.backlogDate,
-            source: entry.source,
-            externalRefs: entry.externalRefs,
-          };
-        }),
-    [entries, ignored, selections, addBacklog]
-  );
-
-  const filterCounts = useMemo(() => {
-    const next: Record<ImportFilterKey, number> = {
-      log: 0,
-      backlog: 0,
-      validated: 0,
-      attention: 0,
-      errors: 0,
-    };
-    for (const entry of entries) {
-      const match = matches[entry.key];
-      const result = resultByKey.get(entry.key);
-      if (entry.logs.length > 0) next.log += 1;
-      if (addBacklog && entry.inBacklog) next.backlog += 1;
-      // Itens ainda não casados não entram na contagem de status.
-      if (match) {
-        if (match.status === "matched" || match.status === "already_in_library") next.validated += 1;
-        if (match.status === "ambiguous") next.attention += 1;
-        if (match.status === "not_found") next.errors += 1;
-      }
-      if (result?.outcome === "failed") next.errors += 1;
-    }
-    return next;
-  }, [entries, matches, addBacklog, resultByKey]);
-
-  const visibleEntries = useMemo(() => {
-    const activeFilter = filter;
-    if (activeFilter === "all") return entries;
-    return entries.filter((entry) => {
-      const match = matches[entry.key];
-      const result = resultByKey.get(entry.key);
-      switch (activeFilter) {
-        case "log":
-          return entry.logs.length > 0;
-        case "backlog":
-          return addBacklog && entry.inBacklog;
-        case "validated":
-          return match?.status === "matched" || match?.status === "already_in_library";
-        case "attention":
-          return match?.status === "ambiguous";
-        case "errors":
-          return match?.status === "not_found" || result?.outcome === "failed";
-        default:
-          return true;
-      }
-    });
-  }, [entries, matches, filter, addBacklog, resultByKey]);
-
-  // Candidatos do match + resultados da busca manual, por item.
-  const candidatesByKey = useMemo(() => {
-    const map = new Map<string, ImportCandidate[]>();
-    for (const entry of entries) {
-      const seen = new Set<string>();
-      const merged: ImportCandidate[] = [];
-      for (const candidate of [
-        ...(matches[entry.key]?.candidates ?? []),
-        ...(extraCandidates[entry.key] ?? []),
-      ]) {
-        if (!seen.has(candidate.externalId)) {
-          seen.add(candidate.externalId);
-          merged.push(candidate);
-        }
-      }
-      map.set(entry.key, merged);
-    }
-    return map;
-  }, [entries, matches, extraCandidates]);
-
-  const shownEntries = useMemo(() => visibleEntries.slice(0, limit), [visibleEntries, limit]);
-
   const handleCommit = async () => {
-    if (!user || commitEntries.length === 0) {
-      toast.error(t("errors.nothingSelected"));
-      return;
-    }
-    setBusy(true);
+    if (!user || !jobId) return;
+    setCommitting(true);
     try {
-      const result = await commitImport(commitEntries, user.id);
+      const result = await commitImportJob(jobId, user.id, addBacklog);
       setSummary(result);
       setStep(3);
-      toast.success(t("commit.success", { count: result.imported + result.merged }));
+      toast.success(
+        t("commit.success", { count: result.imported + result.merged })
+      );
       await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["import-job", jobId, user.id] }),
+        queryClient.invalidateQueries({ queryKey: ["import-jobs"] }),
         queryClient.invalidateQueries({ queryKey: ["media"] }),
         queryClient.invalidateQueries({ queryKey: ["existingMedia"] }),
         queryClient.invalidateQueries({ queryKey: ["media-logs"] }),
@@ -699,27 +863,58 @@ function ImportManager() {
     } catch (error) {
       toast.error(error instanceof Error ? error.message : t("errors.commit"));
     } finally {
-      setBusy(false);
+      setCommitting(false);
     }
   };
 
-  const percent = progress && progress.total > 0 ? Math.round((progress.done / progress.total) * 100) : 0;
+  const handleOpenJob = (selectedJob: ImportJob) => {
+    lastJobId.current = null;
+    openJob(selectedJob.id);
+    setSummary(selectedJob.status === "done" ? selectedJob.summary ?? null : null);
+    setStep(selectedJob.status === "done" && selectedJob.summary ? 3 : 2);
+  };
 
-  const detailEntry = detailKey ? entries.find((entry) => entry.key === detailKey) : undefined;
-  const detailCandidates = detailKey
-    ? candidatesByKey.get(detailKey) ?? EMPTY_CANDIDATES
-    : EMPTY_CANDIDATES;
-  const detailSourceHref = detailEntry ? sourceUrl(detailEntry) : null;
-  const detailSourceLabel = detailEntry
-    ? t(`providers.${detailEntry.source}.label`, { defaultValue: detailEntry.source })
-    : "";
+  const handleNewImport = () => {
+    lastJobId.current = null;
+    openJob(null);
+    setSummary(null);
+    setStep(1);
+    setFilter("all");
+    setExtraCandidates({});
+    setDetailKey(null);
+  };
+
+  const handleConfirmAction = async () => {
+    if (!user || !confirmAction) return;
+    setActionPending(true);
+    try {
+      if (confirmAction.type === "cancel") {
+        await cancelImportJob(confirmAction.job.id, user.id);
+        toast.success(t("jobs.cancelSuccess"));
+      } else {
+        await deleteImportJob(confirmAction.job.id, user.id);
+        toast.success(t("jobs.deleteSuccess"));
+        if (confirmAction.job.id === jobId) handleNewImport();
+      }
+      await queryClient.invalidateQueries({ queryKey: ["import-jobs"] });
+      await queryClient.invalidateQueries({ queryKey: ["import-job"] });
+      setConfirmAction(null);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : t("errors.commit"));
+    } finally {
+      setActionPending(false);
+    }
+  };
+
+  const scrollToTop = () =>
+    listTopRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
 
   return (
     <div className="w-full space-y-5">
       <Card>
         <StepRail
           step={step}
-          canReview={entries.length > 0}
+          canReview={!!job && job.status !== "done"}
           canResult={summary !== null}
           onSelect={setStep}
         />
@@ -855,150 +1050,278 @@ function ImportManager() {
                 <Button
                   type="button"
                   onClick={handleAnalyze}
-                  disabled={busy}
+                  disabled={creating}
                   className="w-full sm:w-auto"
                 >
-                  {busy && !progress ? <Loader2 className="animate-spin" /> : <Upload />}
-                  {busy && !progress ? t("input.analyzing") : t("input.analyze")}
+                  {creating ? <Loader2 className="animate-spin" /> : <Upload />}
+                  {creating ? t("input.analyzing") : t("input.analyze")}
                 </Button>
               </div>
             )}
+
+            <RecentJobs
+              jobs={jobs ?? []}
+              currentJobId={jobId}
+              onOpen={handleOpenJob}
+              onCancel={(selectedJob) =>
+                setConfirmAction({ type: "cancel", job: selectedJob })
+              }
+              onDelete={(selectedJob) =>
+                setConfirmAction({ type: "delete", job: selectedJob })
+              }
+            />
           </>
         )}
 
         {step === 2 && (
           <>
-            {provider && entries.length > 0 && (
-              <div className="flex flex-wrap items-center justify-between gap-3 rounded-control border border-border px-3 py-2">
-                <p className="min-w-0 truncate text-step-1 text-muted-foreground">
-                  {t("steps.summary", { provider: providerLabel(provider), count: entries.length })}
+            {jobQuery.isLoading && <Skeleton className="h-24 w-full" />}
+
+            {jobQuery.error && (
+              <div className="space-y-2 rounded-control border border-destructive/40 p-3">
+                <p className="text-step-1 text-destructive">
+                  {jobQuery.error instanceof Error
+                    ? jobQuery.error.message
+                    : t("errors.parse")}
                 </p>
                 <Button
                   type="button"
-                  variant="ghost"
                   size="sm"
-                  onClick={() => setStep(1)}
-                  className="shrink-0"
+                  variant="outline"
+                  onClick={handleNewImport}
                 >
-                  {t("steps.edit")}
+                  <Plus /> {t("jobs.retry")}
                 </Button>
               </div>
             )}
 
-            {progress && (
-              <div className="space-y-1.5" role="status" aria-live="polite">
-                <div className="flex items-baseline justify-between gap-3">
-                  <p className="text-step-1 text-muted-foreground">
-                    {t("match.progress", { done: progress.done, total: progress.total })}
-                  </p>
-                  <span className="font-serif text-step-2 tabular-nums">{percent}%</span>
+            {job && (
+              <>
+                <div className="flex flex-wrap items-center justify-between gap-3 rounded-control border border-border px-3 py-2">
+                  <div className="min-w-0">
+                    <p className="flex flex-wrap items-center gap-2 truncate text-step-1 font-medium">
+                      {providerLabelById(job.provider)}
+                      <JobStatusBadge status={job.status} />
+                    </p>
+                    <p className="text-step-0 text-muted-foreground">
+                      {job.progressTotal > 0
+                        ? t("jobs.progress", {
+                          done: job.progressDone,
+                          total: job.progressTotal,
+                        })
+                        : formatJobDate(job.createdAt)}
+                    </p>
+                  </div>
+                  <div className="flex shrink-0 flex-wrap gap-2">
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="ghost"
+                      onClick={handleNewImport}
+                    >
+                      <Plus /> {t("jobs.retry")}
+                    </Button>
+                    {(active || job.status === "ready") && (
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() =>
+                          setConfirmAction({ type: "cancel", job })
+                        }
+                      >
+                        <X /> {t("jobs.cancel")}
+                      </Button>
+                    )}
+                  </div>
                 </div>
-                <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+
+                {active && (
+                  <div className="space-y-2" role="status" aria-live="polite">
+                    <div className="flex items-baseline justify-between gap-3">
+                      <p className="text-step-1 text-muted-foreground">
+                        {t(`jobs.status.${job.status}`)}
+                      </p>
+                      <span className="font-serif text-step-2 tabular-nums">
+                        {percent}%
+                      </span>
+                    </div>
+                    <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+                      <div
+                        className="h-full rounded-full bg-primary transition-all"
+                        style={{ width: `${percent}%` }}
+                      />
+                    </div>
+                    <p className="text-step-0 text-muted-foreground">
+                      {t("jobs.leaveHint")}
+                    </p>
+                  </div>
+                )}
+
+                {(job.status === "failed" || job.status === "cancelled") && (
                   <div
-                    className="h-full rounded-full bg-primary transition-all"
-                    style={{ width: `${percent}%` }}
-                  />
-                </div>
-              </div>
-            )}
-
-            {counts && (
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-                <StatCell label={t("counts.total")} value={counts.total} />
-                <StatCell label={t("counts.withLogs")} value={counts.withLogs} />
-                <StatCell label={t("counts.rated")} value={counts.rated} />
-                <StatCell label={t("counts.reviewed")} value={counts.reviewed} />
-                <StatCell label={t("counts.backlog")} value={counts.backlog} />
-              </div>
-            )}
-
-            <div className="flex flex-wrap items-end gap-x-4 gap-y-3">
-              <ImportFilters value={filter} counts={filterCounts} onChange={setFilter} />
-              <label className="flex items-center gap-2 pb-1.5">
-                <Switch
-                  checked={addBacklog}
-                  onCheckedChange={setAddBacklog}
-                  aria-label={t("options.backlog")}
-                />
-                <span className="text-step-1">{t("options.backlog")}</span>
-              </label>
-            </div>
-
-            <p className="text-step-0 text-muted-foreground">
-              {t("filters.showing", { shown: visibleEntries.length, total: entries.length })}
-            </p>
-
-            {visibleEntries.length > 0 ? (
-              <div className="space-y-2">
-                <div
-                  ref={listTopRef}
-                  className="scroll-mt-16 rounded-control border border-border px-3"
-                >
-                  {shownEntries.map((entry) => (
-                    <EntryRow
-                      key={entry.key}
-                      entry={entry}
-                      match={matches[entry.key]}
-                      result={resultByKey.get(entry.key)}
-                      selected={selections[entry.key] ?? null}
-                      ignored={ignored[entry.key] ?? false}
-                      willBacklog={addBacklog && entry.inBacklog}
-                      pending={busy && !matches[entry.key]}
-                      candidates={candidatesByKey.get(entry.key) ?? EMPTY_CANDIDATES}
-                      onSelect={handleSelectCandidate}
-                      onToggleIgnored={handleToggleIgnored}
-                      onSearch={handleSearch}
-                      onOpenDetails={handleOpenDetails}
-                    />
-                  ))}
-                </div>
-
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  {visibleEntries.length > limit ? (
+                    className={cn(
+                      "space-y-2 rounded-control border p-3",
+                      job.status === "failed"
+                        ? "border-destructive/40"
+                        : "border-border"
+                    )}
+                  >
+                    <p
+                      className={cn(
+                        "font-medium text-step-1",
+                        job.status === "failed" && "text-destructive"
+                      )}
+                    >
+                      {job.status === "failed"
+                        ? t("jobs.failedTitle")
+                        : t("jobs.status.cancelled")}
+                    </p>
+                    {job.error && (
+                      <p className="text-step-0 text-muted-foreground">
+                        {job.error}
+                      </p>
+                    )}
                     <Button
                       type="button"
                       size="sm"
                       variant="outline"
-                      onClick={() => setLimit((prev) => prev + PAGE_SIZE)}
+                      onClick={handleNewImport}
                     >
-                      {t("filters.showMore", { count: visibleEntries.length - limit })}
+                      <Plus /> {t("jobs.retry")}
                     </Button>
-                  ) : (
-                    <span />
-                  )}
+                  </div>
+                )}
 
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="ghost"
-                    onClick={() =>
-                      listTopRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
-                    }
-                  >
-                    <ArrowUp aria-hidden="true" />
-                    {t("filters.backToTop")}
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <p className="rounded-control border border-border p-3 text-step-1 text-muted-foreground">
-                {t("filters.empty")}
-              </p>
+                {job.status === "ready" && (
+                  <>
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+                      <StatCell label={t("counts.total")} value={jobCounts.total ?? 0} />
+                      <StatCell
+                        label={t("counts.withLogs")}
+                        value={jobCounts.withLogs ?? 0}
+                      />
+                      <StatCell label={t("counts.rated")} value={jobCounts.rated ?? 0} />
+                      <StatCell
+                        label={t("counts.reviewed")}
+                        value={jobCounts.reviewed ?? 0}
+                      />
+                      <StatCell
+                        label={t("counts.backlog")}
+                        value={jobCounts.backlog ?? 0}
+                      />
+                    </div>
+
+                    <div className="flex flex-wrap items-end gap-x-4 gap-y-3">
+                      <ImportFilters
+                        value={filter}
+                        counts={filterCounts}
+                        onChange={setFilter}
+                      />
+                      <label className="flex items-center gap-2 pb-1.5">
+                        <Switch
+                          checked={addBacklog}
+                          onCheckedChange={setAddBacklog}
+                          aria-label={t("options.backlog")}
+                        />
+                        <span className="text-step-1">{t("options.backlog")}</span>
+                      </label>
+                    </div>
+
+                    <p className="text-step-0 text-muted-foreground">
+                      {t("filters.showing", {
+                        shown: items.length,
+                        total: itemsTotal,
+                      })}
+                    </p>
+
+                    {itemsQuery.isLoading ? (
+                      <Skeleton className="h-24 w-full" />
+                    ) : items.length > 0 ? (
+                      <div className="space-y-2">
+                        <div
+                          ref={listTopRef}
+                          className="scroll-mt-16 rounded-control border border-border px-3"
+                        >
+                          {items.map((item) => (
+                            <EntryRow
+                              key={item.key}
+                              entry={toEntry(item)}
+                              match={toMatch(item)}
+                              result={resultByKey.get(item.key)}
+                              selected={item.selected ?? null}
+                              ignored={item.ignored}
+                              willBacklog={addBacklog && item.inBacklog}
+                              pending={false}
+                              candidates={mergeCandidates(
+                                item,
+                                extraCandidates[item.key]
+                              )}
+                              onSelect={handleSelectCandidate}
+                              onToggleIgnored={handleToggleIgnored}
+                              onSearch={handleSearch}
+                              onOpenDetails={handleOpenDetails}
+                            />
+                          ))}
+                        </div>
+
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          {itemsQuery.hasNextPage ? (
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="outline"
+                              onClick={() => void itemsQuery.fetchNextPage()}
+                              disabled={itemsQuery.isFetchingNextPage}
+                            >
+                              {itemsQuery.isFetchingNextPage ? (
+                                <Loader2 className="animate-spin" />
+                              ) : null}
+                              {t("jobs.loadMore")}
+                            </Button>
+                          ) : (
+                            <span />
+                          )}
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="ghost"
+                            onClick={scrollToTop}
+                          >
+                            <ArrowUp aria-hidden="true" />
+                            {t("filters.backToTop")}
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="rounded-control border border-border p-3 text-step-1 text-muted-foreground">
+                        {t("filters.empty")}
+                      </p>
+                    )}
+
+                    <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-3">
+                      <span className="text-step-1 text-muted-foreground">
+                        {t("commit.selected", { count: selectedCount })}
+                      </span>
+                      <Button
+                        type="button"
+                        onClick={handleCommit}
+                        disabled={committing || selectedCount === 0}
+                      >
+                        {committing ? (
+                          <Loader2 className="animate-spin" />
+                        ) : (
+                          <Upload />
+                        )}
+                        {committing
+                          ? t("commit.working")
+                          : t("commit.action", { count: selectedCount })}
+                      </Button>
+                    </div>
+                  </>
+                )}
+              </>
             )}
-
-            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-3">
-              <span className="text-step-1 text-muted-foreground">
-                {t("commit.selected", { count: commitEntries.length })}
-              </span>
-              <Button
-                type="button"
-                onClick={handleCommit}
-                disabled={busy || commitEntries.length === 0}
-              >
-                {busy ? <Loader2 className="animate-spin" /> : <Upload />}
-                {busy ? t("commit.working") : t("commit.action", { count: commitEntries.length })}
-              </Button>
-            </div>
           </>
         )}
 
@@ -1038,7 +1361,7 @@ function ImportManager() {
             )}
 
             <div className="flex flex-wrap gap-2">
-              <Button type="button" variant="outline" onClick={() => setStep(1)}>
+              <Button type="button" variant="outline" onClick={handleNewImport}>
                 {t("summary.restart")}
               </Button>
             </div>
@@ -1053,14 +1376,42 @@ function ImportManager() {
             if (!next) setDetailKey(null);
           }}
           entry={detailEntry}
-          match={detailKey ? matches[detailKey] : undefined}
-          selected={detailKey ? selections[detailKey] ?? null : null}
+          match={detailMatch}
+          selected={detailItem?.selected ?? null}
           candidates={detailCandidates}
-          sourceHref={detailSourceHref}
-          sourceLabel={detailSourceLabel}
-          onSelect={(candidate) => handleSelectCandidate(detailEntry.key, candidate)}
+          sourceHref={sourceUrl(detailEntry)}
+          sourceLabel={t(`providers.${detailEntry.source}.label`, {
+            defaultValue: detailEntry.source,
+          })}
+          onSelect={(candidate) => {
+            if (detailItem) void handleSelectCandidate(detailItem.key, candidate);
+          }}
         />
       )}
+
+      <ConfirmDialog
+        open={confirmAction !== null}
+        onOpenChange={(next) => {
+          if (!next) setConfirmAction(null);
+        }}
+        title={
+          confirmAction?.type === "delete"
+            ? t("jobs.deleteTitle")
+            : t("jobs.cancelTitle")
+        }
+        description={
+          confirmAction?.type === "delete"
+            ? t("jobs.deleteDescription")
+            : t("jobs.cancelDescription")
+        }
+        confirmLabel={
+          confirmAction?.type === "delete"
+            ? t("jobs.deleteConfirm")
+            : t("jobs.cancelConfirm")
+        }
+        onConfirm={() => void handleConfirmAction()}
+        isPending={actionPending}
+      />
     </div>
   );
 }

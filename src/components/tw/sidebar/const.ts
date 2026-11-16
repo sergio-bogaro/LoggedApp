@@ -1,4 +1,4 @@
-import { Film, Tv, Clapperboard, BookOpen, BookText, Gamepad2, Home, Settings, Search, Star, Bookmark, Music, LayoutGrid } from "lucide-react";
+import { Film, Tv, Clapperboard, BookOpen, BookText, Gamepad2, Home, Settings, Search, Star, Bookmark, Music, LayoutGrid, Upload } from "lucide-react";
 
 import { MediaTypeEnum } from "@/types/media";
 import { mediaTypeToPath } from "@/utils/mediaText";
@@ -61,6 +61,11 @@ export const mainNavigation = [
     titleKey: "navigation.backlog",
     icon: Bookmark,
     path: "/media/backlog",
+  },
+  {
+    titleKey: "navigation.import",
+    icon: Upload,
+    path: "/import",
   },
   {
     titleKey: "navigation.views",

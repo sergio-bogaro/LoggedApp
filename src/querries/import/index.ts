@@ -10,6 +10,11 @@ import type {
   ImportPreviewResponse,
   ImportProviderInfo,
 } from "@/types/import";
+import type {
+  CreateImportJobInput,
+  ImportJob,
+  ImportJobItemsResponse,
+} from "@/types/importJob";
 import type { MediaTypeEnum } from "@/types/media";
 
 async function apiFetch<T>(
@@ -102,4 +107,123 @@ export async function commitImport(
     method: "POST",
     body: JSON.stringify({ userId, entries }),
   }, 120_000);
+}
+
+/** Cria uma importação em background (arquivo, username ou URL). */
+export async function createImportJob(
+  input: CreateImportJobInput
+): Promise<ImportJob> {
+  const form = new FormData();
+  form.append("user_id", String(input.userId));
+  form.append("provider_id", input.providerId);
+  if (input.mediaType) form.append("media_type", input.mediaType);
+  if (input.username) form.append("username", input.username);
+  if (input.sourceUrl) form.append("source_url", input.sourceUrl);
+  if (input.file) form.append("file", input.file);
+
+  const res = await fetchWithTimeout(
+    `${API_BASE_URL}/api/import/jobs`,
+    { method: "POST", body: form },
+    120_000
+  );
+
+  if (!res.ok) throw await parseApiError(res);
+  return (await res.json()) as ImportJob;
+}
+
+/** Lista as importações recentes, opcionalmente por status. */
+export async function listImportJobs(
+  userId: number,
+  status?: string,
+  limit = 20
+): Promise<ImportJob[]> {
+  const params = new URLSearchParams({
+    user_id: String(userId),
+    limit: String(limit),
+  });
+  if (status) params.set("status", status);
+  return apiFetch<ImportJob[]>(`/api/import/jobs?${params.toString()}`);
+}
+
+/** Detalhe de uma importação. */
+export async function getImportJob(
+  jobId: number,
+  userId: number
+): Promise<ImportJob> {
+  return apiFetch<ImportJob>(`/api/import/jobs/${jobId}?user_id=${userId}`);
+}
+
+/** Itens paginados da revisão. */
+export async function getImportJobItems(
+  jobId: number,
+  userId: number,
+  filter: string,
+  offset: number,
+  limit: number
+): Promise<ImportJobItemsResponse> {
+  const params = new URLSearchParams({
+    user_id: String(userId),
+    filter,
+    offset: String(offset),
+    limit: String(limit),
+  });
+  return apiFetch<ImportJobItemsResponse>(
+    `/api/import/jobs/${jobId}/items?${params.toString()}`,
+    undefined,
+    60_000
+  );
+}
+
+/** Seleciona um candidato ou ignora um item. */
+export async function patchImportJobItem(
+  jobId: number,
+  itemId: number,
+  userId: number,
+  patch: { selected?: ImportCandidate | null; ignored?: boolean }
+): Promise<void> {
+  await apiFetch<unknown>(
+    `/api/import/jobs/${jobId}/items/${itemId}?user_id=${userId}`,
+    {
+      method: "PATCH",
+      body: JSON.stringify(patch),
+    }
+  );
+}
+
+/** Confirma os itens selecionados de um job. */
+export async function commitImportJob(
+  jobId: number,
+  userId: number,
+  addToBacklog: boolean
+): Promise<ImportCommitResponse> {
+  return apiFetch<ImportCommitResponse>(
+    `/api/import/jobs/${jobId}/commit?user_id=${userId}`,
+    {
+      method: "POST",
+      body: JSON.stringify({ addToBacklog }),
+    },
+    120_000
+  );
+}
+
+/** Cancela uma importação. */
+export async function cancelImportJob(
+  jobId: number,
+  userId: number
+): Promise<ImportJob> {
+  return apiFetch<ImportJob>(
+    `/api/import/jobs/${jobId}/cancel?user_id=${userId}`,
+    { method: "POST" }
+  );
+}
+
+/** Remove uma importação finalizada/cancelada do histórico. */
+export async function deleteImportJob(
+  jobId: number,
+  userId: number
+): Promise<void> {
+  await apiFetch<void>(
+    `/api/import/jobs/${jobId}?user_id=${userId}`,
+    { method: "DELETE" }
+  );
 }

@@ -12,10 +12,12 @@ import {
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
+  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
+import { useReadyImportJobs } from "@/hooks/useImportJobs";
 import { useAppSelector } from "@/store/auth/hooks";
 import { getTrackFlags } from "@/utils/mediaTrack";
 
@@ -23,6 +25,8 @@ export function AppSidebar() {
   const { t } = useTranslation(["common", "media"]);
   const location = useLocation();
   const { user } = useAppSelector((state) => state.auth);
+  const { data: readyImportJobs } = useReadyImportJobs(user?.id);
+  const readyImportCount = readyImportJobs?.length ?? 0;
 
   const trackFlags = getTrackFlags(user);
   const visibleMediaTypes = mediaTypes.filter((item) => trackFlags[item.type]);
@@ -66,6 +70,11 @@ export function AppSidebar() {
                         <span>{label}</span>
                       </Link>
                     </SidebarMenuButton>
+                    {item.path === "/import" && readyImportCount > 0 && (
+                      <SidebarMenuBadge className="bg-primary text-primary-foreground">
+                        {readyImportCount}
+                      </SidebarMenuBadge>
+                    )}
                   </SidebarMenuItem>
                 );
               })}
