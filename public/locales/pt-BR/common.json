@@ -38,7 +38,7 @@
       "title": "Aparência e idioma"
     },
     "tracking": {
-      "title": "Mídias a Registrar",
+      "title": "Mídias a registrar",
       "description": "Escolha quais tipos de mídia deseja logar",
       "saving": "Salvando...",
       "requiresTmdb": "Requer chave do TMDB — configure em Integrações",

@@ -355,12 +355,10 @@ export function LibrarySyncIntegrations() {
 
   return (
     <div className="space-y-4">
-      <p className="text-step-1 text-muted-foreground">{t("description")}</p>
-
       {globalLoading ? (
         <Skeleton className="h-32 w-full" />
       ) : (
-        <div className="space-y-3 rounded-control border border-border p-3">
+        <div className="space-y-3 rounded-control border border-border p-4">
           <div className="flex flex-wrap items-start justify-between gap-2">
             <div>
               <p className="font-medium text-step-1">{t("global.title")}</p>

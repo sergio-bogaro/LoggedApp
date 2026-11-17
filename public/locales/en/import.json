@@ -308,5 +308,6 @@
     "rating": "Rating {{value}}/10",
     "openSource": "Open source",
     "openMetadata": "Open on TMDB"
-  }
+  },
+  "supported": "Letterboxd, AniList, MyAnimeList, Goodreads, Trakt, IMDb and Grouvee"
 }

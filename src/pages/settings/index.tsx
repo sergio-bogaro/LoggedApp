@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { toast } from "sonner";
@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import RatingSwitcher from "@/components/RatingSwitcher";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
+import { Card } from "@/components/tw/generic/card";
 import { PageHeader } from "@/components/tw/generic/PageHeader";
 import { SectionHeading } from "@/components/tw/generic/SectionHeading";
 import IntegrationKeysForm from "@/components/tw/settings/IntegrationKeysForm";
@@ -19,8 +20,40 @@ import { setBreadcrumbs } from "@/store/settings/slice";
 import { MediaTypeEnum } from "@/types/media";
 import { getTrackFlags } from "@/utils/mediaTrack";
 
+/*
+ * The settings page is a stack of the same plane: one panel per subject, with
+ * a shared hairline heading. Keeping the shell here (instead of a new global
+ * component) makes the page's hierarchy explicit without changing the shared
+ * Card/SectionHeading defaults used elsewhere.
+ */
+function SettingsPanel({
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description?: string;
+  children: ReactNode;
+}) {
+  return (
+    <Card className="gap-5 p-5 sm:p-6">
+      <SectionHeading className="pb-2.5! text-[1.5rem]! leading-[1.25]!">
+        {title}
+      </SectionHeading>
+
+      {description && (
+        <p className="max-w-[68ch] text-step-2 text-muted-foreground">
+          {description}
+        </p>
+      )}
+
+      {children}
+    </Card>
+  );
+}
+
 function SettingsPage() {
-  const { t } = useTranslation(["common", "librarySync"]);
+  const { t } = useTranslation(["common", "librarySync", "import"]);
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
 
@@ -63,67 +96,62 @@ function SettingsPage() {
   };
 
   return (
-    <div className="w-full space-y-8">
-      <PageHeader title={t("settings.title")} />
+    <div className="w-full max-w-4xl space-y-6">
+      <PageHeader
+        title={t("settings.title")}
+        className="mb-0 [&_h1]:text-[2rem] [&_h1]:leading-[1.1] [&_h1]:tracking-[-0.02em]"
+      />
 
-      <section className="space-y-4">
-        <SectionHeading>{t("settings.appearance.title")}</SectionHeading>
-
+      <SettingsPanel title={t("settings.appearance.title")}>
         <div className="grid max-w-md gap-4">
           <LanguageSwitcher />
           <ThemeSwitcher />
           <RatingSwitcher />
         </div>
-      </section>
+      </SettingsPanel>
 
-      <section className="space-y-4">
-        <SectionHeading>{t("settings.tracking.title")}</SectionHeading>
-
-        <p className="text-step-1 text-muted-foreground">
-          {t("settings.tracking.description")}
-        </p>
-
-        <MediaTrackToggles
-          values={values}
-          onChange={handleChange}
-        />
+      <SettingsPanel
+        title={t("settings.tracking.title")}
+        description={t("settings.tracking.description")}
+      >
+        <MediaTrackToggles values={values} onChange={handleChange} />
 
         {savingType && (
-          <p className="text-step-1 text-muted-foreground">{t("settings.tracking.saving")}</p>
+          <p className="text-step-1 text-muted-foreground">
+            {t("settings.tracking.saving")}
+          </p>
         )}
-      </section>
+      </SettingsPanel>
 
-      <section className="space-y-4">
-        <SectionHeading>{t("settings.integrations.title")}</SectionHeading>
-
-        <p className="text-step-1 text-muted-foreground">
-          {t("settings.integrations.description")}
-        </p>
-
+      <SettingsPanel
+        title={t("settings.integrations.title")}
+        description={t("settings.integrations.description")}
+      >
         <IntegrationKeysForm />
-      </section>
+      </SettingsPanel>
 
-      <section className="space-y-4">
-        <SectionHeading>{t("title", { ns: "librarySync" })}</SectionHeading>
+      <SettingsPanel
+        title={t("title", { ns: "librarySync" })}
+        description={t("description", { ns: "librarySync" })}
+      >
+        <LibrarySyncIntegrations />
+      </SettingsPanel>
 
-        <div className="max-w-2xl">
-          <LibrarySyncIntegrations />
+      <SettingsPanel
+        title={t("settings.title", { ns: "import" })}
+        description={t("settings.description", { ns: "import" })}
+      >
+        <div className="flex flex-wrap items-center gap-3">
+          <Button asChild>
+            <Link to="/import">{t("settings.open", { ns: "import" })}</Link>
+          </Button>
+          <p className="text-step-0 text-muted-foreground">
+            {t("supported", { ns: "import" })}
+          </p>
         </div>
-      </section>
-
-      <section className="space-y-4">
-        <SectionHeading>{t("settings.title", { ns: "import" })}</SectionHeading>
-
-        <p className="text-step-1 text-muted-foreground">
-          {t("settings.description", { ns: "import" })}
-        </p>
-
-        <Button asChild>
-          <Link to="/import">{t("settings.open", { ns: "import" })}</Link>
-        </Button>
-      </section>
+      </SettingsPanel>
     </div>
-  )
+  );
 }
 
 export default SettingsPage;

@@ -308,5 +308,6 @@
     "rating": "Nota {{value}}/10",
     "openSource": "Abrir na origem",
     "openMetadata": "Abrir no TMDB"
-  }
+  },
+  "supported": "Letterboxd, AniList, MyAnimeList, Goodreads, Trakt, IMDb e Grouvee"
 }
