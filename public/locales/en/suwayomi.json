@@ -74,7 +74,9 @@
       "created": "Created",
       "statusUpdated": "Status changes",
       "backlogAdded": "Added to backlog",
-      "backlogRemoved": "Removed from backlog"
+      "backlogRemoved": "Removed from backlog",
+      "logsCreated": "Logs created",
+      "datedItems": "Items with date"
     },
     "pendingResolvedTitle": "Resolved pending links ({{count}})"
   },

@@ -511,7 +511,7 @@ function SuwayomiIntegration() {
       {summary && (
         <div className="space-y-3 rounded-control border border-border p-3">
           <p className="font-medium text-step-1">{t("summary.title")}</p>
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
             <SummaryStat label={t("summary.stats.created")} value={summary.created ?? 0} />
             <SummaryStat
               label={t("summary.stats.statusUpdated")}
@@ -524,6 +524,14 @@ function SuwayomiIntegration() {
             <SummaryStat
               label={t("summary.stats.backlogRemoved")}
               value={summary.backlogRemoved ?? 0}
+            />
+            <SummaryStat
+              label={t("summary.stats.logsCreated")}
+              value={summary.logsCreated ?? 0}
+            />
+            <SummaryStat
+              label={t("summary.stats.datedItems")}
+              value={summary.datedItems ?? 0}
             />
           </div>
 

@@ -74,7 +74,9 @@
       "created": "Criados",
       "statusUpdated": "Status alterados",
       "backlogAdded": "Adicionados ao backlog",
-      "backlogRemoved": "Removidos do backlog"
+      "backlogRemoved": "Removidos do backlog",
+      "logsCreated": "Logs criados",
+      "datedItems": "Itens com data"
     },
     "pendingResolvedTitle": "Vínculos pendentes resolvidos ({{count}})"
   },

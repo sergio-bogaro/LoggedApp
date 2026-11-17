@@ -24,6 +24,8 @@ export interface SuwayomiSyncSummary {
   statusUpdated?: number;
   backlogAdded?: number;
   backlogRemoved?: number;
+  logsCreated?: number;
+  datedItems?: number;
   unmatched?: { title: string; reason?: string }[];
   removed?: string[];
   pendingResolved?: string[];
