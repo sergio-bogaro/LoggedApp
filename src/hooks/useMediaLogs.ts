@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 
 import { getUserMediaLogs, MediaLogWithMedia } from "@/querries/media/logged";
 import { useAppSelector } from "@/store/auth/hooks";
-import { DEFAULT_STALE_TIME } from "@/utils/conts";
 import type { PeriodRange } from "@/utils/date";
 
 /**
@@ -15,7 +14,8 @@ export function useMediaLogs(range: PeriodRange) {
   return useQuery<MediaLogWithMedia[]>({
     queryKey: ["media-logs", user?.id, range.start ?? null, range.end ?? null],
     queryFn: () => getUserMediaLogs(user!.id, { start: range.start, end: range.end }),
-    staleTime: DEFAULT_STALE_TIME,
+    // O registro muda por sync/importação; revalida ao montar e ao trocar o período.
+    staleTime: 0,
     enabled: !!user,
   });
 }

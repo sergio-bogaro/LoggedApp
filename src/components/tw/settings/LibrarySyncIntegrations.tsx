@@ -171,6 +171,16 @@ export function LibrarySyncIntegrations() {
     await queryClient.invalidateQueries({ queryKey: ["integration-statuses"] });
   };
 
+  const refreshLibrary = async () => {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ["media"] }),
+      queryClient.invalidateQueries({ queryKey: ["existingMedia"] }),
+      queryClient.invalidateQueries({ queryKey: ["media-logs"] }),
+      queryClient.invalidateQueries({ queryKey: ["backlog"] }),
+      queryClient.invalidateQueries({ queryKey: ["sync-suggestions"] }),
+    ]);
+  };
+
   const open = (provider: SyncProviderInfo) => {
     setSelected(provider.id);
     setStatuses([]);
@@ -223,12 +233,11 @@ export function LibrarySyncIntegrations() {
     try {
       await syncIntegration(selected, user.id);
       toast.success(t("syncStarted"));
-      await refresh();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : t("errors.sync"));
-      await refresh();
     } finally {
       setSyncing(false);
+      await Promise.all([refresh(), refreshLibrary()]);
     }
   };
 
