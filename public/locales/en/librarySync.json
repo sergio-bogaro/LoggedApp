@@ -1,6 +1,6 @@
 {
-  "title": "Library sync",
-  "description": "Connect external trackers to keep status and backlog in sync. The first sync only links what already exists; bulk history stays in the Import page.",
+  "title": "Library integrations",
+  "description": "Connect external services to keep status and backlog in sync. On Letterboxd, exact matches go straight to the library; uncertain ones go to review.",
   "connected": "Connected",
   "notConnected": "Not connected",
   "connect": "Connect",
@@ -65,7 +65,11 @@
     "unmatched": "Unmatched",
     "removed": "Removed",
     "missingHint": "These titles are not in Logged yet. Use Import library to review and import them.",
-    "errors": "{{count}} item(s) failed."
+    "errors": "{{count}} item(s) failed.",
+    "pendingReview": "{{count}} waiting for review",
+    "review": "Review",
+    "reviewHint": "Some titles are waiting for approval in Import → Automatic.",
+    "logsCreated": "Logs created"
   },
   "status": {
     "ok": "Completed",

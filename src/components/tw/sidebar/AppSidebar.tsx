@@ -18,6 +18,7 @@ import {
   SidebarSeparator,
 } from "@/components/ui/sidebar";
 import { useReadyImportJobs } from "@/hooks/useImportJobs";
+import { useSyncSuggestionCount } from "@/hooks/useSyncSuggestions";
 import { useAppSelector } from "@/store/auth/hooks";
 import { getTrackFlags } from "@/utils/mediaTrack";
 
@@ -26,7 +27,9 @@ export function AppSidebar() {
   const location = useLocation();
   const { user } = useAppSelector((state) => state.auth);
   const { data: readyImportJobs } = useReadyImportJobs(user?.id);
-  const readyImportCount = readyImportJobs?.length ?? 0;
+  const { data: pendingSuggestions } = useSyncSuggestionCount(user?.id);
+  const importReviewCount =
+    (readyImportJobs?.length ?? 0) + (pendingSuggestions?.pending ?? 0);
 
   const trackFlags = getTrackFlags(user);
   const visibleMediaTypes = mediaTypes.filter((item) => trackFlags[item.type]);
@@ -70,9 +73,9 @@ export function AppSidebar() {
                         <span>{label}</span>
                       </Link>
                     </SidebarMenuButton>
-                    {item.path === "/import" && readyImportCount > 0 && (
+                    {item.path === "/import" && importReviewCount > 0 && (
                       <SidebarMenuBadge className="bg-primary text-primary-foreground">
-                        {readyImportCount}
+                        {importReviewCount}
                       </SidebarMenuBadge>
                     )}
                   </SidebarMenuItem>

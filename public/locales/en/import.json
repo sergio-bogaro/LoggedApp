@@ -279,5 +279,34 @@
     "openResult": "View result",
     "provider": "Source",
     "createdAt": "Created at"
+  },
+  "tabs": {
+    "manual": "Import",
+    "automatic": "Automatic"
+  },
+  "automatic": {
+    "title": "Automatic imports",
+    "description": "Titles found by sync that need your review before entering the library.",
+    "tabPending": "Pending",
+    "tabDismissed": "Ignored",
+    "emptyPending": "No titles waiting for review.",
+    "emptyDismissed": "No ignored titles.",
+    "emptyHint": "Perfect matches are added to the library directly. Uncertain ones show up here.",
+    "selected": "{{count}} selected",
+    "selectAll": "Select all",
+    "clearSelection": "Clear selection",
+    "approve": "Add selected ({{count}})",
+    "approving": "Adding…",
+    "dismiss": "Ignore",
+    "restore": "Restore",
+    "approveSuccess": "{{count}} title(s) added to the library.",
+    "approvePartial": "{{approved}} added; {{failed}} failed.",
+    "dismissed": "Title ignored.",
+    "restored": "Title restored.",
+    "error": "Could not complete the action.",
+    "watched": "Watched on {{date}}",
+    "rating": "Rating {{value}}/10",
+    "openSource": "Open source",
+    "openMetadata": "Open on TMDB"
   }
 }

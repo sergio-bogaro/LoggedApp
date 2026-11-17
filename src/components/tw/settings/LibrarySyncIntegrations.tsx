@@ -13,6 +13,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { toast } from "sonner";
 
+import SuwayomiIntegration from "@/components/tw/settings/SuwayomiIntegration";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -43,6 +44,7 @@ import {
   syncIntegration,
   testIntegration,
 } from "@/querries/librarySync";
+import { suwayomiApi } from "@/querries/suwayomi";
 import { useAppSelector } from "@/store/auth/hooks";
 import type {
   OAuthStartResponse,
@@ -88,6 +90,7 @@ export function LibrarySyncIntegrations() {
   });
 
   const [selected, setSelected] = useState<string | null>(null);
+  const [suwayomiOpen, setSuwayomiOpen] = useState(false);
   const [enabled, setEnabled] = useState(true);
   const [updatesPerDay, setUpdatesPerDay] = useState("4");
   const [username, setUsername] = useState("");
@@ -99,6 +102,13 @@ export function LibrarySyncIntegrations() {
   const [savingStatuses, setSavingStatuses] = useState(false);
   const [device, setDevice] = useState<OAuthStartResponse | null>(null);
   const [statuses, setStatuses] = useState<SyncStatusOption[]>([]);
+
+  const { data: suwayomiConfig, isLoading: suwayomiLoading } = useQuery({
+    queryKey: ["suwayomi", "config", user?.id],
+    queryFn: () => suwayomiApi.getConfig(user!.id),
+    enabled: !!user,
+    refetchOnWindowFocus: false,
+  });
 
   const current = useMemo(
     () => data?.find((item) => item.id === selected) ?? null,
@@ -281,6 +291,46 @@ export function LibrarySyncIntegrations() {
         </div>
       ) : (
         <div className="grid gap-3 sm:grid-cols-2">
+          <button
+            type="button"
+            onClick={() => setSuwayomiOpen(true)}
+            className="rounded-control border border-border bg-background p-3 text-left transition-colors hover:bg-accent/40"
+          >
+            <div className="flex items-start justify-between gap-2">
+              <div className="min-w-0">
+                <p className="truncate text-step-1 font-medium">
+                  {t("title", { ns: "suwayomi" })}
+                </p>
+                <p className="truncate text-step-0 text-muted-foreground">
+                  {suwayomiConfig?.configured
+                    ? suwayomiConfig.baseUrl
+                    : t("notConnected")}
+                </p>
+              </div>
+              <span
+                className={cn(
+                  "shrink-0 rounded-full px-2 py-0.5 text-step-0",
+                  suwayomiConfig?.configured
+                    ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"
+                    : "bg-muted text-muted-foreground"
+                )}
+              >
+                {suwayomiConfig?.configured ? t("connected") : t("connect")}
+              </span>
+            </div>
+            <p className="mt-2 text-step-0 text-muted-foreground">
+              {suwayomiLoading
+                ? t("neverSynced")
+                : suwayomiConfig?.configured && suwayomiConfig.enabled
+                  ? formatDateTime(suwayomiConfig.lastSyncAt)
+                    ? t("lastSync", {
+                      date: formatDateTime(suwayomiConfig.lastSyncAt),
+                    })
+                    : t("neverSynced")
+                  : t("disabled")}
+            </p>
+          </button>
+
           {(data ?? []).map((provider) => {
             const last = formatDateTime(provider.lastSyncAt);
             return (
@@ -330,6 +380,11 @@ export function LibrarySyncIntegrations() {
                 {provider.needsReauth && (
                   <p className="mt-1 text-step-0 text-destructive">
                     {t("needsReauth")}
+                  </p>
+                )}
+                {provider.pendingReview > 0 && (
+                  <p className="mt-1 text-step-0 text-amber-600 dark:text-amber-400">
+                    {t("summary.pendingReview", { count: provider.pendingReview })}
                   </p>
                 )}
               </button>
@@ -619,6 +674,7 @@ export function LibrarySyncIntegrations() {
                         ["created", "summary.created"],
                         ["statusUpdated", "summary.statusUpdated"],
                         ["backlogAdded", "summary.backlogAdded"],
+                        ["logsCreated", "summary.logsCreated"],
                         ["pending", "summary.pending"],
                         ["missing", "summary.missing"],
                         ["unmatched", "summary.unmatched"],
@@ -639,8 +695,25 @@ export function LibrarySyncIntegrations() {
                     </div>
                     {summaryNumber("missing") > 0 && (
                       <p className="text-step-0 text-muted-foreground">
-                        {t("summary.missingHint")}
+                        {current.pendingReview > 0
+                          ? t("summary.reviewHint")
+                          : t("summary.missingHint")}
                       </p>
+                    )}
+                    {current.pendingReview > 0 && (
+                      <div className="flex flex-wrap items-center justify-between gap-2 rounded-control border border-border p-2">
+                        <p className="text-step-0">
+                          {t("summary.pendingReview", {
+                            count: current.pendingReview,
+                          })}
+                        </p>
+                        <Button type="button" size="xs" variant="outline" asChild>
+                          <Link to={`/import?tab=auto&provider=${current.id}`}>
+                            <Check />
+                            {t("summary.review")}
+                          </Link>
+                        </Button>
+                      </div>
                     )}
                     {Array.isArray(summary.errors) && summary.errors.length > 0 && (
                       <p className="text-step-0 text-destructive">
@@ -652,6 +725,18 @@ export function LibrarySyncIntegrations() {
               </div>
             </>
           )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={suwayomiOpen} onOpenChange={setSuwayomiOpen}>
+        <DialogContent className="max-h-[90vh] w-[95%] max-w-3xl overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{t("title", { ns: "suwayomi" })}</DialogTitle>
+            <DialogDescription>
+              {t("description", { ns: "suwayomi" })}
+            </DialogDescription>
+          </DialogHeader>
+          <SuwayomiIntegration />
         </DialogContent>
       </Dialog>
     </div>

@@ -1,6 +1,6 @@
 {
-  "title": "Sincronização de bibliotecas",
-  "description": "Conecte serviços externos para manter status e backlog sincronizados. A primeira sincronização apenas vincula o que já existe; o histórico em massa fica na página Importar.",
+  "title": "Integrações de bibliotecas",
+  "description": "Conecte serviços externos para manter status e backlog sincronizados. No Letterboxd, matches exatos entram direto na biblioteca; os duvidosos vão para a revisão.",
   "connected": "Conectado",
   "notConnected": "Não conectado",
   "connect": "Conectar",
@@ -65,7 +65,11 @@
     "unmatched": "Sem match",
     "removed": "Removidos",
     "missingHint": "Estes títulos ainda não estão no Logged. Use Importar biblioteca para revisar e importar.",
-    "errors": "{{count}} item(ns) falharam."
+    "errors": "{{count}} item(ns) falharam.",
+    "pendingReview": "{{count}} aguardando revisão",
+    "review": "Revisar",
+    "reviewHint": "Há títulos aguardando sua aprovação em Importar → Automáticos.",
+    "logsCreated": "Logs criados"
   },
   "status": {
     "ok": "Concluído",

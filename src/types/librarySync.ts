@@ -1,3 +1,4 @@
+import type { ImportCandidate } from "./import";
 import type { MediaStatusEnum, MediaTypeEnum } from "./media";
 
 export type SyncAction =
@@ -27,6 +28,7 @@ export interface SyncProviderInfo {
   username?: string | null;
   clientId?: string | null;
   hasToken: boolean;
+  pendingReview: number;
 }
 
 export interface SyncStatusOption {
@@ -67,4 +69,52 @@ export interface OAuthPollResponse {
 export interface SyncResponse {
   status: string;
   summary: Record<string, unknown>;
+}
+
+
+export type SyncSuggestionState = "pending" | "approved" | "dismissed";
+
+export interface SyncSuggestion {
+  id: number;
+  provider: string;
+  sourceId: string;
+  mediaType: MediaTypeEnum;
+  title: string;
+  year?: number | null;
+  sourceStatus: string;
+  sourceLabel: string;
+  action: SyncAction;
+  targetStatus?: MediaStatusEnum | null;
+  rating?: number | null;
+  review?: string | null;
+  watchedDate?: string | null;
+  candidate?: ImportCandidate | null;
+  sourceUrl?: string | null;
+  reviewState: SyncSuggestionState;
+  mediaId?: number | null;
+  error?: string | null;
+  createdAt?: string | null;
+  updatedAt?: string | null;
+}
+
+export interface SyncSuggestionCounts {
+  pending: number;
+  approved: number;
+  dismissed: number;
+}
+
+export interface SyncSuggestionsResponse {
+  items: SyncSuggestion[];
+  total: number;
+  counts: SyncSuggestionCounts;
+}
+
+export interface SyncSuggestionCountResponse {
+  pending: number;
+}
+
+export interface SyncSuggestionsApproveResponse {
+  approved: number;
+  failed: number;
+  failures: { name: string; reason: string }[];
 }

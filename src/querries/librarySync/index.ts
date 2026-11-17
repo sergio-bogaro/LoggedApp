@@ -9,6 +9,11 @@ import type {
   SyncProviderInfo,
   SyncResponse,
   SyncStatusesResponse,
+  SyncSuggestion,
+  SyncSuggestionCountResponse,
+  SyncSuggestionsApproveResponse,
+  SyncSuggestionsResponse,
+  SyncSuggestionState,
 } from "@/types/librarySync";
 
 async function apiFetch<T>(
@@ -126,4 +131,59 @@ export async function deleteIntegration(
   await apiFetch<void>(`/api/integrations/${provider}?user_id=${userId}`, {
     method: "DELETE",
   });
+}
+
+
+export async function listSyncSuggestions(
+  userId: number,
+  params?: { state?: SyncSuggestionState; provider?: string; limit?: number; offset?: number }
+): Promise<SyncSuggestionsResponse> {
+  const query = new URLSearchParams();
+  query.set("user_id", String(userId));
+  if (params?.state) query.set("state", params.state);
+  if (params?.provider) query.set("provider", params.provider);
+  if (params?.limit !== undefined) query.set("limit", String(params.limit));
+  if (params?.offset !== undefined) query.set("offset", String(params.offset));
+  return apiFetch<SyncSuggestionsResponse>(
+    `/api/integrations/suggestions?${query.toString()}`
+  );
+}
+
+export async function countSyncSuggestions(
+  userId: number,
+  provider?: string
+): Promise<SyncSuggestionCountResponse> {
+  const query = new URLSearchParams({ user_id: String(userId) });
+  if (provider) query.set("provider", provider);
+  return apiFetch<SyncSuggestionCountResponse>(
+    `/api/integrations/suggestions/count?${query.toString()}`
+  );
+}
+
+export async function approveSyncSuggestions(
+  userId: number,
+  ids: number[]
+): Promise<SyncSuggestionsApproveResponse> {
+  return apiFetch<SyncSuggestionsApproveResponse>(
+    "/api/integrations/suggestions/approve",
+    {
+      method: "POST",
+      body: JSON.stringify({ userId, ids }),
+    },
+    120_000
+  );
+}
+
+export async function updateSyncSuggestion(
+  userId: number,
+  suggestionId: number,
+  state: "pending" | "dismissed"
+): Promise<SyncSuggestion> {
+  return apiFetch<SyncSuggestion>(
+    `/api/integrations/suggestions/${suggestionId}`,
+    {
+      method: "PATCH",
+      body: JSON.stringify({ userId, state }),
+    }
+  );
 }

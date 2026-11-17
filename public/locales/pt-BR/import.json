@@ -279,5 +279,34 @@
     "openResult": "Ver resultado",
     "provider": "Origem",
     "createdAt": "Criada em"
+  },
+  "tabs": {
+    "manual": "Importar",
+    "automatic": "Automáticos"
+  },
+  "automatic": {
+    "title": "Importações automáticas",
+    "description": "Títulos encontrados pela sincronização que precisam da sua revisão antes de entrar na biblioteca.",
+    "tabPending": "Pendentes",
+    "tabDismissed": "Ignorados",
+    "emptyPending": "Nenhum título aguardando revisão.",
+    "emptyDismissed": "Nenhum título ignorado.",
+    "emptyHint": "O match perfeito é adicionado direto na biblioteca. Os duvidosos aparecem aqui.",
+    "selected": "{{count}} selecionado(s)",
+    "selectAll": "Selecionar todos",
+    "clearSelection": "Limpar seleção",
+    "approve": "Adicionar selecionados ({{count}})",
+    "approving": "Adicionando…",
+    "dismiss": "Ignorar",
+    "restore": "Restaurar",
+    "approveSuccess": "{{count}} título(s) adicionado(s) à biblioteca.",
+    "approvePartial": "{{approved}} adicionado(s); {{failed}} falharam.",
+    "dismissed": "Título ignorado.",
+    "restored": "Título restaurado.",
+    "error": "Não foi possível concluir a ação.",
+    "watched": "Assistido em {{date}}",
+    "rating": "Nota {{value}}/10",
+    "openSource": "Abrir na origem",
+    "openMetadata": "Abrir no TMDB"
   }
 }

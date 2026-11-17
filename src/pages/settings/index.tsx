@@ -11,7 +11,6 @@ import { SectionHeading } from "@/components/tw/generic/SectionHeading";
 import IntegrationKeysForm from "@/components/tw/settings/IntegrationKeysForm";
 import { LibrarySyncIntegrations } from "@/components/tw/settings/LibrarySyncIntegrations";
 import MediaTrackToggles from "@/components/tw/settings/MediaTrackToggles";
-import SuwayomiIntegration from "@/components/tw/settings/SuwayomiIntegration";
 import { Button } from "@/components/ui/button";
 import { authApi } from "@/querries/auth/auth";
 import { useAppDispatch, useAppSelector } from "@/store/auth/hooks";
@@ -21,7 +20,7 @@ import { MediaTypeEnum } from "@/types/media";
 import { getTrackFlags } from "@/utils/mediaTrack";
 
 function SettingsPage() {
-  const { t } = useTranslation(["common", "suwayomi", "librarySync"]);
+  const { t } = useTranslation(["common", "librarySync"]);
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
 
@@ -102,18 +101,6 @@ function SettingsPage() {
         </p>
 
         <IntegrationKeysForm />
-
-        <div className="max-w-2xl space-y-4 border-t border-border pt-6">
-          <h3 className="font-serif text-step-3 font-medium">
-            {t("title", { ns: "suwayomi" })}
-          </h3>
-
-          <p className="text-step-1 text-muted-foreground">
-            {t("description", { ns: "suwayomi" })}
-          </p>
-
-          <SuwayomiIntegration />
-        </div>
       </section>
 
       <section className="space-y-4">
