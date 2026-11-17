@@ -1,0 +1,166 @@
+{
+  "title": "Sincronização de bibliotecas",
+  "description": "Conecte serviços externos para manter status e backlog sincronizados. A primeira sincronização apenas vincula o que já existe; o histórico em massa fica na página Importar.",
+  "connected": "Conectado",
+  "notConnected": "Não conectado",
+  "connect": "Conectar",
+  "disabled": "Desativado",
+  "needsReauth": "Reconexão necessária",
+  "lastSync": "Último sync: {{date}}",
+  "neverSynced": "Nunca sincronizado",
+  "username": "Username",
+  "token": "Token de acesso pessoal",
+  "tokenKeep": "Deixe vazio para manter o token atual",
+  "tokenPlaceholder": "Cole o token",
+  "enabled": "Ativar sincronização automática",
+  "frequency": "Frequência",
+  "frequencyValue": "{{count}}x por dia",
+  "save": "Salvar",
+  "test": "Testar conexão",
+  "testOk": "Conexão OK: {{account}}",
+  "syncNow": "Sincronizar agora",
+  "syncStarted": "Sincronização concluída.",
+  "importLibrary": "Importar biblioteca",
+  "disconnect": "Desconectar",
+  "disconnected": "Integração desconectada.",
+  "saved": "Configurações salvas.",
+  "errors": {
+    "save": "Não foi possível salvar as configurações.",
+    "test": "Não foi possível testar a conexão.",
+    "sync": "Não foi possível sincronizar.",
+    "oauth": "Não foi possível conectar a conta.",
+    "delete": "Não foi possível desconectar."
+  },
+  "oauth": {
+    "connect": "Conectar conta",
+    "reconnect": "Reconectar",
+    "connected": "Conta conectada.",
+    "expired": "O código expirou. Tente novamente.",
+    "notConnected": "Esta integração usa OAuth.",
+    "connectedAs": "Conectado como {{account}}.",
+    "instructions": "Abra o link e informe este código:",
+    "waiting": "Aguardando aprovação..."
+  },
+  "mappings": {
+    "title": "Mapeamento de status",
+    "description": "Escolha o que cada status do serviço vira no Logged.",
+    "save": "Salvar mapeamento"
+  },
+  "actions": {
+    "ignore": "Ignorar",
+    "backlog": "Backlog",
+    "in_progress": "Em andamento",
+    "following": "Acompanhando",
+    "on_hold": "Em pausa",
+    "finished": "Finalizado",
+    "dropped": "Dropado"
+  },
+  "summary": {
+    "title": "Último sync",
+    "created": "Criados",
+    "statusUpdated": "Status atualizados",
+    "backlogAdded": "Backlog adicionados",
+    "pending": "Pendentes",
+    "missing": "Fora do Logged",
+    "unmatched": "Sem match",
+    "removed": "Removidos",
+    "missingHint": "Estes títulos ainda não estão no Logged. Use Importar biblioteca para revisar e importar.",
+    "errors": "{{count}} item(ns) falharam."
+  },
+  "status": {
+    "ok": "Concluído",
+    "partial": "Concluído com avisos",
+    "failed": "Falhou",
+    "syncing": "Sincronizando"
+  },
+  "providers": {
+    "anilist": {
+      "label": "AniList",
+      "description": "Listas públicas de anime e mangá. Usa os IDs do AniList diretamente.",
+      "statuses": {
+        "CURRENT": "Assistindo/lendo",
+        "REPEATING": "Reassistindo/relendo",
+        "COMPLETED": "Completo",
+        "PAUSED": "Em pausa",
+        "DROPPED": "Dropado",
+        "PLANNING": "Planejado"
+      }
+    },
+    "mal": {
+      "label": "MyAnimeList",
+      "description": "Listas públicas de anime e mangá pela API oficial.",
+      "statuses": {
+        "watching": "Assistindo",
+        "reading": "Lendo",
+        "completed": "Completo",
+        "on_hold": "Em pausa",
+        "dropped": "Dropado",
+        "plan_to_watch": "Planejado (anime)",
+        "plan_to_read": "Planejado (mangá)"
+      }
+    },
+    "kitsu": {
+      "label": "Kitsu",
+      "description": "Biblioteca pública de anime e mangá.",
+      "statuses": {
+        "current": "Assistindo/lendo",
+        "completed": "Completo",
+        "onHold": "Em pausa",
+        "dropped": "Dropado",
+        "planned": "Planejado"
+      }
+    },
+    "trakt": {
+      "label": "Trakt",
+      "description": "Histórico assistido e watchlist de filmes e séries.",
+      "statuses": {
+        "watched": "Assistido",
+        "watching": "Em andamento",
+        "watchlist": "Watchlist"
+      }
+    },
+    "simkl": {
+      "label": "Simkl",
+      "description": "Filmes, séries e anime com status exatos de watchlist.",
+      "statuses": {
+        "watching": "Assistindo",
+        "completed": "Completo",
+        "hold": "Em pausa",
+        "dropped": "Dropado",
+        "plantowatch": "Planejado"
+      }
+    },
+    "letterboxd": {
+      "label": "Letterboxd",
+      "description": "Diários recentes via RSS. Histórico completo e watchlist vêm do export CSV.",
+      "statuses": {
+        "watched": "Assistido"
+      }
+    },
+    "hardcover": {
+      "label": "Hardcover",
+      "description": "Status de leitura, notas e resenhas do Hardcover.",
+      "statuses": {
+        "1": "Quero ler",
+        "2": "Lendo",
+        "3": "Lido",
+        "4": "Em pausa",
+        "5": "Não terminei",
+        "6": "Ignorado"
+      }
+    },
+    "openlibrary": {
+      "label": "Open Library",
+      "description": "Reading log público do Open Library.",
+      "statuses": {
+        "want-to-read": "Quero ler",
+        "currently-reading": "Lendo",
+        "already-read": "Já li",
+        "stopped-reading": "Abandonei"
+      }
+    }
+  },
+  "clientId": "Client ID do MyAnimeList",
+  "clientIdPlaceholder": "Client ID (opcional se configurado no servidor)",
+  "clientIdHint": "Crie um app em myanimelist.net/apiconfig. Usado apenas para ler listas públicas."
+}

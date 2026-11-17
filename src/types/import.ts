@@ -4,7 +4,7 @@ export type ImportProviderInfo = {
   id: string;
   label: string;
   mediaTypes: MediaTypeEnum[];
-  inputType: "file" | "username" | "url";
+  inputType: "file" | "username" | "url" | "connection";
   accepts?: string | null;
   skipExisting?: boolean;
 };

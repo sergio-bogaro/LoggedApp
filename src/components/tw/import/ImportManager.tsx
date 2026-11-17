@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { Fragment, memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useSearchParams } from "react-router";
+import { Link, useSearchParams } from "react-router";
 import { toast } from "sonner";
 
 import { TypeMark } from "@/components/tw/generic/badges";
@@ -585,6 +585,8 @@ function ImportManager() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const jobId = Number(searchParams.get("job")) || null;
+  const providerParam = searchParams.get("provider");
+  const usernameParam = searchParams.get("username");
 
   const { data: providers } = useQuery({
     queryKey: ["import", "providers"],
@@ -663,6 +665,15 @@ function ImportManager() {
     setStep(job.status === "done" && job.summary ? 3 : 2);
   }, [job]);
 
+  useEffect(() => {
+    if (!providerParam || providerId || !providers) return;
+    const match = providers.find((item) => item.id === providerParam);
+    if (match) {
+      handleSelectProvider(match);
+      if (usernameParam) setUsername(usernameParam);
+    }
+  }, [providerParam, providerId, providers, usernameParam]);
+
   const items = useMemo(
     () => itemsQuery.data?.pages.flatMap((page) => page.items) ?? [],
     [itemsQuery.data]
@@ -713,7 +724,9 @@ function ImportManager() {
 
   const handleSelectProvider = (item: ImportProviderInfo) => {
     setProviderId(item.id);
-    setMediaType(item.mediaTypes[0] ?? null);
+    setMediaType(
+      item.inputType === "connection" ? null : item.mediaTypes[0] ?? null
+    );
     setFile(null);
     setUsername("");
     setServerUrl("");
@@ -978,15 +991,26 @@ function ImportManager() {
                   </div>
                 )}
 
-                {provider.inputType === "username" && provider.mediaTypes.length > 1 && (
+                {(provider.inputType === "username" ||
+                  provider.inputType === "connection") &&
+                  provider.mediaTypes.length > 1 && (
                   <SelectBase
-                    value={mediaType ?? ""}
-                    onValueChange={(value) => setMediaType(value as MediaTypeEnum)}
+                    value={mediaType ?? "all"}
+                    onValueChange={(value) =>
+                      setMediaType(
+                        value === "all" ? null : (value as MediaTypeEnum)
+                      )
+                    }
                   >
                     <SelectTrigger size="sm" className="max-w-52">
                       <SelectValue placeholder={t("input.mediaTypeLabel")} />
                     </SelectTrigger>
                     <SelectContent>
+                      {provider.inputType === "connection" && (
+                        <SelectItem value="all">
+                          {t("input.allMediaTypes")}
+                        </SelectItem>
+                      )}
                       {provider.mediaTypes.map((type) => (
                         <SelectItem key={type} value={type}>
                           {t(`type.${type}`, { ns: "media" })}
@@ -996,7 +1020,17 @@ function ImportManager() {
                   </SelectBase>
                 )}
 
-                {provider.inputType === "file" ? (
+                {provider.inputType === "connection" ? (
+                  <div className="space-y-1.5 rounded-control border border-border p-3">
+                    <p className="text-step-1">{t("input.connectionHint")}</p>
+                    <Link
+                      to="/settings"
+                      className="inline-block text-step-1 text-primary underline-offset-4 hover:underline"
+                    >
+                      {t("input.configureConnection")}
+                    </Link>
+                  </div>
+                ) : provider.inputType === "file" ? (
                   <div className="space-y-1.5">
                     <label className="text-step-1" htmlFor="import-file">
                       {t("input.fileLabel")}

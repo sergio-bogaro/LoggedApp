@@ -9,6 +9,7 @@ import ThemeSwitcher from "@/components/ThemeSwitcher";
 import { PageHeader } from "@/components/tw/generic/PageHeader";
 import { SectionHeading } from "@/components/tw/generic/SectionHeading";
 import IntegrationKeysForm from "@/components/tw/settings/IntegrationKeysForm";
+import { LibrarySyncIntegrations } from "@/components/tw/settings/LibrarySyncIntegrations";
 import MediaTrackToggles from "@/components/tw/settings/MediaTrackToggles";
 import SuwayomiIntegration from "@/components/tw/settings/SuwayomiIntegration";
 import { Button } from "@/components/ui/button";
@@ -20,7 +21,7 @@ import { MediaTypeEnum } from "@/types/media";
 import { getTrackFlags } from "@/utils/mediaTrack";
 
 function SettingsPage() {
-  const { t } = useTranslation(["common", "suwayomi"]);
+  const { t } = useTranslation(["common", "suwayomi", "librarySync"]);
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
 
@@ -112,6 +113,14 @@ function SettingsPage() {
           </p>
 
           <SuwayomiIntegration />
+        </div>
+      </section>
+
+      <section className="space-y-4">
+        <SectionHeading>{t("title", { ns: "librarySync" })}</SectionHeading>
+
+        <div className="max-w-2xl">
+          <LibrarySyncIntegrations />
         </div>
       </section>
 

@@ -134,7 +134,10 @@
       "hint": "ou clique para escolher um arquivo",
       "remove": "Remover arquivo"
     },
-    "urlLabel": "URL do servidor"
+    "urlLabel": "URL do servidor",
+    "connectionHint": "Esta fonte usa a conexão configurada em Configurações > Integrações.",
+    "configureConnection": "Configurar conexão",
+    "allMediaTypes": "Todos os tipos"
   },
   "metadata": {
     "tmdb": "TMDB",
