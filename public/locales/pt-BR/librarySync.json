@@ -166,5 +166,24 @@
   },
   "clientId": "Client ID do MyAnimeList",
   "clientIdPlaceholder": "Client ID (opcional se configurado no servidor)",
-  "clientIdHint": "Crie um app em myanimelist.net/apiconfig. Usado apenas para ler listas públicas."
+  "clientIdHint": "Crie um app em myanimelist.net/apiconfig. Usado apenas para ler listas públicas.",
+  "global": {
+    "title": "Sincronização geral",
+    "description": "Uma frequência única para todos os provedores incluídos. Use os switches dos cards para tirar uma plataforma do sync geral.",
+    "enabled": "Sincronização automática",
+    "frequency": "Frequência",
+    "save": "Salvar",
+    "saved": "Configuração geral salva.",
+    "syncing": "Sincronizando tudo…",
+    "syncAll": "Sincronizar tudo ({{count}})",
+    "lastSync": "Última sync geral",
+    "nextSync": "Próxima sync geral",
+    "included": "{{count}} provedor(es) incluído(s)",
+    "syncDone": "Sincronização geral concluída — {{count}} provedor(es).",
+    "syncPartial": "{{ok}} sincronizado(s); {{failed}} falharam."
+  },
+  "includeInGlobal": "Incluir na sincronização geral",
+  "includeInGlobalHint": "Quando ativado, este provedor participa do botão e do agendamento geral.",
+  "included": "Incluído no sync geral",
+  "excluded": "Fora do sync geral"
 }

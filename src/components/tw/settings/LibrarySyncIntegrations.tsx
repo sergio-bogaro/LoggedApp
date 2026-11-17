@@ -35,12 +35,15 @@ import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import {
   deleteIntegration,
+  getGlobalSyncSettings,
   listIntegrationStatuses,
   listIntegrations,
   pollIntegrationOAuth,
+  saveGlobalSyncSettings,
   saveIntegrationConfig,
   saveIntegrationStatuses,
   startIntegrationOAuth,
+  syncAllIntegrations,
   syncIntegration,
   testIntegration,
 } from "@/querries/librarySync";
@@ -89,10 +92,20 @@ export function LibrarySyncIntegrations() {
     refetchOnWindowFocus: false,
   });
 
+  const { data: globalSettings, isLoading: globalLoading } = useQuery({
+    queryKey: ["global-sync-settings", user?.id],
+    queryFn: () => getGlobalSyncSettings(user!.id),
+    enabled: !!user,
+    refetchOnWindowFocus: false,
+  });
+
   const [selected, setSelected] = useState<string | null>(null);
   const [suwayomiOpen, setSuwayomiOpen] = useState(false);
   const [enabled, setEnabled] = useState(true);
-  const [updatesPerDay, setUpdatesPerDay] = useState("4");
+  const [globalEnabled, setGlobalEnabled] = useState(false);
+  const [globalUpdatesPerDay, setGlobalUpdatesPerDay] = useState("4");
+  const [savingGlobal, setSavingGlobal] = useState(false);
+  const [syncingAll, setSyncingAll] = useState(false);
   const [username, setUsername] = useState("");
   const [clientId, setClientId] = useState("");
   const [token, setToken] = useState("");
@@ -125,7 +138,6 @@ export function LibrarySyncIntegrations() {
   useEffect(() => {
     if (!current) return;
     setEnabled(current.enabled);
-    setUpdatesPerDay(String(current.updatesPerDay || 4));
     setUsername(current.username ?? "");
     setClientId(current.clientId ?? "");
     setToken("");
@@ -166,9 +178,16 @@ export function LibrarySyncIntegrations() {
   const actionLabel = (action: SyncAction) =>
     t(`actions.${action}`, { defaultValue: action });
 
+  useEffect(() => {
+    if (!globalSettings) return;
+    setGlobalEnabled(globalSettings.enabled);
+    setGlobalUpdatesPerDay(String(globalSettings.updatesPerDay ?? 4));
+  }, [globalSettings]);
+
   const refresh = async () => {
     await queryClient.invalidateQueries({ queryKey: ["integrations"] });
     await queryClient.invalidateQueries({ queryKey: ["integration-statuses"] });
+    await queryClient.invalidateQueries({ queryKey: ["global-sync-settings"] });
   };
 
   const refreshLibrary = async () => {
@@ -193,7 +212,6 @@ export function LibrarySyncIntegrations() {
       await saveIntegrationConfig(selected, {
         userId: user.id,
         enabled,
-        updatesPerDay: Number(updatesPerDay) || 4,
         username:
           current.authKind === "username" ? username.trim() || null : undefined,
         clientId: clientId.trim() || undefined,
@@ -241,6 +259,44 @@ export function LibrarySyncIntegrations() {
     }
   };
 
+  const handleSaveGlobal = async () => {
+    if (!user) return;
+    setSavingGlobal(true);
+    try {
+      await saveGlobalSyncSettings({
+        userId: user.id,
+        enabled: globalEnabled,
+        updatesPerDay: Number(globalUpdatesPerDay) || 4,
+      });
+      await refresh();
+      toast.success(t("global.saved"));
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : t("errors.save"));
+    } finally {
+      setSavingGlobal(false);
+    }
+  };
+
+  const handleSyncAll = async () => {
+    if (!user) return;
+    setSyncingAll(true);
+    try {
+      const result = await syncAllIntegrations(user.id);
+      await Promise.all([refresh(), refreshLibrary()]);
+      if (result.failed > 0) {
+        toast.warning(
+          t("global.syncPartial", { ok: result.ok, failed: result.failed })
+        );
+      } else {
+        toast.success(t("global.syncDone", { count: result.ok }));
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : t("errors.sync"));
+    } finally {
+      setSyncingAll(false);
+    }
+  };
+
   const handleOAuth = async () => {
     if (!user || !selected) return;
     try {
@@ -285,12 +341,114 @@ export function LibrarySyncIntegrations() {
     }
   };
 
+  const includedCount = useMemo(() => {
+    const generic = (data ?? []).filter(
+      (provider) => provider.connected && provider.enabled
+    ).length;
+    const suwayomi =
+      suwayomiConfig?.configured && suwayomiConfig.enabled ? 1 : 0;
+    return generic + suwayomi;
+  }, [data, suwayomiConfig]);
+
   const summary = current?.lastSyncSummary as Record<string, unknown> | null | undefined;
   const summaryNumber = (key: string) => Number(summary?.[key] ?? 0);
 
   return (
     <div className="space-y-4">
       <p className="text-step-1 text-muted-foreground">{t("description")}</p>
+
+      {globalLoading ? (
+        <Skeleton className="h-32 w-full" />
+      ) : (
+        <div className="space-y-3 rounded-control border border-border p-3">
+          <div className="flex flex-wrap items-start justify-between gap-2">
+            <div>
+              <p className="font-medium text-step-1">{t("global.title")}</p>
+              <p className="text-step-0 text-muted-foreground">
+                {t("global.description")}
+              </p>
+            </div>
+            <label className="flex items-center gap-2">
+              <Switch
+                checked={globalEnabled}
+                onCheckedChange={setGlobalEnabled}
+              />
+              <span className="text-step-1">{t("global.enabled")}</span>
+            </label>
+          </div>
+
+          <div className="flex flex-wrap items-end gap-3">
+            <div className="space-y-1">
+              <label className="text-step-1" htmlFor="global-sync-frequency">
+                {t("global.frequency")}
+              </label>
+              <SelectBase
+                value={globalUpdatesPerDay}
+                onValueChange={setGlobalUpdatesPerDay}
+              >
+                <SelectTrigger
+                  id="global-sync-frequency"
+                  size="sm"
+                  className="w-44"
+                >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {[1, 2, 4, 6, 8, 12, 24].map((value) => (
+                    <SelectItem key={value} value={String(value)}>
+                      {t("frequencyValue", { count: value })}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </SelectBase>
+            </div>
+
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={handleSaveGlobal}
+              disabled={savingGlobal}
+            >
+              {savingGlobal ? <Loader2 className="animate-spin" /> : <Check />}
+              {t("global.save")}
+            </Button>
+
+            <Button
+              type="button"
+              size="sm"
+              onClick={handleSyncAll}
+              disabled={syncingAll || includedCount === 0}
+            >
+              {syncingAll ? <Loader2 className="animate-spin" /> : <RefreshCw />}
+              {syncingAll
+                ? t("global.syncing")
+                : t("global.syncAll", { count: includedCount })}
+            </Button>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-step-0 text-muted-foreground">
+            <span>
+              {t("global.lastSync")}:{" "}
+              {formatDateTime(globalSettings?.lastSyncAt) ?? t("neverSynced")}
+            </span>
+            {globalSettings?.enabled && (
+              <span>
+                {t("global.nextSync")}:{" "}
+                {formatDateTime(globalSettings?.nextSyncAt) ?? t("neverSynced")}
+              </span>
+            )}
+            {globalSettings?.lastSyncStatus && (
+              <span>
+                {t(`status.${globalSettings.lastSyncStatus}`, {
+                  defaultValue: globalSettings.lastSyncStatus,
+                })}
+              </span>
+            )}
+            <span>{t("global.included", { count: includedCount })}</span>
+          </div>
+        </div>
+      )}
 
       {isLoading ? (
         <div className="grid gap-3 sm:grid-cols-2">
@@ -330,14 +488,26 @@ export function LibrarySyncIntegrations() {
             <p className="mt-2 text-step-0 text-muted-foreground">
               {suwayomiLoading
                 ? t("neverSynced")
-                : suwayomiConfig?.configured && suwayomiConfig.enabled
+                : suwayomiConfig?.configured
                   ? formatDateTime(suwayomiConfig.lastSyncAt)
                     ? t("lastSync", {
                       date: formatDateTime(suwayomiConfig.lastSyncAt),
                     })
                     : t("neverSynced")
-                  : t("disabled")}
+                  : t("notConnected")}
             </p>
+            {suwayomiConfig?.configured && (
+              <p
+                className={cn(
+                  "mt-1 text-step-0",
+                  suwayomiConfig.enabled
+                    ? "text-emerald-600 dark:text-emerald-400"
+                    : "text-muted-foreground"
+                )}
+              >
+                {t(suwayomiConfig.enabled ? "included" : "excluded")}
+              </p>
+            )}
           </button>
 
           {(data ?? []).map((provider) => {
@@ -380,12 +550,24 @@ export function LibrarySyncIntegrations() {
                   </span>
                 </div>
                 <p className="mt-2 text-step-0 text-muted-foreground">
-                  {provider.enabled && provider.connected
+                  {provider.connected
                     ? last
                       ? t("lastSync", { date: last })
                       : t("neverSynced")
-                    : t("disabled")}
+                    : t("notConnected")}
                 </p>
+                {provider.connected && (
+                  <p
+                    className={cn(
+                      "mt-1 text-step-0",
+                      provider.enabled
+                        ? "text-emerald-600 dark:text-emerald-400"
+                        : "text-muted-foreground"
+                    )}
+                  >
+                    {t(provider.enabled ? "included" : "excluded")}
+                  </p>
+                )}
                 {provider.needsReauth && (
                   <p className="mt-1 text-step-0 text-destructive">
                     {t("needsReauth")}
@@ -526,31 +708,14 @@ export function LibrarySyncIntegrations() {
                   </div>
                 )}
 
-                <div className="grid gap-3 sm:grid-cols-2">
+                <div className="space-y-1">
                   <label className="flex items-center gap-2">
                     <Switch checked={enabled} onCheckedChange={setEnabled} />
-                    <span className="text-step-1">{t("enabled")}</span>
+                    <span className="text-step-1">{t("includeInGlobal")}</span>
                   </label>
-                  <div className="space-y-1">
-                    <label className="text-step-1" htmlFor="sync-frequency">
-                      {t("frequency")}
-                    </label>
-                    <SelectBase
-                      value={updatesPerDay}
-                      onValueChange={setUpdatesPerDay}
-                    >
-                      <SelectTrigger id="sync-frequency" size="sm">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {[1, 2, 4, 6, 8, 12, 24].map((value) => (
-                          <SelectItem key={value} value={String(value)}>
-                            {t("frequencyValue", { count: value })}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </SelectBase>
-                  </div>
+                  <p className="text-step-0 text-muted-foreground">
+                    {t("includeInGlobalHint")}
+                  </p>
                 </div>
 
                 <div className="flex flex-wrap gap-2">

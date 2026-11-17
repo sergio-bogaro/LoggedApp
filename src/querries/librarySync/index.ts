@@ -2,6 +2,9 @@ import { parseApiError } from "@/lib/apiError";
 import { fetchWithTimeout } from "@/lib/fetchWithTimeout";
 import { API_BASE_URL } from "@/querries/apiBase";
 import type {
+  GlobalSyncConfigPayload,
+  GlobalSyncResponse,
+  GlobalSyncSettings,
   OAuthPollResponse,
   OAuthStartResponse,
   SyncAction,
@@ -40,6 +43,36 @@ async function apiFetch<T>(
 
 export async function listIntegrations(userId: number): Promise<SyncProviderInfo[]> {
   return apiFetch<SyncProviderInfo[]>(`/api/integrations?user_id=${userId}`);
+}
+
+export async function getGlobalSyncSettings(
+  userId: number
+): Promise<GlobalSyncSettings> {
+  return apiFetch<GlobalSyncSettings>(
+    `/api/integrations/global?user_id=${userId}`
+  );
+}
+
+export async function saveGlobalSyncSettings(
+  payload: GlobalSyncConfigPayload
+): Promise<GlobalSyncSettings> {
+  return apiFetch<GlobalSyncSettings>("/api/integrations/global", {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function syncAllIntegrations(
+  userId: number
+): Promise<GlobalSyncResponse> {
+  return apiFetch<GlobalSyncResponse>(
+    "/api/integrations/sync-all",
+    {
+      method: "POST",
+      body: JSON.stringify({ userId }),
+    },
+    15 * 60_000
+  );
 }
 
 export async function getIntegration(

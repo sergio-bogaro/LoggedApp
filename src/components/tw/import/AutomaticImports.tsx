@@ -118,7 +118,7 @@ function SuggestionRow({
         <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-step-0 text-muted-foreground">
           <span>
             {t(`providers.${suggestion.provider}.label`, {
-              ns: "import",
+              ns: "librarySync",
               defaultValue: suggestion.provider,
             })}
           </span>

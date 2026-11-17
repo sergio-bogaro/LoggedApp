@@ -22,7 +22,9 @@
     "syncError": "Sincronização concluída com erros",
     "importLibrary": "Importar biblioteca",
     "importHint": "Revise e importe os títulos que ainda faltam no Logged.",
-    "cancel": "Cancelar"
+    "cancel": "Cancelar",
+    "includeInGlobal": "Incluir na sincronização geral",
+    "includeInGlobalHint": "Quando ativado, o Suwayomi participa do botão e do agendamento geral."
   },
   "auth": {
     "label": "Autenticação",

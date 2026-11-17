@@ -110,7 +110,6 @@ function SuwayomiIntegration() {
 
   const [baseUrl, setBaseUrl] = useState("");
   const [enabled, setEnabled] = useState(true);
-  const [updatesPerDay, setUpdatesPerDay] = useState("4");
   const [authOpen, setAuthOpen] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -127,7 +126,6 @@ function SuwayomiIntegration() {
     if (initializedFor === user.id) return;
     setBaseUrl(config.baseUrl ?? "");
     setEnabled(config.enabled);
-    setUpdatesPerDay(String(config.updatesPerDay ?? 4));
     setUsername(config.username ?? "");
     setInitializedFor(user.id);
   }, [config, user, initializedFor]);
@@ -144,11 +142,6 @@ function SuwayomiIntegration() {
   const configured = config?.configured ?? false;
   const summary: SuwayomiSyncSummary | null = config?.lastSyncSummary ?? null;
   const language = i18n.resolvedLanguage ?? i18n.language;
-
-  const hours = useMemo(() => {
-    const perDay = Number(updatesPerDay) || 1;
-    return (24 / Math.min(Math.max(perDay, 1), 24)).toFixed(1);
-  }, [updatesPerDay]);
 
   const actionOptions = useMemo(
     () => [
@@ -195,19 +188,13 @@ function SuwayomiIntegration() {
       toast.error(t("errors.urlRequired"));
       return false;
     }
-    const perDay = Number(updatesPerDay);
-    if (!Number.isInteger(perDay) || perDay < 1 || perDay > 24) {
-      toast.error(t("errors.invalidTimes"));
-      return false;
-    }
-
     setSaving(true);
     try {
       await suwayomiApi.saveConfig({
         userId: user.id,
         baseUrl: url,
         enabled,
-        updatesPerDay: perDay,
+        updatesPerDay: config?.updatesPerDay ?? 4,
         ...extra,
       });
       await refresh();
@@ -372,40 +359,21 @@ function SuwayomiIntegration() {
           </Button>
         </div>
 
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+        <div className="space-y-1">
           <label className="flex items-center gap-2">
             <Switch checked={enabled} onCheckedChange={setEnabled} />
-            <span className="text-step-1">{t("connection.enabled")}</span>
+            <span className="text-step-1">{t("connection.includeInGlobal")}</span>
           </label>
-
-          <label className="flex items-center gap-2">
-            <span className="text-step-1">{t("connection.timesPerDay")}</span>
-            <Input
-              type="number"
-              min={1}
-              max={24}
-              name="suwayomi-updates-per-day"
-              value={updatesPerDay}
-              onChange={(event) => setUpdatesPerDay(event.target.value)}
-              className="w-20"
-            />
-          </label>
+          <p className="text-step-0 text-muted-foreground">
+            {t("connection.includeInGlobalHint")}
+          </p>
         </div>
-        <p className="text-step-0 text-muted-foreground">
-          {t("connection.timesHint", { hours })}
-        </p>
 
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-step-0 text-muted-foreground">
           <span>
             {t("connection.lastSync")}:{" "}
             {formatDateTime(config?.lastSyncAt, language) ?? t("connection.never")}
           </span>
-          {config?.enabled && (
-            <span>
-              {t("connection.nextSync")}:{" "}
-              {formatDateTime(config?.nextSyncAt, language) ?? t("connection.never")}
-            </span>
-          )}
           {config?.lastSyncStatus && (
             <span>
               {t(`syncStatus.${config.lastSyncStatus}`, {

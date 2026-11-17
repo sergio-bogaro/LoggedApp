@@ -22,7 +22,9 @@
     "syncError": "Sync finished with errors",
     "importLibrary": "Import library",
     "importHint": "Review and import the titles that are missing from Logged.",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "includeInGlobal": "Include in global sync",
+    "includeInGlobalHint": "When enabled, Suwayomi takes part in the global button and schedule."
   },
   "auth": {
     "label": "Authentication",

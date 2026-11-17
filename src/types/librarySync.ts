@@ -46,11 +46,40 @@ export interface SyncStatusesResponse {
 export interface SyncConfigPayload {
   userId: number;
   enabled: boolean;
-  updatesPerDay: number;
+  updatesPerDay?: number;
   username?: string | null;
   token?: string | null;
   clientId?: string | null;
   clearAuth?: boolean;
+}
+
+export interface GlobalSyncSettings {
+  enabled: boolean;
+  updatesPerDay: number;
+  lastSyncAt?: string | null;
+  lastSyncStatus?: string | null;
+  lastSyncSummary?: Record<string, unknown> | null;
+  nextSyncAt?: string | null;
+}
+
+export interface GlobalSyncConfigPayload {
+  userId: number;
+  enabled: boolean;
+  updatesPerDay: number;
+}
+
+export interface GlobalSyncResultItem {
+  provider: string;
+  status: string;
+  summary?: Record<string, unknown> | null;
+  error?: string | null;
+}
+
+export interface GlobalSyncResponse {
+  status: string;
+  results: GlobalSyncResultItem[];
+  ok: number;
+  failed: number;
 }
 
 export interface OAuthStartResponse {

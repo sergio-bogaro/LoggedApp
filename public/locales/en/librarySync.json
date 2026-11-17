@@ -166,5 +166,24 @@
   },
   "clientId": "MyAnimeList Client ID",
   "clientIdPlaceholder": "Client ID (optional if set on the server)",
-  "clientIdHint": "Create an app at myanimelist.net/apiconfig. Used only to read public lists."
+  "clientIdHint": "Create an app at myanimelist.net/apiconfig. Used only to read public lists.",
+  "global": {
+    "title": "Global sync",
+    "description": "One schedule for every included provider. Use the card switches to exclude a platform from the global sync.",
+    "enabled": "Automatic sync",
+    "frequency": "Frequency",
+    "save": "Save",
+    "saved": "Global settings saved.",
+    "syncing": "Syncing everything…",
+    "syncAll": "Sync all ({{count}})",
+    "lastSync": "Last global sync",
+    "nextSync": "Next global sync",
+    "included": "{{count}} provider(s) included",
+    "syncDone": "Global sync finished — {{count}} provider(s).",
+    "syncPartial": "{{ok}} synced; {{failed}} failed."
+  },
+  "includeInGlobal": "Include in global sync",
+  "includeInGlobalHint": "When enabled, this provider takes part in the global button and schedule.",
+  "included": "Included in global sync",
+  "excluded": "Excluded from global sync"
 }
