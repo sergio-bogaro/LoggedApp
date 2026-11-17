@@ -120,8 +120,11 @@ export interface SyncSuggestion {
   review?: string | null;
   watchedDate?: string | null;
   candidate?: ImportCandidate | null;
+  candidates: ImportCandidate[];
   sourceUrl?: string | null;
   reviewState: SyncSuggestionState;
+  origin: "auto" | "review" | string;
+  syncRunAt?: string | null;
   mediaId?: number | null;
   error?: string | null;
   createdAt?: string | null;
@@ -132,12 +135,16 @@ export interface SyncSuggestionCounts {
   pending: number;
   approved: number;
   dismissed: number;
+  attention: number;
+  noMatch: number;
+  lastSync: number;
 }
 
 export interface SyncSuggestionsResponse {
   items: SyncSuggestion[];
   total: number;
   counts: SyncSuggestionCounts;
+  lastSyncAt?: string | null;
 }
 
 export interface SyncSuggestionCountResponse {

@@ -321,7 +321,23 @@
     "noMatchCandidates": "Nenhum candidato encontrado.",
     "selectMatch": "Usar este",
     "matchSaved": "Match salvo. Agora você pode adicionar o título.",
-    "matchError": "Não foi possível salvar o match."
+    "matchError": "Não foi possível salvar o match.",
+    "autoOrigin": "Automático",
+    "reviewOrigin": "Aprovado",
+    "chooseMatch": "Selecionar candidato",
+    "lastSyncAt": "Último sync: {{date}}",
+    "emptyHistory": "Nenhum item no histórico.",
+    "dismissedState": "Ignorado",
+    "filters": {
+      "label": "Filtro",
+      "all": "Todos",
+      "validated": "Validados",
+      "lastSync": "Último sync",
+      "attention": "Atenção",
+      "noMatch": "Sem match",
+      "dismissed": "Ignorados"
+    },
+    "loadMore": "Carregar mais"
   },
   "supported": "Letterboxd, AniList, MyAnimeList, Goodreads, Trakt, IMDb e Grouvee"
 }

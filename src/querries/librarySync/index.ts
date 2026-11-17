@@ -170,12 +170,19 @@ export async function deleteIntegration(
 
 export async function listSyncSuggestions(
   userId: number,
-  params?: { state?: SyncSuggestionState; provider?: string; limit?: number; offset?: number }
+  params?: {
+    state?: SyncSuggestionState | "all";
+    provider?: string;
+    lastSync?: boolean;
+    limit?: number;
+    offset?: number;
+  }
 ): Promise<SyncSuggestionsResponse> {
   const query = new URLSearchParams();
   query.set("user_id", String(userId));
   if (params?.state) query.set("state", params.state);
   if (params?.provider) query.set("provider", params.provider);
+  if (params?.lastSync) query.set("last_sync", "true");
   if (params?.limit !== undefined) query.set("limit", String(params.limit));
   if (params?.offset !== undefined) query.set("offset", String(params.offset));
   return apiFetch<SyncSuggestionsResponse>(

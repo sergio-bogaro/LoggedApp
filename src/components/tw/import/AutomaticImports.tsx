@@ -12,6 +12,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
+import { ImportMatchMark, ImportOutcomeMark } from "@/components/tw/import/ImportStatusMark";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -21,8 +22,18 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import {
+  SelectBase,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useSyncSuggestions } from "@/hooks/useSyncSuggestions";
+import {
+  type SyncSuggestionFilter,
+  useSyncSuggestions,
+} from "@/hooks/useSyncSuggestions";
 import { cn } from "@/lib/utils";
 import { searchImportCandidates } from "@/querries/import";
 import {
@@ -32,7 +43,7 @@ import {
 } from "@/querries/librarySync";
 import { useAppSelector } from "@/store/auth/hooks";
 import type { ImportCandidate } from "@/types/import";
-import type { SyncSuggestion, SyncSuggestionState } from "@/types/librarySync";
+import type { SyncSuggestion } from "@/types/librarySync";
 import { metadataProviderKey, metadataUrl } from "@/utils/importLinks";
 
 function formatDate(value?: string | null): string | null {
@@ -176,6 +187,7 @@ function SuggestionRow({
   selectable,
   busy,
   onToggle,
+  onSelectCandidate,
   onFindMatch,
   onDismiss,
   onRestore,
@@ -185,13 +197,22 @@ function SuggestionRow({
   selectable: boolean;
   busy: boolean;
   onToggle: () => void;
+  onSelectCandidate: (candidate: ImportCandidate) => void;
   onFindMatch: () => void;
   onDismiss: () => void;
   onRestore: () => void;
 }) {
   const { t } = useTranslation(["import", "librarySync", "media"]);
   const pending = suggestion.reviewState === "pending";
+  const approved = suggestion.reviewState === "approved";
   const cover = suggestion.candidate?.coverUrl;
+  const candidates =
+    suggestion.candidates.length > 0
+      ? suggestion.candidates
+      : suggestion.candidate
+        ? [suggestion.candidate]
+        : [];
+  const matchStatus = suggestion.candidate ? "ambiguous" : "not_found";
   const target =
     suggestion.action === "backlog"
       ? t("actions.backlog", { ns: "librarySync" })
@@ -262,6 +283,27 @@ function SuggestionRow({
           ) : null}
         </p>
 
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+          {pending && <ImportMatchMark status={matchStatus} />}
+          {approved && (
+            <>
+              <ImportOutcomeMark outcome="imported" />
+              <span className="text-step-0 text-muted-foreground">
+                {t(
+                  suggestion.origin === "auto"
+                    ? "automatic.autoOrigin"
+                    : "automatic.reviewOrigin"
+                )}
+              </span>
+            </>
+          )}
+          {!pending && !approved && (
+            <span className="text-step-0 text-muted-foreground">
+              {t("automatic.dismissedState")}
+            </span>
+          )}
+        </div>
+
         <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-step-0 text-muted-foreground">
           <span>
             {t(`providers.${suggestion.provider}.label`, {
@@ -314,6 +356,32 @@ function SuggestionRow({
             </a>
           )}
         </div>
+
+        {pending && candidates.length > 0 && (
+          <SelectBase
+            value={suggestion.candidate?.externalId ?? ""}
+            onValueChange={(value) => {
+              const candidate = candidates.find(
+                (item) => item.externalId === value
+              );
+              if (candidate) onSelectCandidate(candidate);
+            }}
+          >
+            <SelectTrigger size="sm" className="max-w-72">
+              <SelectValue placeholder={t("automatic.chooseMatch")} />
+            </SelectTrigger>
+            <SelectContent>
+              {candidates.map((candidate) => (
+                <SelectItem
+                  key={candidate.externalId}
+                  value={candidate.externalId}
+                >
+                  {candidate.title} ({candidate.year ?? "—"})
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </SelectBase>
+        )}
       </div>
 
       <div className="flex shrink-0 flex-col items-end gap-1">
@@ -333,22 +401,24 @@ function SuggestionRow({
             )}
           </Button>
         )}
-        <Button
-          type="button"
-          size="xs"
-          variant="outline"
-          onClick={pending ? onDismiss : onRestore}
-          disabled={busy}
-        >
-          {busy ? (
-            <Loader2 className="animate-spin" />
-          ) : pending ? (
-            <SkipForward />
-          ) : (
-            <RotateCcw />
-          )}
-          {t(pending ? "automatic.dismiss" : "automatic.restore")}
-        </Button>
+        {!approved && (
+          <Button
+            type="button"
+            size="xs"
+            variant="outline"
+            onClick={pending ? onDismiss : onRestore}
+            disabled={busy}
+          >
+            {busy ? (
+              <Loader2 className="animate-spin" />
+            ) : pending ? (
+              <SkipForward />
+            ) : (
+              <RotateCcw />
+            )}
+            {t(pending ? "automatic.dismiss" : "automatic.restore")}
+          </Button>
+        )}
       </div>
     </div>
   );
@@ -359,7 +429,7 @@ export function AutomaticImports({ provider }: { provider?: string }) {
   const { user } = useAppSelector((state) => state.auth);
   const queryClient = useQueryClient();
 
-  const [state, setState] = useState<SyncSuggestionState>("pending");
+  const [filter, setFilter] = useState<SyncSuggestionFilter>("all");
   const [deselected, setDeselected] = useState<Set<number>>(new Set());
   const [approving, setApproving] = useState(false);
   const [rowBusy, setRowBusy] = useState<number | null>(null);
@@ -368,12 +438,17 @@ export function AutomaticImports({ provider }: { provider?: string }) {
   );
   const [savingMatch, setSavingMatch] = useState(false);
 
-  const { data, isLoading } = useSyncSuggestions(user?.id, state, provider);
-  const items = data?.items ?? [];
+  const suggestionsQuery = useSyncSuggestions(user?.id, filter, provider);
+  const data = suggestionsQuery.data?.pages[0];
+  const allItems = useMemo(
+    () => suggestionsQuery.data?.pages.flatMap((page) => page.items) ?? [],
+    [suggestionsQuery.data]
+  );
   const counts = data?.counts;
+  const isLoading = suggestionsQuery.isLoading;
   const pendingItems = useMemo(
-    () => items.filter((item) => item.reviewState === "pending"),
-    [items]
+    () => allItems.filter((item) => item.reviewState === "pending"),
+    [allItems]
   );
   const attentionItems = useMemo(
     () => pendingItems.filter((item) => Boolean(item.candidate)),
@@ -383,6 +458,15 @@ export function AutomaticImports({ provider }: { provider?: string }) {
     () => pendingItems.filter((item) => !item.candidate),
     [pendingItems]
   );
+  const items = useMemo(
+    () =>
+      filter === "attention"
+        ? attentionItems
+        : filter === "no_match"
+          ? noMatchItems
+          : allItems,
+    [filter, attentionItems, noMatchItems, allItems]
+  );
   const selectedIds = useMemo(
     () =>
       attentionItems
@@ -391,9 +475,30 @@ export function AutomaticImports({ provider }: { provider?: string }) {
     [attentionItems, deselected]
   );
 
+  const filterCounts: Record<SyncSuggestionFilter, number> = {
+    all:
+      (counts?.pending ?? 0) +
+      (counts?.approved ?? 0) +
+      (counts?.dismissed ?? 0),
+    validated: counts?.approved ?? 0,
+    last_sync: counts?.lastSync ?? 0,
+    attention: counts?.attention ?? 0,
+    no_match: counts?.noMatch ?? 0,
+    dismissed: counts?.dismissed ?? 0,
+  };
+
+  const filterOptions: { value: SyncSuggestionFilter; labelKey: string }[] = [
+    { value: "all", labelKey: "automatic.filters.all" },
+    { value: "validated", labelKey: "automatic.filters.validated" },
+    { value: "last_sync", labelKey: "automatic.filters.lastSync" },
+    { value: "attention", labelKey: "automatic.filters.attention" },
+    { value: "no_match", labelKey: "automatic.filters.noMatch" },
+    { value: "dismissed", labelKey: "automatic.filters.dismissed" },
+  ];
+
   useEffect(() => {
     setDeselected(new Set());
-  }, [state, provider]);
+  }, [filter, provider]);
 
   const invalidate = async () => {
     await Promise.all([
@@ -493,6 +598,9 @@ export function AutomaticImports({ provider }: { provider?: string }) {
       selectable={selectable}
       busy={rowBusy === suggestion.id}
       onToggle={() => toggle(suggestion.id)}
+      onSelectCandidate={(candidate) =>
+        void handleSaveMatch(suggestion, candidate)
+      }
       onFindMatch={() => setMatchSuggestion(suggestion)}
       onDismiss={() => void handleState(suggestion, "dismissed")}
       onRestore={() => void handleState(suggestion, "pending")}
@@ -509,31 +617,40 @@ export function AutomaticImports({ provider }: { provider?: string }) {
           </p>
         </div>
 
-        <div className="flex rounded-control border border-border p-0.5">
-          {(["pending", "dismissed"] as const).map((value) => (
-            <button
-              key={value}
-              type="button"
-              aria-pressed={state === value}
-              onClick={() => setState(value)}
-              className={cn(
-                "rounded-[calc(var(--radius-control)-2px)] px-2 py-1 text-step-0",
-                state === value
-                  ? "bg-accent text-accent-foreground"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              {t(value === "pending" ? "automatic.tabPending" : "automatic.tabDismissed")}
-              {value === "pending" && counts?.pending
-                ? ` (${counts.pending})`
-                : ""}
-              {value === "dismissed" && counts?.dismissed
-                ? ` (${counts.dismissed})`
-                : ""}
-            </button>
-          ))}
+        <div className="flex flex-col gap-1">
+          <label className="text-step-0 text-muted-foreground" htmlFor="suggestion-filter">
+            {t("automatic.filters.label")}
+          </label>
+          <SelectBase
+            value={filter}
+            onValueChange={(value) =>
+              setFilter(value as SyncSuggestionFilter)
+            }
+          >
+            <SelectTrigger size="sm" id="suggestion-filter" className="w-56">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {filterOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {t(option.labelKey)}
+                  <span className="ml-1 tabular-nums text-muted-foreground">
+                    ({filterCounts[option.value]})
+                  </span>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </SelectBase>
         </div>
       </div>
+
+      {filter === "last_sync" && data?.lastSyncAt && (
+        <p className="text-step-0 text-muted-foreground">
+          {t("automatic.lastSyncAt", {
+            date: formatDate(data.lastSyncAt),
+          })}
+        </p>
+      )}
 
       {isLoading ? (
         <Skeleton className="h-24 w-full" />
@@ -541,9 +658,11 @@ export function AutomaticImports({ provider }: { provider?: string }) {
         <div className="rounded-control border border-dashed border-border p-6 text-center">
           <p className="text-step-1 font-medium">
             {t(
-              state === "pending"
-                ? "automatic.emptyPending"
-                : "automatic.emptyDismissed"
+              filter === "dismissed"
+                ? "automatic.emptyDismissed"
+                : filter === "validated" || filter === "last_sync"
+                  ? "automatic.emptyHistory"
+                  : "automatic.emptyPending"
             )}
           </p>
           <p className="mt-1 text-step-0 text-muted-foreground">
@@ -552,96 +671,76 @@ export function AutomaticImports({ provider }: { provider?: string }) {
         </div>
       ) : (
         <>
-          {state === "pending" ? (
-            <>
-              {attentionItems.length > 0 && (
-                <div className="flex flex-wrap items-center gap-2">
-                  <p className="text-step-0 text-muted-foreground">
-                    {t("automatic.selected", { count: selectedIds.length })}
-                  </p>
-                  <Button
-                    type="button"
-                    size="xs"
-                    variant="outline"
-                    onClick={() => setDeselected(new Set())}
-                    disabled={selectedIds.length === attentionItems.length}
-                  >
-                    {t("automatic.selectAll")}
-                  </Button>
-                  <Button
-                    type="button"
-                    size="xs"
-                    variant="outline"
-                    onClick={() =>
-                      setDeselected(
-                        new Set(attentionItems.map((item) => item.id))
-                      )
-                    }
-                    disabled={selectedIds.length === 0}
-                  >
-                    {t("automatic.clearSelection")}
-                  </Button>
-                  <Button
-                    type="button"
-                    size="sm"
-                    className="ml-auto"
-                    onClick={handleApprove}
-                    disabled={approving || selectedIds.length === 0}
-                  >
-                    {approving ? (
-                      <Loader2 className="animate-spin" />
-                    ) : (
-                      <Plus />
-                    )}
-                    {approving
-                      ? t("automatic.approving")
-                      : t("automatic.approve", { count: selectedIds.length })}
-                  </Button>
-                </div>
-              )}
-
-              {attentionItems.length > 0 && (
-                <section className="space-y-2">
-                  <div>
-                    <h3 className="text-step-1 font-medium">
-                      {t("automatic.needsAttention", {
-                        count: attentionItems.length,
-                      })}
-                    </h3>
-                    <p className="text-step-0 text-muted-foreground">
-                      {t("automatic.needsAttentionHint")}
-                    </p>
-                  </div>
-                  <div className="rounded-control border border-border">
-                    {attentionItems.map((suggestion) =>
-                      renderRow(suggestion, true)
-                    )}
-                  </div>
-                </section>
-              )}
-
-              {noMatchItems.length > 0 && (
-                <section className="space-y-2">
-                  <div>
-                    <h3 className="text-step-1 font-medium">
-                      {t("automatic.noMatch", { count: noMatchItems.length })}
-                    </h3>
-                    <p className="text-step-0 text-muted-foreground">
-                      {t("automatic.noMatchHint")}
-                    </p>
-                  </div>
-                  <div className="rounded-control border border-border">
-                    {noMatchItems.map((suggestion) =>
-                      renderRow(suggestion, false)
-                    )}
-                  </div>
-                </section>
-              )}
-            </>
-          ) : (
-            <div className="rounded-control border border-border">
-              {items.map((suggestion) => renderRow(suggestion, false))}
+          {attentionItems.length > 0 &&
+            (filter === "all" || filter === "attention") && (
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="text-step-0 text-muted-foreground">
+                {t("automatic.selected", { count: selectedIds.length })}
+              </p>
+              <Button
+                type="button"
+                size="xs"
+                variant="outline"
+                onClick={() => setDeselected(new Set())}
+                disabled={selectedIds.length === attentionItems.length}
+              >
+                {t("automatic.selectAll")}
+              </Button>
+              <Button
+                type="button"
+                size="xs"
+                variant="outline"
+                onClick={() =>
+                  setDeselected(
+                    new Set(attentionItems.map((item) => item.id))
+                  )
+                }
+                disabled={selectedIds.length === 0}
+              >
+                {t("automatic.clearSelection")}
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                className="ml-auto"
+                onClick={handleApprove}
+                disabled={approving || selectedIds.length === 0}
+              >
+                {approving ? (
+                  <Loader2 className="animate-spin" />
+                ) : (
+                  <Plus />
+                )}
+                {approving
+                  ? t("automatic.approving")
+                  : t("automatic.approve", { count: selectedIds.length })}
+              </Button>
             </div>
+          )}
+
+          <div className="rounded-control border border-border">
+            {items.map((suggestion) =>
+              renderRow(
+                suggestion,
+                suggestion.reviewState === "pending" &&
+                  Boolean(suggestion.candidate)
+              )
+            )}
+          </div>
+
+          {suggestionsQuery.hasNextPage && (
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={() => void suggestionsQuery.fetchNextPage()}
+              disabled={suggestionsQuery.isFetchingNextPage}
+            >
+              {suggestionsQuery.isFetchingNextPage && (
+                <Loader2 className="animate-spin" />
+              )}
+              {t("automatic.loadMore")}
+            </Button>
           )}
         </>
       )}
