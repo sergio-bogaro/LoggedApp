@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { toast } from "sonner";
 
+import { SuwayomiLinks } from "@/components/tw/settings/SuwayomiLinks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -533,6 +534,12 @@ function SuwayomiIntegration() {
               label={t("summary.stats.datedItems")}
               value={summary.datedItems ?? 0}
             />
+            {(summary.ignoredSkipped ?? 0) > 0 && (
+              <SummaryStat
+                label={t("summary.stats.ignoredSkipped")}
+                value={summary.ignoredSkipped ?? 0}
+              />
+            )}
           </div>
 
           {summary.changes && summary.changes.length > 0 && (
@@ -577,6 +584,8 @@ function SuwayomiIntegration() {
 
       {configured && (
         <div className="space-y-3">
+          <SuwayomiLinks />
+
           <div>
             <p className="font-medium text-step-1">{t("categories.title")}</p>
             <p className="text-step-0 text-muted-foreground">

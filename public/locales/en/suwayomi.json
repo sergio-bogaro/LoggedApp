@@ -67,7 +67,7 @@
     "unmatchedTitle": "Pending matches",
     "removedTitle": "No longer in the library",
     "errorsTitle": "Errors",
-    "unmatchedHint": "Resolve these titles on the Import page.",
+    "unmatchedHint": "Resolve them in the pending links list below.",
     "from": "from",
     "to": "to",
     "stats": {
@@ -76,7 +76,8 @@
       "backlogAdded": "Added to backlog",
       "backlogRemoved": "Removed from backlog",
       "logsCreated": "Logs created",
-      "datedItems": "Items with date"
+      "datedItems": "Items with date",
+      "ignoredSkipped": "Ignored"
     },
     "pendingResolvedTitle": "Resolved pending links ({{count}})"
   },
@@ -86,11 +87,34 @@
     "test": "Could not connect to Suwayomi.",
     "load": "Could not load the Suwayomi settings.",
     "sync": "Could not sync with Suwayomi.",
-    "save": "Could not save the Suwayomi settings."
+    "save": "Could not save the Suwayomi settings.",
+    "linkUpdate": "Could not update the link."
   },
   "syncStatus": {
     "ok": "Completed",
     "partial": "Completed with pending items",
     "error": "Failed"
+  },
+  "links": {
+    "title": "Pending links",
+    "description": "Titles the sync could not link automatically. You can link one to an existing manga or ignore it.",
+    "tabPending": "Pending",
+    "tabIgnored": "Ignored",
+    "emptyPending": "No pending links.",
+    "emptyIgnored": "No ignored titles.",
+    "pendingHint": "The sync retries this title automatically.",
+    "ignoredHint": "Ignored: the sync will not create or retry this title.",
+    "attempts": "{{count}} attempts",
+    "link": "Link",
+    "select": "Select",
+    "ignore": "Ignore",
+    "restore": "Restore",
+    "searchPlaceholder": "Search a manga in Logged…",
+    "searchHint": "Type at least 2 characters.",
+    "searching": "Searching…",
+    "noResults": "No manga found.",
+    "linked": "Link created; the next sync applies the category.",
+    "ignored": "Title ignored; the sync will not retry it.",
+    "restored": "Title restored; the sync will try it again."
   }
 }

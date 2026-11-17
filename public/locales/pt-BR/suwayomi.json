@@ -67,7 +67,7 @@
     "unmatchedTitle": "Pendentes de match",
     "removedTitle": "Não estão mais na biblioteca",
     "errorsTitle": "Erros",
-    "unmatchedHint": "Resolva esses títulos na página Importar.",
+    "unmatchedHint": "Resolva na lista de vínculos pendentes abaixo.",
     "from": "de",
     "to": "para",
     "stats": {
@@ -76,7 +76,8 @@
       "backlogAdded": "Adicionados ao backlog",
       "backlogRemoved": "Removidos do backlog",
       "logsCreated": "Logs criados",
-      "datedItems": "Itens com data"
+      "datedItems": "Itens com data",
+      "ignoredSkipped": "Ignorados"
     },
     "pendingResolvedTitle": "Vínculos pendentes resolvidos ({{count}})"
   },
@@ -86,11 +87,34 @@
     "test": "Não foi possível conectar ao Suwayomi.",
     "load": "Não foi possível carregar as configurações do Suwayomi.",
     "sync": "Não foi possível sincronizar com o Suwayomi.",
-    "save": "Não foi possível salvar as configurações do Suwayomi."
+    "save": "Não foi possível salvar as configurações do Suwayomi.",
+    "linkUpdate": "Não foi possível atualizar o vínculo."
   },
   "syncStatus": {
     "ok": "Concluída",
     "partial": "Concluída com pendências",
     "error": "Falhou"
+  },
+  "links": {
+    "title": "Vínculos pendentes",
+    "description": "Títulos que a sincronização não conseguiu vincular. Você pode vincular a um mangá existente ou ignorar.",
+    "tabPending": "Pendentes",
+    "tabIgnored": "Ignorados",
+    "emptyPending": "Nenhum vínculo pendente.",
+    "emptyIgnored": "Nenhum título ignorado.",
+    "pendingHint": "A sincronização tenta este título automaticamente.",
+    "ignoredHint": "Ignorado: a sincronização não cria nem tenta este título.",
+    "attempts": "{{count}} tentativas",
+    "link": "Vincular",
+    "select": "Selecionar",
+    "ignore": "Ignorar",
+    "restore": "Restaurar",
+    "searchPlaceholder": "Buscar mangá no Logged…",
+    "searchHint": "Digite ao menos 2 caracteres.",
+    "searching": "Buscando…",
+    "noResults": "Nenhum mangá encontrado.",
+    "linked": "Vínculo criado; a próxima sincronização aplica a categoria.",
+    "ignored": "Título ignorado; a sincronização não vai mais tentar.",
+    "restored": "Título restaurado; a sincronização vai tentar novamente."
   }
 }

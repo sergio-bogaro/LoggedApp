@@ -6,6 +6,9 @@ import type {
   SuwayomiCategoryPayload,
   SuwayomiConfig,
   SuwayomiConfigPayload,
+  SuwayomiLink,
+  SuwayomiLinkStatus,
+  SuwayomiLinkUpdate,
   SuwayomiSyncResponse,
   SuwayomiTestResponse,
 } from "@/types/suwayomi";
@@ -81,5 +84,22 @@ export const suwayomiApi = {
       { method: "POST" },
       300_000
     );
+  },
+
+  getLinks(userId: number, status: SuwayomiLinkStatus = "pending"): Promise<SuwayomiLink[]> {
+    return apiFetch<SuwayomiLink[]>(
+      `/api/suwayomi/links?user_id=${userId}&status=${status}`
+    );
+  },
+
+  updateLink(
+    userId: number,
+    linkId: number,
+    data: SuwayomiLinkUpdate
+  ): Promise<SuwayomiLink> {
+    return apiFetch<SuwayomiLink>(`/api/suwayomi/links/${linkId}?user_id=${userId}`, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    });
   },
 };

@@ -26,6 +26,7 @@ export interface SuwayomiSyncSummary {
   backlogRemoved?: number;
   logsCreated?: number;
   datedItems?: number;
+  ignoredSkipped?: number;
   unmatched?: { title: string; reason?: string }[];
   removed?: string[];
   pendingResolved?: string[];
@@ -90,4 +91,23 @@ export interface SuwayomiTestResponse {
 export interface SuwayomiSyncResponse {
   status: string;
   summary: SuwayomiSyncSummary;
+}
+
+export type SuwayomiLinkStatus = "pending" | "ignored" | "all";
+
+export interface SuwayomiLink {
+  id: number;
+  suwayomiMangaId: number;
+  mediaId?: number | null;
+  title: string;
+  ignored: boolean;
+  matchError?: string | null;
+  matchAttempts: number;
+  lastMatchAttemptAt?: string | null;
+  lastSeenAt?: string | null;
+}
+
+export interface SuwayomiLinkUpdate {
+  mediaId?: number;
+  ignored?: boolean;
 }
