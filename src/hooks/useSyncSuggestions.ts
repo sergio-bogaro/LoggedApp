@@ -12,7 +12,8 @@ export function useSyncSuggestionCount(userId?: number, provider?: string) {
     queryKey: ["sync-suggestions", "count", userId, provider ?? "all"],
     queryFn: () => countSyncSuggestions(userId!, provider),
     enabled: !!userId,
-    refetchInterval: 10_000,
+    refetchInterval: 60_000,
+    refetchIntervalInBackground: false,
     refetchOnWindowFocus: true,
   });
 }

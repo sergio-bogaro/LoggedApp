@@ -1095,7 +1095,7 @@ function ImportManager() {
             )}
 
             <RecentJobs
-              jobs={jobs ?? []}
+              jobs={jobs?.slice(0, 20) ?? []}
               currentJobId={jobId}
               onOpen={handleOpenJob}
               onCancel={(selectedJob) =>

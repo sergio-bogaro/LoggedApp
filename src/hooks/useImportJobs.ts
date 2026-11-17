@@ -1,4 +1,5 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 
 import {
   getImportJob,
@@ -17,24 +18,43 @@ export function isActiveJobStatus(status?: ImportJobStatus | null): boolean {
   return !!status && ACTIVE_JOB_STATUSES.includes(status);
 }
 
-/** Jobs prontos para revisão; alimenta o badge e os avisos globais. */
+export const IMPORT_JOBS_LIMIT = 50;
+
+/**
+ * Jobs prontos para revisão; alimenta o badge e os avisos globais.
+ *
+ * Usa a mesma lista recente da página Importar para não manter duas consultas
+ * concorrentes. O polling só existe enquanto a lista tem job ativo.
+ */
 export function useReadyImportJobs(userId?: number) {
-  return useQuery({
-    queryKey: ["import-jobs", "ready", userId],
-    queryFn: () => listImportJobs(userId!, "ready", 50),
-    enabled: !!userId,
-    refetchInterval: 10_000,
-    refetchOnWindowFocus: true,
-  });
+  const query = useImportJobs(userId);
+  const data = useMemo(
+    () => query.data?.filter((job) => job.status === "ready"),
+    [query.data]
+  );
+  return { ...query, data };
 }
 
-/** Lista de importações recentes da página Importar. */
-export function useImportJobs(userId?: number, limit = 20) {
+/**
+ * Lista de importações recentes.
+ *
+ * O endpoint só é consultado periodicamente enquanto existe job em
+ * queued/parsing/matching. Sem trabalho ativo, sobra apenas o refetch ao
+ * focar a janela ou uma invalidação explícita.
+ */
+export function useImportJobs(
+  userId?: number,
+  limit = IMPORT_JOBS_LIMIT
+) {
   return useQuery({
     queryKey: ["import-jobs", "list", userId, limit],
     queryFn: () => listImportJobs(userId!, undefined, limit),
     enabled: !!userId,
-    refetchInterval: 5_000,
+    refetchInterval: (query) => {
+      const jobs = query.state.data;
+      return jobs?.some((job) => isActiveJobStatus(job.status)) ? 5_000 : false;
+    },
+    refetchIntervalInBackground: false,
     refetchOnWindowFocus: true,
   });
 }
