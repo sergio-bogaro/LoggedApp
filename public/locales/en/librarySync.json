@@ -77,6 +77,12 @@
     "failed": "Failed",
     "syncing": "Syncing"
   },
+  "groups": {
+    "configured": "Configured",
+    "pending": "Missing setup",
+    "noneConfigured": "No integration configured yet.",
+    "allConfigured": "All integrations are configured."
+  },
   "providers": {
     "anilist": {
       "label": "AniList",
@@ -169,7 +175,7 @@
   "clientIdHint": "Create an app at myanimelist.net/apiconfig. Used only to read public lists.",
   "global": {
     "title": "Global sync",
-    "description": "One schedule for every included provider. Use the card switches to exclude a platform from the global sync.",
+    "description": "One start time and frequency for every included provider. Use the card switches to exclude a platform from the global sync.",
     "enabled": "Automatic sync",
     "frequency": "Frequency",
     "save": "Save",
@@ -180,7 +186,10 @@
     "nextSync": "Next global sync",
     "included": "{{count}} provider(s) included",
     "syncDone": "Global sync finished — {{count}} provider(s).",
-    "syncPartial": "{{ok}} synced; {{failed}} failed."
+    "syncPartial": "{{ok}} synced; {{failed}} failed.",
+    "startTime": "Start time",
+    "startTimeHint": "Server time. The sync schedule starts at this time and repeats every 24h.",
+    "schedulePreview": "Times: {{slots}}"
   },
   "includeInGlobal": "Include in global sync",
   "includeInGlobalHint": "When enabled, this provider takes part in the global button and schedule.",

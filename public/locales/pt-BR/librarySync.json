@@ -77,6 +77,12 @@
     "failed": "Falhou",
     "syncing": "Sincronizando"
   },
+  "groups": {
+    "configured": "Configurados",
+    "pending": "Faltam configurar",
+    "noneConfigured": "Nenhuma integração configurada ainda.",
+    "allConfigured": "Todas as integrações estão configuradas."
+  },
   "providers": {
     "anilist": {
       "label": "AniList",
@@ -169,7 +175,7 @@
   "clientIdHint": "Crie um app em myanimelist.net/apiconfig. Usado apenas para ler listas públicas.",
   "global": {
     "title": "Sincronização geral",
-    "description": "Uma frequência única para todos os provedores incluídos. Use os switches dos cards para tirar uma plataforma do sync geral.",
+    "description": "Um horário inicial e uma frequência únicos para todos os provedores incluídos. Use os switches dos cards para tirar uma plataforma do sync geral.",
     "enabled": "Sincronização automática",
     "frequency": "Frequência",
     "save": "Salvar",
@@ -180,7 +186,10 @@
     "nextSync": "Próxima sync geral",
     "included": "{{count}} provedor(es) incluído(s)",
     "syncDone": "Sincronização geral concluída — {{count}} provedor(es).",
-    "syncPartial": "{{ok}} sincronizado(s); {{failed}} falharam."
+    "syncPartial": "{{ok}} sincronizado(s); {{failed}} falharam.",
+    "startTime": "Horário inicial",
+    "startTimeHint": "Horário do servidor. A grade de sync começa nesse horário e se repete a cada 24h.",
+    "schedulePreview": "Horários: {{slots}}"
   },
   "includeInGlobal": "Incluir na sincronização geral",
   "includeInGlobalHint": "Quando ativado, este provedor participa do botão e do agendamento geral.",

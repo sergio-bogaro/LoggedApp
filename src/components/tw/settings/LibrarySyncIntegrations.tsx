@@ -8,11 +8,12 @@ import {
   Unplug,
   Upload,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { toast } from "sonner";
 
+import { TypeMark } from "@/components/tw/generic/badges";
 import SuwayomiIntegration from "@/components/tw/settings/SuwayomiIntegration";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,7 +23,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+import { BaseInput, Input } from "@/components/ui/input";
 import {
   SelectBase,
   SelectContent,
@@ -55,6 +56,7 @@ import type {
   SyncProviderInfo,
   SyncStatusOption,
 } from "@/types/librarySync";
+import { MediaTypeEnum } from "@/types/media";
 
 const ACTIONS: SyncAction[] = [
   "ignore",
@@ -78,6 +80,75 @@ function statusTone(status?: string | null): string {
   if (status === "partial") return "text-amber-600 dark:text-amber-400";
   if (status === "failed") return "text-destructive";
   return "text-muted-foreground";
+}
+
+function GroupHeading({ title, count }: { title: string; count: number }) {
+  return (
+    <h3 className="flex items-baseline gap-2 text-step-1 font-medium">
+      {title}
+      <span className="text-step-0 font-normal tabular-nums text-muted-foreground">
+        {count}
+      </span>
+    </h3>
+  );
+}
+
+function ProviderCard({
+  label,
+  mediaTypes,
+  subtitle,
+  statusLabel,
+  connected,
+  onClick,
+  selected = false,
+  children,
+}: {
+  label: string;
+  mediaTypes: MediaTypeEnum[];
+  subtitle: string;
+  statusLabel: string;
+  connected: boolean;
+  onClick: () => void;
+  selected?: boolean;
+  children?: ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "rounded-control border border-border bg-background p-3 text-left transition-colors hover:bg-accent/40",
+        selected && "border-primary/40 bg-accent/30"
+      )}
+    >
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0">
+          <p className="truncate text-step-1 font-medium">{label}</p>
+          <p className="truncate text-step-0 text-muted-foreground">{subtitle}</p>
+        </div>
+        <span
+          className={cn(
+            "shrink-0 rounded-full px-2 py-0.5 text-[11.5px] leading-[1.5]",
+            connected
+              ? "bg-emerald-500/15 font-medium text-emerald-700 dark:text-emerald-400"
+              : "bg-muted text-muted-foreground"
+          )}
+        >
+          {statusLabel}
+        </span>
+      </div>
+
+      {mediaTypes.length > 0 && (
+        <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1">
+          {mediaTypes.map((type) => (
+            <TypeMark key={type} type={type} />
+          ))}
+        </div>
+      )}
+
+      {children}
+    </button>
+  );
 }
 
 export function LibrarySyncIntegrations() {
@@ -104,6 +175,7 @@ export function LibrarySyncIntegrations() {
   const [enabled, setEnabled] = useState(true);
   const [globalEnabled, setGlobalEnabled] = useState(false);
   const [globalUpdatesPerDay, setGlobalUpdatesPerDay] = useState("4");
+  const [globalStartTime, setGlobalStartTime] = useState("00:00");
   const [savingGlobal, setSavingGlobal] = useState(false);
   const [syncingAll, setSyncingAll] = useState(false);
   const [username, setUsername] = useState("");
@@ -182,7 +254,22 @@ export function LibrarySyncIntegrations() {
     if (!globalSettings) return;
     setGlobalEnabled(globalSettings.enabled);
     setGlobalUpdatesPerDay(String(globalSettings.updatesPerDay ?? 4));
+    setGlobalStartTime(globalSettings.startTime ?? "00:00");
   }, [globalSettings]);
+
+  const globalSlots = useMemo(() => {
+    const [hour, minute] = globalStartTime.split(":").map(Number);
+    const perDay = Number(globalUpdatesPerDay) || 4;
+    if (!Number.isFinite(hour) || !Number.isFinite(minute)) return [];
+    const step = (24 * 60) / perDay;
+    return Array.from({ length: perDay }, (_, index) => {
+      const total =
+        Math.round(hour * 60 + minute + index * step) % (24 * 60);
+      return `${String(Math.floor(total / 60)).padStart(2, "0")}:${String(
+        total % 60
+      ).padStart(2, "0")}`;
+    });
+  }, [globalStartTime, globalUpdatesPerDay]);
 
   const refresh = async () => {
     await queryClient.invalidateQueries({ queryKey: ["integrations"] });
@@ -267,6 +354,7 @@ export function LibrarySyncIntegrations() {
         userId: user.id,
         enabled: globalEnabled,
         updatesPerDay: Number(globalUpdatesPerDay) || 4,
+        startTime: globalStartTime || "00:00",
       });
       await refresh();
       toast.success(t("global.saved"));
@@ -353,6 +441,105 @@ export function LibrarySyncIntegrations() {
   const summary = current?.lastSyncSummary as Record<string, unknown> | null | undefined;
   const summaryNumber = (key: string) => Number(summary?.[key] ?? 0);
 
+  const configuredCards: ReactNode[] = [];
+  const pendingCards: ReactNode[] = [];
+  const suwayomiConfigured = Boolean(suwayomiConfig?.configured);
+  const suwayomiLastSync = formatDateTime(suwayomiConfig?.lastSyncAt);
+
+  const suwayomiState = suwayomiLoading
+    ? t("neverSynced")
+    : suwayomiConfigured
+      ? suwayomiLastSync
+        ? t("lastSync", { date: suwayomiLastSync })
+        : t("neverSynced")
+      : t("notConnected");
+
+  (suwayomiConfigured ? configuredCards : pendingCards).push(
+    <ProviderCard
+      key="suwayomi"
+      label={t("title", { ns: "suwayomi" })}
+      mediaTypes={[MediaTypeEnum.MANGA]}
+      subtitle={
+        suwayomiConfigured ? suwayomiConfig?.baseUrl ?? "" : t("notConnected")
+      }
+      connected={suwayomiConfigured}
+      statusLabel={suwayomiConfigured ? t("connected") : t("connect")}
+      onClick={() => setSuwayomiOpen(true)}
+    >
+      <p className="mt-2 text-step-0 text-muted-foreground">{suwayomiState}</p>
+      {suwayomiConfigured && (
+        <p
+          className={cn(
+            "mt-1 text-[12.5px] leading-[1.45]",
+            suwayomiConfig?.enabled
+              ? "text-emerald-600 dark:text-emerald-400"
+              : "text-muted-foreground"
+          )}
+        >
+          {t(suwayomiConfig?.enabled ? "included" : "excluded")}
+        </p>
+      )}
+    </ProviderCard>
+  );
+
+  (data ?? []).forEach((provider) => {
+    const last = formatDateTime(provider.lastSyncAt);
+
+    (provider.connected ? configuredCards : pendingCards).push(
+      <ProviderCard
+        key={provider.id}
+        label={t(`providers.${provider.id}.label`, {
+          defaultValue: provider.label,
+        })}
+        mediaTypes={provider.mediaTypes ?? []}
+        subtitle={
+          provider.connected
+            ? provider.account ||
+              t(`providers.${provider.id}.connected`, {
+                defaultValue: t("connected"),
+              })
+            : t("notConnected")
+        }
+        connected={provider.connected}
+        statusLabel={provider.connected ? t("connected") : t("connect")}
+        selected={selected === provider.id}
+        onClick={() => open(provider)}
+      >
+        <p className="mt-2 text-step-0 text-muted-foreground">
+          {provider.connected
+            ? last
+              ? t("lastSync", { date: last })
+              : t("neverSynced")
+            : t("notConnected")}
+        </p>
+        {provider.connected && (
+          <p
+            className={cn(
+              "mt-1 text-[12.5px] leading-[1.45]",
+              provider.enabled
+                ? "text-emerald-600 dark:text-emerald-400"
+                : "text-muted-foreground"
+            )}
+          >
+            {t(provider.enabled ? "included" : "excluded")}
+          </p>
+        )}
+        {provider.needsReauth && (
+          <p className="mt-1 text-step-0 text-destructive">
+            {t("needsReauth")}
+          </p>
+        )}
+        {provider.pendingReview > 0 && (
+          <p className="mt-1 text-step-0 text-amber-600 dark:text-amber-400">
+            {t("summary.pendingReview", { count: provider.pendingReview })}
+          </p>
+        )}
+      </ProviderCard>
+    );
+  });
+
+  const providerGrid = "grid gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4";
+
   return (
     <div className="space-y-4">
       {globalLoading ? (
@@ -377,6 +564,20 @@ export function LibrarySyncIntegrations() {
 
           <div className="flex flex-wrap items-end gap-3">
             <div className="space-y-1">
+              <label className="text-step-1" htmlFor="global-sync-start">
+                {t("global.startTime")}
+              </label>
+              <BaseInput
+                id="global-sync-start"
+                name="global-sync-start"
+                type="time"
+                value={globalStartTime}
+                onChange={(event) => setGlobalStartTime(event.target.value)}
+                className="w-36"
+              />
+            </div>
+
+            <div className="space-y-1">
               <label className="text-step-1" htmlFor="global-sync-frequency">
                 {t("global.frequency")}
               </label>
@@ -392,7 +593,7 @@ export function LibrarySyncIntegrations() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {[1, 2, 4, 6, 8, 12, 24].map((value) => (
+                  {[1, 2, 3, 4, 6, 8, 12, 24].map((value) => (
                     <SelectItem key={value} value={String(value)}>
                       {t("frequencyValue", { count: value })}
                     </SelectItem>
@@ -425,6 +626,17 @@ export function LibrarySyncIntegrations() {
             </Button>
           </div>
 
+          <p className="text-step-0 text-muted-foreground">
+            {t("global.startTimeHint")}
+          </p>
+          {globalSlots.length > 0 && (
+            <p className="text-step-0 text-muted-foreground">
+              {t("global.schedulePreview", {
+                slots: globalSlots.join(" · "),
+              })}
+            </p>
+          )}
+
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-step-0 text-muted-foreground">
             <span>
               {t("global.lastSync")}:{" "}
@@ -449,136 +661,49 @@ export function LibrarySyncIntegrations() {
       )}
 
       {isLoading ? (
-        <div className="grid gap-3 sm:grid-cols-2">
-          {[0, 1, 2, 3].map((index) => (
-            <Skeleton key={index} className="h-24" />
+        <div className="space-y-6">
+          {[0, 1].map((group) => (
+            <div key={group} className="space-y-2">
+              <Skeleton className="h-4 w-36" />
+              <div className={providerGrid}>
+                {[0, 1].map((index) => (
+                  <Skeleton key={index} className="h-28" />
+                ))}
+              </div>
+            </div>
           ))}
         </div>
       ) : (
-        <div className="grid gap-3 sm:grid-cols-2">
-          <button
-            type="button"
-            onClick={() => setSuwayomiOpen(true)}
-            className="rounded-control border border-border bg-background p-3 text-left transition-colors hover:bg-accent/40"
-          >
-            <div className="flex items-start justify-between gap-2">
-              <div className="min-w-0">
-                <p className="truncate text-step-1 font-medium">
-                  {t("title", { ns: "suwayomi" })}
-                </p>
-                <p className="truncate text-step-0 text-muted-foreground">
-                  {suwayomiConfig?.configured
-                    ? suwayomiConfig.baseUrl
-                    : t("notConnected")}
-                </p>
-              </div>
-              <span
-                className={cn(
-                  "shrink-0 rounded-full px-2 py-0.5 text-[11.5px] leading-[1.5]",
-                  suwayomiConfig?.configured
-                    ? "bg-emerald-500/15 font-medium text-emerald-700 dark:text-emerald-400"
-                    : "bg-muted text-muted-foreground"
-                )}
-              >
-                {suwayomiConfig?.configured ? t("connected") : t("connect")}
-              </span>
-            </div>
-            <p className="mt-2 text-step-0 text-muted-foreground">
-              {suwayomiLoading
-                ? t("neverSynced")
-                : suwayomiConfig?.configured
-                  ? formatDateTime(suwayomiConfig.lastSyncAt)
-                    ? t("lastSync", {
-                      date: formatDateTime(suwayomiConfig.lastSyncAt),
-                    })
-                    : t("neverSynced")
-                  : t("notConnected")}
-            </p>
-            {suwayomiConfig?.configured && (
-              <p
-                className={cn(
-                  "mt-1 text-[12.5px] leading-[1.45]",
-                  suwayomiConfig.enabled
-                    ? "text-emerald-600 dark:text-emerald-400"
-                    : "text-muted-foreground"
-                )}
-              >
-                {t(suwayomiConfig.enabled ? "included" : "excluded")}
+        <div className="space-y-6">
+          <section className="space-y-2">
+            <GroupHeading
+              title={t("groups.configured")}
+              count={configuredCards.length}
+            />
+            {configuredCards.length > 0 ? (
+              <div className={providerGrid}>{configuredCards}</div>
+            ) : (
+              <p className="text-step-0 text-muted-foreground">
+                {t("groups.noneConfigured")}
               </p>
             )}
-          </button>
+          </section>
 
-          {(data ?? []).map((provider) => {
-            const last = formatDateTime(provider.lastSyncAt);
-            return (
-              <button
-                key={provider.id}
-                type="button"
-                onClick={() => open(provider)}
-                className={cn(
-                  "rounded-control border border-border bg-background p-3 text-left transition-colors hover:bg-accent/40",
-                  selected === provider.id && "border-primary/40 bg-accent/30"
-                )}
-              >
-                <div className="flex items-start justify-between gap-2">
-                  <div className="min-w-0">
-                    <p className="truncate text-step-1 font-medium">
-                      {t(`providers.${provider.id}.label`, {
-                        defaultValue: provider.label,
-                      })}
-                    </p>
-                    <p className="truncate text-step-0 text-muted-foreground">
-                      {provider.connected
-                        ? provider.account ||
-                          t(`providers.${provider.id}.connected`, {
-                            defaultValue: t("connected"),
-                          })
-                        : t("notConnected")}
-                    </p>
-                  </div>
-                  <span
-                    className={cn(
-                      "shrink-0 rounded-full px-2 py-0.5 text-[11.5px] leading-[1.5]",
-                      provider.connected
-                        ? "bg-emerald-500/15 font-medium text-emerald-700 dark:text-emerald-400"
-                        : "bg-muted text-muted-foreground"
-                    )}
-                  >
-                    {provider.connected ? t("connected") : t("connect")}
-                  </span>
-                </div>
-                <p className="mt-2 text-step-0 text-muted-foreground">
-                  {provider.connected
-                    ? last
-                      ? t("lastSync", { date: last })
-                      : t("neverSynced")
-                    : t("notConnected")}
+          {(configuredCards.length > 0 || pendingCards.length > 0) && (
+            <section className="space-y-2">
+              <GroupHeading
+                title={t("groups.pending")}
+                count={pendingCards.length}
+              />
+              {pendingCards.length > 0 ? (
+                <div className={providerGrid}>{pendingCards}</div>
+              ) : (
+                <p className="text-step-0 text-muted-foreground">
+                  {t("groups.allConfigured")}
                 </p>
-                {provider.connected && (
-                  <p
-                    className={cn(
-                      "mt-1 text-[12.5px] leading-[1.45]",
-                      provider.enabled
-                        ? "text-emerald-600 dark:text-emerald-400"
-                        : "text-muted-foreground"
-                    )}
-                  >
-                    {t(provider.enabled ? "included" : "excluded")}
-                  </p>
-                )}
-                {provider.needsReauth && (
-                  <p className="mt-1 text-step-0 text-destructive">
-                    {t("needsReauth")}
-                  </p>
-                )}
-                {provider.pendingReview > 0 && (
-                  <p className="mt-1 text-step-0 text-amber-600 dark:text-amber-400">
-                    {t("summary.pendingReview", { count: provider.pendingReview })}
-                  </p>
-                )}
-              </button>
-            );
-          })}
+              )}
+            </section>
+          )}
         </div>
       )}
 
@@ -605,6 +730,13 @@ export function LibrarySyncIntegrations() {
                     defaultValue: t("description"),
                   })}
                 </DialogDescription>
+                {(current.mediaTypes ?? []).length > 0 && (
+                  <div className="flex flex-wrap gap-x-3 gap-y-1">
+                    {current.mediaTypes.map((type) => (
+                      <TypeMark key={type} type={type} />
+                    ))}
+                  </div>
+                )}
               </DialogHeader>
 
               <div className="space-y-4">

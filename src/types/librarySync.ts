@@ -56,6 +56,7 @@ export interface SyncConfigPayload {
 export interface GlobalSyncSettings {
   enabled: boolean;
   updatesPerDay: number;
+  startTime: string;
   lastSyncAt?: string | null;
   lastSyncStatus?: string | null;
   lastSyncSummary?: Record<string, unknown> | null;
@@ -66,6 +67,7 @@ export interface GlobalSyncConfigPayload {
   userId: number;
   enabled: boolean;
   updatesPerDay: number;
+  startTime: string;
 }
 
 export interface GlobalSyncResultItem {

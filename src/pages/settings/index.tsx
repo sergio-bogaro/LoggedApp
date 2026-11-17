@@ -13,6 +13,7 @@ import IntegrationKeysForm from "@/components/tw/settings/IntegrationKeysForm";
 import { LibrarySyncIntegrations } from "@/components/tw/settings/LibrarySyncIntegrations";
 import MediaTrackToggles from "@/components/tw/settings/MediaTrackToggles";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { authApi } from "@/querries/auth/auth";
 import { useAppDispatch, useAppSelector } from "@/store/auth/hooks";
 import { updateUserSettings } from "@/store/auth/slice";
@@ -30,13 +31,15 @@ function SettingsPanel({
   title,
   description,
   children,
+  className,
 }: {
   title: string;
   description?: string;
   children: ReactNode;
+  className?: string;
 }) {
   return (
-    <Card className="gap-5 p-5 sm:p-6">
+    <Card className={cn("gap-5 p-5 sm:p-6", className)}>
       <SectionHeading className="pb-2.5! text-[1.5rem]! leading-[1.25]!">
         {title}
       </SectionHeading>
@@ -96,14 +99,14 @@ function SettingsPage() {
   };
 
   return (
-    <div className="w-full max-w-4xl space-y-6">
+    <div className="grid w-full items-start gap-6 md:grid-cols-2 xl:grid-cols-3">
       <PageHeader
         title={t("settings.title")}
-        className="mb-0 [&_h1]:text-[2rem] [&_h1]:leading-[1.1] [&_h1]:tracking-[-0.02em]"
+        className="mb-0 md:col-span-2 xl:col-span-3 [&_h1]:text-[2rem] [&_h1]:leading-[1.1] [&_h1]:tracking-[-0.02em]"
       />
 
       <SettingsPanel title={t("settings.appearance.title")}>
-        <div className="grid max-w-md gap-4">
+        <div className="grid gap-4">
           <LanguageSwitcher />
           <ThemeSwitcher />
           <RatingSwitcher />
@@ -126,6 +129,7 @@ function SettingsPage() {
       <SettingsPanel
         title={t("settings.integrations.title")}
         description={t("settings.integrations.description")}
+        className="md:col-span-2 xl:col-span-1"
       >
         <IntegrationKeysForm />
       </SettingsPanel>
@@ -133,6 +137,7 @@ function SettingsPage() {
       <SettingsPanel
         title={t("title", { ns: "librarySync" })}
         description={t("description", { ns: "librarySync" })}
+        className="md:col-span-2 xl:col-span-3"
       >
         <LibrarySyncIntegrations />
       </SettingsPanel>
@@ -140,6 +145,7 @@ function SettingsPage() {
       <SettingsPanel
         title={t("settings.title", { ns: "import" })}
         description={t("settings.description", { ns: "import" })}
+        className="md:col-span-2 xl:col-span-3"
       >
         <div className="flex flex-wrap items-center gap-3">
           <Button asChild>
