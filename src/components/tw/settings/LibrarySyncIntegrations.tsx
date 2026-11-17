@@ -474,9 +474,9 @@ export function LibrarySyncIntegrations() {
               </div>
               <span
                 className={cn(
-                  "shrink-0 rounded-full px-2 py-0.5 text-step-0",
+                  "shrink-0 rounded-full px-2 py-0.5 text-[11.5px] leading-[1.5]",
                   suwayomiConfig?.configured
-                    ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"
+                    ? "bg-emerald-500/15 font-medium text-emerald-700 dark:text-emerald-400"
                     : "bg-muted text-muted-foreground"
                 )}
               >
@@ -497,7 +497,7 @@ export function LibrarySyncIntegrations() {
             {suwayomiConfig?.configured && (
               <p
                 className={cn(
-                  "mt-1 text-step-0",
+                  "mt-1 text-[12.5px] leading-[1.45]",
                   suwayomiConfig.enabled
                     ? "text-emerald-600 dark:text-emerald-400"
                     : "text-muted-foreground"
@@ -538,9 +538,9 @@ export function LibrarySyncIntegrations() {
                   </div>
                   <span
                     className={cn(
-                      "shrink-0 rounded-full px-2 py-0.5 text-step-0",
+                      "shrink-0 rounded-full px-2 py-0.5 text-[11.5px] leading-[1.5]",
                       provider.connected
-                        ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"
+                        ? "bg-emerald-500/15 font-medium text-emerald-700 dark:text-emerald-400"
                         : "bg-muted text-muted-foreground"
                     )}
                   >
@@ -557,7 +557,7 @@ export function LibrarySyncIntegrations() {
                 {provider.connected && (
                   <p
                     className={cn(
-                      "mt-1 text-step-0",
+                      "mt-1 text-[12.5px] leading-[1.45]",
                       provider.enabled
                         ? "text-emerald-600 dark:text-emerald-400"
                         : "text-muted-foreground"
