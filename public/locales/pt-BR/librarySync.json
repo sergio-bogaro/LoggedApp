@@ -168,6 +168,10 @@
         "already-read": "Já li",
         "stopped-reading": "Abandonei"
       }
+    },
+    "suwayomi": {
+      "label": "Suwayomi",
+      "description": "Biblioteca do seu servidor de mangá."
     }
   },
   "clientId": "Client ID do MyAnimeList",

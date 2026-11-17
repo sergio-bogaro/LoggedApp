@@ -285,8 +285,8 @@
     "automatic": "Automáticos"
   },
   "automatic": {
-    "title": "Importações automáticas",
-    "description": "Títulos encontrados pela sincronização que precisam da sua revisão antes de entrar na biblioteca.",
+    "title": "Revisão automática",
+    "description": "Títulos encontrados pelo sync e pelo Suwayomi que precisam da sua revisão antes de entrar na biblioteca.",
     "tabPending": "Pendentes",
     "tabDismissed": "Ignorados",
     "emptyPending": "Nenhum título aguardando revisão.",
@@ -307,7 +307,21 @@
     "watched": "Assistido em {{date}}",
     "rating": "Nota {{value}}/10",
     "openSource": "Abrir na origem",
-    "openMetadata": "Abrir no TMDB"
+    "openMetadata": "Abrir nos metadados",
+    "needsAttention": "Precisam de atenção ({{count}})",
+    "noMatch": "Sem match ({{count}})",
+    "needsAttentionHint": "Há um candidato, mas o match não é exato.",
+    "noMatchHint": "Nenhum candidato encontrado. Busque um match para continuar.",
+    "findMatch": "Buscar match",
+    "changeMatch": "Trocar match",
+    "searchMatchTitle": "Buscar match",
+    "searchMatchDescription": "Busque no provedor de metadata e escolha o título correto.",
+    "searchMatchPlaceholder": "Digite o título…",
+    "searchingMatches": "Buscando…",
+    "noMatchCandidates": "Nenhum candidato encontrado.",
+    "selectMatch": "Usar este",
+    "matchSaved": "Match salvo. Agora você pode adicionar o título.",
+    "matchError": "Não foi possível salvar o match."
   },
   "supported": "Letterboxd, AniList, MyAnimeList, Goodreads, Trakt, IMDb e Grouvee"
 }

@@ -27,6 +27,7 @@ export interface SuwayomiSyncSummary {
   logsCreated?: number;
   datedItems?: number;
   ignoredSkipped?: number;
+  reviewStaged?: number;
   unmatched?: { title: string; reason?: string }[];
   removed?: string[];
   pendingResolved?: string[];

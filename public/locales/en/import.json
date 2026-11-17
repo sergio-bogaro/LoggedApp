@@ -285,8 +285,8 @@
     "automatic": "Automatic"
   },
   "automatic": {
-    "title": "Automatic imports",
-    "description": "Titles found by sync that need your review before entering the library.",
+    "title": "Automatic review",
+    "description": "Titles found by sync and Suwayomi that need your review before entering the library.",
     "tabPending": "Pending",
     "tabDismissed": "Ignored",
     "emptyPending": "No titles waiting for review.",
@@ -307,7 +307,21 @@
     "watched": "Watched on {{date}}",
     "rating": "Rating {{value}}/10",
     "openSource": "Open source",
-    "openMetadata": "Open on TMDB"
+    "openMetadata": "Open metadata",
+    "needsAttention": "Needs attention ({{count}})",
+    "noMatch": "No match ({{count}})",
+    "needsAttentionHint": "A candidate exists, but the match is not exact.",
+    "noMatchHint": "No candidate found. Search for a match to continue.",
+    "findMatch": "Find match",
+    "changeMatch": "Change match",
+    "searchMatchTitle": "Find match",
+    "searchMatchDescription": "Search the metadata provider and choose the correct title.",
+    "searchMatchPlaceholder": "Type a title…",
+    "searchingMatches": "Searching…",
+    "noMatchCandidates": "No candidates found.",
+    "selectMatch": "Use this",
+    "matchSaved": "Match saved. You can now add the title.",
+    "matchError": "Could not save the match."
   },
   "supported": "Letterboxd, AniList, MyAnimeList, Goodreads, Trakt, IMDb and Grouvee"
 }

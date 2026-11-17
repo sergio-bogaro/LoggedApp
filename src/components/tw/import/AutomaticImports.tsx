@@ -1,10 +1,11 @@
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ExternalLink,
   ImageOff,
   Loader2,
   Plus,
   RotateCcw,
+  Search,
   SkipForward,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
@@ -12,16 +13,27 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useSyncSuggestions } from "@/hooks/useSyncSuggestions";
 import { cn } from "@/lib/utils";
+import { searchImportCandidates } from "@/querries/import";
 import {
   approveSyncSuggestions,
+  saveSyncSuggestionCandidate,
   updateSyncSuggestion,
 } from "@/querries/librarySync";
 import { useAppSelector } from "@/store/auth/hooks";
+import type { ImportCandidate } from "@/types/import";
 import type { SyncSuggestion, SyncSuggestionState } from "@/types/librarySync";
-import { metadataUrl } from "@/utils/importLinks";
+import { metadataProviderKey, metadataUrl } from "@/utils/importLinks";
 
 function formatDate(value?: string | null): string | null {
   if (!value) return null;
@@ -34,18 +46,146 @@ function formatDate(value?: string | null): string | null {
   return Number.isNaN(date.getTime()) ? value : date.toLocaleDateString();
 }
 
+function SuggestionMatchDialog({
+  suggestion,
+  saving,
+  onClose,
+  onSelect,
+}: {
+  suggestion: SyncSuggestion;
+  saving: boolean;
+  onClose: () => void;
+  onSelect: (candidate: ImportCandidate) => void;
+}) {
+  const { t } = useTranslation(["import", "librarySync"]);
+  const { user } = useAppSelector((state) => state.auth);
+  const [query, setQuery] = useState(suggestion.title);
+  const [search, setSearch] = useState(suggestion.title.trim());
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setSearch(query.trim()), 300);
+    return () => window.clearTimeout(timer);
+  }, [query]);
+
+  const { data, isFetching } = useQuery({
+    queryKey: [
+      "import",
+      "suggestion-search",
+      user?.id,
+      suggestion.mediaType,
+      search,
+    ],
+    queryFn: () =>
+      searchImportCandidates(search, suggestion.mediaType, user!.id),
+    enabled: !!user && search.length >= 2,
+    refetchOnWindowFocus: false,
+  });
+
+  const candidates = data ?? [];
+
+  return (
+    <Dialog open onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="pr-8">{t("automatic.searchMatchTitle")}</DialogTitle>
+          <DialogDescription>
+            {t("automatic.searchMatchDescription")}
+          </DialogDescription>
+        </DialogHeader>
+
+        <p className="text-step-1 font-medium">{suggestion.title}</p>
+
+        <Input
+          name="suggestion-match-search"
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder={t("automatic.searchMatchPlaceholder")}
+          autoFocus
+        />
+
+        {search.length < 2 ? null : isFetching ? (
+          <p className="flex items-center gap-2 text-step-1 text-muted-foreground">
+            <Loader2 className="size-4 animate-spin" />
+            {t("automatic.searchingMatches")}
+          </p>
+        ) : candidates.length === 0 ? (
+          <p className="rounded-control border border-dashed border-border p-3 text-step-1 text-muted-foreground">
+            {t("automatic.noMatchCandidates")}
+          </p>
+        ) : (
+          <ul className="space-y-2">
+            {candidates.map((candidate) => {
+              const selected =
+                suggestion.candidate?.externalId === candidate.externalId;
+              return (
+                <li
+                  key={candidate.externalId}
+                  className={cn(
+                    "flex items-center gap-3 rounded-control border border-border p-2",
+                    selected && "border-primary"
+                  )}
+                >
+                  <div className="h-16 w-11 shrink-0 overflow-hidden rounded-control bg-muted">
+                    {candidate.coverUrl ? (
+                      <img
+                        src={candidate.coverUrl}
+                        alt=""
+                        className="h-full w-full object-cover"
+                        loading="lazy"
+                      />
+                    ) : null}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-step-1">
+                      {candidate.title}
+                      {candidate.year ? ` (${candidate.year})` : ""}
+                    </p>
+                    <p className="text-step-0 text-muted-foreground">
+                      {t(metadataProviderKey(candidate.provider), {
+                        defaultValue: candidate.provider,
+                      })}
+                    </p>
+                  </div>
+                  <Button
+                    type="button"
+                    size="xs"
+                    variant={selected ? "default" : "outline"}
+                    disabled={saving}
+                    onClick={() => onSelect(candidate)}
+                  >
+                    {saving ? (
+                      <Loader2 className="animate-spin" />
+                    ) : (
+                      <Search />
+                    )}
+                    {t("automatic.selectMatch")}
+                  </Button>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 function SuggestionRow({
   suggestion,
   selected,
+  selectable,
   busy,
   onToggle,
+  onFindMatch,
   onDismiss,
   onRestore,
 }: {
   suggestion: SyncSuggestion;
   selected: boolean;
+  selectable: boolean;
   busy: boolean;
   onToggle: () => void;
+  onFindMatch: () => void;
   onDismiss: () => void;
   onRestore: () => void;
 }) {
@@ -63,13 +203,20 @@ function SuggestionRow({
     ? metadataUrl(suggestion.candidate)
     : null;
   const watched = formatDate(suggestion.watchedDate);
-  const sourceLabel = t(
-    `providers.${suggestion.provider}.statuses.${suggestion.sourceStatus}`,
-    {
-      ns: "librarySync",
-      defaultValue: suggestion.sourceLabel || suggestion.sourceStatus,
-    }
-  );
+  const sourceLabel =
+    suggestion.provider === "suwayomi"
+      ? t(`actions.${suggestion.action}`, {
+        ns: "librarySync",
+        defaultValue: suggestion.sourceLabel || suggestion.sourceStatus,
+      })
+      : t(
+        `providers.${suggestion.provider}.statuses.${suggestion.sourceStatus}`,
+        {
+          ns: "librarySync",
+          defaultValue:
+              suggestion.sourceLabel || suggestion.sourceStatus,
+        }
+      );
 
   return (
     <div
@@ -78,7 +225,7 @@ function SuggestionRow({
         !pending && "opacity-60"
       )}
     >
-      {pending ? (
+      {pending && selectable ? (
         <input
           type="checkbox"
           checked={selected}
@@ -169,7 +316,23 @@ function SuggestionRow({
         </div>
       </div>
 
-      <div className="shrink-0">
+      <div className="flex shrink-0 flex-col items-end gap-1">
+        {pending && (
+          <Button
+            type="button"
+            size="xs"
+            variant="outline"
+            onClick={onFindMatch}
+            disabled={busy}
+          >
+            <Search />
+            {t(
+              suggestion.candidate
+                ? "automatic.changeMatch"
+                : "automatic.findMatch"
+            )}
+          </Button>
+        )}
         <Button
           type="button"
           size="xs"
@@ -200,6 +363,10 @@ export function AutomaticImports({ provider }: { provider?: string }) {
   const [deselected, setDeselected] = useState<Set<number>>(new Set());
   const [approving, setApproving] = useState(false);
   const [rowBusy, setRowBusy] = useState<number | null>(null);
+  const [matchSuggestion, setMatchSuggestion] = useState<SyncSuggestion | null>(
+    null
+  );
+  const [savingMatch, setSavingMatch] = useState(false);
 
   const { data, isLoading } = useSyncSuggestions(user?.id, state, provider);
   const items = data?.items ?? [];
@@ -208,12 +375,20 @@ export function AutomaticImports({ provider }: { provider?: string }) {
     () => items.filter((item) => item.reviewState === "pending"),
     [items]
   );
+  const attentionItems = useMemo(
+    () => pendingItems.filter((item) => Boolean(item.candidate)),
+    [pendingItems]
+  );
+  const noMatchItems = useMemo(
+    () => pendingItems.filter((item) => !item.candidate),
+    [pendingItems]
+  );
   const selectedIds = useMemo(
     () =>
-      pendingItems
+      attentionItems
         .filter((item) => !deselected.has(item.id))
         .map((item) => item.id),
-    [pendingItems, deselected]
+    [attentionItems, deselected]
   );
 
   useEffect(() => {
@@ -228,6 +403,8 @@ export function AutomaticImports({ provider }: { provider?: string }) {
       queryClient.invalidateQueries({ queryKey: ["existingMedia"] }),
       queryClient.invalidateQueries({ queryKey: ["media-logs"] }),
       queryClient.invalidateQueries({ queryKey: ["backlog"] }),
+      queryClient.invalidateQueries({ queryKey: ["suwayomi", "links"] }),
+      queryClient.invalidateQueries({ queryKey: ["suwayomi", "config"] }),
     ]);
   };
 
@@ -266,6 +443,26 @@ export function AutomaticImports({ provider }: { provider?: string }) {
     }
   };
 
+  const handleSaveMatch = async (
+    suggestion: SyncSuggestion,
+    candidate: ImportCandidate
+  ) => {
+    if (!user) return;
+    setSavingMatch(true);
+    try {
+      await saveSyncSuggestionCandidate(user.id, suggestion.id, candidate);
+      await invalidate();
+      setMatchSuggestion(null);
+      toast.success(t("automatic.matchSaved"));
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : t("automatic.matchError")
+      );
+    } finally {
+      setSavingMatch(false);
+    }
+  };
+
   const handleState = async (
     suggestion: SyncSuggestion,
     nextState: "pending" | "dismissed"
@@ -284,6 +481,23 @@ export function AutomaticImports({ provider }: { provider?: string }) {
       setRowBusy(null);
     }
   };
+
+  const renderRow = (
+    suggestion: SyncSuggestion,
+    selectable: boolean
+  ) => (
+    <SuggestionRow
+      key={suggestion.id}
+      suggestion={suggestion}
+      selected={!deselected.has(suggestion.id)}
+      selectable={selectable}
+      busy={rowBusy === suggestion.id}
+      onToggle={() => toggle(suggestion.id)}
+      onFindMatch={() => setMatchSuggestion(suggestion)}
+      onDismiss={() => void handleState(suggestion, "dismissed")}
+      onRestore={() => void handleState(suggestion, "pending")}
+    />
+  );
 
   return (
     <div className="space-y-4">
@@ -338,64 +552,109 @@ export function AutomaticImports({ provider }: { provider?: string }) {
         </div>
       ) : (
         <>
-          {state === "pending" && (
-            <div className="flex flex-wrap items-center gap-2">
-              <p className="text-step-0 text-muted-foreground">
-                {t("automatic.selected", { count: selectedIds.length })}
-              </p>
-              <Button
-                type="button"
-                size="xs"
-                variant="outline"
-                onClick={() => setDeselected(new Set())}
-                disabled={selectedIds.length === pendingItems.length}
-              >
-                {t("automatic.selectAll")}
-              </Button>
-              <Button
-                type="button"
-                size="xs"
-                variant="outline"
-                onClick={() =>
-                  setDeselected(new Set(pendingItems.map((item) => item.id)))
-                }
-                disabled={selectedIds.length === 0}
-              >
-                {t("automatic.clearSelection")}
-              </Button>
-              <Button
-                type="button"
-                size="sm"
-                className="ml-auto"
-                onClick={handleApprove}
-                disabled={approving || selectedIds.length === 0}
-              >
-                {approving ? (
-                  <Loader2 className="animate-spin" />
-                ) : (
-                  <Plus />
-                )}
-                {approving
-                  ? t("automatic.approving")
-                  : t("automatic.approve", { count: selectedIds.length })}
-              </Button>
+          {state === "pending" ? (
+            <>
+              {attentionItems.length > 0 && (
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="text-step-0 text-muted-foreground">
+                    {t("automatic.selected", { count: selectedIds.length })}
+                  </p>
+                  <Button
+                    type="button"
+                    size="xs"
+                    variant="outline"
+                    onClick={() => setDeselected(new Set())}
+                    disabled={selectedIds.length === attentionItems.length}
+                  >
+                    {t("automatic.selectAll")}
+                  </Button>
+                  <Button
+                    type="button"
+                    size="xs"
+                    variant="outline"
+                    onClick={() =>
+                      setDeselected(
+                        new Set(attentionItems.map((item) => item.id))
+                      )
+                    }
+                    disabled={selectedIds.length === 0}
+                  >
+                    {t("automatic.clearSelection")}
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    className="ml-auto"
+                    onClick={handleApprove}
+                    disabled={approving || selectedIds.length === 0}
+                  >
+                    {approving ? (
+                      <Loader2 className="animate-spin" />
+                    ) : (
+                      <Plus />
+                    )}
+                    {approving
+                      ? t("automatic.approving")
+                      : t("automatic.approve", { count: selectedIds.length })}
+                  </Button>
+                </div>
+              )}
+
+              {attentionItems.length > 0 && (
+                <section className="space-y-2">
+                  <div>
+                    <h3 className="text-step-1 font-medium">
+                      {t("automatic.needsAttention", {
+                        count: attentionItems.length,
+                      })}
+                    </h3>
+                    <p className="text-step-0 text-muted-foreground">
+                      {t("automatic.needsAttentionHint")}
+                    </p>
+                  </div>
+                  <div className="rounded-control border border-border">
+                    {attentionItems.map((suggestion) =>
+                      renderRow(suggestion, true)
+                    )}
+                  </div>
+                </section>
+              )}
+
+              {noMatchItems.length > 0 && (
+                <section className="space-y-2">
+                  <div>
+                    <h3 className="text-step-1 font-medium">
+                      {t("automatic.noMatch", { count: noMatchItems.length })}
+                    </h3>
+                    <p className="text-step-0 text-muted-foreground">
+                      {t("automatic.noMatchHint")}
+                    </p>
+                  </div>
+                  <div className="rounded-control border border-border">
+                    {noMatchItems.map((suggestion) =>
+                      renderRow(suggestion, false)
+                    )}
+                  </div>
+                </section>
+              )}
+            </>
+          ) : (
+            <div className="rounded-control border border-border">
+              {items.map((suggestion) => renderRow(suggestion, false))}
             </div>
           )}
-
-          <div className="rounded-control border border-border">
-            {items.map((suggestion) => (
-              <SuggestionRow
-                key={suggestion.id}
-                suggestion={suggestion}
-                selected={!deselected.has(suggestion.id)}
-                busy={rowBusy === suggestion.id}
-                onToggle={() => toggle(suggestion.id)}
-                onDismiss={() => void handleState(suggestion, "dismissed")}
-                onRestore={() => void handleState(suggestion, "pending")}
-              />
-            ))}
-          </div>
         </>
+      )}
+
+      {matchSuggestion && (
+        <SuggestionMatchDialog
+          suggestion={matchSuggestion}
+          saving={savingMatch}
+          onClose={() => setMatchSuggestion(null)}
+          onSelect={(candidate) =>
+            void handleSaveMatch(matchSuggestion, candidate)
+          }
+        />
       )}
     </div>
   );

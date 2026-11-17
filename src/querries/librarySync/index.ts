@@ -1,6 +1,7 @@
 import { parseApiError } from "@/lib/apiError";
 import { fetchWithTimeout } from "@/lib/fetchWithTimeout";
 import { API_BASE_URL } from "@/querries/apiBase";
+import type { ImportCandidate } from "@/types/import";
 import type {
   GlobalSyncConfigPayload,
   GlobalSyncResponse,
@@ -217,6 +218,20 @@ export async function updateSyncSuggestion(
     {
       method: "PATCH",
       body: JSON.stringify({ userId, state }),
+    }
+  );
+}
+
+export async function saveSyncSuggestionCandidate(
+  userId: number,
+  suggestionId: number,
+  candidate: ImportCandidate
+): Promise<SyncSuggestion> {
+  return apiFetch<SyncSuggestion>(
+    `/api/integrations/suggestions/${suggestionId}/candidate`,
+    {
+      method: "PATCH",
+      body: JSON.stringify({ userId, candidate }),
     }
   );
 }

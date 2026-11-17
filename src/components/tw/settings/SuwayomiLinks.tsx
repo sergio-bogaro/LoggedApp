@@ -2,6 +2,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader2, RotateCcw, Search, SkipForward } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -64,7 +65,10 @@ export function SuwayomiLinks() {
     setBusyId(link.id);
     try {
       await suwayomiApi.updateLink(user.id, link.id, data);
-      await queryClient.invalidateQueries({ queryKey: ["suwayomi", "links"] });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["suwayomi", "links"] }),
+        queryClient.invalidateQueries({ queryKey: ["sync-suggestions"] }),
+      ]);
       toast.success(t(successKey));
       if (data.mediaId !== undefined) {
         setLinkingId(null);
@@ -90,6 +94,11 @@ export function SuwayomiLinks() {
         <div>
           <p className="font-medium text-step-1">{t("links.title")}</p>
           <p className="text-step-0 text-muted-foreground">{t("links.description")}</p>
+          <Button asChild size="xs" variant="outline" className="mt-2">
+            <Link to="/import?tab=auto&provider=suwayomi">
+              {t("links.openReview")}
+            </Link>
+          </Button>
         </div>
         <div className="flex rounded-control border border-border p-0.5">
           {TABS.map((tab) => (

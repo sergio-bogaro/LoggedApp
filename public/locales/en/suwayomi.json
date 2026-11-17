@@ -24,7 +24,9 @@
     "importHint": "Review and import the titles that are missing from Logged.",
     "cancel": "Cancel",
     "includeInGlobal": "Include in global sync",
-    "includeInGlobalHint": "When enabled, Suwayomi takes part in the global button and schedule."
+    "includeInGlobalHint": "When enabled, Suwayomi takes part in the global button and schedule.",
+    "syncDoneReview": "Sync finished — {{created}} created, {{review}} to review",
+    "review": "Review"
   },
   "auth": {
     "label": "Authentication",
@@ -99,12 +101,12 @@
   },
   "links": {
     "title": "Pending links",
-    "description": "Titles the sync could not link automatically. You can link one to an existing manga or ignore it.",
+    "description": "Titles the sync could not link automatically. They also appear in Import → Automatic; here you can link one to an existing manga or ignore it.",
     "tabPending": "Pending",
     "tabIgnored": "Ignored",
     "emptyPending": "No pending links.",
     "emptyIgnored": "No ignored titles.",
-    "pendingHint": "The sync retries this title automatically.",
+    "pendingHint": "Also available in Import → Automatic. The sync retries this title automatically.",
     "ignoredHint": "Ignored: the sync will not create or retry this title.",
     "attempts": "{{count}} attempts",
     "link": "Link",
@@ -117,6 +119,7 @@
     "noResults": "No manga found.",
     "linked": "Link created; the next sync applies the category.",
     "ignored": "Title ignored; the sync will not retry it.",
-    "restored": "Title restored; the sync will try it again."
+    "restored": "Title restored; the sync will try it again.",
+    "openReview": "Review in Automatic"
   }
 }

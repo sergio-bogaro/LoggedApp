@@ -2,7 +2,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader2, RefreshCw } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
 
 import { SuwayomiLinks } from "@/components/tw/settings/SuwayomiLinks";
@@ -93,6 +93,7 @@ function SuwayomiIntegration() {
   const { t, i18n } = useTranslation(["suwayomi", "media"]);
   const { user } = useAppSelector((state) => state.auth);
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const { data: config, isLoading } = useQuery({
     queryKey: ["suwayomi", "config", user?.id],
@@ -166,6 +167,7 @@ function SuwayomiIntegration() {
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: ["suwayomi", "config"] }),
       queryClient.invalidateQueries({ queryKey: ["suwayomi", "categories"] }),
+      queryClient.invalidateQueries({ queryKey: ["suwayomi", "links"] }),
     ]);
   };
 
@@ -175,6 +177,7 @@ function SuwayomiIntegration() {
       queryClient.invalidateQueries({ queryKey: ["existingMedia"] }),
       queryClient.invalidateQueries({ queryKey: ["media-logs"] }),
       queryClient.invalidateQueries({ queryKey: ["backlog"] }),
+      queryClient.invalidateQueries({ queryKey: ["sync-suggestions"] }),
     ]);
   };
 
@@ -283,10 +286,21 @@ function SuwayomiIntegration() {
         const message = result.summary.errors?.[0] || t("errors.sync");
         toast.error(message);
       } else {
+        const review = result.summary.reviewStaged ?? 0;
         toast.success(
-          t("connection.syncDone", {
+          t(review > 0 ? "connection.syncDoneReview" : "connection.syncDone", {
             created: result.summary.created ?? 0,
-          })
+            review,
+          }),
+          review > 0
+            ? {
+              action: {
+                label: t("connection.review"),
+                onClick: () =>
+                  navigate("/import?tab=auto&provider=suwayomi"),
+              },
+            }
+            : undefined
         );
       }
     } catch (error) {

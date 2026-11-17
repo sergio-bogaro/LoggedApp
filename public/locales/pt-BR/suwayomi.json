@@ -24,7 +24,9 @@
     "importHint": "Revise e importe os títulos que ainda faltam no Logged.",
     "cancel": "Cancelar",
     "includeInGlobal": "Incluir na sincronização geral",
-    "includeInGlobalHint": "Quando ativado, o Suwayomi participa do botão e do agendamento geral."
+    "includeInGlobalHint": "Quando ativado, o Suwayomi participa do botão e do agendamento geral.",
+    "syncDoneReview": "Sincronização concluída — {{created}} criados, {{review}} para revisão",
+    "review": "Revisar"
   },
   "auth": {
     "label": "Autenticação",
@@ -99,12 +101,12 @@
   },
   "links": {
     "title": "Vínculos pendentes",
-    "description": "Títulos que a sincronização não conseguiu vincular. Você pode vincular a um mangá existente ou ignorar.",
+    "description": "Títulos que a sincronização não conseguiu vincular. Eles também aparecem em Importar → Automáticos; aqui você pode vincular a um mangá existente ou ignorar.",
     "tabPending": "Pendentes",
     "tabIgnored": "Ignorados",
     "emptyPending": "Nenhum vínculo pendente.",
     "emptyIgnored": "Nenhum título ignorado.",
-    "pendingHint": "A sincronização tenta este título automaticamente.",
+    "pendingHint": "Também disponível em Importar → Automáticos. A sincronização tenta este título automaticamente.",
     "ignoredHint": "Ignorado: a sincronização não cria nem tenta este título.",
     "attempts": "{{count}} tentativas",
     "link": "Vincular",
@@ -117,6 +119,7 @@
     "noResults": "Nenhum mangá encontrado.",
     "linked": "Vínculo criado; a próxima sincronização aplica a categoria.",
     "ignored": "Título ignorado; a sincronização não vai mais tentar.",
-    "restored": "Título restaurado; a sincronização vai tentar novamente."
+    "restored": "Título restaurado; a sincronização vai tentar novamente.",
+    "openReview": "Revisar em Automáticos"
   }
 }
