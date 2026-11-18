@@ -868,6 +868,7 @@ function ImportManager() {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ["import-job", jobId, user.id] }),
         queryClient.invalidateQueries({ queryKey: ["import-jobs"] }),
+        queryClient.invalidateQueries({ queryKey: ["review"] }),
         queryClient.invalidateQueries({ queryKey: ["media"] }),
         queryClient.invalidateQueries({ queryKey: ["existingMedia"] }),
         queryClient.invalidateQueries({ queryKey: ["media-logs"] }),
@@ -912,6 +913,7 @@ function ImportManager() {
       }
       await queryClient.invalidateQueries({ queryKey: ["import-jobs"] });
       await queryClient.invalidateQueries({ queryKey: ["import-job"] });
+      await queryClient.invalidateQueries({ queryKey: ["review"] });
       setConfirmAction(null);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : t("errors.commit"));

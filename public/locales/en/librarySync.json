@@ -24,6 +24,7 @@
   "disconnect": "Disconnect",
   "disconnected": "Integration disconnected.",
   "saved": "Settings saved.",
+  "syncVsImportHint": "Sync now keeps the library up to date. Import library brings a full history in one go.",
   "initialSync": {
     "badge": "Initial sync pending",
     "title": "Initial sync pending",

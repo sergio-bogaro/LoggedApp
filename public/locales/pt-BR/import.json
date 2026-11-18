@@ -5,8 +5,8 @@
     "open": "Abrir importador"
   },
   "page": {
-    "title": "Importar mídias",
-    "description": "Importe de outra plataforma, revise os matches e adicione tudo ao Logged."
+    "title": "Importar e revisar",
+    "description": "Envie um arquivo ou conta para importar de uma vez, ou revise o que o sync encontrou antes de adicionar ao Logged."
   },
   "providers": {
     "letterboxd": {
@@ -188,10 +188,10 @@
     "restore": "Restaurar",
     "matching": "Casando…",
     "status": {
-      "matched": "Casado",
-      "ambiguous": "Conferir",
-      "not_found": "Não encontrado",
-      "already_in_library": "Na biblioteca"
+      "matched": "Com match",
+      "ambiguous": "Precisa validar",
+      "not_found": "Sem match",
+      "already_in_library": "Já na biblioteca"
     }
   },
   "filters": {
@@ -200,7 +200,7 @@
     "log": "Com log",
     "backlog": "No backlog",
     "validated": "Validados",
-    "attention": "Requer atenção",
+    "attention": "Precisa validar",
     "errors": "Com erro",
     "clear": "Limpar filtros",
     "showing": "Mostrando {{shown}} de {{total}} itens",
@@ -282,20 +282,63 @@
   },
   "tabs": {
     "manual": "Importar",
-    "automatic": "Automáticos"
+    "review": "Revisão"
+  },
+  "review": {
+    "inbox": {
+      "title": "Revisão pendente",
+      "description": "Importações manuais e títulos do sync no mesmo lugar.",
+      "pendingItems": "{{count}} item(ns) aguardando decisão."
+    },
+    "source": {
+      "manual": "Importação manual",
+      "sync": "Sync"
+    },
+    "job": "Job #{{id}}",
+    "manualBulkHint": "Itens de uma importação manual são confirmados em conjunto com o restante do job.",
+    "filters": {
+      "label": "Filtro",
+      "source": "Origem",
+      "clearProvider": "Limpar provedor: {{provider}}",
+      "allSources": "Todas as origens",
+      "pending": "Pendentes",
+      "ready": "Match 100%",
+      "needsValidation": "Precisa validar",
+      "noMatch": "Sem match",
+      "approved": "Aprovados",
+      "dismissed": "Ignorados",
+      "all": "Todos"
+    },
+    "empty": {
+      "pending": "Nada aguardando revisão.",
+      "history": "Nenhum item no histórico.",
+      "hint": "Sincronize ou importe uma biblioteca para começar."
+    },
+    "manual": {
+      "title": "Importações manuais prontas",
+      "description": "Revise os matches antes de confirmar a importação.",
+      "summary": "{{total}} títulos · {{matched}} com match · {{validation}} para validar · {{errors}} sem match",
+      "review": "Revisar"
+    },
+    "banner": {
+      "title": "{{count}} revisões pendentes",
+      "description": "{{manual}} importações manuais e {{sync}} títulos do sync aguardando decisão.",
+      "action": "Abrir revisão"
+    }
   },
   "automatic": {
-    "title": "Revisão automática",
-    "description": "Títulos encontrados pelo sync e pelo Suwayomi que precisam da sua revisão antes de entrar na biblioteca.",
+    "title": "Títulos do sync",
+    "description": "Encontrados pelo sync e pelo Suwayomi. Aprove os que devem entrar na biblioteca.",
     "match": {
       "exact": "Match 100%",
-      "validation": "Precisa de validação",
-      "none": "Sem match"
+      "validation": "Precisa validar",
+      "none": "Sem match",
+      "alreadyInLibrary": "Já na biblioteca"
     },
     "tabPending": "Pendentes",
     "tabDismissed": "Ignorados",
-    "emptyPending": "Nenhum título aguardando revisão.",
-    "emptyDismissed": "Nenhum título ignorado.",
+    "emptyPending": "Nenhum título do sync aguardando revisão.",
+    "emptyDismissed": "Nenhum título do sync ignorado.",
     "emptyHint": "Os títulos encontrados pelo sync aparecem aqui para revisão antes de entrar na biblioteca.",
     "selected": "{{count}} selecionado(s)",
     "selectAll": "Selecionar todos",
@@ -331,7 +374,7 @@
     "reviewOrigin": "Aprovado",
     "chooseMatch": "Selecionar candidato",
     "lastSyncAt": "Último sync: {{date}}",
-    "emptyHistory": "Nenhum item no histórico.",
+    "emptyHistory": "Nenhum item no histórico do sync.",
     "dismissedState": "Ignorado",
     "filters": {
       "label": "Filtro",

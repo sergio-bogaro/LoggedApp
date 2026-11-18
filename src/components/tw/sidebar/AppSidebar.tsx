@@ -17,8 +17,7 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
-import { useReadyImportJobs } from "@/hooks/useImportJobs";
-import { useSyncSuggestionCount } from "@/hooks/useSyncSuggestions";
+import { useReviewCounts } from "@/hooks/useReviewCounts";
 import { useAppSelector } from "@/store/auth/hooks";
 import { getTrackFlags } from "@/utils/mediaTrack";
 
@@ -26,10 +25,7 @@ export function AppSidebar() {
   const { t } = useTranslation(["common", "media"]);
   const location = useLocation();
   const { user } = useAppSelector((state) => state.auth);
-  const { data: readyImportJobs } = useReadyImportJobs(user?.id);
-  const { data: pendingSuggestions } = useSyncSuggestionCount(user?.id);
-  const importReviewCount =
-    (readyImportJobs?.length ?? 0) + (pendingSuggestions?.pending ?? 0);
+  const { total: importReviewCount } = useReviewCounts(user?.id);
 
   const trackFlags = getTrackFlags(user);
   const visibleMediaTypes = mediaTypes.filter((item) => trackFlags[item.type]);

@@ -665,7 +665,14 @@ export function AutomaticImports({ provider }: { provider?: string }) {
     <div className="space-y-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="font-medium text-step-1">{t("automatic.title")}</p>
+          <p className="font-medium text-step-1">
+            {t("automatic.title")}
+            {(counts?.pending ?? 0) > 0 ? (
+              <span className="ml-1 tabular-nums text-muted-foreground">
+                ({counts?.pending})
+              </span>
+            ) : null}
+          </p>
           <p className="text-step-0 text-muted-foreground">
             {t("automatic.description")}
           </p>

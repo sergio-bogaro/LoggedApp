@@ -93,6 +93,7 @@ export function SyncRunProvider({ children }: { children: ReactNode }) {
       queryClient.invalidateQueries({ queryKey: ["media-logs"] }),
       queryClient.invalidateQueries({ queryKey: ["backlog"] }),
       queryClient.invalidateQueries({ queryKey: ["sync-suggestions"] }),
+      queryClient.invalidateQueries({ queryKey: ["review"] }),
     ]);
   }, [run, queryClient, t]);
 

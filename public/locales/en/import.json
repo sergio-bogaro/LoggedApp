@@ -5,8 +5,8 @@
     "open": "Open importer"
   },
   "page": {
-    "title": "Import media",
-    "description": "Import from another platform, review the matches and add everything to Logged."
+    "title": "Import and review",
+    "description": "Upload a file or account to import in one go, or review what sync found before adding it to Logged."
   },
   "providers": {
     "letterboxd": {
@@ -189,9 +189,9 @@
     "matching": "Matching…",
     "status": {
       "matched": "Matched",
-      "ambiguous": "Check",
-      "not_found": "Not found",
-      "already_in_library": "In library"
+      "ambiguous": "Needs validation",
+      "not_found": "No match",
+      "already_in_library": "Already in library"
     }
   },
   "filters": {
@@ -200,7 +200,7 @@
     "log": "With log",
     "backlog": "In backlog",
     "validated": "Validated",
-    "attention": "Needs attention",
+    "attention": "Needs validation",
     "errors": "With error",
     "clear": "Clear filters",
     "showing": "Showing {{shown}} of {{total}} items",
@@ -282,20 +282,63 @@
   },
   "tabs": {
     "manual": "Import",
-    "automatic": "Automatic"
+    "review": "Review"
+  },
+  "review": {
+    "inbox": {
+      "title": "Pending review",
+      "description": "Manual imports and sync titles in one place.",
+      "pendingItems": "{{count}} item(s) waiting for a decision."
+    },
+    "source": {
+      "manual": "Manual import",
+      "sync": "Sync"
+    },
+    "job": "Job #{{id}}",
+    "manualBulkHint": "Items from a manual import are confirmed together with the rest of the job.",
+    "filters": {
+      "label": "Filter",
+      "source": "Source",
+      "clearProvider": "Clear provider: {{provider}}",
+      "allSources": "All sources",
+      "pending": "Pending",
+      "ready": "100% match",
+      "needsValidation": "Needs validation",
+      "noMatch": "No match",
+      "approved": "Approved",
+      "dismissed": "Ignored",
+      "all": "All"
+    },
+    "empty": {
+      "pending": "Nothing waiting for review.",
+      "history": "No items in history.",
+      "hint": "Sync or import a library to get started."
+    },
+    "manual": {
+      "title": "Manual imports ready",
+      "description": "Review the matches before confirming the import.",
+      "summary": "{{total}} titles · {{matched}} matched · {{validation}} to validate · {{errors}} without match",
+      "review": "Review"
+    },
+    "banner": {
+      "title": "{{count}} pending reviews",
+      "description": "{{manual}} manual imports and {{sync}} sync titles waiting for a decision.",
+      "action": "Open review"
+    }
   },
   "automatic": {
-    "title": "Automatic review",
-    "description": "Titles found by sync and Suwayomi that need your review before entering the library.",
+    "title": "Sync titles",
+    "description": "Found by sync and Suwayomi. Approve the ones that should enter the library.",
     "match": {
       "exact": "100% match",
       "validation": "Needs validation",
-      "none": "No match"
+      "none": "No match",
+      "alreadyInLibrary": "Already in library"
     },
     "tabPending": "Pending",
     "tabDismissed": "Ignored",
-    "emptyPending": "No titles waiting for review.",
-    "emptyDismissed": "No ignored titles.",
+    "emptyPending": "No sync titles waiting for review.",
+    "emptyDismissed": "No ignored sync titles.",
     "emptyHint": "Titles found by sync show up here for review before entering the library.",
     "selected": "{{count}} selected",
     "selectAll": "Select all",
@@ -331,7 +374,7 @@
     "reviewOrigin": "Approved",
     "chooseMatch": "Select candidate",
     "lastSyncAt": "Last sync: {{date}}",
-    "emptyHistory": "No items in history.",
+    "emptyHistory": "No items in sync history.",
     "dismissedState": "Ignored",
     "filters": {
       "label": "Filter",

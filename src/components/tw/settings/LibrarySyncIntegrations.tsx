@@ -876,6 +876,10 @@ export function LibrarySyncIntegrations() {
                   )}
                 </div>
 
+                <p className="text-step-0 text-muted-foreground">
+                  {t("syncVsImportHint")}
+                </p>
+
                 {current.connected && !current.baselineCompletedAt && (
                   <div className="space-y-1 rounded-control border border-primary/30 bg-primary/5 p-3">
                     <p className="text-step-1 font-medium">

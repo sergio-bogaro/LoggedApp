@@ -24,6 +24,7 @@
   "disconnect": "Desconectar",
   "disconnected": "Integração desconectada.",
   "saved": "Configurações salvas.",
+  "syncVsImportHint": "Sincronizar agora mantém a biblioteca atualizada. Importar biblioteca traz um histórico completo de uma vez.",
   "initialSync": {
     "badge": "Sincronização inicial pendente",
     "title": "Sincronização inicial pendente",

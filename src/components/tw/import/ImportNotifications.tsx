@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
@@ -15,11 +16,16 @@ export function ImportNotifications() {
   const { data } = useReadyImportJobs(user?.id);
   const { t } = useTranslation(["import", "common"]);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const shown = useRef<Set<number>>(new Set());
 
   useEffect(() => {
     const readyJobs = data ?? [];
     const readyIds = new Set(readyJobs.map((job) => job.id));
+
+    if (readyJobs.length > 0) {
+      queryClient.invalidateQueries({ queryKey: ["review"] });
+    }
 
     for (const jobId of Array.from(shown.current)) {
       if (!readyIds.has(jobId)) {
@@ -52,7 +58,7 @@ export function ImportNotifications() {
         },
       });
     }
-  }, [data, navigate, t]);
+  }, [data, navigate, queryClient, t]);
 
   return null;
 }
