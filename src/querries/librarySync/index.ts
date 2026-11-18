@@ -12,6 +12,8 @@ import type {
   SyncConfigPayload,
   SyncProviderInfo,
   SyncResponse,
+  SyncRun,
+  SyncRunStartResponse,
   SyncStatusesResponse,
   SyncSuggestion,
   SyncSuggestionCountResponse,
@@ -73,6 +75,33 @@ export async function syncAllIntegrations(
       body: JSON.stringify({ userId }),
     },
     15 * 60_000
+  );
+}
+
+export async function startSyncRun(
+  userId: number,
+  scope: string
+): Promise<SyncRunStartResponse> {
+  return apiFetch<SyncRunStartResponse>("/api/integrations/sync-runs", {
+    method: "POST",
+    body: JSON.stringify({ userId, scope }),
+  });
+}
+
+export async function getSyncRun(
+  userId: number,
+  runId: string
+): Promise<SyncRun> {
+  return apiFetch<SyncRun>(
+    `/api/integrations/sync-runs/${runId}?user_id=${userId}`
+  );
+}
+
+export async function getActiveSyncRun(
+  userId: number
+): Promise<SyncRun | null> {
+  return apiFetch<SyncRun | null>(
+    `/api/integrations/sync-runs/active?user_id=${userId}`
   );
 }
 

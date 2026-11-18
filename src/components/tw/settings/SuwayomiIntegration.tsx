@@ -2,10 +2,11 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader2, RefreshCw } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate } from "react-router";
+import { Link } from "react-router";
 import { toast } from "sonner";
 
 import { SuwayomiLinks } from "@/components/tw/settings/SuwayomiLinks";
+import { useSyncRun } from "@/components/tw/sync/SyncRunProvider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -93,7 +94,7 @@ function SuwayomiIntegration() {
   const { t, i18n } = useTranslation(["suwayomi", "media"]);
   const { user } = useAppSelector((state) => state.auth);
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
+  const { isRunning, startSync } = useSyncRun();
 
   const { data: config, isLoading } = useQuery({
     queryKey: ["suwayomi", "config", user?.id],
@@ -117,7 +118,6 @@ function SuwayomiIntegration() {
   const [actions, setActions] = useState<Record<number, SuwayomiAction>>({});
   const [saving, setSaving] = useState(false);
   const [testing, setTesting] = useState(false);
-  const [syncing, setSyncing] = useState(false);
   const [savingAuth, setSavingAuth] = useState(false);
   const [savingCategories, setSavingCategories] = useState(false);
   const [initializedFor, setInitializedFor] = useState<number | null>(null);
@@ -168,16 +168,6 @@ function SuwayomiIntegration() {
       queryClient.invalidateQueries({ queryKey: ["suwayomi", "config"] }),
       queryClient.invalidateQueries({ queryKey: ["suwayomi", "categories"] }),
       queryClient.invalidateQueries({ queryKey: ["suwayomi", "links"] }),
-    ]);
-  };
-
-  const refreshLibrary = async () => {
-    await Promise.all([
-      queryClient.invalidateQueries({ queryKey: ["media"] }),
-      queryClient.invalidateQueries({ queryKey: ["existingMedia"] }),
-      queryClient.invalidateQueries({ queryKey: ["media-logs"] }),
-      queryClient.invalidateQueries({ queryKey: ["backlog"] }),
-      queryClient.invalidateQueries({ queryKey: ["sync-suggestions"] }),
     ]);
   };
 
@@ -276,38 +266,7 @@ function SuwayomiIntegration() {
   };
 
   const handleSync = async () => {
-    if (!user) return;
-    setSyncing(true);
-    try {
-      const result = await suwayomiApi.syncNow(user.id);
-      await refresh();
-      await refreshLibrary();
-      if (result.status === "error") {
-        const message = result.summary.errors?.[0] || t("errors.sync");
-        toast.error(message);
-      } else {
-        const review = result.summary.reviewStaged ?? 0;
-        toast.success(
-          t(review > 0 ? "connection.syncDoneReview" : "connection.syncDone", {
-            created: result.summary.created ?? 0,
-            review,
-          }),
-          review > 0
-            ? {
-              action: {
-                label: t("connection.review"),
-                onClick: () =>
-                  navigate("/import?tab=auto&provider=suwayomi"),
-              },
-            }
-            : undefined
-        );
-      }
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : t("errors.sync"));
-    } finally {
-      setSyncing(false);
-    }
+    await startSync("suwayomi");
   };
 
   const handleSaveCategories = async () => {
@@ -403,10 +362,16 @@ function SuwayomiIntegration() {
             size="sm"
             variant="outline"
             onClick={handleSync}
-            disabled={!configured || syncing}
+            disabled={!configured}
           >
-            {syncing ? <Loader2 className="animate-spin" /> : <RefreshCw />}
-            {syncing ? t("connection.syncing") : t("connection.syncNow")}
+            {isRunning ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              <RefreshCw />
+            )}
+            {isRunning
+              ? t("connection.viewProgress")
+              : t("connection.syncNow")}
           </Button>
           <Button asChild type="button" size="sm" variant="outline">
             <Link to="/import">{t("connection.importLibrary")}</Link>

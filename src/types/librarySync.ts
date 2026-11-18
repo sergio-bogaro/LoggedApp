@@ -151,6 +151,41 @@ export interface SyncSuggestionCountResponse {
   pending: number;
 }
 
+export type SyncRunStatus = "running" | "success" | "partial" | "failed";
+
+export interface SyncRunProvider {
+  id: string;
+  status: "pending" | "running" | "done" | "error" | string;
+  done: number;
+  total: number;
+  error?: string | null;
+}
+
+export interface SyncRun {
+  id: string;
+  userId: number;
+  scope: string;
+  status: SyncRunStatus;
+  phase: string;
+  label: string;
+  provider?: string | null;
+  providerIndex: number;
+  providerTotal: number;
+  done: number;
+  total: number;
+  percent?: number | null;
+  providers: SyncRunProvider[];
+  startedAt: string;
+  finishedAt?: string | null;
+  summary?: Record<string, unknown> | null;
+  error?: string | null;
+}
+
+export interface SyncRunStartResponse {
+  started: boolean;
+  run: SyncRun;
+}
+
 export interface SyncSuggestionsApproveResponse {
   approved: number;
   failed: number;

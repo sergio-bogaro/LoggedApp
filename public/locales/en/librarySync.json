@@ -198,5 +198,32 @@
   "includeInGlobal": "Include in global sync",
   "includeInGlobalHint": "When enabled, this provider takes part in the global button and schedule.",
   "included": "Included in global sync",
-  "excluded": "Excluded from global sync"
+  "excluded": "Excluded from global sync",
+  "syncRun": {
+    "titleAll": "Syncing everything",
+    "titleSuwayomi": "Syncing Suwayomi",
+    "titleProvider": "Syncing {{provider}}",
+    "preparing": "Preparing sync…",
+    "working": "In progress",
+    "success": "Sync finished",
+    "partial": "Sync finished with warnings",
+    "failed": "Sync failed",
+    "background": "Continue in background",
+    "close": "Close",
+    "items": "{{done}} of {{total}} items",
+    "providers": "Providers",
+    "created": "Created",
+    "updated": "Updated",
+    "backlog": "In backlog",
+    "logs": "Logs",
+    "review": "To review",
+    "missing": "No match",
+    "okProviders": "Providers OK",
+    "failedProviders": "Providers with errors",
+    "viewProgress": "View progress",
+    "startError": "Could not start the sync.",
+    "finishedToast": "Sync finished.",
+    "partialToast": "Sync finished with warnings.",
+    "failedToast": "Sync failed."
+  }
 }

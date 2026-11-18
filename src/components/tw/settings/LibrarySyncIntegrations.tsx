@@ -15,6 +15,7 @@ import { toast } from "sonner";
 
 import { TypeMark } from "@/components/tw/generic/badges";
 import SuwayomiIntegration from "@/components/tw/settings/SuwayomiIntegration";
+import { useSyncRun } from "@/components/tw/sync/SyncRunProvider";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -44,8 +45,6 @@ import {
   saveIntegrationConfig,
   saveIntegrationStatuses,
   startIntegrationOAuth,
-  syncAllIntegrations,
-  syncIntegration,
   testIntegration,
 } from "@/querries/librarySync";
 import { suwayomiApi } from "@/querries/suwayomi";
@@ -155,6 +154,7 @@ export function LibrarySyncIntegrations() {
   const { t } = useTranslation("librarySync");
   const { user } = useAppSelector((state) => state.auth);
   const queryClient = useQueryClient();
+  const { isRunning, startSync } = useSyncRun();
 
   const { data, isLoading } = useQuery({
     queryKey: ["integrations", user?.id],
@@ -177,13 +177,11 @@ export function LibrarySyncIntegrations() {
   const [globalUpdatesPerDay, setGlobalUpdatesPerDay] = useState("4");
   const [globalStartTime, setGlobalStartTime] = useState("00:00");
   const [savingGlobal, setSavingGlobal] = useState(false);
-  const [syncingAll, setSyncingAll] = useState(false);
   const [username, setUsername] = useState("");
   const [clientId, setClientId] = useState("");
   const [token, setToken] = useState("");
   const [saving, setSaving] = useState(false);
   const [testing, setTesting] = useState(false);
-  const [syncing, setSyncing] = useState(false);
   const [savingStatuses, setSavingStatuses] = useState(false);
   const [device, setDevice] = useState<OAuthStartResponse | null>(null);
   const [statuses, setStatuses] = useState<SyncStatusOption[]>([]);
@@ -277,16 +275,6 @@ export function LibrarySyncIntegrations() {
     await queryClient.invalidateQueries({ queryKey: ["global-sync-settings"] });
   };
 
-  const refreshLibrary = async () => {
-    await Promise.all([
-      queryClient.invalidateQueries({ queryKey: ["media"] }),
-      queryClient.invalidateQueries({ queryKey: ["existingMedia"] }),
-      queryClient.invalidateQueries({ queryKey: ["media-logs"] }),
-      queryClient.invalidateQueries({ queryKey: ["backlog"] }),
-      queryClient.invalidateQueries({ queryKey: ["sync-suggestions"] }),
-    ]);
-  };
-
   const open = (provider: SyncProviderInfo) => {
     setSelected(provider.id);
     setStatuses([]);
@@ -332,18 +320,9 @@ export function LibrarySyncIntegrations() {
     }
   };
 
-  const handleSync = async () => {
-    if (!user || !selected) return;
-    setSyncing(true);
-    try {
-      await syncIntegration(selected, user.id);
-      toast.success(t("syncStarted"));
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : t("errors.sync"));
-    } finally {
-      setSyncing(false);
-      await Promise.all([refresh(), refreshLibrary()]);
-    }
+  const handleSync = () => {
+    if (!selected) return;
+    void startSync(selected);
   };
 
   const handleSaveGlobal = async () => {
@@ -365,24 +344,8 @@ export function LibrarySyncIntegrations() {
     }
   };
 
-  const handleSyncAll = async () => {
-    if (!user) return;
-    setSyncingAll(true);
-    try {
-      const result = await syncAllIntegrations(user.id);
-      await Promise.all([refresh(), refreshLibrary()]);
-      if (result.failed > 0) {
-        toast.warning(
-          t("global.syncPartial", { ok: result.ok, failed: result.failed })
-        );
-      } else {
-        toast.success(t("global.syncDone", { count: result.ok }));
-      }
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : t("errors.sync"));
-    } finally {
-      setSyncingAll(false);
-    }
+  const handleSyncAll = () => {
+    void startSync("all");
   };
 
   const handleOAuth = async () => {
@@ -617,11 +580,15 @@ export function LibrarySyncIntegrations() {
               type="button"
               size="sm"
               onClick={handleSyncAll}
-              disabled={syncingAll || includedCount === 0}
+              disabled={includedCount === 0}
             >
-              {syncingAll ? <Loader2 className="animate-spin" /> : <RefreshCw />}
-              {syncingAll
-                ? t("global.syncing")
+              {isRunning ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                <RefreshCw />
+              )}
+              {isRunning
+                ? t("syncRun.viewProgress")
                 : t("global.syncAll", { count: includedCount })}
             </Button>
           </div>
@@ -866,10 +833,14 @@ export function LibrarySyncIntegrations() {
                     type="button"
                     variant="outline"
                     onClick={handleSync}
-                    disabled={syncing || !current.connected}
+                    disabled={!current.connected}
                   >
-                    {syncing ? <Loader2 className="animate-spin" /> : <RefreshCw />}
-                    {t("syncNow")}
+                    {isRunning ? (
+                      <Loader2 className="animate-spin" />
+                    ) : (
+                      <RefreshCw />
+                    )}
+                    {isRunning ? t("syncRun.viewProgress") : t("syncNow")}
                   </Button>
                   <Button type="button" variant="outline" asChild>
                     <Link

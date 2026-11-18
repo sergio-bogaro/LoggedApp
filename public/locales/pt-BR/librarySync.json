@@ -198,5 +198,32 @@
   "includeInGlobal": "Incluir na sincronização geral",
   "includeInGlobalHint": "Quando ativado, este provedor participa do botão e do agendamento geral.",
   "included": "Incluído no sync geral",
-  "excluded": "Fora do sync geral"
+  "excluded": "Fora do sync geral",
+  "syncRun": {
+    "titleAll": "Sincronizando tudo",
+    "titleSuwayomi": "Sincronizando Suwayomi",
+    "titleProvider": "Sincronizando {{provider}}",
+    "preparing": "Preparando sincronização…",
+    "working": "Em andamento",
+    "success": "Sincronização concluída",
+    "partial": "Sincronização concluída com avisos",
+    "failed": "Sincronização falhou",
+    "background": "Continuar em segundo plano",
+    "close": "Fechar",
+    "items": "{{done}} de {{total}} itens",
+    "providers": "Provedores",
+    "created": "Criados",
+    "updated": "Atualizados",
+    "backlog": "No backlog",
+    "logs": "Logs",
+    "review": "Para revisão",
+    "missing": "Sem match",
+    "okProviders": "Provedores OK",
+    "failedProviders": "Provedores com erro",
+    "viewProgress": "Ver progresso",
+    "startError": "Não foi possível iniciar a sincronização.",
+    "finishedToast": "Sincronização concluída.",
+    "partialToast": "Sincronização concluída com avisos.",
+    "failedToast": "A sincronização falhou."
+  }
 }

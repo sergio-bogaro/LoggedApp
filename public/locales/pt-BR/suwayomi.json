@@ -26,7 +26,8 @@
     "includeInGlobal": "Incluir na sincronização geral",
     "includeInGlobalHint": "Quando ativado, o Suwayomi participa do botão e do agendamento geral.",
     "syncDoneReview": "Sincronização concluída — {{created}} criados, {{review}} para revisão",
-    "review": "Revisar"
+    "review": "Revisar",
+    "viewProgress": "Ver progresso"
   },
   "auth": {
     "label": "Autenticação",

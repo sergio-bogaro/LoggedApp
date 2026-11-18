@@ -26,7 +26,8 @@
     "includeInGlobal": "Include in global sync",
     "includeInGlobalHint": "When enabled, Suwayomi takes part in the global button and schedule.",
     "syncDoneReview": "Sync finished — {{created}} created, {{review}} to review",
-    "review": "Review"
+    "review": "Review",
+    "viewProgress": "View progress"
   },
   "auth": {
     "label": "Authentication",
