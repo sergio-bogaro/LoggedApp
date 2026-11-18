@@ -1,6 +1,6 @@
 {
   "title": "Library integrations",
-  "description": "Connect external services to keep status and backlog in sync. On Letterboxd, exact matches go straight to the library; uncertain ones go to review.",
+  "description": "Connect external services to keep status and backlog in sync. New titles go through the review queue, just like a manual import.",
   "connected": "Connected",
   "notConnected": "Not connected",
   "connect": "Connect",
@@ -24,6 +24,17 @@
   "disconnect": "Disconnect",
   "disconnected": "Integration disconnected.",
   "saved": "Settings saved.",
+  "initialSync": {
+    "badge": "Initial sync pending",
+    "title": "Initial sync pending",
+    "description": "Sync now to fetch your library and send new titles to review before they enter Logged."
+  },
+  "partialSync": {
+    "badge": "Full history via file",
+    "title": "Partial sync",
+    "description": "The sync does not cover this service's full history. Use the file import to bring everything.",
+    "action": "Import full file"
+  },
   "errors": {
     "save": "Could not save the settings.",
     "test": "Could not test the connection.",
@@ -58,13 +69,14 @@
   "summary": {
     "title": "Last sync",
     "created": "Created",
+    "reviewStaged": "For review",
     "statusUpdated": "Status updated",
     "backlogAdded": "Backlog added",
     "pending": "Pending",
-    "missing": "Missing",
+    "missing": "Waiting for review",
     "unmatched": "Unmatched",
     "removed": "Removed",
-    "missingHint": "These titles are not in Logged yet. Use Import library to review and import them.",
+    "missingHint": "Review them in Import → Automatic to add them to your library.",
     "errors": "{{count}} item(s) failed.",
     "pendingReview": "{{count}} waiting for review",
     "review": "Review",
@@ -143,6 +155,7 @@
     "letterboxd": {
       "label": "Letterboxd",
       "description": "Recent diary entries via RSS. Full history and watchlist come from the CSV export.",
+      "syncPartial": "The sync reads only the ~50 most recent diary entries. Full history and watchlist must be imported from the ZIP export.",
       "statuses": {
         "watched": "Watched"
       }
@@ -217,7 +230,7 @@
     "backlog": "In backlog",
     "logs": "Logs",
     "review": "To review",
-    "missing": "No match",
+    "missing": "Waiting for review",
     "okProviders": "Providers OK",
     "failedProviders": "Providers with errors",
     "viewProgress": "View progress",

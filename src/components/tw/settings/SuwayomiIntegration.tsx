@@ -342,6 +342,14 @@ function SuwayomiIntegration() {
           </p>
         </div>
 
+        {configured && !config?.lastSyncAt && (
+          <div className="rounded-control border border-primary/30 bg-primary/5 p-3">
+            <p className="text-step-1 font-medium">
+              {t("connection.initialSyncHint")}
+            </p>
+          </div>
+        )}
+
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-step-0 text-muted-foreground">
           <span>
             {t("connection.lastSync")}:{" "}
@@ -460,7 +468,10 @@ function SuwayomiIntegration() {
         <div className="space-y-3 rounded-control border border-border p-3">
           <p className="font-medium text-step-1">{t("summary.title")}</p>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-            <SummaryStat label={t("summary.stats.created")} value={summary.created ?? 0} />
+            <SummaryStat
+              label={t("summary.stats.reviewStaged")}
+              value={summary.reviewStaged ?? 0}
+            />
             <SummaryStat
               label={t("summary.stats.statusUpdated")}
               value={summary.statusUpdated ?? 0}

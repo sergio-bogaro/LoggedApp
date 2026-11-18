@@ -29,6 +29,7 @@ export interface SyncProviderInfo {
   clientId?: string | null;
   hasToken: boolean;
   pendingReview: number;
+  syncPartial?: boolean;
 }
 
 export interface SyncStatusOption {
@@ -135,6 +136,7 @@ export interface SyncSuggestionCounts {
   pending: number;
   approved: number;
   dismissed: number;
+  ready: number;
   attention: number;
   noMatch: number;
   lastSync: number;

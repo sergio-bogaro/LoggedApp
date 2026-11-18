@@ -287,11 +287,16 @@
   "automatic": {
     "title": "Revisão automática",
     "description": "Títulos encontrados pelo sync e pelo Suwayomi que precisam da sua revisão antes de entrar na biblioteca.",
+    "match": {
+      "exact": "Match 100%",
+      "validation": "Precisa de validação",
+      "none": "Sem match"
+    },
     "tabPending": "Pendentes",
     "tabDismissed": "Ignorados",
     "emptyPending": "Nenhum título aguardando revisão.",
     "emptyDismissed": "Nenhum título ignorado.",
-    "emptyHint": "O match perfeito é adicionado direto na biblioteca. Os duvidosos aparecem aqui.",
+    "emptyHint": "Os títulos encontrados pelo sync aparecem aqui para revisão antes de entrar na biblioteca.",
     "selected": "{{count}} selecionado(s)",
     "selectAll": "Selecionar todos",
     "clearSelection": "Limpar seleção",
@@ -308,9 +313,9 @@
     "rating": "Nota {{value}}/10",
     "openSource": "Abrir na origem",
     "openMetadata": "Abrir nos metadados",
-    "needsAttention": "Precisam de atenção ({{count}})",
+    "needsAttention": "Com candidato ({{count}})",
     "noMatch": "Sem match ({{count}})",
-    "needsAttentionHint": "Há um candidato, mas o match não é exato.",
+    "needsAttentionHint": "Revise os candidatos e aprove os títulos que devem entrar na biblioteca.",
     "noMatchHint": "Nenhum candidato encontrado. Busque um match para continuar.",
     "findMatch": "Buscar match",
     "changeMatch": "Trocar match",
@@ -330,10 +335,12 @@
     "dismissedState": "Ignorado",
     "filters": {
       "label": "Filtro",
+      "pending": "Pendentes",
+      "ready": "Match 100%",
       "all": "Todos",
       "validated": "Validados",
       "lastSync": "Último sync",
-      "attention": "Atenção",
+      "attention": "Precisa validar",
       "noMatch": "Sem match",
       "dismissed": "Ignorados"
     },

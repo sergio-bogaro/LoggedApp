@@ -287,11 +287,16 @@
   "automatic": {
     "title": "Automatic review",
     "description": "Titles found by sync and Suwayomi that need your review before entering the library.",
+    "match": {
+      "exact": "100% match",
+      "validation": "Needs validation",
+      "none": "No match"
+    },
     "tabPending": "Pending",
     "tabDismissed": "Ignored",
     "emptyPending": "No titles waiting for review.",
     "emptyDismissed": "No ignored titles.",
-    "emptyHint": "Perfect matches are added to the library directly. Uncertain ones show up here.",
+    "emptyHint": "Titles found by sync show up here for review before entering the library.",
     "selected": "{{count}} selected",
     "selectAll": "Select all",
     "clearSelection": "Clear selection",
@@ -308,9 +313,9 @@
     "rating": "Rating {{value}}/10",
     "openSource": "Open source",
     "openMetadata": "Open metadata",
-    "needsAttention": "Needs attention ({{count}})",
+    "needsAttention": "With a candidate ({{count}})",
     "noMatch": "No match ({{count}})",
-    "needsAttentionHint": "A candidate exists, but the match is not exact.",
+    "needsAttentionHint": "Review the candidates and approve the titles that should enter the library.",
     "noMatchHint": "No candidate found. Search for a match to continue.",
     "findMatch": "Find match",
     "changeMatch": "Change match",
@@ -330,10 +335,12 @@
     "dismissedState": "Ignored",
     "filters": {
       "label": "Filter",
+      "pending": "Pending",
+      "ready": "100% match",
       "all": "All",
       "validated": "Validated",
       "lastSync": "Last sync",
-      "attention": "Attention",
+      "attention": "Needs validation",
       "noMatch": "No match",
       "dismissed": "Ignored"
     },

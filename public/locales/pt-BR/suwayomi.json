@@ -27,7 +27,8 @@
     "includeInGlobalHint": "Quando ativado, o Suwayomi participa do botão e do agendamento geral.",
     "syncDoneReview": "Sincronização concluída — {{created}} criados, {{review}} para revisão",
     "review": "Revisar",
-    "viewProgress": "Ver progresso"
+    "viewProgress": "Ver progresso",
+    "initialSyncHint": "Sincronização inicial pendente. Sincronize agora para enviar os títulos novos para revisão."
   },
   "auth": {
     "label": "Autenticação",
@@ -77,6 +78,7 @@
     "to": "para",
     "stats": {
       "created": "Criados",
+      "reviewStaged": "Para revisão",
       "statusUpdated": "Status alterados",
       "backlogAdded": "Adicionados ao backlog",
       "backlogRemoved": "Removidos do backlog",

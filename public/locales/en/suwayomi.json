@@ -27,7 +27,8 @@
     "includeInGlobalHint": "When enabled, Suwayomi takes part in the global button and schedule.",
     "syncDoneReview": "Sync finished — {{created}} created, {{review}} to review",
     "review": "Review",
-    "viewProgress": "View progress"
+    "viewProgress": "View progress",
+    "initialSyncHint": "Initial sync pending. Sync now to send new titles to review."
   },
   "auth": {
     "label": "Authentication",
@@ -77,6 +78,7 @@
     "to": "to",
     "stats": {
       "created": "Created",
+      "reviewStaged": "For review",
       "statusUpdated": "Status changes",
       "backlogAdded": "Added to backlog",
       "backlogRemoved": "Removed from backlog",

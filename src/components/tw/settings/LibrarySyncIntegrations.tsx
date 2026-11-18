@@ -492,6 +492,16 @@ export function LibrarySyncIntegrations() {
             {t("needsReauth")}
           </p>
         )}
+        {provider.connected && !provider.baselineCompletedAt && (
+          <p className="mt-1 text-step-0 text-primary">
+            {t("initialSync.badge")}
+          </p>
+        )}
+        {provider.syncPartial && (
+          <p className="mt-1 text-step-0 text-muted-foreground">
+            {t("partialSync.badge")}
+          </p>
+        )}
         {provider.pendingReview > 0 && (
           <p className="mt-1 text-step-0 text-amber-600 dark:text-amber-400">
             {t("summary.pendingReview", { count: provider.pendingReview })}
@@ -866,6 +876,36 @@ export function LibrarySyncIntegrations() {
                   )}
                 </div>
 
+                {current.connected && !current.baselineCompletedAt && (
+                  <div className="space-y-1 rounded-control border border-primary/30 bg-primary/5 p-3">
+                    <p className="text-step-1 font-medium">
+                      {t("initialSync.title")}
+                    </p>
+                    <p className="text-step-0 text-muted-foreground">
+                      {t("initialSync.description")}
+                    </p>
+                  </div>
+                )}
+
+                {current.syncPartial && (
+                  <div className="space-y-2 rounded-control border border-amber-500/30 bg-amber-500/5 p-3">
+                    <p className="text-step-1 font-medium">
+                      {t("partialSync.title")}
+                    </p>
+                    <p className="text-step-0 text-muted-foreground">
+                      {t(`providers.${current.id}.syncPartial`, {
+                        defaultValue: t("partialSync.description"),
+                      })}
+                    </p>
+                    <Button type="button" size="sm" variant="outline" asChild>
+                      <Link to={`/import?provider=${current.id}`}>
+                        <Upload />
+                        {t("partialSync.action")}
+                      </Link>
+                    </Button>
+                  </div>
+                )}
+
                 <div className="space-y-2 border-t border-border pt-3">
                   <p className="text-step-1 font-medium">{t("mappings.title")}</p>
                   <p className="text-step-0 text-muted-foreground">
@@ -946,7 +986,7 @@ export function LibrarySyncIntegrations() {
                     </p>
                     <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                       {[
-                        ["created", "summary.created"],
+                        ["reviewStaged", "summary.reviewStaged"],
                         ["statusUpdated", "summary.statusUpdated"],
                         ["backlogAdded", "summary.backlogAdded"],
                         ["logsCreated", "summary.logsCreated"],

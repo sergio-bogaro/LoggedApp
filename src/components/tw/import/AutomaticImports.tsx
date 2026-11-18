@@ -12,7 +12,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
-import { ImportMatchMark, ImportOutcomeMark } from "@/components/tw/import/ImportStatusMark";
+import { ImportOutcomeMark } from "@/components/tw/import/ImportStatusMark";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -55,6 +55,39 @@ function formatDate(value?: string | null): string | null {
       : `${value}Z`;
   const date = new Date(normalized);
   return Number.isNaN(date.getTime()) ? value : date.toLocaleDateString();
+}
+
+function SuggestionMatchMark({
+  kind,
+}: {
+  kind: "exact" | "validation" | "none";
+}) {
+  const { t } = useTranslation("import");
+  const tone =
+    kind === "exact"
+      ? {
+          text: "text-foreground",
+          mark: "border-primary bg-primary",
+        }
+      : kind === "validation"
+        ? {
+            text: "text-amber-600 dark:text-amber-400",
+            mark: "border-amber-500 bg-transparent",
+          }
+        : {
+            text: "text-destructive",
+            mark: "border-destructive bg-transparent",
+          };
+
+  return (
+    <span className={cn("inline-flex items-center gap-1.5 text-step-0", tone.text)}>
+      <span
+        aria-hidden="true"
+        className={cn("size-2 shrink-0 rounded-[2px] border", tone.mark)}
+      />
+      {t(`automatic.match.${kind}`)}
+    </span>
+  );
 }
 
 function SuggestionMatchDialog({
@@ -212,7 +245,11 @@ function SuggestionRow({
       : suggestion.candidate
         ? [suggestion.candidate]
         : [];
-  const matchStatus = suggestion.candidate ? "ambiguous" : "not_found";
+  const matchKind = !suggestion.candidate
+    ? "none"
+    : suggestion.error
+      ? "validation"
+      : "exact";
   const target =
     suggestion.action === "backlog"
       ? t("actions.backlog", { ns: "librarySync" })
@@ -284,7 +321,7 @@ function SuggestionRow({
         </p>
 
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-          {pending && <ImportMatchMark status={matchStatus} />}
+          {pending && <SuggestionMatchMark kind={matchKind} />}
           {approved && (
             <>
               <ImportOutcomeMark outcome="imported" />
@@ -429,7 +466,7 @@ export function AutomaticImports({ provider }: { provider?: string }) {
   const { user } = useAppSelector((state) => state.auth);
   const queryClient = useQueryClient();
 
-  const [filter, setFilter] = useState<SyncSuggestionFilter>("all");
+  const [filter, setFilter] = useState<SyncSuggestionFilter>("pending");
   const [deselected, setDeselected] = useState<Set<number>>(new Set());
   const [approving, setApproving] = useState(false);
   const [rowBusy, setRowBusy] = useState<number | null>(null);
@@ -450,8 +487,12 @@ export function AutomaticImports({ provider }: { provider?: string }) {
     () => allItems.filter((item) => item.reviewState === "pending"),
     [allItems]
   );
+  const readyItems = useMemo(
+    () => pendingItems.filter((item) => item.candidate && !item.error),
+    [pendingItems]
+  );
   const attentionItems = useMemo(
-    () => pendingItems.filter((item) => Boolean(item.candidate)),
+    () => pendingItems.filter((item) => item.candidate && item.error),
     [pendingItems]
   );
   const noMatchItems = useMemo(
@@ -460,22 +501,33 @@ export function AutomaticImports({ provider }: { provider?: string }) {
   );
   const items = useMemo(
     () =>
-      filter === "attention"
-        ? attentionItems
-        : filter === "no_match"
-          ? noMatchItems
-          : allItems,
-    [filter, attentionItems, noMatchItems, allItems]
+      filter === "ready"
+        ? readyItems
+        : filter === "attention"
+          ? attentionItems
+          : filter === "no_match"
+            ? noMatchItems
+            : allItems,
+    [filter, readyItems, attentionItems, noMatchItems, allItems]
   );
+  const selectableItems =
+    filter === "attention" ? attentionItems : readyItems;
   const selectedIds = useMemo(
     () =>
-      attentionItems
+      selectableItems
         .filter((item) => !deselected.has(item.id))
         .map((item) => item.id),
-    [attentionItems, deselected]
+    [selectableItems, deselected]
   );
+  const canBulkSelect =
+    filter === "pending" ||
+    filter === "ready" ||
+    filter === "attention" ||
+    filter === "all";
 
   const filterCounts: Record<SyncSuggestionFilter, number> = {
+    pending: counts?.pending ?? 0,
+    ready: counts?.ready ?? 0,
     all:
       (counts?.pending ?? 0) +
       (counts?.approved ?? 0) +
@@ -488,11 +540,13 @@ export function AutomaticImports({ provider }: { provider?: string }) {
   };
 
   const filterOptions: { value: SyncSuggestionFilter; labelKey: string }[] = [
+    { value: "pending", labelKey: "automatic.filters.pending" },
+    { value: "ready", labelKey: "automatic.filters.ready" },
+    { value: "attention", labelKey: "automatic.filters.attention" },
+    { value: "no_match", labelKey: "automatic.filters.noMatch" },
     { value: "all", labelKey: "automatic.filters.all" },
     { value: "validated", labelKey: "automatic.filters.validated" },
     { value: "last_sync", labelKey: "automatic.filters.lastSync" },
-    { value: "attention", labelKey: "automatic.filters.attention" },
-    { value: "no_match", labelKey: "automatic.filters.noMatch" },
     { value: "dismissed", labelKey: "automatic.filters.dismissed" },
   ];
 
@@ -671,8 +725,7 @@ export function AutomaticImports({ provider }: { provider?: string }) {
         </div>
       ) : (
         <>
-          {attentionItems.length > 0 &&
-            (filter === "all" || filter === "attention") && (
+          {canBulkSelect && selectableItems.length > 0 && (
             <div className="flex flex-wrap items-center gap-2">
               <p className="text-step-0 text-muted-foreground">
                 {t("automatic.selected", { count: selectedIds.length })}
@@ -682,7 +735,7 @@ export function AutomaticImports({ provider }: { provider?: string }) {
                 size="xs"
                 variant="outline"
                 onClick={() => setDeselected(new Set())}
-                disabled={selectedIds.length === attentionItems.length}
+                disabled={selectedIds.length === selectableItems.length}
               >
                 {t("automatic.selectAll")}
               </Button>
@@ -692,7 +745,7 @@ export function AutomaticImports({ provider }: { provider?: string }) {
                 variant="outline"
                 onClick={() =>
                   setDeselected(
-                    new Set(attentionItems.map((item) => item.id))
+                    new Set(selectableItems.map((item) => item.id))
                   )
                 }
                 disabled={selectedIds.length === 0}
@@ -723,7 +776,9 @@ export function AutomaticImports({ provider }: { provider?: string }) {
               renderRow(
                 suggestion,
                 suggestion.reviewState === "pending" &&
-                  Boolean(suggestion.candidate)
+                  (filter === "attention"
+                    ? Boolean(suggestion.candidate && suggestion.error)
+                    : Boolean(suggestion.candidate && !suggestion.error))
               )
             )}
           </div>

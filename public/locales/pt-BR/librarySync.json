@@ -1,6 +1,6 @@
 {
   "title": "Integrações de bibliotecas",
-  "description": "Conecte serviços externos para manter status e backlog sincronizados. No Letterboxd, matches exatos entram direto na biblioteca; os duvidosos vão para a revisão.",
+  "description": "Conecte serviços externos para manter status e backlog sincronizados. Títulos novos entram pela fila de revisão, igual à importação manual.",
   "connected": "Conectado",
   "notConnected": "Não conectado",
   "connect": "Conectar",
@@ -24,6 +24,17 @@
   "disconnect": "Desconectar",
   "disconnected": "Integração desconectada.",
   "saved": "Configurações salvas.",
+  "initialSync": {
+    "badge": "Sincronização inicial pendente",
+    "title": "Sincronização inicial pendente",
+    "description": "Sincronize agora para buscar sua biblioteca e enviar os títulos novos para revisão antes de entrarem no Logged."
+  },
+  "partialSync": {
+    "badge": "Histórico completo via arquivo",
+    "title": "Sync parcial",
+    "description": "O sync não cobre todo o histórico deste serviço. Use a importação por arquivo para trazer tudo.",
+    "action": "Importar arquivo completo"
+  },
   "errors": {
     "save": "Não foi possível salvar as configurações.",
     "test": "Não foi possível testar a conexão.",
@@ -58,13 +69,14 @@
   "summary": {
     "title": "Último sync",
     "created": "Criados",
+    "reviewStaged": "Para revisão",
     "statusUpdated": "Status atualizados",
     "backlogAdded": "Backlog adicionados",
     "pending": "Pendentes",
-    "missing": "Fora do Logged",
+    "missing": "Aguardando revisão",
     "unmatched": "Sem match",
     "removed": "Removidos",
-    "missingHint": "Estes títulos ainda não estão no Logged. Use Importar biblioteca para revisar e importar.",
+    "missingHint": "Revise os títulos em Importar → Automáticos para adicioná-los à biblioteca.",
     "errors": "{{count}} item(ns) falharam.",
     "pendingReview": "{{count}} aguardando revisão",
     "review": "Revisar",
@@ -143,6 +155,7 @@
     "letterboxd": {
       "label": "Letterboxd",
       "description": "Diários recentes via RSS. Histórico completo e watchlist vêm do export CSV.",
+      "syncPartial": "O sync lê apenas os ~50 diários mais recentes. O histórico completo e a watchlist precisam ser importados pelo arquivo ZIP.",
       "statuses": {
         "watched": "Assistido"
       }
@@ -217,7 +230,7 @@
     "backlog": "No backlog",
     "logs": "Logs",
     "review": "Para revisão",
-    "missing": "Sem match",
+    "missing": "Aguardando revisão",
     "okProviders": "Provedores OK",
     "failedProviders": "Provedores com erro",
     "viewProgress": "Ver progresso",

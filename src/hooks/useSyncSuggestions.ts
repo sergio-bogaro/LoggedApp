@@ -7,6 +7,8 @@ import {
 import type { SyncSuggestionState } from "@/types/librarySync";
 
 export type SyncSuggestionFilter =
+  | "pending"
+  | "ready"
   | "all"
   | "validated"
   | "last_sync"
