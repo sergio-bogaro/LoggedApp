@@ -1,6 +1,4 @@
-import { parseApiError } from "@/lib/apiError";
-import { fetchWithTimeout } from "@/lib/fetchWithTimeout";
-import { API_BASE_URL } from "@/querries/apiBase";
+import { apiFetch } from "@/lib/http";
 import type { ImportCandidate } from "@/types/import";
 import type {
   GlobalSyncConfigPayload,
@@ -21,28 +19,6 @@ import type {
   SyncSuggestionsResponse,
   SyncSuggestionState,
 } from "@/types/librarySync";
-
-async function apiFetch<T>(
-  path: string,
-  options?: globalThis.RequestInit,
-  timeoutMs = 20_000
-): Promise<T> {
-  const { headers, ...rest } = options ?? {};
-  const response = await fetchWithTimeout(
-    `${API_BASE_URL}${path}`,
-    {
-      ...rest,
-      headers: {
-        "Content-Type": "application/json",
-        ...headers,
-      },
-    },
-    timeoutMs
-  );
-  if (!response.ok) throw await parseApiError(response);
-  if (response.status === 204) return undefined as T;
-  return (await response.json()) as T;
-}
 
 export async function listIntegrations(userId: number): Promise<SyncProviderInfo[]> {
   return apiFetch<SyncProviderInfo[]>(`/api/integrations?user_id=${userId}`);

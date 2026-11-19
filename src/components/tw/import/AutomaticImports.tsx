@@ -66,18 +66,18 @@ function SuggestionMatchMark({
   const tone =
     kind === "exact"
       ? {
-          text: "text-foreground",
-          mark: "border-primary bg-primary",
-        }
+        text: "text-foreground",
+        mark: "border-primary bg-primary",
+      }
       : kind === "validation"
         ? {
-            text: "text-amber-600 dark:text-amber-400",
-            mark: "border-amber-500 bg-transparent",
-          }
+          text: "text-amber-600 dark:text-amber-400",
+          mark: "border-amber-500 bg-transparent",
+        }
         : {
-            text: "text-destructive",
-            mark: "border-destructive bg-transparent",
-          };
+          text: "text-destructive",
+          mark: "border-destructive bg-transparent",
+        };
 
   return (
     <span className={cn("inline-flex items-center gap-1.5 text-step-0", tone.text)}>

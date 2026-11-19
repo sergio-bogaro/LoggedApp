@@ -1,34 +1,24 @@
-import { ApiError, parseApiError } from "@/lib/apiError";
-import { fetchWithTimeout } from "@/lib/fetchWithTimeout";
+import { ApiError } from "@/lib/apiError";
+import { apiFetch } from "@/lib/http";
 import { API_BASE_URL } from "@/querries/apiBase";
 import { MediaCreatePayload, MediaLogCreatePayload, MediaLogResponse, MediaLogUpdatePayload, MediaResponse, MediaUpdatePayload, MediaWithLogsResponse } from "@/types/logged";
 import { MediaStatusEnum, MediaTypeEnum } from "@/types/media";
-
-async function apiFetch<T>(path: string, options?: globalThis.RequestInit): Promise<T> {
-  const { headers, ...rest } = options ?? {};
-  const res = await fetchWithTimeout(`${API_BASE_URL}${path}`, {
-    ...rest,
-    headers: {
-      "Content-Type": "application/json",
-      ...headers,
-    },
-  });
-
-  if (!res.ok) {
-    throw await parseApiError(res);
-  }
-
-  // 204 No Content
-  if (res.status === 204) return undefined as T;
-
-  return (await res.json()) as T;
-}
 
 // ──────────────────────────────────────────────
 // Media — CRUD
 // ──────────────────────────────────────────────
 
-export async function getMediaList(userId: number, params?: { types?: MediaTypeEnum[]; status?: MediaStatusEnum; search?: string; tags?: string[]; hasLogs?: boolean; limit?: number; offset?: number }): Promise<MediaResponse[]> {
+export type MediaListParams = {
+  types?: MediaTypeEnum[];
+  status?: MediaStatusEnum;
+  search?: string;
+  tags?: string[];
+  hasLogs?: boolean;
+  limit?: number;
+  offset?: number;
+};
+
+export async function getMediaList(userId: number, params?: MediaListParams): Promise<MediaResponse[]> {
   const url = new URLSearchParams();
   url.set("user_id", userId.toString());
   if (params?.types) params.types.forEach((type) => url.append("type", type));
@@ -41,6 +31,29 @@ export async function getMediaList(userId: number, params?: { types?: MediaTypeE
   
   const qs = url.toString();
   return apiFetch<MediaResponse[]>(`/api/media/${qs ? `?${qs}` : ""}`);
+}
+
+/** Página máxima aceita pela API. Usada para buscar a biblioteca completa em blocos. */
+const API_PAGE_SIZE = 500;
+
+/**
+ * Biblioteca inteira, buscada em páginas. A API limita cada resposta a 500
+ * itens; o consumidor final (views, gráficos, coleções) continua recebendo tudo.
+ */
+export async function getAllMedia(
+  userId: number,
+  params: Omit<MediaListParams, "limit" | "offset"> = {}
+): Promise<MediaResponse[]> {
+  const all: MediaResponse[] = [];
+  for (let offset = 0; ; offset += API_PAGE_SIZE) {
+    const page = await getMediaList(userId, {
+      ...params,
+      limit: API_PAGE_SIZE,
+      offset,
+    });
+    all.push(...page);
+    if (page.length < API_PAGE_SIZE) return all;
+  }
 }
 
 export async function getTags(userId: number, type?: MediaTypeEnum): Promise<string[]> {
@@ -109,42 +122,25 @@ export async function uploadMediaImage(id: number, file: File, userId: number): 
   const formData = new FormData();
   formData.append("file", file);
 
-  const res = await fetchWithTimeout(`${API_BASE_URL}/api/media/${id}/image?user_id=${userId}`, {
+  return apiFetch<MediaResponse>(`/api/media/${id}/image?user_id=${userId}`, {
     method: "POST",
     body: formData,
+    timeoutMs: 60_000,
   });
-
-  if (!res.ok) {
-    throw await parseApiError(res);
-  }
-
-  return (await res.json()) as MediaResponse;
 }
 
 export async function uploadMediaImageFromUrl(id: number, imageUrl: string, userId: number): Promise<MediaResponse> {
-  const res = await fetchWithTimeout(`${API_BASE_URL}/api/media/${id}/image-url?user_id=${userId}`, {
+  return apiFetch<MediaResponse>(`/api/media/${id}/image-url?user_id=${userId}`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ url: imageUrl }),
+    body: { url: imageUrl },
+    timeoutMs: 60_000,
   });
-
-  if (!res.ok) {
-    throw await parseApiError(res);
-  }
-
-  return (await res.json()) as MediaResponse;
 }
 
 export async function removeMediaImage(id: number, userId: number): Promise<MediaResponse> {
-  const res = await fetchWithTimeout(`${API_BASE_URL}/api/media/${id}/image?user_id=${userId}`, {
+  return apiFetch<MediaResponse>(`/api/media/${id}/image?user_id=${userId}`, {
     method: "DELETE",
   });
-
-  if (!res.ok) {
-    throw await parseApiError(res);
-  }
-
-  return (await res.json()) as MediaResponse;
 }
 
 export async function deleteMedia(id: number, userId: number): Promise<void> {
@@ -196,9 +192,16 @@ export type MediaLogWithMedia = MediaLogResponse & {
   media: MediaLogMediaSummary | null;
 };
 
+export type MediaLogListParams = {
+  start?: string;
+  end?: string;
+  limit?: number;
+  offset?: number;
+};
+
 export async function getUserMediaLogs(
   userId: number,
-  params?: { start?: string; end?: string; limit?: number; offset?: number }
+  params?: MediaLogListParams
 ): Promise<MediaLogWithMedia[]> {
   const url = new URLSearchParams();
   url.set("user_id", userId.toString());
@@ -208,6 +211,23 @@ export async function getUserMediaLogs(
   if (params?.offset !== undefined) url.set("offset", params.offset.toString());
 
   return apiFetch<MediaLogWithMedia[]>(`/api/media-logs/?${url.toString()}`);
+}
+
+/** Todos os logs do período, paginados em blocos de 500. */
+export async function getAllMediaLogs(
+  userId: number,
+  params: Omit<MediaLogListParams, "limit" | "offset"> = {}
+): Promise<MediaLogWithMedia[]> {
+  const all: MediaLogWithMedia[] = [];
+  for (let offset = 0; ; offset += API_PAGE_SIZE) {
+    const page = await getUserMediaLogs(userId, {
+      ...params,
+      limit: API_PAGE_SIZE,
+      offset,
+    });
+    all.push(...page);
+    if (page.length < API_PAGE_SIZE) return all;
+  }
 }
 
 // ──────────────────────────────────────────────

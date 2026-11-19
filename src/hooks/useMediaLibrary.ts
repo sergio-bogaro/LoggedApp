@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { getMediaList } from "@/querries/media/logged";
+import { getAllMedia } from "@/querries/media/logged";
 import { useAppSelector } from "@/store/auth/hooks";
 import { DEFAULT_STALE_TIME } from "@/utils/conts";
 
@@ -13,7 +13,7 @@ export function useMediaLibrary() {
 
   return useQuery({
     queryKey: ["media", "library", user?.id],
-    queryFn: () => getMediaList(user!.id),
+    queryFn: () => getAllMedia(user!.id),
     staleTime: DEFAULT_STALE_TIME,
     enabled: !!user,
   });

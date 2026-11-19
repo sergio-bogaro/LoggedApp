@@ -22,6 +22,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import {
   SelectBase,
   SelectContent,
@@ -30,7 +31,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Input } from "@/components/ui/input";
 import { useReviewItems } from "@/hooks/useReviewItems";
 import { cn } from "@/lib/utils";
 import { searchImportCandidates } from "@/querries/import";
@@ -90,18 +90,18 @@ function ReviewMatchMark({ match }: { match: ReviewMatch }) {
       ? { text: "text-foreground", mark: "border-primary bg-primary" }
       : match === "already_in_library"
         ? {
-            text: "text-muted-foreground",
-            mark: "border-muted-foreground bg-muted-foreground",
-          }
+          text: "text-muted-foreground",
+          mark: "border-muted-foreground bg-muted-foreground",
+        }
         : match === "needs_validation"
           ? {
-              text: "text-amber-600 dark:text-amber-400",
-              mark: "border-amber-500 bg-transparent",
-            }
+            text: "text-amber-600 dark:text-amber-400",
+            mark: "border-amber-500 bg-transparent",
+          }
           : {
-              text: "text-destructive",
-              mark: "border-destructive bg-transparent",
-            };
+            text: "text-destructive",
+            mark: "border-destructive bg-transparent",
+          };
 
   return (
     <span className={cn("inline-flex items-center gap-1.5 text-step-0", tone.text)}>
@@ -298,12 +298,12 @@ function ReviewRow({
   const providerLabel =
     item.source === "manual"
       ? t(`providers.${item.provider}.label`, {
-          defaultValue: item.provider,
-        })
+        defaultValue: item.provider,
+      })
       : t(`providers.${item.provider}.label`, {
-          ns: "librarySync",
-          defaultValue: item.provider,
-        });
+        ns: "librarySync",
+        defaultValue: item.provider,
+      });
 
   return (
     <div
@@ -546,9 +546,9 @@ export function UnifiedReviewInbox({ provider }: { provider?: string }) {
   const hasManualSelected = selectedKeys.some((key) => key.startsWith("manual:"));
   const providerLabel = provider
     ? t(`providers.${provider}.label`, {
-        ns: "librarySync",
-        defaultValue: provider,
-      })
+      ns: "librarySync",
+      defaultValue: provider,
+    })
     : null;
 
   const clearProvider = () => {

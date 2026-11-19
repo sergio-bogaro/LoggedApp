@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { fetchWithTimeout } from "@/lib/fetchWithTimeout";
-import { API_BASE_URL } from "@/querries/apiBase";
+import { apiFetch } from "@/lib/http";
 import { useAppSelector } from "@/store/auth/hooks";
 import { MediaTypeEnum } from "@/types/media";
 
@@ -9,14 +8,13 @@ export type MediaSourceAvailability = Record<MediaTypeEnum, boolean>;
 
 async function fetchConfigured(path: string, userId?: number): Promise<boolean> {
   const params = userId !== undefined ? `?user_id=${userId}` : "";
-  const response = await fetchWithTimeout(`${API_BASE_URL}${path}${params}`);
-
-  if (!response.ok) {
+  try {
+    const data = await apiFetch<{ configured: boolean }>(`${path}${params}`);
+    return data.configured;
+  } catch {
+    // Sem credencial/fora do ar: a fonte aparece indisponível, sem quebrar a tela.
     return false;
   }
-
-  const data = (await response.json()) as { configured: boolean };
-  return data.configured;
 }
 
 export function useMediaSourceAvailability(): {

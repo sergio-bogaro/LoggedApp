@@ -1,6 +1,4 @@
-import { parseApiError } from "@/lib/apiError";
-import { fetchWithTimeout } from "@/lib/fetchWithTimeout";
-import { API_BASE_URL } from "@/querries/apiBase";
+import { apiFetch } from "@/lib/http";
 import type {
   ImportCandidate,
   ImportCommitEntry,
@@ -16,29 +14,6 @@ import type {
   ImportJobItemsResponse,
 } from "@/types/importJob";
 import type { MediaTypeEnum } from "@/types/media";
-
-async function apiFetch<T>(
-  path: string,
-  options?: globalThis.RequestInit,
-  timeoutMs?: number
-): Promise<T> {
-  const { headers, ...rest } = options ?? {};
-  const res = await fetchWithTimeout(
-    `${API_BASE_URL}${path}`,
-    {
-      ...rest,
-      headers: {
-        "Content-Type": "application/json",
-        ...headers,
-      },
-    },
-    timeoutMs
-  );
-
-  if (!res.ok) throw await parseApiError(res);
-  if (res.status === 204) return undefined as T;
-  return (await res.json()) as T;
-}
 
 export type ParseImportInput = {
   userId: number;
@@ -65,13 +40,13 @@ export async function parseImport(
   if (input.sourceUrl) form.append("source_url", input.sourceUrl);
   if (input.file) form.append("file", input.file);
 
-  const res = await fetchWithTimeout(`${API_BASE_URL}/api/import/${providerId}/parse`, {
+  const res = await apiFetch<ImportPreviewResponse>(`/api/import/${providerId}/parse`, {
     method: "POST",
     body: form,
-  }, 60_000);
+    timeoutMs: 60_000,
+  });
 
-  if (!res.ok) throw await parseApiError(res);
-  return (await res.json()) as ImportPreviewResponse;
+  return res;
 }
 
 /** Casa um lote de itens com o provedor de metadata. */
@@ -121,14 +96,11 @@ export async function createImportJob(
   if (input.sourceUrl) form.append("source_url", input.sourceUrl);
   if (input.file) form.append("file", input.file);
 
-  const res = await fetchWithTimeout(
-    `${API_BASE_URL}/api/import/jobs`,
-    { method: "POST", body: form },
-    120_000
-  );
-
-  if (!res.ok) throw await parseApiError(res);
-  return (await res.json()) as ImportJob;
+  return apiFetch<ImportJob>("/api/import/jobs", {
+    method: "POST",
+    body: form,
+    timeoutMs: 120_000,
+  });
 }
 
 /** Lista as importações recentes, opcionalmente por status. */

@@ -1,5 +1,4 @@
-import { fetchWithTimeout } from "@/lib/fetchWithTimeout";
-import { API_BASE_URL } from "@/querries/apiBase";
+import { apiFetch } from "@/lib/http";
 import { MediaItem, MediaTypeEnum } from "@/types/media";
 import { toIsoDate } from "@/utils/date";
 
@@ -107,19 +106,14 @@ export async function searchGames(title: string, userId?: number): Promise<IGDBS
 
   try {
     const params = userId !== undefined ? `?user_id=${userId}` : "";
-    const res = await fetchWithTimeout(`${API_BASE_URL}/api/igdb/games/search${params}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ query: title, limit: 20 }),
-      signal: searchController.signal,
-    });
-
-    if (!res.ok) {
-      const text = await res.text();
-      throw new Error(`IGDB search error: ${res.status} ${text}`);
-    }
-
-    const results: IGDBSearchItem[] = await res.json();
+    const results = await apiFetch<IGDBSearchItem[]>(
+      `/api/igdb/games/search${params}`,
+      {
+        method: "POST",
+        body: { query: title, limit: 20 },
+        signal: searchController.signal,
+      }
+    );
 
     searchCache.set(cacheKey, { data: results, timestamp: Date.now() });
     if (searchCache.size > 100) {
@@ -142,14 +136,7 @@ export async function searchGames(title: string, userId?: number): Promise<IGDBS
 
 export async function getGameDetails(id: number, userId?: number): Promise<IGDBGame> {
   const params = userId !== undefined ? `?user_id=${userId}` : "";
-  const res = await fetchWithTimeout(`${API_BASE_URL}/api/igdb/games/${id}${params}`);
-
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`IGDB details error: ${res.status} ${text}`);
-  }
-
-  return res.json();
+  return apiFetch<IGDBGame>(`/api/igdb/games/${id}${params}`);
 }
 
 // ──────────────────────────────────────────────

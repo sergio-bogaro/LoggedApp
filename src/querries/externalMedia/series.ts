@@ -1,5 +1,4 @@
-import { fetchWithTimeout } from "@/lib/fetchWithTimeout";
-import { API_BASE_URL } from "@/querries/apiBase";
+import { apiFetch } from "@/lib/http";
 import { TMDBCredits, TMDBCrewMember, TMDBGenre, TMDBImages, TMDBVideos, tmdbPosterUrl } from "@/querries/externalMedia/movies";
 import { MediaItem, MediaTypeEnum } from "@/types/media";
 import { toIsoDate } from "@/utils/date";
@@ -114,8 +113,6 @@ export type TMDBTvDetails = {
   [key: string]: any;
 };
 
-const API = API_BASE_URL;
-
 export async function searchSeriesNormalized(query: string, userId?: number): Promise<MediaItem[]> {
   const series = await searchSeries(query, userId);
 
@@ -136,19 +133,13 @@ export async function searchSeries(query: string, userId?: number): Promise<TMDB
   const params = new URLSearchParams({ query });
   if (userId !== undefined) params.set("user_id", String(userId));
 
-  const res = await fetchWithTimeout(`${API}/api/tmdb/search/tv?${params.toString()}`);
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`TMDB API error: ${res.status} ${text}`);
-  }
-  const data = (await res.json()) as SearchTvResponse;
+  const data = await apiFetch<SearchTvResponse>(
+    `/api/tmdb/search/tv?${params.toString()}`
+  );
   return data.results || [];
 }
 
 export async function getSeriesDetails(id: number, userId?: number): Promise<TMDBTvDetails> {
   const params = userId !== undefined ? `?user_id=${userId}` : "";
-  const res = await fetchWithTimeout(`${API}/api/tmdb/tv/${id}${params}`);
-  if (!res.ok) throw new Error("TMDB details error");
-  const data = (await res.json()) as TMDBTvDetails;
-  return data;
+  return apiFetch<TMDBTvDetails>(`/api/tmdb/tv/${id}${params}`);
 }

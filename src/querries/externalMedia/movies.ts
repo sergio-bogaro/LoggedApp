@@ -1,5 +1,4 @@
-import { fetchWithTimeout } from "@/lib/fetchWithTimeout";
-import { API_BASE_URL } from "@/querries/apiBase";
+import { apiFetch } from "@/lib/http";
 import { MediaItem, MediaTypeEnum } from "@/types/media";
 import { toIsoDate } from "@/utils/date";
 
@@ -135,18 +134,13 @@ export type TMDBMovieDetails = {
   [key: string]: any;
 };
 
-const API = API_BASE_URL;
-
 export async function searchMovies(query: string, userId?: number): Promise<Movie[]> {
   const params = new URLSearchParams({ query });
   if (userId !== undefined) params.set("user_id", String(userId));
 
-  const res = await fetchWithTimeout(`${API}/api/tmdb/search?${params.toString()}`);
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`TMDB API error: ${res.status} ${text}`);
-  }
-  const data = (await res.json()) as SearchMoviesResponse;
+  const data = await apiFetch<SearchMoviesResponse>(
+    `/api/tmdb/search?${params.toString()}`
+  );
   return data.results || [];
 }
 
@@ -157,8 +151,5 @@ export function tmdbPosterUrl(path: string | null | undefined, size = "w200") {
 
 export async function getMovieDetails(id: number, userId?: number): Promise<TMDBMovieDetails> {
   const params = userId !== undefined ? `?user_id=${userId}` : "";
-  const res = await fetchWithTimeout(`${API}/api/tmdb/movie/${id}${params}`);
-  if (!res.ok) throw new Error("TMDB details error");
-  const data = (await res.json()) as TMDBMovieDetails;
-  return data;
+  return apiFetch<TMDBMovieDetails>(`/api/tmdb/movie/${id}${params}`);
 }

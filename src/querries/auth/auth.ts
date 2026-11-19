@@ -1,6 +1,4 @@
-import { parseApiError } from "@/lib/apiError";
-import { fetchWithTimeout } from "@/lib/fetchWithTimeout";
-import { API_BASE_URL } from "@/querries/apiBase";
+import { apiFetch } from "@/lib/http";
 
 export interface UserRegister {
   username: string;
@@ -54,61 +52,19 @@ export interface IntegrationStatus {
 
 export const authApi = {
   async register(data: UserRegister): Promise<User> {
-    const response = await fetchWithTimeout(`${API_BASE_URL}/auth/register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      throw await parseApiError(response);
-    }
-
-    return response.json();
+    return apiFetch<User>("/auth/register", { method: "POST", body: data });
   },
 
   async login(data: UserLogin): Promise<LoginResponse> {
-    const response = await fetchWithTimeout(`${API_BASE_URL}/auth/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      throw await parseApiError(response);
-    }
-
-    return response.json();
+    return apiFetch<LoginResponse>("/auth/login", { method: "POST", body: data });
   },
 
   async getUser(userId: number): Promise<User> {
-    const response = await fetchWithTimeout(`${API_BASE_URL}/auth/users/${userId}`);
-
-    if (!response.ok) {
-      throw await parseApiError(response);
-    }
-
-    return response.json();
+    return apiFetch<User>(`/auth/users/${userId}`);
   },
 
   async updateUser(userId: number, data: Partial<User> | UserSecrets): Promise<User> {
-    const response = await fetchWithTimeout(`${API_BASE_URL}/auth/users/${userId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      throw await parseApiError(response);
-    }
-
-    return response.json();
+    return apiFetch<User>(`/auth/users/${userId}`, { method: "PUT", body: data });
   },
 };
 
@@ -117,12 +73,12 @@ const EMPTY_INTEGRATION: IntegrationEntry = { configured: false, source: "none" 
 export const integrationsApi = {
   async getStatus(userId: number): Promise<IntegrationStatus> {
     const [tmdb, igdb] = await Promise.all([
-      fetch(`${API_BASE_URL}/api/tmdb/config?user_id=${userId}`)
-        .then((r) => (r.ok ? r.json() : EMPTY_INTEGRATION))
-        .catch(() => EMPTY_INTEGRATION),
-      fetch(`${API_BASE_URL}/api/igdb/config?user_id=${userId}`)
-        .then((r) => (r.ok ? r.json() : EMPTY_INTEGRATION))
-        .catch(() => EMPTY_INTEGRATION),
+      apiFetch<IntegrationEntry>(`/api/tmdb/config?user_id=${userId}`).catch(
+        () => EMPTY_INTEGRATION
+      ),
+      apiFetch<IntegrationEntry>(`/api/igdb/config?user_id=${userId}`).catch(
+        () => EMPTY_INTEGRATION
+      ),
     ]);
 
     return { tmdb, igdb };

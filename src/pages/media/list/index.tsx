@@ -11,7 +11,7 @@ import { MediaLibrary } from "@/components/tw/media/mediaLibrary";
 import { Select } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useMediaLogs } from "@/hooks/useMediaLogs";
-import { getMediaList, getTags } from "@/querries/media/logged";
+import { getAllMedia, getMediaList, getTags } from "@/querries/media/logged";
 import { useAppSelector } from "@/store/auth/hooks";
 import { useAppDispatch } from "@/store/settings/hooks";
 import { setBreadcrumbs } from "@/store/settings/slice";
@@ -49,7 +49,7 @@ const MediaListPage = () => {
   const { data: data, isFetching, isError, error } = useQuery<MediaResponse[]>({
     queryKey: ["media", "list", user?.id, mediaType, tagFilter],
     queryFn: () =>
-      getMediaList(user!.id, {
+      getAllMedia(user!.id, {
         types: mediaType ? [mediaType] : undefined,
         tags: tagFilter ? [tagFilter] : undefined,
       }),

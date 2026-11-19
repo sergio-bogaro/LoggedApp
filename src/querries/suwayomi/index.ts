@@ -1,6 +1,4 @@
-import { parseApiError } from "@/lib/apiError";
-import { fetchWithTimeout } from "@/lib/fetchWithTimeout";
-import { API_BASE_URL } from "@/querries/apiBase";
+import { apiFetch } from "@/lib/http";
 import type {
   SuwayomiCategoriesResponse,
   SuwayomiCategoryPayload,
@@ -12,29 +10,6 @@ import type {
   SuwayomiSyncResponse,
   SuwayomiTestResponse,
 } from "@/types/suwayomi";
-
-async function apiFetch<T>(
-  path: string,
-  options?: globalThis.RequestInit,
-  timeoutMs?: number
-): Promise<T> {
-  const { headers, ...rest } = options ?? {};
-  const res = await fetchWithTimeout(
-    `${API_BASE_URL}${path}`,
-    {
-      ...rest,
-      headers: {
-        "Content-Type": "application/json",
-        ...headers,
-      },
-    },
-    timeoutMs
-  );
-
-  if (!res.ok) throw await parseApiError(res);
-  if (res.status === 204) return undefined as T;
-  return (await res.json()) as T;
-}
 
 export const suwayomiApi = {
   getConfig(userId: number): Promise<SuwayomiConfig> {

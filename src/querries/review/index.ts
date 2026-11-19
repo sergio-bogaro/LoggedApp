@@ -1,6 +1,4 @@
-import { parseApiError } from "@/lib/apiError";
-import { fetchWithTimeout } from "@/lib/fetchWithTimeout";
-import { API_BASE_URL } from "@/querries/apiBase";
+import { apiFetch } from "@/lib/http";
 import type { ImportCandidate } from "@/types/import";
 import type {
   ReviewCommitResponse,
@@ -8,28 +6,6 @@ import type {
   ReviewItemsParams,
   ReviewItemsResponse,
 } from "@/types/review";
-
-async function apiFetch<T>(
-  path: string,
-  options?: globalThis.RequestInit,
-  timeoutMs = 30_000
-): Promise<T> {
-  const { headers, ...rest } = options ?? {};
-  const response = await fetchWithTimeout(
-    `${API_BASE_URL}${path}`,
-    {
-      ...rest,
-      headers: {
-        "Content-Type": "application/json",
-        ...headers,
-      },
-    },
-    timeoutMs
-  );
-  if (!response.ok) throw await parseApiError(response);
-  if (response.status === 204) return undefined as T;
-  return (await response.json()) as T;
-}
 
 export async function listReviewItems(
   userId: number,
