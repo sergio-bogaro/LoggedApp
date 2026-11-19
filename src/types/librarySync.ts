@@ -30,6 +30,7 @@ export interface SyncProviderInfo {
   hasToken: boolean;
   pendingReview: number;
   syncPartial?: boolean;
+  statusMapping?: boolean;
 }
 
 export interface SyncStatusOption {

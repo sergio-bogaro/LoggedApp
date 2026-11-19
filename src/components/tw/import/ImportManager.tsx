@@ -868,6 +868,7 @@ function ImportManager() {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ["import-job", jobId, user.id] }),
         queryClient.invalidateQueries({ queryKey: ["import-jobs"] }),
+        queryClient.invalidateQueries({ queryKey: ["integrations"] }),
         queryClient.invalidateQueries({ queryKey: ["review"] }),
         queryClient.invalidateQueries({ queryKey: ["media"] }),
         queryClient.invalidateQueries({ queryKey: ["existingMedia"] }),

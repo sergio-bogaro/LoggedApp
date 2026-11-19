@@ -34,7 +34,8 @@
     "badge": "Histórico completo via arquivo",
     "title": "Sync parcial",
     "description": "O sync não cobre todo o histórico deste serviço. Use a importação por arquivo para trazer tudo.",
-    "action": "Importar arquivo completo"
+    "action": "Importar arquivo completo",
+    "dismiss": "Ignorar aviso"
   },
   "errors": {
     "save": "Não foi possível salvar as configurações.",

@@ -17,6 +17,7 @@ import { TypeMark } from "@/components/tw/generic/badges";
 import SuwayomiIntegration from "@/components/tw/settings/SuwayomiIntegration";
 import { useSyncRun } from "@/components/tw/sync/SyncRunProvider";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -72,6 +73,23 @@ function formatDateTime(value?: string | null): string | null {
   const normalized = /[zZ]|[+-]\d{2}:?\d{2}$/.test(value) ? value : `${value}Z`;
   const date = new Date(normalized);
   return Number.isNaN(date.getTime()) ? value : date.toLocaleString();
+}
+
+function dismissedPartialKey(userId: number) {
+  return `dismissedSyncPartial:${userId}`;
+}
+
+function readDismissedPartial(userId?: number): string[] {
+  if (!userId) return [];
+  try {
+    const raw = localStorage.getItem(dismissedPartialKey(userId));
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed)
+      ? parsed.filter((item): item is string => typeof item === "string")
+      : [];
+  } catch {
+    return [];
+  }
 }
 
 function statusTone(status?: string | null): string {
@@ -155,6 +173,30 @@ export function LibrarySyncIntegrations() {
   const { user } = useAppSelector((state) => state.auth);
   const queryClient = useQueryClient();
   const { isRunning, startSync } = useSyncRun();
+  const [dismissedPartial, setDismissedPartial] = useState<string[]>(() =>
+    readDismissedPartial(user?.id)
+  );
+
+  useEffect(() => {
+    setDismissedPartial(readDismissedPartial(user?.id));
+  }, [user?.id]);
+
+  const dismissPartial = (providerId: string) => {
+    if (!user) return;
+    setDismissedPartial((prev) => {
+      if (prev.includes(providerId)) return prev;
+      const next = [...prev, providerId];
+      try {
+        localStorage.setItem(
+          dismissedPartialKey(user.id),
+          JSON.stringify(next)
+        );
+      } catch {
+        // Sem localStorage disponível: ignora só nesta sessão.
+      }
+      return next;
+    });
+  };
 
   const { data, isLoading } = useQuery({
     queryKey: ["integrations", user?.id],
@@ -201,7 +243,7 @@ export function LibrarySyncIntegrations() {
   const statusesQuery = useQuery({
     queryKey: ["integration-statuses", user?.id, selected],
     queryFn: () => listIntegrationStatuses(selected!, user!.id),
-    enabled: !!user && !!selected,
+    enabled: !!user && !!selected && current?.statusMapping !== false,
     refetchOnWindowFocus: false,
   });
 
@@ -497,7 +539,7 @@ export function LibrarySyncIntegrations() {
             {t("initialSync.badge")}
           </p>
         )}
-        {provider.syncPartial && (
+        {provider.syncPartial && !dismissedPartial.includes(provider.id) && (
           <p className="mt-1 text-step-0 text-muted-foreground">
             {t("partialSync.badge")}
           </p>
@@ -519,23 +561,28 @@ export function LibrarySyncIntegrations() {
         <Skeleton className="h-32 w-full" />
       ) : (
         <div className="space-y-3 rounded-control border border-border p-4">
-          <div className="flex flex-wrap items-start justify-between gap-2">
-            <div>
-              <p className="font-medium text-step-1">{t("global.title")}</p>
-              <p className="text-step-0 text-muted-foreground">
-                {t("global.description")}
-              </p>
-            </div>
-            <label className="flex items-center gap-2">
-              <Switch
-                checked={globalEnabled}
-                onCheckedChange={setGlobalEnabled}
-              />
-              <span className="text-step-1">{t("global.enabled")}</span>
-            </label>
+          <div>
+            <p className="font-medium text-step-1">{t("global.title")}</p>
+            <p className="text-step-0 text-muted-foreground">
+              {t("global.description")}
+            </p>
           </div>
 
           <div className="flex flex-wrap items-end gap-3">
+            <div className="flex h-9 items-center gap-2">
+              <Checkbox
+                id="global-sync-enabled"
+                checked={globalEnabled}
+                onCheckedChange={(checked) => setGlobalEnabled(checked === true)}
+              />
+              <label
+                htmlFor="global-sync-enabled"
+                className="cursor-pointer text-step-1"
+              >
+                {t("global.enabled")}
+              </label>
+            </div>
+
             <div className="space-y-1">
               <label className="text-step-1" htmlFor="global-sync-start">
                 {t("global.startTime")}
@@ -544,9 +591,11 @@ export function LibrarySyncIntegrations() {
                 id="global-sync-start"
                 name="global-sync-start"
                 type="time"
+                step={60}
                 value={globalStartTime}
                 onChange={(event) => setGlobalStartTime(event.target.value)}
-                className="w-36"
+                disabled={!globalEnabled}
+                className="w-36 appearance-none bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
               />
             </div>
 
@@ -557,6 +606,7 @@ export function LibrarySyncIntegrations() {
               <SelectBase
                 value={globalUpdatesPerDay}
                 onValueChange={setGlobalUpdatesPerDay}
+                disabled={!globalEnabled}
               >
                 <SelectTrigger
                   id="global-sync-frequency"
@@ -891,7 +941,7 @@ export function LibrarySyncIntegrations() {
                   </div>
                 )}
 
-                {current.syncPartial && (
+                {current.syncPartial && !dismissedPartial.includes(current.id) && (
                   <div className="space-y-2 rounded-control border border-amber-500/30 bg-amber-500/5 p-3">
                     <p className="text-step-1 font-medium">
                       {t("partialSync.title")}
@@ -901,79 +951,91 @@ export function LibrarySyncIntegrations() {
                         defaultValue: t("partialSync.description"),
                       })}
                     </p>
-                    <Button type="button" size="sm" variant="outline" asChild>
-                      <Link to={`/import?provider=${current.id}`}>
-                        <Upload />
-                        {t("partialSync.action")}
-                      </Link>
-                    </Button>
-                  </div>
-                )}
-
-                <div className="space-y-2 border-t border-border pt-3">
-                  <p className="text-step-1 font-medium">{t("mappings.title")}</p>
-                  <p className="text-step-0 text-muted-foreground">
-                    {t("mappings.description")}
-                  </p>
-                  {statusesQuery.isLoading ? (
-                    <Skeleton className="h-24 w-full" />
-                  ) : (
-                    <>
-                      <div className="space-y-1.5">
-                        {statuses.map((status, index) => (
-                          <div
-                            key={status.sourceStatus}
-                            className="flex flex-wrap items-center justify-between gap-2 rounded-control border border-border px-2 py-1.5"
-                          >
-                            <span className="text-step-1">
-                              {t(
-                                `providers.${current.id}.statuses.${status.sourceStatus}`,
-                                { defaultValue: status.sourceLabel }
-                              )}
-                            </span>
-                            <SelectBase
-                              value={status.action}
-                              onValueChange={(value) =>
-                                setStatuses((rows) =>
-                                  rows.map((row, rowIndex) =>
-                                    rowIndex === index
-                                      ? { ...row, action: value as SyncAction }
-                                      : row
-                                  )
-                                )
-                              }
-                            >
-                              <SelectTrigger size="sm" className="w-44">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {ACTIONS.map((action) => (
-                                  <SelectItem key={action} value={action}>
-                                    {actionLabel(action)}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </SelectBase>
-                          </div>
-                        ))}
-                      </div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Button type="button" size="sm" variant="outline" asChild>
+                        <Link to={`/import?provider=${current.id}`}>
+                          <Upload />
+                          {t("partialSync.action")}
+                        </Link>
+                      </Button>
                       <Button
                         type="button"
                         size="sm"
-                        variant="outline"
-                        onClick={handleSaveStatuses}
-                        disabled={savingStatuses || statuses.length === 0}
+                        variant="ghost"
+                        onClick={() => dismissPartial(current.id)}
                       >
-                        {savingStatuses ? (
-                          <Loader2 className="animate-spin" />
-                        ) : (
-                          <Check />
-                        )}
-                        {t("mappings.save")}
+                        {t("partialSync.dismiss")}
                       </Button>
-                    </>
-                  )}
-                </div>
+                    </div>
+                  </div>
+                )}
+
+                {current.statusMapping !== false && (
+                  <div className="space-y-2 border-t border-border pt-3">
+                    <p className="text-step-1 font-medium">{t("mappings.title")}</p>
+                    <p className="text-step-0 text-muted-foreground">
+                      {t("mappings.description")}
+                    </p>
+                    {statusesQuery.isLoading ? (
+                      <Skeleton className="h-24 w-full" />
+                    ) : (
+                      <>
+                        <div className="space-y-1.5">
+                          {statuses.map((status, index) => (
+                            <div
+                              key={status.sourceStatus}
+                              className="flex flex-wrap items-center justify-between gap-2 rounded-control border border-border px-2 py-1.5"
+                            >
+                              <span className="text-step-1">
+                                {t(
+                                  `providers.${current.id}.statuses.${status.sourceStatus}`,
+                                  { defaultValue: status.sourceLabel }
+                                )}
+                              </span>
+                              <SelectBase
+                                value={status.action}
+                                onValueChange={(value) =>
+                                  setStatuses((rows) =>
+                                    rows.map((row, rowIndex) =>
+                                      rowIndex === index
+                                        ? { ...row, action: value as SyncAction }
+                                        : row
+                                    )
+                                  )
+                                }
+                              >
+                                <SelectTrigger size="sm" className="w-44">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {ACTIONS.map((action) => (
+                                    <SelectItem key={action} value={action}>
+                                      {actionLabel(action)}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </SelectBase>
+                            </div>
+                          ))}
+                        </div>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={handleSaveStatuses}
+                          disabled={savingStatuses || statuses.length === 0}
+                        >
+                          {savingStatuses ? (
+                            <Loader2 className="animate-spin" />
+                          ) : (
+                            <Check />
+                          )}
+                          {t("mappings.save")}
+                        </Button>
+                      </>
+                    )}
+                  </div>
+                )}
 
                 {summary && (
                   <div className="space-y-2 border-t border-border pt-3">

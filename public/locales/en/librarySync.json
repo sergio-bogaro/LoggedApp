@@ -34,7 +34,8 @@
     "badge": "Full history via file",
     "title": "Partial sync",
     "description": "The sync does not cover this service's full history. Use the file import to bring everything.",
-    "action": "Import full file"
+    "action": "Import full file",
+    "dismiss": "Dismiss warning"
   },
   "errors": {
     "save": "Could not save the settings.",
