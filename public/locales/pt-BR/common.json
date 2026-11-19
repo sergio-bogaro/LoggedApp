@@ -40,7 +40,6 @@
     "tracking": {
       "title": "Mídias a registrar",
       "description": "Escolha quais tipos de mídia deseja logar",
-      "saving": "Salvando...",
       "requiresTmdb": "Requer chave do TMDB — configure em Integrações",
       "requiresIgdb": "Requer credenciais do IGDB — configure em Integrações"
     },

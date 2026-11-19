@@ -70,14 +70,12 @@ function SettingsPage() {
   }, [dispatch, t]);
 
   const [values, setValues] = useState(() => getTrackFlags(user));
-  const [savingType, setSavingType] = useState<MediaTypeEnum | null>(null);
 
   const handleChange = async (type: MediaTypeEnum, value: boolean) => {
     if (!user) return;
 
     const next = { ...values, [type]: value };
     setValues(next);
-    setSavingType(type);
 
     try {
       const updated = await authApi.updateUser(user.id, {
@@ -93,8 +91,6 @@ function SettingsPage() {
     } catch (error) {
       setValues((prev) => ({ ...prev, [type]: !value }));
       toast.error(error instanceof Error ? error.message : t("errorLoading"));
-    } finally {
-      setSavingType(null);
     }
   };
 
@@ -118,12 +114,6 @@ function SettingsPage() {
         description={t("settings.tracking.description")}
       >
         <MediaTrackToggles values={values} onChange={handleChange} />
-
-        {savingType && (
-          <p className="text-step-1 text-muted-foreground">
-            {t("settings.tracking.saving")}
-          </p>
-        )}
       </SettingsPanel>
 
       <SettingsPanel

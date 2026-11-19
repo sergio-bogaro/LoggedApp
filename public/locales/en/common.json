@@ -40,7 +40,6 @@
     "tracking": {
       "title": "Media tracking",
       "description": "Choose which media types you want to log",
-      "saving": "Saving...",
       "requiresTmdb": "Requires a TMDB API key — set it in Integrations",
       "requiresIgdb": "Requires IGDB credentials — set them in Integrations"
     },
